@@ -8,13 +8,9 @@ interface Collection {
   id: string
   name: string
   slug: string
-  description: string
+  cover_image_url: string | null
 }
 
-interface Fabric {
-  image_urls: string[]
-  collection_id: string
-}
 export default async function CollectionsPage() {
   if (!supabase) {
     return (
@@ -25,7 +21,11 @@ export default async function CollectionsPage() {
       </div>
     )
   }
-  const { data: collections, error } = await supabase.from("collections").select("id, name, slug, description")
+
+  const { data: collections, error } = await supabase
+    .from("collections")
+    .select("id, name, slug, cover_image_url")
+
   if (error || !collections) {
     return (
       <div className="min-h-screen">
@@ -36,38 +36,27 @@ export default async function CollectionsPage() {
     )
   }
 
-  const collectionsWithPreview = await Promise.all(
-    collections.map(async (collection: Collection) => {
-      const { data } = await supabase
-        .from("fabrics")
-        .select("image_urls, collection_id")
-        .eq("collection_id", collection.id)
-        .limit(4)
-      const previewImages = data?.map((f: Fabric) => f.image_urls[0]).filter(Boolean) || []
-      return { ...collection, previewImages }
-    })
-  )
-
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 flex-1">
         <h1 className="text-3xl font-bold mb-6">คอลเลกชันลายผ้า</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {collectionsWithPreview.map((collection) => (
-            <Link key={collection.id} href={`/collections/${collection.slug}`}>
-              <div className="border rounded-lg overflow-hidden hover:shadow-lg transition bg-white">
-                <div className="grid grid-cols-2 gap-1 h-40">
-                  {collection.previewImages.map((url, idx) => (
-                    <div key={idx} className="relative w-full h-full">
-                      <Image src={url} alt={collection.name} fill className="object-cover" />
-                    </div>
-                  ))}
-                </div>
-                <div className="p-4 space-y-1">
-                  <h3 className="font-semibold text-lg">{collection.name}</h3>
-                  <p className="text-sm text-gray-600 line-clamp-2">{collection.description}</p>
-                </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {collections.map((collection: Collection) => (
+            <Link key={collection.id} href={`/collections/${collection.slug}`}
+              className="border rounded-lg overflow-hidden hover:shadow transition bg-white">
+              <div className="relative w-full h-40 md:h-48">
+                <Image
+                  src={collection.cover_image_url || "/placeholder.svg"}
+                  alt={collection.name}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div className="p-3 md:p-4">
+                <h3 className="font-semibold text-sm md:text-base truncate">
+                  {collection.name}
+                </h3>
               </div>
             </Link>
           ))}
