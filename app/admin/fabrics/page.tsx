@@ -8,8 +8,16 @@ import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 interface Fabric {
   id: string
@@ -24,7 +32,29 @@ interface Fabric {
 export default function AdminFabricsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
+  const { toast } = useToast()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("คุณต้องการลบลายผ้านี้ใช่หรือไม่?")) return
+
+    const previous = fabrics
+    setFabrics(fabrics.filter((f) => f.id !== id))
+
+    const { error } = await supabase?.from("fabrics").delete().eq("id", id)
+
+    if (error) {
+      console.error("Failed to delete fabric", error)
+      setFabrics(previous)
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถลบลายผ้าได้",
+        variant: "destructive",
+      })
+    } else {
+      toast({ title: "ลบลายผ้าแล้ว" })
+    }
+  }
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -127,10 +157,19 @@ export default function AdminFabricsPage() {
                       <TableCell>{fabric.collection_name || "-"}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
-                          <Button variant="outline" size="icon">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => router.push(`/admin/fabrics/${fabric.id}/edit`)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="icon" className="text-red-600 hover:text-red-700">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDelete(fabric.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </div>
