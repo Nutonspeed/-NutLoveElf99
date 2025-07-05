@@ -2,31 +2,40 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
 import { useAuth } from "@/contexts/auth-context"
+import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { mockCollections, type Collection } from "@/lib/mock-collections"
+import type { Collection } from "@/lib/mock-collections"
+
+interface CollectionWithFabrics extends Collection {
+  fabrics: { id: string; name: string }[]
+}
 
 export default function AdminCollectionsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
-  const [collections, setCollections] = useState<Collection[]>(mockCollections)
+  const [collections, setCollections] = useState<CollectionWithFabrics[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [editingCollection, setEditingCollection] = useState<Collection | null>(null)
-  const [formData, setFormData] = useState({
-    name: "",
-    slug: "",
-    description: "",
-    cover_image_url: "",
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [editingCollection, setEditingCollection] = useState<CollectionWithFabrics | null>(null)
+  const form = useForm<Collection>({
+    defaultValues: {
+      name: "",
+      slug: "",
+      description: "",
+      cover_image_url: "",
+      id: "",
+    },
   })
 
   useEffect(() => {
@@ -38,6 +47,25 @@ export default function AdminCollectionsPage() {
       router.push("/")
       return
     }
+    const fetchCollections = async () => {
+      if (!supabase) return
+      const { data: cols } = await supabase
+        .from("collections")
+        .select("id, name, slug, description, cover_image_url")
+      if (!cols) return
+      const { data: fabs } = await supabase
+        .from("fabrics")
+        .select("id, name, collection_id")
+      const map: Record<string, { id: string; name: string }[]> = {}
+      fabs?.forEach((f) => {
+        if (!map[f.collection_id]) map[f.collection_id] = []
+        map[f.collection_id].push({ id: f.id, name: f.name })
+      })
+      setCollections(
+        cols.map((c) => ({ ...c, fabrics: map[c.id] || [] })) as CollectionWithFabrics[],
+      )
+    }
+    fetchCollections()
   }, [isAuthenticated, user, router])
 
   if (!isAuthenticated || user?.role !== "admin") {
@@ -54,43 +82,62 @@ export default function AdminCollectionsPage() {
   }
 
   const resetForm = () => {
-    setFormData({ name: "", slug: "", description: "", cover_image_url: "" })
+    form.reset({ id: "", name: "", slug: "", description: "", cover_image_url: "" })
   }
 
-  const handleCreateCollection = () => {
-    const newCollection: Collection = {
-      id: Date.now().toString(),
-      ...formData,
+  const handleSubmit = async (values: Collection) => {
+    if (!supabase) return
+    if (editingCollection) {
+      const { data, error } = await supabase
+        .from("collections")
+        .update({
+          name: values.name,
+          slug: values.slug,
+          description: values.description,
+          cover_image_url: values.cover_image_url,
+        })
+        .eq("id", editingCollection.id)
+        .select()
+        .single()
+      if (!error && data) {
+        setCollections((prev) =>
+          prev.map((c) => (c.id === editingCollection.id ? data : c)),
+        )
+      }
+    } else {
+      const { data, error } = await supabase
+        .from("collections")
+        .insert({
+          name: values.name,
+          slug: values.slug,
+          description: values.description,
+          cover_image_url: values.cover_image_url,
+        })
+        .select()
+        .single()
+      if (!error && data) {
+        setCollections((prev) => [...prev, data])
+      }
     }
-    setCollections([...collections, newCollection])
-    setIsCreateDialogOpen(false)
-    resetForm()
-  }
-
-  const handleEditCollection = () => {
-    if (!editingCollection) return
-    const updated = collections.map((c) =>
-      c.id === editingCollection.id ? { ...editingCollection, ...formData } : c,
-    )
-    setCollections(updated)
+    setIsDialogOpen(false)
     setEditingCollection(null)
-    setIsEditDialogOpen(false)
     resetForm()
   }
 
-  const openEditDialog = (collection: Collection) => {
+  const openEditDialog = (collection: CollectionWithFabrics) => {
     setEditingCollection(collection)
-    setFormData({
-      name: collection.name,
-      slug: collection.slug,
-      description: collection.description,
-      cover_image_url: collection.cover_image_url,
-    })
-    setIsEditDialogOpen(true)
+    form.reset(collection)
+    setIsDialogOpen(true)
   }
 
-  const handleDeleteCollection = (id: string) => {
+  const handleDeleteCollection = async (id: string) => {
+    if (!supabase) return
+    const previous = collections
     setCollections(collections.filter((c) => c.id !== id))
+    const { error } = await supabase.from("collections").delete().eq("id", id)
+    if (error) {
+      setCollections(previous)
+    }
   }
 
   const filteredCollections = collections.filter(
@@ -114,61 +161,79 @@ export default function AdminCollectionsPage() {
               <p className="text-gray-600">เพิ่ม แก้ไข และลบคอลเลกชันลายผ้า</p>
             </div>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={resetForm}>
+              <Button
+                onClick={() => {
+                  resetForm()
+                  setEditingCollection(null)
+                  setIsDialogOpen(true)
+                }}
+              >
                 <Plus className="mr-2 h-4 w-4" />
                 เพิ่มคอลเลกชันใหม่
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-lg">
               <DialogHeader>
-                <DialogTitle>เพิ่มคอลเลกชันใหม่</DialogTitle>
+                <DialogTitle>
+                  {editingCollection ? "แก้ไขคอลเลกชัน" : "เพิ่มคอลเลกชันใหม่"}
+                </DialogTitle>
               </DialogHeader>
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">ชื่อคอลเลกชัน</Label>
-                  <Input
-                    id="name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="ชื่อคอลเลกชัน"
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                  <FormField
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>ชื่อคอลเลกชัน</FormLabel>
+                        <FormControl>
+                          <Input placeholder="ชื่อคอลเลกชัน" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="slug">Slug</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                    placeholder="slug"
+                  <FormField
+                    name="slug"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slug</FormLabel>
+                        <FormControl>
+                          <Input placeholder="slug" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">คำอธิบาย</Label>
-                  <Input
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    placeholder="คำอธิบาย"
+                  <FormField
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>คำอธิบาย</FormLabel>
+                        <FormControl>
+                          <Input placeholder="คำอธิบาย" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cover">ลิงก์รูปปก</Label>
-                  <Input
-                    id="cover"
-                    value={formData.cover_image_url}
-                    onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-                    placeholder="URL รูปปก"
+                  <FormField
+                    name="cover_image_url"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>ลิงก์รูปปก</FormLabel>
+                        <FormControl>
+                          <Input placeholder="URL รูปปก" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </div>
-                <div className="flex justify-end space-x-2 pt-4">
-                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                    ยกเลิก
-                  </Button>
-                  <Button onClick={handleCreateCollection}>บันทึก</Button>
-                </div>
-              </div>
+                  <div className="flex justify-end space-x-2 pt-4">
+                    <Button variant="outline" onClick={() => setIsDialogOpen(false)} type="button">
+                      ยกเลิก
+                    </Button>
+                    <Button type="submit">บันทึก</Button>
+                  </div>
+                </form>
+              </Form>
             </DialogContent>
           </Dialog>
         </div>
@@ -196,6 +261,7 @@ export default function AdminCollectionsPage() {
                   <TableHead>ชื่อ</TableHead>
                   <TableHead>Slug</TableHead>
                   <TableHead>คำอธิบาย</TableHead>
+                  <TableHead>ลายผ้า</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
                 </TableRow>
               </TableHeader>
@@ -214,6 +280,9 @@ export default function AdminCollectionsPage() {
                     <TableCell>{collection.name}</TableCell>
                     <TableCell>{collection.slug}</TableCell>
                     <TableCell className="line-clamp-2 max-w-xs">{collection.description}</TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {collection.fabrics.map((f) => f.name).join(', ') || '-'}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Button variant="outline" size="icon" onClick={() => openEditDialog(collection)}>
@@ -242,53 +311,6 @@ export default function AdminCollectionsPage() {
         </Card>
       </div>
 
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>แก้ไขคอลเลกชัน</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name_edit">ชื่อคอลเลกชัน</Label>
-              <Input
-                id="name_edit"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="slug_edit">Slug</Label>
-              <Input
-                id="slug_edit"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description_edit">คำอธิบาย</Label>
-              <Input
-                id="description_edit"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="cover_edit">ลิงก์รูปปก</Label>
-              <Input
-                id="cover_edit"
-                value={formData.cover_image_url}
-                onChange={(e) => setFormData({ ...formData, cover_image_url: e.target.value })}
-              />
-            </div>
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                ยกเลิก
-              </Button>
-              <Button onClick={handleEditCollection}>บันทึก</Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
