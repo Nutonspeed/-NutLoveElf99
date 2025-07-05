@@ -6,6 +6,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
+import { prepareFabricImage } from "@/lib/image-handler"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -77,11 +78,20 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
     let uploadedUrl = imageUrl
 
     if (imageFile) {
-      const ext = imageFile.name.split(".").pop()
-      const fileName = `${crypto.randomUUID()}.${ext}`
+      let slug = 'fabric'
+      if (collectionId) {
+        const { data } = await supabase
+          .from('collections')
+          .select('slug')
+          .eq('id', collectionId)
+          .single()
+        if (data?.slug) slug = data.slug
+      }
+      const processedFile = await prepareFabricImage(imageFile, slug, 1)
+      const fileName = processedFile.name
       const { error: uploadError } = await supabase.storage
         .from("fabric-images")
-        .upload(fileName, imageFile)
+        .upload(fileName, processedFile)
       if (uploadError) {
         console.error("Failed to upload image", uploadError)
         return
