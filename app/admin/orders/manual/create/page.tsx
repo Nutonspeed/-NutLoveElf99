@@ -17,6 +17,7 @@ import { OrderItemForm } from "@/components/order/order-item-form"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem, ManualOrder } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
+import { invoiceDb } from "@/lib/invoice-database"
 import { toast } from "sonner"
 
 export default function CreateManualOrderPage() {
@@ -111,6 +112,18 @@ export default function CreateManualOrderPage() {
       }
 
       const newOrder = await orderDb.createManualOrder(orderData)
+
+      await invoiceDb.createInvoice({
+        orderId: newOrder.id,
+        items: newOrder.items,
+        subtotal: newOrder.subtotal,
+        discount: newOrder.discount,
+        shippingCost: newOrder.shippingCost,
+        tax: newOrder.tax,
+        total: newOrder.total,
+        status: "unpaid",
+        notes: newOrder.notes,
+      })
 
       if (orderStatus === "draft") {
         toast.success("บันทึกร่างออเดอร์แล้ว")
