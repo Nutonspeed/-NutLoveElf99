@@ -23,6 +23,8 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
   const [name, setName] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [collectionId, setCollectionId] = useState("")
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>("")
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -53,6 +55,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
       }
       setName(data.name || "")
       setImageUrl(data.image_url || "")
+      setPreviewUrl(data.image_url || "")
       setCollectionId(data.collection_id || "")
       setLoading(false)
     }
@@ -71,11 +74,30 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
     e.preventDefault()
     if (!supabase) return
 
+    let uploadedUrl = imageUrl
+
+    if (imageFile) {
+      const ext = imageFile.name.split(".").pop()
+      const fileName = `${crypto.randomUUID()}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from("fabric-images")
+        .upload(fileName, imageFile)
+      if (uploadError) {
+        console.error("Failed to upload image", uploadError)
+        return
+      }
+      const { data } = supabase.storage
+        .from("fabric-images")
+        .getPublicUrl(fileName)
+      uploadedUrl = data.publicUrl
+      setImageUrl(uploadedUrl)
+    }
+
     const { error } = await supabase
       .from("fabrics")
       .update({
         name,
-        image_url: imageUrl,
+        image_url: uploadedUrl,
         collection_id: collectionId,
       })
       .eq("id", params.id)
@@ -116,13 +138,26 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image_url">URL รูปภาพ</Label>
+                <Label htmlFor="image">รูปภาพ</Label>
                 <Input
-                  id="image_url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://example.com/image.jpg"
+                  id="image"
+                  type="file"
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      setImageFile(file)
+                      setPreviewUrl(URL.createObjectURL(file))
+                    }
+                  }}
                 />
+                {previewUrl && (
+                  <img
+                    src={previewUrl}
+                    alt="preview"
+                    className="h-24 w-24 object-cover rounded-md mt-2"
+                  />
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="collection_id">รหัสคอลเลกชัน</Label>
