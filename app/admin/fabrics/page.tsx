@@ -23,7 +23,7 @@ interface Fabric {
   id: string
   name: string
   collection_id: string
-  image_urls: string[]
+  image_url: string | null
   price_min: number
   price_max: number
   collection_name?: string | null
@@ -34,6 +34,7 @@ export default function AdminFabricsPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
+  const [imgError, setImgError] = useState<Record<string, boolean>>({})
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("คุณต้องการลบลายผ้านี้ใช่หรือไม่?")) return
@@ -72,7 +73,7 @@ export default function AdminFabricsPage() {
       if (!supabase) return
       const { data: fabricsData, error } = await supabase
         .from("fabrics")
-        .select("id, name, collection_id, image_urls, price_min, price_max")
+        .select("id, name, collection_id, image_url, price_min, price_max")
       if (error || !fabricsData) {
         console.error("Failed to fetch fabrics", error)
         return
@@ -140,15 +141,22 @@ export default function AdminFabricsPage() {
                   {fabrics.map((fabric) => (
                     <TableRow key={fabric.id}>
                       <TableCell>
-                        {fabric.image_urls?.[0] && (
-                          <Image
-                            src={fabric.image_urls[0]}
-                            alt={fabric.name}
-                            width={50}
-                            height={50}
-                            className="rounded-md object-cover"
-                          />
-                        )}
+                        <div className="h-20 w-20 flex items-center justify-center">
+                          {fabric.image_url && !imgError[fabric.id] ? (
+                            <Image
+                              src={fabric.image_url}
+                              alt={fabric.name}
+                              width={80}
+                              height={80}
+                              className="rounded-md object-cover"
+                              onError={() =>
+                                setImgError((prev) => ({ ...prev, [fabric.id]: true }))
+                              }
+                            />
+                          ) : (
+                            <span className="text-sm text-gray-500">No image</span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>{fabric.name}</TableCell>
                       <TableCell>
