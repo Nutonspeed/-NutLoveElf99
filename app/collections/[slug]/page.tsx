@@ -1,0 +1,51 @@
+import { Navbar } from "@/components/navbar"
+import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import { mockCollections, mockFabrics } from "@/lib/mock-collections"
+
+export default function CollectionDetailPage({ params }: { params: { slug: string } }) {
+  const collection = mockCollections.find((c) => c.slug === params.slug)
+  if (!collection) {
+    notFound()
+  }
+  const fabrics = mockFabrics.filter((f) => f.collection_id === collection!.id)
+
+  const pageUrl = `https://example.com/collections/${params.slug}`
+  return (
+    <div className="min-h-screen">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-2">{collection!.name}</h1>
+        <p className="text-gray-600 mb-8">{collection!.description}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {fabrics.map((fabric) => (
+            <div key={fabric.id} className="border rounded-lg overflow-hidden bg-white">
+              <div className="relative w-full h-48">
+                <Image src={fabric.image_urls[0]} alt={fabric.name} fill className="object-cover" />
+              </div>
+              <div className="p-4 space-y-2">
+                <h3 className="font-semibold text-lg">{fabric.name}</h3>
+                <p className="text-sm text-gray-600">฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}</p>
+                <div className="flex space-x-2 pt-2">
+                  <Link href={`https://m.me/?message=${encodeURIComponent(pageUrl)}`} target="_blank">
+                    <Button size="sm">ส่งเข้า Inbox</Button>
+                  </Link>
+                  <Link href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`} target="_blank">
+                    <Button size="sm" variant="outline">แชร์</Button>
+                  </Link>
+                  <a href={fabric.image_urls[0]} download>
+                    <Button size="sm" variant="outline">ดาวน์โหลด</Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <Footer />
+    </div>
+  )
+}
