@@ -9,7 +9,10 @@ import { AnalyticsTracker } from "@/components/analytics-tracker"
 
 interface Fabric {
   id: string
+  slug?: string | null
   name: string
+  description?: string | null
+  collection_id?: string | null
   image_url?: string | null
   image_urls?: string[] | null
   price_min?: number | null
@@ -18,11 +21,23 @@ interface Fabric {
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   if (!supabase) return {}
-  const { data } = await supabase.from("fabrics").select("name").eq("id", params.id).single()
+  const { data } = await supabase
+    .from("fabrics")
+    .select("name, description, image_url, image_urls")
+    .or(`id.eq.${params.id},slug.eq.${params.id}`)
+    .single()
   if (!data) return {}
+  const title = `${data.name} | SofaCover Pro`
+  const description = data.description || `รายละเอียดลายผ้า ${data.name}`
+  const image = data.image_urls?.[0] || data.image_url || "/placeholder.svg"
   return {
-    title: `${data.name} | SofaCover Pro`,
-    description: `รายละเอียดลายผ้า ${data.name}`,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: image }],
+    },
   }
 }
 
@@ -39,12 +54,22 @@ export default async function FabricDetailPage({ params }: { params: { id: strin
 
   const { data: fabric, error } = await supabase
     .from("fabrics")
-    .select("id, name, image_url, image_urls, price_min, price_max")
-    .eq("id", params.id)
+    .select("id, slug, name, description, collection_id, image_url, image_urls, price_min, price_max")
+    .or(`id.eq.${params.id},slug.eq.${params.id}`)
     .single()
 
   if (error || !fabric) {
     notFound()
+  }
+
+  let collection: { name: string; slug: string } | null = null
+  if (fabric.collection_id) {
+    const { data: col } = await supabase
+      .from("collections")
+      .select("name, slug")
+      .eq("id", fabric.collection_id)
+      .single()
+    if (col) collection = col
   }
 
   return (
@@ -72,6 +97,15 @@ export default async function FabricDetailPage({ params }: { params: { id: strin
                 ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
               </p>
             )}
+            {collection && (
+              <p className="text-gray-600">
+                คอลเลกชัน:{" "}
+                <Link href={`/collections/${collection.slug}`} className="underline">
+                  {collection.name}
+                </Link>
+              </p>
+            )}
+            {fabric.description && <p className="text-gray-700 whitespace-pre-line">{fabric.description}</p>}
           </div>
         </div>
       </div>
