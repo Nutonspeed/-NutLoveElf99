@@ -4,14 +4,39 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { mockCollections, mockFabrics } from "@/lib/mock-collections"
+import { supabase } from "@/lib/supabase"
 
-export default function CollectionDetailPage({ params }: { params: { slug: string } }) {
-  const collection = mockCollections.find((c) => c.slug === params.slug)
-  if (!collection) {
+export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
+  if (!supabase) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 text-red-500">Supabase client not configured</div>
+        <Footer />
+      </div>
+    )
+  }
+  const { data: collection, error } = await supabase
+    .from('collections')
+    .select('id, name, description, slug')
+    .eq('slug', params.slug)
+    .single()
+  if (error || !collection) {
     notFound()
   }
-  const fabrics = mockFabrics.filter((f) => f.collection_id === collection!.id)
+  const { data: fabrics, error: fabricsError } = await supabase
+    .from('fabrics')
+    .select('*')
+    .eq('collection_id', collection!.id)
+  if (fabricsError || !fabrics) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <div className="container mx-auto px-4 py-8 text-red-500">ไม่สามารถโหลดข้อมูลผ้าได้</div>
+        <Footer />
+      </div>
+    )
+  }
 
   const pageUrl = `https://example.com/collections/${params.slug}`
   return (
