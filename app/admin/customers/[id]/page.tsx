@@ -107,19 +107,18 @@ export default function CustomerDetailPage({
                       <TableCell>
                         <Badge
                           variant={
-                            order.status === "delivered"
+                            order.status === "paid"
                               ? "default"
-                              : order.status === "shipped"
+                              : order.status === "depositPaid"
                                 ? "secondary"
-                                : order.status === "processing"
+                                : order.status === "pendingPayment"
                                   ? "outline"
                                   : "destructive"
                           }
                         >
-                          {order.status === "pending" && "รอดำเนินการ"}
-                          {order.status === "processing" && "กำลังดำเนินการ"}
-                          {order.status === "shipped" && "จัดส่งแล้ว"}
-                          {order.status === "delivered" && "ส่งมอบแล้ว"}
+                          {order.status === "pendingPayment" && "รอชำระเงิน"}
+                          {order.status === "depositPaid" && "มัดจำแล้ว"}
+                          {order.status === "paid" && "ชำระแล้ว"}
                           {order.status === "cancelled" && "ยกเลิก"}
                         </Badge>
                       </TableCell>

@@ -33,14 +33,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case "delivered":
+      case "paid":
         return "default"
-      case "shipped":
+      case "depositPaid":
         return "secondary"
-      case "processing":
+      case "pendingPayment":
         return "outline"
-      case "pending":
-        return "destructive"
       case "cancelled":
         return "destructive"
       default:
@@ -50,14 +48,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "pending":
-        return "รอดำเนินการ"
-      case "processing":
-        return "กำลังดำเนินการ"
-      case "shipped":
-        return "จัดส่งแล้ว"
-      case "delivered":
-        return "ส่งมอบแล้ว"
+      case "pendingPayment":
+        return "รอชำระเงิน"
+      case "depositPaid":
+        return "มัดจำแล้ว"
+      case "paid":
+        return "ชำระแล้ว"
       case "cancelled":
         return "ยกเลิก"
       default:
@@ -66,10 +62,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   }
 
   const orderSteps = [
-    { status: "pending", label: "รับคำสั่งซื้อ", icon: Package },
-    { status: "processing", label: "กำลังเตรียมสินค้า", icon: Package },
-    { status: "shipped", label: "จัดส่งแล้ว", icon: Truck },
-    { status: "delivered", label: "ส่งมอบแล้ว", icon: CheckCircle },
+    { status: "pendingPayment", label: "รอชำระเงิน", icon: Package },
+    { status: "depositPaid", label: "มัดจำแล้ว", icon: Package },
+    { status: "paid", label: "ชำระแล้ว", icon: CheckCircle },
   ]
 
   const currentStepIndex = orderSteps.findIndex((step) => step.status === order.status)
@@ -201,7 +196,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 <CardTitle>การดำเนินการ</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {order.status === "delivered" && (
+                {order.status === "paid" && (
                   <Link href={`/invoice/${order.id}`}>
                     <Button className="w-full bg-transparent" variant="outline">
                       <Download className="mr-2 h-4 w-4" />

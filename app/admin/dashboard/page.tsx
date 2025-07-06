@@ -82,7 +82,7 @@ export default function AdminDashboard() {
           />
           <DashboardCard
             cardClassName="border-blue-200 bg-blue-50"
-            title="ออเดอร์รอดำเนินการ"
+            title="ออเดอร์รอชำระเงิน"
             value={stats?.pendingOrders ?? 0}
             titleClassName="text-blue-800"
             valueClassName="text-blue-900"

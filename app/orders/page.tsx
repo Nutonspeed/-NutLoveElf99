@@ -30,14 +30,12 @@ export default function OrdersPage() {
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case "delivered":
+      case "paid":
         return "default"
-      case "shipped":
+      case "depositPaid":
         return "secondary"
-      case "processing":
+      case "pendingPayment":
         return "outline"
-      case "pending":
-        return "destructive"
       case "cancelled":
         return "destructive"
       default:
@@ -47,14 +45,12 @@ export default function OrdersPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "pending":
-        return "รอดำเนินการ"
-      case "processing":
-        return "กำลังดำเนินการ"
-      case "shipped":
-        return "จัดส่งแล้ว"
-      case "delivered":
-        return "ส่งมอบแล้ว"
+      case "pendingPayment":
+        return "รอชำระเงิน"
+      case "depositPaid":
+        return "มัดจำแล้ว"
+      case "paid":
+        return "ชำระแล้ว"
       case "cancelled":
         return "ยกเลิก"
       default:
@@ -132,7 +128,7 @@ export default function OrdersPage() {
                         </Button>
                       </Link>
 
-                      {order.status === "delivered" && (
+                      {order.status === "paid" && (
                         <Link href={`/invoice/${order.id}`}>
                           <Button variant="outline" size="sm">
                             <Download className="mr-2 h-4 w-4" />
