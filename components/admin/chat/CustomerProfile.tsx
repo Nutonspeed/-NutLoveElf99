@@ -2,7 +2,9 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
 import { Mail, Phone } from "lucide-react"
+import { useRouter } from "next/navigation"
 import type { User as Customer } from "@/lib/database"
 
 interface CustomerProfileProps {
@@ -10,6 +12,7 @@ interface CustomerProfileProps {
 }
 
 export default function CustomerProfile({ customer }: CustomerProfileProps) {
+  const router = useRouter()
   if (!customer) {
     return (
       <Card className="lg:col-span-1 flex items-center justify-center">
@@ -53,6 +56,20 @@ export default function CustomerProfile({ customer }: CustomerProfileProps) {
               {customer.postalCode ? ` ${customer.postalCode}` : ""}
             </p>
           )}
+        </div>
+        <div>
+          <Button
+            className="w-full"
+            onClick={() =>
+              router.push(
+                `/admin/orders/create?fromChat=${customer.id}&name=${encodeURIComponent(
+                  customer.name,
+                )}&phone=${encodeURIComponent(customer.phone || "")}`,
+              )
+            }
+          >
+            เปิดบิลจากแชทนี้
+          </Button>
         </div>
       </CardContent>
     </Card>

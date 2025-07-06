@@ -2,13 +2,19 @@
 
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/button"
 import { mockOrders } from "@/lib/mock-orders"
 
 export default function CreateOrderPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const initialValues = {
+    customerName: searchParams.get("name") || "",
+    customerPhone: searchParams.get("phone") || "",
+  }
 
   const handleSave = (data: {
     customerName: string
@@ -56,7 +62,7 @@ export default function CreateOrderPage() {
           </Link>
           <h1 className="text-3xl font-bold">สร้างคำสั่งซื้อ</h1>
         </div>
-        <OrderForm onSave={handleSave} />
+        <OrderForm onSave={handleSave} initialValues={initialValues} />
       </div>
     </div>
   )
