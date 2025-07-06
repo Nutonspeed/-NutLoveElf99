@@ -102,6 +102,15 @@ export default function CheckoutPage() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-8">ชำระเงิน</h1>
 
+        <div className="py-10 flex flex-col items-center">
+          <h1 className="text-4xl font-bold text-center mb-2">
+            บิลนี้เป็นของคุณเท่านั้น
+          </h1>
+          {typeof window !== "undefined" && (
+            <p className="text-sm text-gray-500">{window.location.href}</p>
+          )}
+        </div>
+
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}

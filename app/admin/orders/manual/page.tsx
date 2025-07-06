@@ -116,14 +116,24 @@ export default function ManualOrdersPage() {
   }
 
   const copyPublicLink = (publicLink: string) => {
-    const url = `${window.location.origin}/order/${publicLink}`
-    navigator.clipboard.writeText(url)
-    toast.success("คัดลอกลิงก์แล้ว")
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/order/${publicLink}`
+        : ""
+    if (url) {
+      navigator.clipboard.writeText(url)
+      toast.success("คัดลอกลิงก์แล้ว")
+    }
   }
 
   const openPublicLink = (publicLink: string) => {
-    const url = `${window.location.origin}/order/${publicLink}`
-    window.open(url, "_blank")
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/order/${publicLink}`
+        : ""
+    if (url && typeof window !== "undefined") {
+      window.open(url, "_blank")
+    }
   }
 
   const deleteOrder = async (id: string) => {
