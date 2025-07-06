@@ -12,12 +12,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Search, Edit, Trash2, ArrowLeft, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { mockProducts, type Product } from "@/lib/mock-data"
+import { type Product } from "@/lib/mock-data"
+import { supabase } from "@/lib/supabase"
 
 export default function AdminProductsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
-  const [products, setProducts] = useState<Product[]>(mockProducts)
+  const [products, setProducts] = useState<Product[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
@@ -31,6 +32,17 @@ export default function AdminProductsPage() {
       return
     }
   }, [isAuthenticated, user, router])
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!supabase) return
+      const { data } = await supabase.from("products").select("*")
+      if (data) {
+        setProducts(data as Product[])
+      }
+    }
+    fetchProducts()
+  }, [])
 
   if (!isAuthenticated) {
     return (
