@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -36,8 +34,6 @@ interface Coupon {
 }
 
 export default function AdminCouponsPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
   const [coupons, setCoupons] = useState<Coupon[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
@@ -59,16 +55,8 @@ export default function AdminCouponsPage() {
   })
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
     loadCoupons()
-  }, [isAuthenticated, user, router])
+  }, [])
 
   const loadCoupons = async () => {
     try {
@@ -208,18 +196,6 @@ export default function AdminCouponsPage() {
     })
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
-            <Button>เข้าสู่ระบบ</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
 
   const filteredCoupons = coupons.filter(
     (coupon) =>

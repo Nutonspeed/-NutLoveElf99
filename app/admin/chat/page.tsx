@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -33,8 +31,6 @@ interface ChatRoom {
 }
 
 export default function AdminChatPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([])
   const [selectedRoom, setSelectedRoom] = useState<string | null>(null)
@@ -43,16 +39,8 @@ export default function AdminChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
     loadChatData()
-  }, [isAuthenticated, user, router])
+  }, [])
 
   useEffect(() => {
     scrollToBottom()
@@ -133,18 +121,6 @@ export default function AdminChatPage() {
     return chatRooms.find((room) => room.customerId === selectedRoom)
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
-            <Button>เข้าสู่ระบบ</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
 
   if (loading) {
     return (

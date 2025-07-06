@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -46,8 +44,6 @@ interface NotificationSettings {
 }
 
 export default function NotificationSettingsPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
   const { toast } = useToast()
   const [settings, setSettings] = useState<NotificationSettings>({
     email: {
@@ -81,34 +77,12 @@ export default function NotificationSettingsPage() {
   const [testResults, setTestResults] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
-
-    // Load settings from localStorage or API
     const savedSettings = localStorage.getItem("notificationSettings")
     if (savedSettings) {
       setSettings(JSON.parse(savedSettings))
     }
-  }, [isAuthenticated, user, router])
+  }, [])
 
-  if (!isAuthenticated || user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
-            <Button>เข้าสู่ระบบ</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
 
   const handleSaveSettings = () => {
     // Save to localStorage (in real app, save to database)
