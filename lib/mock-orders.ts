@@ -12,7 +12,9 @@ export interface Order {
     color?: string
   }>
   total: number
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled"
+  status: "pendingPayment" | "depositPaid" | "paid" | "cancelled"
+  depositPercent?: number
+  note?: string
   createdAt: string
   shippingAddress: {
     name: string
@@ -40,7 +42,9 @@ export const mockOrders: Order[] = [
       },
     ],
     total: 2990,
-    status: "processing",
+    status: "depositPaid",
+    depositPercent: 50,
+    note: "Deposit received",
     createdAt: "2024-01-15T10:30:00Z",
     shippingAddress: {
       name: "John Doe",
@@ -66,7 +70,8 @@ export const mockOrders: Order[] = [
       },
     ],
     total: 3980,
-    status: "shipped",
+    status: "paid",
+    depositPercent: 100,
     createdAt: "2024-01-14T14:20:00Z",
     shippingAddress: {
       name: "Jane Smith",

@@ -155,7 +155,7 @@ export default function AdminAnalyticsPage() {
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">รอดำเนินการ</span>
+                      <span className="text-sm text-gray-600">รอชำระเงิน</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 h-2 bg-gray-200 rounded-full">
                           <div
@@ -167,7 +167,7 @@ export default function AdminAnalyticsPage() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">เสร็จสิ้น</span>
+                      <span className="text-sm text-gray-600">ชำระแล้ว</span>
                       <div className="flex items-center space-x-2">
                         <div className="w-20 h-2 bg-gray-200 rounded-full">
                           <div

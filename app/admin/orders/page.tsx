@@ -37,14 +37,12 @@ export default function AdminOrdersPage() {
 
   const getStatusBadgeVariant = (status: Order["status"]) => {
     switch (status) {
-      case "delivered":
+      case "paid":
         return "default"
-      case "shipped":
+      case "depositPaid":
         return "secondary"
-      case "processing":
+      case "pendingPayment":
         return "outline"
-      case "pending":
-        return "destructive"
       case "cancelled":
         return "destructive"
       default:
@@ -54,14 +52,12 @@ export default function AdminOrdersPage() {
 
   const getStatusText = (status: Order["status"]) => {
     switch (status) {
-      case "pending":
-        return "รอดำเนินการ"
-      case "processing":
-        return "กำลังดำเนินการ"
-      case "shipped":
-        return "จัดส่งแล้ว"
-      case "delivered":
-        return "ส่งมอบแล้ว"
+      case "pendingPayment":
+        return "รอชำระเงิน"
+      case "depositPaid":
+        return "มัดจำแล้ว"
+      case "paid":
+        return "ชำระแล้ว"
       case "cancelled":
         return "ยกเลิก"
       default:
@@ -107,10 +103,9 @@ export default function AdminOrdersPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">ทั้งหมด</SelectItem>
-                    <SelectItem value="pending">รอดำเนินการ</SelectItem>
-                    <SelectItem value="processing">กำลังดำเนินการ</SelectItem>
-                    <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
-                    <SelectItem value="delivered">ส่งมอบแล้ว</SelectItem>
+                    <SelectItem value="pendingPayment">รอชำระเงิน</SelectItem>
+                    <SelectItem value="depositPaid">มัดจำแล้ว</SelectItem>
+                    <SelectItem value="paid">ชำระแล้ว</SelectItem>
                     <SelectItem value="cancelled">ยกเลิก</SelectItem>
                   </SelectContent>
                 </Select>
@@ -154,10 +149,9 @@ export default function AdminOrdersPage() {
                           <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pending">รอดำเนินการ</SelectItem>
-                          <SelectItem value="processing">กำลังดำเนินการ</SelectItem>
-                          <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
-                          <SelectItem value="delivered">ส่งมอบแล้ว</SelectItem>
+                          <SelectItem value="pendingPayment">รอชำระเงิน</SelectItem>
+                          <SelectItem value="depositPaid">มัดจำแล้ว</SelectItem>
+                          <SelectItem value="paid">ชำระแล้ว</SelectItem>
                           <SelectItem value="cancelled">ยกเลิก</SelectItem>
                         </SelectContent>
                       </Select>

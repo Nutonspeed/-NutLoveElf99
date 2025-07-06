@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/button"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders, type Order } from "@/lib/mock-orders"
 
 export default function CreateOrderPage() {
   const router = useRouter()
@@ -34,7 +34,7 @@ export default function CreateOrderPage() {
       customerEmail: "",
       items: data.items,
       total,
-      status: "pending" as const,
+      status: "pendingPayment" as const,
       createdAt: new Date().toISOString(),
       shippingAddress: {
         name: data.customerName,
@@ -45,7 +45,7 @@ export default function CreateOrderPage() {
       },
       depositPercent: data.deposit,
       note: data.note,
-    } as any
+    } as Order
 
     mockOrders.push(newOrder)
     router.push("/admin/orders")

@@ -40,7 +40,7 @@ export async function fetchDashboardStats(): Promise<DashboardStats> {
   const totalCustomers = mockCustomers.length
   const totalRevenue = mockOrders.reduce((sum, o) => sum + o.total, 0)
   const lowStockItems = mockProducts.filter((p) => !p.inStock).length
-  const pendingOrders = mockOrders.filter((o) => o.status === "pending").length
+  const pendingOrders = mockOrders.filter((o) => o.status === "pendingPayment").length
 
   return {
     totalOrders,
@@ -71,8 +71,8 @@ export async function fetchAnalytics(): Promise<AnalyticsData> {
   const growth = revenueLastMonth === 0 ? 0 : ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100
 
   const ordersTotal = mockOrders.length
-  const ordersPending = mockOrders.filter((o) => o.status === "pending").length
-  const ordersCompleted = mockOrders.filter((o) => o.status === "delivered").length
+  const ordersPending = mockOrders.filter((o) => o.status === "pendingPayment").length
+  const ordersCompleted = mockOrders.filter((o) => o.status === "paid").length
 
   const productsTotal = mockProducts.length
   const productsInStock = mockProducts.filter((p) => p.inStock).length

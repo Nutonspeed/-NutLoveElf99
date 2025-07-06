@@ -44,7 +44,7 @@ export interface Order {
     image: string
   }>
   total: number
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled"
+  status: "pendingPayment" | "depositPaid" | "paid" | "cancelled"
   shippingAddress: {
     name: string
     address: string
@@ -255,7 +255,7 @@ const mockOrders: Order[] = [
       },
     ],
     total: 2990,
-    status: "delivered",
+    status: "paid",
     shippingAddress: {
       name: "John Doe",
       address: "123 ถนนสุขุมวิท",
@@ -280,7 +280,7 @@ const mockOrders: Order[] = [
       },
     ],
     total: 3980,
-    status: "shipped",
+    status: "depositPaid",
     shippingAddress: {
       name: "Jane Smith",
       address: "456 ถนนพหลโยธิน",
@@ -305,7 +305,7 @@ const mockOrders: Order[] = [
       },
     ],
     total: 3490,
-    status: "processing",
+    status: "pendingPayment",
     shippingAddress: {
       name: "Sarah Wilson",
       address: "789 ถนนรัชดาภิเษก",
@@ -602,8 +602,8 @@ export const db = {
           orders: {
             total: mockOrders.length,
             thisMonth: thisMonthOrders.length,
-            pending: mockOrders.filter((o) => o.status === "pending").length,
-            completed: mockOrders.filter((o) => o.status === "delivered").length,
+            pending: mockOrders.filter((o) => o.status === "pendingPayment").length,
+            completed: mockOrders.filter((o) => o.status === "paid").length,
           },
           products: {
             total: mockProducts.length,
