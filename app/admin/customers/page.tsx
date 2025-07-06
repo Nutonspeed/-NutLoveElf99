@@ -6,17 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
 import Link from "next/link"
-import { fetchCustomers, getCustomerStats, type Customer, getCustomerOrders } from "@/lib/mock-customers"
+import { fetchCustomers, getCustomerStats, type Customer } from "@/lib/mock-customers"
 
 
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -219,159 +216,11 @@ export default function AdminCustomersPage() {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="icon" onClick={() => setSelectedCustomer(customer)}>
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-4xl">
-                          <DialogHeader>
-                            <DialogTitle>ข้อมูลลูกค้า: {selectedCustomer?.name}</DialogTitle>
-                          </DialogHeader>
-                          {selectedCustomer && (
-                            <Tabs defaultValue="info" className="w-full">
-                              <TabsList className="grid w-full grid-cols-3">
-                                <TabsTrigger value="info">ข้อมูลส่วนตัว</TabsTrigger>
-                                <TabsTrigger value="orders">ประวัติการซื้อ</TabsTrigger>
-                                <TabsTrigger value="stats">สstatistics</TabsTrigger>
-                              </TabsList>
-
-                              <TabsContent value="info" className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium">ชื่อ-นามสกุล</label>
-                                    <p className="text-sm bg-gray-50 p-2 rounded">{selectedCustomer.name}</p>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium">อีเมล</label>
-                                    <p className="text-sm bg-gray-50 p-2 rounded">{selectedCustomer.email}</p>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium">เบอร์โทร</label>
-                                    <p className="text-sm bg-gray-50 p-2 rounded">
-                                      {selectedCustomer.phone || "ไม่ระบุ"}
-                                    </p>
-                                  </div>
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium">วันที่สมัคร</label>
-                                    <p className="text-sm bg-gray-50 p-2 rounded">
-                                      {new Date(selectedCustomer.createdAt).toLocaleDateString("th-TH")}
-                                    </p>
-                                  </div>
-                                </div>
-                                {selectedCustomer.address && (
-                                  <div className="space-y-2">
-                                    <label className="text-sm font-medium">ที่อยู่</label>
-                                    <p className="text-sm bg-gray-50 p-2 rounded">
-                                      {selectedCustomer.address}
-                                      {selectedCustomer.city && `, ${selectedCustomer.city}`}
-                                      {selectedCustomer.postalCode && ` ${selectedCustomer.postalCode}`}
-                                    </p>
-                                  </div>
-                                )}
-                              </TabsContent>
-
-                              <TabsContent value="orders" className="space-y-4">
-                                <div className="space-y-4">
-                                  {getCustomerOrders(selectedCustomer.id).length > 0 ? (
-                                    getCustomerOrders(selectedCustomer.id).map((order) => (
-                                      <div key={order.id} className="border rounded-lg p-4">
-                                        <div className="flex items-center justify-between mb-2">
-                                          <div>
-                                            <p className="font-medium">คำสั่งซื้อ {order.id}</p>
-                                            <p className="text-sm text-gray-600">
-                                              {new Date(order.createdAt).toLocaleDateString("th-TH")}
-                                            </p>
-                                          </div>
-                                          <div className="text-right">
-                                            <Badge
-                                              variant={
-                                                order.status === "delivered"
-                                                  ? "default"
-                                                  : order.status === "shipped"
-                                                    ? "secondary"
-                                                    : order.status === "processing"
-                                                      ? "outline"
-                                                      : "destructive"
-                                              }
-                                            >
-                                              {order.status === "pending" && "รอดำเนินการ"}
-                                              {order.status === "processing" && "กำลังดำเนินการ"}
-                                              {order.status === "shipped" && "จัดส่งแล้ว"}
-                                              {order.status === "delivered" && "ส่งมอบแล้ว"}
-                                              {order.status === "cancelled" && "ยกเลิก"}
-                                            </Badge>
-                                            <p className="font-semibold mt-1">฿{order.total.toLocaleString()}</p>
-                                          </div>
-                                        </div>
-                                        <div className="text-sm text-gray-600">{order.items.length} รายการ</div>
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <div className="text-center py-8 text-gray-500">ยังไม่มีประวัติการซื้อ</div>
-                                  )}
-                                </div>
-                              </TabsContent>
-
-                              <TabsContent value="stats" className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <Card>
-                                    <CardContent className="p-4">
-                                      <div className="text-center">
-                                        <p className="text-2xl font-bold text-blue-600">
-                                          {selectedCustomer.totalOrders}
-                                        </p>
-                                        <p className="text-sm text-gray-600">คำสั่งซื้อทั้งหมด</p>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                  <Card>
-                                    <CardContent className="p-4">
-                                      <div className="text-center">
-                                        <p className="text-2xl font-bold text-green-600">
-                                          ฿{selectedCustomer.totalSpent.toLocaleString()}
-                                        </p>
-                                        <p className="text-sm text-gray-600">ยอดซื้อรวม</p>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                  <Card>
-                                    <CardContent className="p-4">
-                                      <div className="text-center">
-                                        <p className="text-2xl font-bold text-purple-600">
-                                          ฿
-                                          {selectedCustomer.totalOrders > 0
-                                            ? Math.round(
-                                                selectedCustomer.totalSpent / selectedCustomer.totalOrders,
-                                              ).toLocaleString()
-                                            : 0}
-                                        </p>
-                                        <p className="text-sm text-gray-600">ยอดซื้อเฉลี่ย</p>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                  <Card>
-                                    <CardContent className="p-4">
-                                      <div className="text-center">
-                                        <p className="text-2xl font-bold text-orange-600">
-                                          {selectedCustomer.lastOrderDate
-                                            ? Math.floor(
-                                                (Date.now() - new Date(selectedCustomer.lastOrderDate).getTime()) /
-                                                  (1000 * 60 * 60 * 24),
-                                              )
-                                            : "-"}
-                                        </p>
-                                        <p className="text-sm text-gray-600">วันที่ซื้อล่าสุด</p>
-                                      </div>
-                                    </CardContent>
-                                  </Card>
-                                </div>
-                              </TabsContent>
-                            </Tabs>
-                          )}
-                        </DialogContent>
-                      </Dialog>
+                      <Link href={`/admin/customers/${customer.id}`}>
+                        <Button variant="outline" size="icon">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
