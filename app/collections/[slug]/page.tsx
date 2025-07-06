@@ -1,6 +1,5 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
 import { notFound } from "next/navigation"
@@ -17,56 +16,50 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
     )
   }
   const { data: collection, error } = await supabase
-    .from('collections')
-    .select('id, name, description, slug')
-    .eq('slug', params.slug)
+    .from("collections")
+    .select(
+      `id, name, description, slug,
+      fabrics(id, slug, name, image_url, image_urls, size)`
+    )
+    .eq("slug", params.slug)
     .single()
   if (error || !collection) {
     notFound()
   }
-  const { data: fabrics, error: fabricsError } = await supabase
-    .from('fabrics')
-    .select('*')
-    .eq('collection_id', collection!.id)
-  if (fabricsError || !fabrics) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">ไม่สามารถโหลดข้อมูลผ้าได้</div>
-        <Footer />
-      </div>
-    )
-  }
 
-  const pageUrl = `https://example.com/collections/${params.slug}`
+  const fabrics = (collection as any).fabrics || []
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-2">{collection!.name}</h1>
-        <p className="text-gray-600 mb-8">{collection!.description}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {fabrics.map((fabric) => (
-            <div key={fabric.id} className="border rounded-lg overflow-hidden bg-white">
-              <div className="relative w-full h-48">
-                <Image src={fabric.image_urls[0]} alt={fabric.name} fill className="object-cover" />
+      <div className="container mx-auto px-4 py-8 flex-1">
+        <h1 className="text-3xl font-bold mb-2">{collection.name}</h1>
+        {collection.description && (
+          <p className="text-gray-600 mb-8">{collection.description}</p>
+        )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          {fabrics.map((fabric: any) => (
+            <Link
+              key={fabric.id}
+              href={`/fabrics/${fabric.slug || fabric.id}`}
+              className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
+            >
+              <div className="relative aspect-square">
+                <Image
+                  src={fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"}
+                  alt={fabric.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <div className="p-4 space-y-2">
-                <h3 className="font-semibold text-lg">{fabric.name}</h3>
-                <p className="text-sm text-gray-600">฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}</p>
-                <div className="flex space-x-2 pt-2">
-                  <Link href={`https://m.me/?message=${encodeURIComponent(pageUrl)}`} target="_blank">
-                    <Button size="sm">ส่งเข้า Inbox</Button>
-                  </Link>
-                  <Link href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`} target="_blank">
-                    <Button size="sm" variant="outline">แชร์</Button>
-                  </Link>
-                  <a href={fabric.image_urls[0]} download>
-                    <Button size="sm" variant="outline">ดาวน์โหลด</Button>
-                  </a>
-                </div>
+              <div className="p-3 md:p-4">
+                <h3 className="font-medium text-sm md:text-base line-clamp-2">
+                  {fabric.name}
+                </h3>
+                {fabric.size && (
+                  <p className="text-xs text-gray-600 mt-1">{fabric.size}</p>
+                )}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
