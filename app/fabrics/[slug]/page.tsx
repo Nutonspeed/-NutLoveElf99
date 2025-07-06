@@ -1,17 +1,20 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
+import { MessageSquare, Share2, Receipt } from "lucide-react"
 
 interface Fabric {
   id: string
-  slug?: string | null
+  slug: string | null
   name: string
   description?: string | null
+  size?: string | null
   collection_id?: string | null
   image_url?: string | null
   image_urls?: string[] | null
@@ -19,12 +22,12 @@ interface Fabric {
   price_max?: number | null
 }
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   if (!supabase) return {}
   const { data } = await supabase
     .from("fabrics")
     .select("name, description, image_url, image_urls")
-    .or(`id.eq.${params.id},slug.eq.${params.id}`)
+    .eq("slug", params.slug)
     .single()
   if (!data) return {}
   const title = `${data.name} | SofaCover Pro`
@@ -41,7 +44,7 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   }
 }
 
-export default async function FabricDetailPage({ params }: { params: { id: string } }) {
+export default async function FabricDetailPage({ params }: { params: { slug: string } }) {
   if (!supabase) {
     return (
       <div className="min-h-screen">
@@ -54,8 +57,8 @@ export default async function FabricDetailPage({ params }: { params: { id: strin
 
   const { data: fabric, error } = await supabase
     .from("fabrics")
-    .select("id, slug, name, description, collection_id, image_url, image_urls, price_min, price_max")
-    .or(`id.eq.${params.id},slug.eq.${params.id}`)
+    .select("id, slug, name, description, size, collection_id, image_url, image_urls, price_min, price_max")
+    .eq("slug", params.slug)
     .single()
 
   if (error || !fabric) {
@@ -97,6 +100,9 @@ export default async function FabricDetailPage({ params }: { params: { id: strin
                 ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
               </p>
             )}
+            {fabric.size && (
+              <p className="text-gray-600">ขนาด: {fabric.size}</p>
+            )}
             {collection && (
               <p className="text-gray-600">
                 คอลเลกชัน:{" "}
@@ -106,6 +112,17 @@ export default async function FabricDetailPage({ params }: { params: { id: strin
               </p>
             )}
             {fabric.description && <p className="text-gray-700 whitespace-pre-line">{fabric.description}</p>}
+            <div className="flex space-x-4 pt-2">
+              <Button className="flex-1" size="lg">
+                <MessageSquare className="h-5 w-5 mr-2" />สอบถามลายนี้
+              </Button>
+              <Button variant="outline" size="lg">
+                <Receipt className="h-5 w-5 mr-2" />เปิดบิล
+              </Button>
+              <Button variant="outline" size="lg">
+                <Share2 className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
