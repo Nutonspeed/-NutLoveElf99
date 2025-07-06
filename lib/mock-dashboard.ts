@@ -1,6 +1,7 @@
 import { mockOrders } from "./mock-orders"
 import { mockProducts } from "./mock-products"
 import { mockCustomers } from "./mock-customers"
+export type { AnalyticsData } from "@/types/analytics"
 
 export interface DashboardStats {
   totalOrders: number
@@ -12,27 +13,6 @@ export interface DashboardStats {
   newNotifications: number
 }
 
-export interface AnalyticsData {
-  revenue: {
-    total: number
-    thisMonth: number
-    lastMonth: number
-    growth: number
-  }
-  orders: {
-    total: number
-    pending: number
-    completed: number
-  }
-  products: {
-    total: number
-    inStock: number
-    outOfStock: number
-  }
-  users: {
-    customers: number
-  }
-}
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
   const totalOrders = mockOrders.length
