@@ -315,7 +315,11 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
                         src={attachment || "/placeholder.svg"}
                         alt={`รูปภาพ ${index + 1}`}
                         className="w-full h-32 object-cover rounded-lg cursor-pointer hover:opacity-80 transition-opacity"
-                        onClick={() => window.open(attachment, "_blank")}
+                        onClick={() => {
+                          if (typeof window !== "undefined") {
+                            window.open(attachment, "_blank")
+                          }
+                        }}
                       />
                     ))}
                   </div>

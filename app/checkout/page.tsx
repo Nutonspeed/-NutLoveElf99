@@ -91,7 +91,9 @@ export default function CheckoutPage() {
   }
 
   if (state.items.length === 0) {
-    router.push("/cart")
+    if (typeof window !== "undefined") {
+      router.push("/cart")
+    }
     return null
   }
 
@@ -106,9 +108,6 @@ export default function CheckoutPage() {
           <h1 className="text-4xl font-bold text-center mb-2">
             บิลนี้เป็นของคุณเท่านั้น
           </h1>
-          {typeof window !== "undefined" && (
-            <p className="text-sm text-gray-500">{window.location.href}</p>
-          )}
         </div>
 
         <form onSubmit={handleSubmit}>

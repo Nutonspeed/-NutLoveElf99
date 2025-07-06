@@ -37,7 +37,11 @@ export default function AdminFabricsPage() {
   const [imgError, setImgError] = useState<Record<string, boolean>>({})
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm("คุณต้องการลบลายผ้านี้ใช่หรือไม่?")) return
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm("คุณต้องการลบลายผ้านี้ใช่หรือไม่?")
+    )
+      return
 
     const previous = fabrics
     setFabrics(fabrics.filter((f) => f.id !== id))

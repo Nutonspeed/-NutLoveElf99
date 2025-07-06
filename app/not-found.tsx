@@ -26,7 +26,15 @@ export default function NotFound() {
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button onClick={() => window.history.back()} variant="outline" size="lg">
+          <Button
+            onClick={() => {
+              if (typeof window !== "undefined") {
+                window.history.back()
+              }
+            }}
+            variant="outline"
+            size="lg"
+          >
             <ArrowLeft className="mr-2 h-4 w-4" />
             กลับหน้าก่อนหน้า
           </Button>

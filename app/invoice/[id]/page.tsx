@@ -26,7 +26,9 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
   }
 
   const handlePrint = () => {
-    window.print()
+    if (typeof window !== "undefined") {
+      window.print()
+    }
   }
 
   const handleDownload = () => {
