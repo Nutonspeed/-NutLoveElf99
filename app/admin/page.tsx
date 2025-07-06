@@ -19,6 +19,9 @@ import {
   Receipt,
 } from "lucide-react"
 import Link from "next/link"
+import SalesCard from "@/components/admin/cards/SalesCard"
+import OrderTable from "@/components/admin/OrderTable"
+import { mockOrders } from "@/lib/mock-orders"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -47,96 +50,72 @@ export default function AdminDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">ออเดอร์ทั้งหมด</p>
-                  <p className="text-2xl font-bold">{stats.totalOrders}</p>
-                </div>
-                <ShoppingCart className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">สินค้าทั้งหมด</p>
-                  <p className="text-2xl font-bold">{stats.totalProducts}</p>
-                </div>
-                <Package className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">ลูกค้าทั้งหมด</p>
-                  <p className="text-2xl font-bold">{stats.totalCustomers}</p>
-                </div>
-                <Users className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600">ยอดขายรวม</p>
-                  <p className="text-2xl font-bold">฿{stats.totalRevenue.toLocaleString()}</p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-orange-600" />
-              </div>
-            </CardContent>
-          </Card>
+          <SalesCard
+            title="ออเดอร์ทั้งหมด"
+            value={stats.totalOrders}
+            icon={ShoppingCart}
+            iconClassName="text-blue-600"
+          />
+          <SalesCard
+            title="สินค้าทั้งหมด"
+            value={stats.totalProducts}
+            icon={Package}
+            iconClassName="text-green-600"
+          />
+          <SalesCard
+            title="ลูกค้าทั้งหมด"
+            value={stats.totalCustomers}
+            icon={Users}
+            iconClassName="text-purple-600"
+          />
+          <SalesCard
+            title="ยอดขายรวม"
+            value={`฿${stats.totalRevenue.toLocaleString()}`}
+            icon={TrendingUp}
+            iconClassName="text-orange-600"
+          />
         </div>
 
         {/* Alert Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-yellow-200 bg-yellow-50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-yellow-800">สต็อกต่ำ</p>
-                  <p className="text-2xl font-bold text-yellow-900">{stats.lowStockItems}</p>
-                  <p className="text-sm text-yellow-700">รายการที่ต้องเติมสต็อก</p>
-                </div>
-                <AlertTriangle className="h-8 w-8 text-yellow-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-blue-200 bg-blue-50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-800">ออเดอร์รอดำเนินการ</p>
-                  <p className="text-2xl font-bold text-blue-900">{stats.pendingOrders}</p>
-                  <p className="text-sm text-blue-700">ออเดอร์ที่รอการจัดส่ง</p>
-                </div>
-                <Receipt className="h-8 w-8 text-blue-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-green-200 bg-green-50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-800">การแจ้งเตือนใหม่</p>
-                  <p className="text-2xl font-bold text-green-900">{stats.newNotifications}</p>
-                  <p className="text-sm text-green-700">การแจ้งเตือนที่ยังไม่ได้อ่าน</p>
-                </div>
-                <Bell className="h-8 w-8 text-green-600" />
-              </div>
-            </CardContent>
-          </Card>
+          <SalesCard
+            cardClassName="border-yellow-200 bg-yellow-50"
+            title="สต็อกต่ำ"
+            value={stats.lowStockItems}
+            titleClassName="text-yellow-800"
+            valueClassName="text-yellow-900"
+            icon={AlertTriangle}
+            iconClassName="text-yellow-600"
+          />
+          <SalesCard
+            cardClassName="border-blue-200 bg-blue-50"
+            title="ออเดอร์รอดำเนินการ"
+            value={stats.pendingOrders}
+            titleClassName="text-blue-800"
+            valueClassName="text-blue-900"
+            icon={Receipt}
+            iconClassName="text-blue-600"
+          />
+          <SalesCard
+            cardClassName="border-green-200 bg-green-50"
+            title="การแจ้งเตือนใหม่"
+            value={stats.newNotifications}
+            titleClassName="text-green-800"
+            valueClassName="text-green-900"
+            icon={Bell}
+            iconClassName="text-green-600"
+          />
         </div>
+
+        {/* Recent Orders */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>รายการคำสั่งซื้อล่าสุด</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OrderTable orders={mockOrders.slice(0, 5)} />
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
