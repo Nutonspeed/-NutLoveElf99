@@ -25,6 +25,8 @@ export interface Order {
   }
 }
 
+import { supabase } from "./supabase"
+
 export const mockOrders: Order[] = [
   {
     id: "ORD-001",
@@ -84,6 +86,19 @@ export const mockOrders: Order[] = [
 ]
 
 export async function fetchOrders(): Promise<Order[]> {
-  // TODO: replace with Supabase query
-  return Promise.resolve(mockOrders)
+  if (!supabase) {
+    return Promise.resolve(mockOrders)
+  }
+
+  const { data, error } = await supabase
+    .from("orders")
+    .select("*")
+    .order("createdAt", { ascending: false })
+
+  if (error || !data) {
+    console.error("Supabase fetchOrders error", error)
+    return mockOrders
+  }
+
+  return data as Order[]
 }
