@@ -10,27 +10,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
 import Link from "next/link"
-import { db } from "@/lib/database"
+import { fetchCustomers, getCustomerStats, type Customer, getCustomerOrders } from "@/lib/mock-customers"
 
-interface Customer {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  address?: string
-  city?: string
-  postalCode?: string
-  role: string
-  avatar?: string
-  createdAt: string
-  totalOrders: number
-  totalSpent: number
-  lastOrderDate?: string
-}
 
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
-  const [orders, setOrders] = useState<any[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
   const [loading, setLoading] = useState(true)
@@ -41,29 +25,19 @@ export default function AdminCustomersPage() {
 
   const loadData = async () => {
     try {
-      const [usersData, ordersData] = await Promise.all([db.getUsers(), db.getOrders()])
+      const usersData = await fetchCustomers()
 
-      // Transform users to customers with order statistics
-      const customersData = usersData
-        .filter((u) => u.role === "customer")
-        .map((user) => {
-          const userOrders = ordersData.filter((o) => o.customerId === user.id)
-          const totalSpent = userOrders.reduce((sum, order) => sum + order.total, 0)
-          const lastOrder = userOrders.sort(
-            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          )[0]
-
-          return {
-            ...user,
-            createdAt: user.createdAt || new Date().toISOString(),
-            totalOrders: userOrders.length,
-            totalSpent,
-            lastOrderDate: lastOrder?.createdAt,
-          }
-        })
+      const customersData = usersData.map((user) => {
+        const stats = getCustomerStats(user.id)
+        return {
+          ...user,
+          totalOrders: stats.totalOrders,
+          totalSpent: stats.totalSpent,
+          lastOrderDate: stats.lastOrderDate,
+        }
+      })
 
       setCustomers(customersData)
-      setOrders(ordersData)
     } catch (error) {
       console.error("Error loading data:", error)
     } finally {
@@ -78,9 +52,6 @@ export default function AdminCustomersPage() {
       customer.email.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const getCustomerOrders = (customerId: string) => {
-    return orders.filter((order) => order.customerId === customerId)
-  }
 
   if (loading) {
     return (

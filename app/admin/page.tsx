@@ -22,20 +22,13 @@ import Link from "next/link"
 import SalesCard from "@/components/admin/cards/SalesCard"
 import OrderTable from "@/components/admin/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
+import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalOrders: 156,
-    totalProducts: 45,
-    totalCustomers: 89,
-    totalRevenue: 125000,
-    lowStockItems: 8,
-    pendingOrders: 12,
-    newNotifications: 5,
-  })
+  const [stats, setStats] = useState<DashboardStats | null>(null)
 
   useEffect(() => {
-    // Any dashboard initialization logic can go here
+    fetchDashboardStats().then(setStats)
   }, [])
 
 
@@ -52,25 +45,25 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <SalesCard
             title="ออเดอร์ทั้งหมด"
-            value={stats.totalOrders}
+            value={stats?.totalOrders ?? 0}
             icon={ShoppingCart}
             iconClassName="text-blue-600"
           />
           <SalesCard
             title="สินค้าทั้งหมด"
-            value={stats.totalProducts}
+            value={stats?.totalProducts ?? 0}
             icon={Package}
             iconClassName="text-green-600"
           />
           <SalesCard
             title="ลูกค้าทั้งหมด"
-            value={stats.totalCustomers}
+            value={stats?.totalCustomers ?? 0}
             icon={Users}
             iconClassName="text-purple-600"
           />
           <SalesCard
             title="ยอดขายรวม"
-            value={`฿${stats.totalRevenue.toLocaleString()}`}
+            value={`฿${(stats?.totalRevenue ?? 0).toLocaleString()}`}
             icon={TrendingUp}
             iconClassName="text-orange-600"
           />
@@ -81,7 +74,7 @@ export default function AdminDashboard() {
           <SalesCard
             cardClassName="border-yellow-200 bg-yellow-50"
             title="สต็อกต่ำ"
-            value={stats.lowStockItems}
+            value={stats?.lowStockItems ?? 0}
             titleClassName="text-yellow-800"
             valueClassName="text-yellow-900"
             icon={AlertTriangle}
@@ -90,7 +83,7 @@ export default function AdminDashboard() {
           <SalesCard
             cardClassName="border-blue-200 bg-blue-50"
             title="ออเดอร์รอดำเนินการ"
-            value={stats.pendingOrders}
+            value={stats?.pendingOrders ?? 0}
             titleClassName="text-blue-800"
             valueClassName="text-blue-900"
             icon={Receipt}
@@ -99,7 +92,7 @@ export default function AdminDashboard() {
           <SalesCard
             cardClassName="border-green-200 bg-green-50"
             title="การแจ้งเตือนใหม่"
-            value={stats.newNotifications}
+            value={stats?.newNotifications ?? 0}
             titleClassName="text-green-800"
             valueClassName="text-green-900"
             icon={Bell}
@@ -166,7 +159,7 @@ export default function AdminDashboard() {
                 <Button variant="outline" className="w-full justify-start bg-transparent">
                   <Warehouse className="mr-2 h-4 w-4" />
                   จัดการสต็อก
-                  {stats.lowStockItems > 0 && (
+                  {stats?.lowStockItems && stats.lowStockItems > 0 && (
                     <Badge variant="destructive" className="ml-2">
                       {stats.lowStockItems}
                     </Badge>
@@ -200,7 +193,7 @@ export default function AdminDashboard() {
                 <Button variant="outline" className="w-full justify-start bg-transparent">
                   <Bell className="mr-2 h-4 w-4" />
                   ระบบแจ้งเตือน
-                  {stats.newNotifications > 0 && (
+                  {stats?.newNotifications && stats.newNotifications > 0 && (
                     <Badge variant="secondary" className="ml-2">
                       {stats.newNotifications}
                     </Badge>

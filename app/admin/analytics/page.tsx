@@ -18,32 +18,8 @@ import {
   Activity,
 } from "lucide-react"
 import Link from "next/link"
-import { db } from "@/lib/database"
+import { fetchAnalytics, type AnalyticsData } from "@/lib/mock-dashboard"
 
-interface AnalyticsData {
-  revenue: {
-    total: number
-    thisMonth: number
-    lastMonth: number
-    growth: number
-  }
-  orders: {
-    total: number
-    thisMonth: number
-    pending: number
-    completed: number
-  }
-  products: {
-    total: number
-    inStock: number
-    outOfStock: number
-  }
-  users: {
-    total: number
-    customers: number
-    admins: number
-  }
-}
 
 export default function AdminAnalyticsPage() {
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
@@ -56,7 +32,7 @@ export default function AdminAnalyticsPage() {
 
   const loadAnalytics = async () => {
     try {
-      const data = await db.getAnalytics()
+      const data = await fetchAnalytics()
       setAnalytics(data)
     } catch (error) {
       console.error("Error loading analytics:", error)
