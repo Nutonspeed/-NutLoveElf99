@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Star, Shield, Truck, Headphones, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { mockProducts } from "@/lib/mock-data"
+import { mockProducts } from "@/lib/mock-products"
 
 export default function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)

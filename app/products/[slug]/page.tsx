@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
-import { mockProducts } from "@/lib/mock-data"
+import { mockProducts } from "@/lib/mock-products"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 

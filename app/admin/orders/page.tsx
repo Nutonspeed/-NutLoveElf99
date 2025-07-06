@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Search, ArrowLeft, Eye, FileText } from "lucide-react"
 import Link from "next/link"
-import { mockOrders, type Order } from "@/lib/mock-data"
+import { mockOrders, type Order } from "@/lib/mock-orders"
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>(mockOrders)
