@@ -40,7 +40,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           {fabrics.map((fabric: any) => (
             <Link
               key={fabric.id}
-              href={`/fabrics/${fabric.slug || fabric.id}`}
+              href={`/fabrics/${fabric.slug}`}
               className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
             >
               <div className="relative aspect-square">

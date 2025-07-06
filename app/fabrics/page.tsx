@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 interface Fabric {
   id: string
+  slug: string | null
   name: string
   image_url?: string | null
   image_urls?: string[] | null
@@ -31,7 +32,7 @@ export default async function FabricsPage() {
 
   const { data: fabrics, error } = await supabase
     .from("fabrics")
-    .select("id, name, image_url, image_urls")
+    .select("id, slug, name, image_url, image_urls")
 
   if (error || !fabrics) {
     return (
@@ -52,7 +53,7 @@ export default async function FabricsPage() {
           {fabrics.map((fabric: Fabric) => (
             <Link
               key={fabric.id}
-              href={`/fabrics/${fabric.id}`}
+              href={`/fabrics/${fabric.slug || fabric.id}`}
               className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
             >
               <div className="relative aspect-square">
