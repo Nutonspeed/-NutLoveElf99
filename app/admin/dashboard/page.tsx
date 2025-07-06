@@ -20,7 +20,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import DashboardCard from "@/components/admin/dashboard/DashboardCard"
-import OrderTable from "@/components/admin/OrderTable"
+import OrderTable from "@/components/admin/orders/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
 

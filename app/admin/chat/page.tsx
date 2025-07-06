@@ -7,7 +7,7 @@ import Link from "next/link"
 import { db, type User } from "@/lib/database"
 import ChatSidebar, { type ChatRoom } from "@/components/admin/chat/ChatSidebar"
 import ChatWindow, { type ChatMessage } from "@/components/admin/chat/ChatWindow"
-import CustomerProfile from "@/components/admin/chat/CustomerProfile"
+import CustomerProfile from "@/components/admin/customers/CustomerProfile"
 
 export default function AdminChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([])
