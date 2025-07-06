@@ -6,7 +6,7 @@ import { Home, ShoppingCart, Package, Layers, Users, Percent, Bell, MessageCircl
 import clsx from "clsx"
 
 const navItems = [
-  { href: "/admin", label: "แดชบอร์ด", icon: Home },
+  { href: "/admin/dashboard", label: "แดชบอร์ด", icon: Home },
   { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart },
   { href: "/admin/products", label: "สินค้า", icon: Package },
   { href: "/admin/inventory", label: "สต็อก", icon: Layers },

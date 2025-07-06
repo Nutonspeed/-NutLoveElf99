@@ -178,7 +178,7 @@ export function Navbar() {
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/admin" className="flex items-center">
+                        <Link href="/admin/dashboard" className="flex items-center">
                           <Settings className="mr-2 h-4 w-4" />
                           ระบบจัดการ
                         </Link>
@@ -257,7 +257,7 @@ export function Navbar() {
                       {user?.role === "admin" && (
                         <div className="border-t pt-4">
                           <Link
-                            href="/admin"
+                            href="/admin/dashboard"
                             className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
                           >
                             <Settings className="mr-2 h-4 w-4" />
