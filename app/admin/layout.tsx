@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useAdminGuard } from "@/contexts/use-admin-guard"
+import Sidebar from "@/components/admin/Sidebar"
+import Topbar from "@/components/admin/Topbar"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin } = useAdminGuard()
@@ -22,5 +23,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return null
   }
 
-  return <>{children}</>
+  return (
+    <div className="flex min-h-screen">
+      <Sidebar />
+      <div className="flex flex-1 flex-col">
+        <Topbar />
+        <main className="flex-1 p-4">{children}</main>
+      </div>
+    </div>
+  )
 }
