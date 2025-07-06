@@ -4,9 +4,14 @@ import type React from "react"
 import { useAdminGuard } from "@/contexts/use-admin-guard"
 import Sidebar from "@/components/admin/Sidebar"
 import Topbar from "@/components/admin/Topbar"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
+import { useState } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin } = useAdminGuard()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   if (loading) {
     return (
@@ -25,9 +30,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen">
-      <Sidebar />
+      <Sidebar className="hidden md:flex" />
+      {isMobile && (
+        <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+          <SheetContent side="left" className="p-0 w-60">
+            <Sidebar />
+          </SheetContent>
+        </Sheet>
+      )}
       <div className="flex flex-1 flex-col">
-        <Topbar />
+        <Topbar onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 p-4">{children}</main>
       </div>
     </div>

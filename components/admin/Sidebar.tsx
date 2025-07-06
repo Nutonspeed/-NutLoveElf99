@@ -16,11 +16,11 @@ const navItems = [
   { href: "/admin/chat", label: "แชท", icon: MessageCircle },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ className = "" }: { className?: string }) {
   const pathname = usePathname()
 
   return (
-    <aside className="hidden md:flex w-60 flex-col border-r bg-sidebar text-sidebar-foreground">
+    <aside className={clsx("w-60 flex-col border-r bg-sidebar text-sidebar-foreground", className)}>
       <div className="h-16 flex items-center px-4 text-lg font-bold bg-sidebar-primary text-sidebar-primary-foreground">
         Admin
       </div>
