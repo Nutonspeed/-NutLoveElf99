@@ -1,23 +1,104 @@
+import { mockOrders } from "./mock-orders"
+import { mockProducts } from "./mock-products"
+import { mockCustomers } from "./mock-customers"
 
-import { mockOrders } from "./mock-orders";
+export interface DashboardStats {
+  totalOrders: number
+  totalProducts: number
+  totalCustomers: number
+  totalRevenue: number
+  lowStockItems: number
+  pendingOrders: number
+  newNotifications: number
+}
 
-export function calculateAnalytics() {
-  const stats = {
-    totalOrders: mockOrders.length,
-    ordersThisMonth: mockOrders.filter((o) => new Date(o.date).getMonth() === new Date().getMonth()).length,
-  };
+export interface AnalyticsData {
+  revenue: {
+    total: number
+    thisMonth: number
+    lastMonth: number
+    growth: number
+  }
+  orders: {
+    total: number
+    pending: number
+    completed: number
+  }
+  products: {
+    total: number
+    inStock: number
+    outOfStock: number
+  }
+  users: {
+    customers: number
+  }
+}
 
-  const pendingOrders = mockOrders.filter((o) => o.status === "pending").length;
+export async function fetchDashboardStats(): Promise<DashboardStats> {
+  const totalOrders = mockOrders.length
+  const totalProducts = mockProducts.length
+  const totalCustomers = mockCustomers.length
+  const totalRevenue = mockOrders.reduce((sum, o) => sum + o.total, 0)
+  const lowStockItems = mockProducts.filter((p) => !p.inStock).length
+  const pendingOrders = mockOrders.filter((o) => o.status === "pending").length
 
   return {
+    totalOrders,
+    totalProducts,
+    totalCustomers,
+    totalRevenue,
+    lowStockItems,
+    pendingOrders,
+    newNotifications: 0,
+  }
+}
+
+export async function fetchAnalytics(): Promise<AnalyticsData> {
+  const now = new Date()
+  const thisMonthOrders = mockOrders.filter((o) => {
+    const d = new Date(o.createdAt)
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()
+  })
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const lastMonthOrders = mockOrders.filter((o) => {
+    const d = new Date(o.createdAt)
+    return d.getMonth() === lastMonth.getMonth() && d.getFullYear() === lastMonth.getFullYear()
+  })
+
+  const revenueThisMonth = thisMonthOrders.reduce((sum, o) => sum + o.total, 0)
+  const revenueLastMonth = lastMonthOrders.reduce((sum, o) => sum + o.total, 0)
+  const revenueTotal = mockOrders.reduce((sum, o) => sum + o.total, 0)
+  const growth = revenueLastMonth === 0 ? 0 : ((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100
+
+  const ordersTotal = mockOrders.length
+  const ordersPending = mockOrders.filter((o) => o.status === "pending").length
+  const ordersCompleted = mockOrders.filter((o) => o.status === "delivered").length
+
+  const productsTotal = mockProducts.length
+  const productsInStock = mockProducts.filter((p) => p.inStock).length
+  const productsOutOfStock = mockProducts.filter((p) => !p.inStock).length
+
+  const customerCount = mockCustomers.length
+
+  return {
+    revenue: {
+      total: revenueTotal,
+      thisMonth: revenueThisMonth,
+      lastMonth: revenueLastMonth,
+      growth: Number(growth.toFixed(2)),
+    },
     orders: {
-      total: stats.totalOrders,
-      thisMonth: stats.ordersThisMonth,
-      pending: pendingOrders,
-      completed: mockOrders.filter((o) => o.status === "delivered").length,
+      total: ordersTotal,
+      pending: ordersPending,
+      completed: ordersCompleted,
     },
     products: {
-      topSelling: ["Sofa Cover A", "Sofa Cover B"],
+      total: productsTotal,
+      inStock: productsInStock,
+      outOfStock: productsOutOfStock,
     },
-  };
+    users: {
+      customers: customerCount,
+    },
+  }
 }
