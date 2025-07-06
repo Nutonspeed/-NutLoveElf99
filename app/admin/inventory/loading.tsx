@@ -21,7 +21,7 @@ export default function InventoryLoading() {
         </div>
 
         {/* Stats Cards Skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {[...Array(4)].map((_, i) => (
             <Card key={i}>
               <CardContent className="p-6">
