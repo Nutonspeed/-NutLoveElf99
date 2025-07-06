@@ -125,7 +125,7 @@ export default function AdminChatPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center space-x-4 mb-8">
-          <Link href="/admin">
+          <Link href="/admin/dashboard">
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>

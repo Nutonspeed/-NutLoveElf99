@@ -34,7 +34,7 @@ export default function LoginPage() {
         // Check if user is admin and redirect accordingly
         const userData = mockUsers.find((u) => u.email === email)
         if (userData?.role === "admin") {
-          router.push("/admin")
+          router.push("/admin/dashboard")
         } else {
           router.push("/")
         }

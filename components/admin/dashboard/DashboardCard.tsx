@@ -5,7 +5,7 @@ import { LucideIcon } from "lucide-react"
 import clsx from "clsx"
 import { HTMLAttributes } from "react"
 
-interface SalesCardProps extends HTMLAttributes<HTMLDivElement> {
+interface DashboardCardProps extends HTMLAttributes<HTMLDivElement> {
   title: string
   value: React.ReactNode
   icon: LucideIcon
@@ -15,7 +15,7 @@ interface SalesCardProps extends HTMLAttributes<HTMLDivElement> {
   cardClassName?: string
 }
 
-export default function SalesCard({
+export default function DashboardCard({
   title,
   value,
   icon: Icon,
@@ -24,7 +24,7 @@ export default function SalesCard({
   valueClassName,
   cardClassName,
   ...divProps
-}: SalesCardProps) {
+}: DashboardCardProps) {
   return (
     <Card className={cardClassName} {...divProps}>
       <CardContent className="p-6">
