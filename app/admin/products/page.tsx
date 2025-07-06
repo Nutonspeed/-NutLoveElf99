@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus, Search, Edit, Trash2, ArrowLeft, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { type Product } from "@/lib/mock-data"
+import { type Product } from "@/types/product"
 import { supabase } from "@/lib/supabase"
 
 export default function AdminProductsPage() {
@@ -33,14 +33,15 @@ export default function AdminProductsPage() {
     }
   }, [isAuthenticated, user, router])
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      if (!supabase) return
-      const { data } = await supabase.from("products").select("*")
-      if (data) {
-        setProducts(data as Product[])
-      }
+  const fetchProducts = async () => {
+    if (!supabase) return
+    const { data } = await supabase.from("products").select("*")
+    if (data) {
+      setProducts(data as Product[])
     }
+  }
+
+  useEffect(() => {
     fetchProducts()
   }, [])
 
@@ -76,8 +77,22 @@ export default function AdminProductsPage() {
       product.category.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleDeleteProduct = (productId: string) => {
-    setProducts(products.filter((p) => p.id !== productId))
+  const handleAddProduct = async (data: Omit<Product, "id">) => {
+    if (!supabase) return
+    await supabase.from("products").insert(data)
+    fetchProducts()
+  }
+
+  const handleEditProduct = async (id: string, data: Partial<Product>) => {
+    if (!supabase) return
+    await supabase.from("products").update(data).eq("id", id)
+    fetchProducts()
+  }
+
+  const handleDeleteProduct = async (productId: string) => {
+    if (!supabase) return
+    await supabase.from("products").delete().eq("id", productId)
+    fetchProducts()
   }
 
   return (
@@ -97,10 +112,12 @@ export default function AdminProductsPage() {
             </div>
           </div>
 
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            เพิ่มสินค้าใหม่
-          </Button>
+          <Link href="/admin/products/create">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              เพิ่มสินค้าใหม่
+            </Button>
+          </Link>
         </div>
 
         <Card>
@@ -231,7 +248,11 @@ export default function AdminProductsPage() {
                           </DialogContent>
                         </Dialog>
 
-                        <Button variant="outline" size="icon">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => router.push(`/admin/products/${product.id}/edit`)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
 
