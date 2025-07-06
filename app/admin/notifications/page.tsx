@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -36,8 +34,6 @@ import { useToast } from "@/hooks/use-toast"
 import type { NotificationHistory, NotificationTemplate } from "@/lib/mock-notification-service"
 
 export default function NotificationsPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
   const { toast } = useToast()
   const [history, setHistory] = useState<NotificationHistory[]>([])
   const [templates, setTemplates] = useState<NotificationTemplate[]>([])
@@ -56,17 +52,8 @@ export default function NotificationsPage() {
   })
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
-
     loadData()
-  }, [isAuthenticated, user, router])
+  }, [])
 
   const loadData = async () => {
     try {
@@ -164,18 +151,6 @@ export default function NotificationsPage() {
     }
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
-            <Button>เข้าสู่ระบบ</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {

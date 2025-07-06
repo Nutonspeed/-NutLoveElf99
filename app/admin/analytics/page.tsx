@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -48,23 +46,13 @@ interface AnalyticsData {
 }
 
 export default function AdminAnalyticsPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
   const [timeRange, setTimeRange] = useState("thisMonth")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
     loadAnalytics()
-  }, [isAuthenticated, user, router])
+  }, [])
 
   const loadAnalytics = async () => {
     try {
@@ -75,19 +63,6 @@ export default function AdminAnalyticsPage() {
     } finally {
       setLoading(false)
     }
-  }
-
-  if (!isAuthenticated || user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
-            <Button>เข้าสู่ระบบ</Button>
-          </Link>
-        </div>
-      </div>
-    )
   }
 
   if (loading || !analytics) {

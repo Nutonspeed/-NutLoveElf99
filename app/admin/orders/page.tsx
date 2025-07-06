@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,26 +13,12 @@ import Link from "next/link"
 import { mockOrders, type Order } from "@/lib/mock-data"
 
 export default function AdminOrdersPage() {
-  const { user, isAuthenticated, isLoading } = useAuth()
-  const router = useRouter()
   const [orders, setOrders] = useState<Order[]>(mockOrders)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
-  useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
-      router.push("/login")
-    }
-  }, [isAuthenticated, user, router, isLoading])
-
-  if (isLoading) {
-    return <div>Loading...</div>
-  }
-
-  if (!isAuthenticated || user?.role !== "admin") {
-    return null
-  }
+  useEffect(() => {}, [])
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =

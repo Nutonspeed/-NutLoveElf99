@@ -1,9 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
-import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,8 +20,6 @@ interface CollectionWithFabrics extends Collection {
 }
 
 export default function AdminCollectionsPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
   const [collections, setCollections] = useState<CollectionWithFabrics[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -39,14 +35,6 @@ export default function AdminCollectionsPage() {
   })
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
     const fetchCollections = async () => {
       if (!supabase) return
       const { data: cols } = await supabase
@@ -66,20 +54,7 @@ export default function AdminCollectionsPage() {
       )
     }
     fetchCollections()
-  }, [isAuthenticated, user, router])
-
-  if (!isAuthenticated || user?.role !== "admin") {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
-            <Button>เข้าสู่ระบบ</Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
+  }, [])
 
   const resetForm = () => {
     form.reset({ id: "", name: "", slug: "", description: "", cover_image_url: "" })
