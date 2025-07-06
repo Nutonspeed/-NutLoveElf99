@@ -1,5 +1,6 @@
 // Mock database functions for demonstration
 // In production, replace with actual database calls (Supabase, etc.)
+import type { AnalyticsData } from "@/types/analytics"
 
 export interface User {
   id: string
@@ -570,7 +571,7 @@ export const db = {
   },
 
   // Analytics
-  async getAnalytics(): Promise<any> {
+  async getAnalytics(): Promise<AnalyticsData> {
     return new Promise((resolve) => {
       setTimeout(() => {
         const totalRevenue = mockOrders.reduce((sum, order) => sum + order.total, 0)
