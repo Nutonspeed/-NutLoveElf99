@@ -28,3 +28,12 @@ Continue building your app on:
 2. Deploy your chats from the v0 interface
 3. Changes are automatically pushed to this repository
 4. Vercel deploys the latest version from this repository
+
+## Environment Variables
+
+Real data is fetched from Supabase when the following variables are provided:
+
+- `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` – the project's anon key
+
+If these variables are absent, the app falls back to built-in mock data.
