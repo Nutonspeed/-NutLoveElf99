@@ -160,7 +160,7 @@ export default function WishlistPage() {
               <Card key={product.id} className="group hover:shadow-lg transition-shadow">
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/products/${product.slug}`}> 
                       <Image
                         src={product.images[0] || "/placeholder.svg"}
                         alt={product.name}
@@ -187,7 +187,7 @@ export default function WishlistPage() {
                   </div>
 
                   <div className="p-4 space-y-3">
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/products/${product.slug}`}> 
                       <h3 className="font-semibold text-lg line-clamp-2 hover:text-primary transition-colors">
                         {product.name}
                       </h3>
@@ -224,7 +224,7 @@ export default function WishlistPage() {
                     </div>
 
                     <div className="flex space-x-2">
-                      <Link href={`/products/${product.id}`} className="flex-1">
+                      <Link href={`/products/${product.slug}`} className="flex-1"> 
                         <Button variant="outline" className="w-full bg-transparent">
                           ดูรายละเอียด
                         </Button>

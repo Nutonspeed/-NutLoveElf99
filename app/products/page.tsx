@@ -210,7 +210,7 @@ export default function ProductsPage() {
                             )}
                           </div>
 
-                          <Link href={`/products/${product.id}`}>
+                          <Link href={`/products/${product.slug}`}> 
                             <Button className="w-full mt-4">ดูรายละเอียด</Button>
                           </Link>
                         </div>
@@ -260,7 +260,7 @@ export default function ProductsPage() {
                               )}
                             </div>
 
-                            <Link href={`/products/${product.id}`}>
+                            <Link href={`/products/${product.slug}`}> 
                               <Button>ดูรายละเอียด</Button>
                             </Link>
                           </div>

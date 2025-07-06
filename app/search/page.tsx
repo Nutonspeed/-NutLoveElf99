@@ -312,7 +312,7 @@ export default function SearchPage() {
                 {filteredProducts.map((product) => (
                   <Card key={product.id} className="group hover:shadow-lg transition-shadow">
                     <CardContent className="p-0">
-                      <Link href={`/products/${product.id}`}>
+                      <Link href={`/products/${product.slug}`}> 
                         <div className="relative overflow-hidden rounded-t-lg">
                           <Image
                             src={product.images[0] || "/placeholder.svg"}

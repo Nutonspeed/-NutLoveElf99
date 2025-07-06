@@ -170,7 +170,7 @@ export default function ComparePage() {
                     </div>
 
                     <div className="flex space-x-2">
-                      <Link href={`/products/${product.id}`} className="flex-1">
+                      <Link href={`/products/${product.slug}`} className="flex-1">
                         <Button variant="outline" className="w-full bg-transparent">
                           ดูรายละเอียด
                         </Button>

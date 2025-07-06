@@ -141,7 +141,7 @@ export default function HomePage() {
                       )}
                     </div>
 
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/products/${product.slug}`}> 
                       <Button className="w-full mt-4">ดูรายละเอียด</Button>
                     </Link>
                   </div>

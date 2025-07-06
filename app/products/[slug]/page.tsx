@@ -15,9 +15,9 @@ import { mockProducts } from "@/lib/mock-data"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 
-export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
-  const product = mockProducts.find((p) => p.id === id)
+export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params)
+  const product = mockProducts.find((p) => p.slug === slug)
   const [selectedImage, setSelectedImage] = useState(0)
   const [selectedSize, setSelectedSize] = useState("")
   const [selectedColor, setSelectedColor] = useState("")
@@ -220,6 +220,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 เพิ่มลงตะกร้า
               </Button>
+              <Link href={`/order/new?product=${product.slug}`} className="flex-1">
+                <Button className="w-full" size="lg">สั่งซื้อ</Button>
+              </Link>
               <Button
                 variant="outline"
                 size="lg"
@@ -393,7 +396,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               .map((relatedProduct) => (
                 <Card key={relatedProduct.id} className="group hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
-                    <Link href={`/products/${relatedProduct.id}`}>
+                    <Link href={`/products/${relatedProduct.slug}`}>
                       <div className="relative overflow-hidden rounded-t-lg">
                         <Image
                           src={relatedProduct.images[0] || "/placeholder.svg"}
