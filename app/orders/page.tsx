@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Package, Eye, Download, MessageCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
-import { mockOrders } from "@/lib/mock-data"
+import { mockOrders } from "@/lib/mock-orders"
 
 export default function OrdersPage() {
   const { user, isAuthenticated } = useAuth()

@@ -12,7 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Star, Filter, Grid, List } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import { mockProducts } from "@/lib/mock-data"
+import { mockProducts } from "@/lib/mock-products"
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
