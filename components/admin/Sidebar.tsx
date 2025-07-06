@@ -1,0 +1,48 @@
+"use client"
+
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { Home, ShoppingCart, Package, Layers, Users, Percent, Bell, MessageCircle } from "lucide-react"
+import clsx from "clsx"
+
+const navItems = [
+  { href: "/admin", label: "แดชบอร์ด", icon: Home },
+  { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart },
+  { href: "/admin/products", label: "สินค้า", icon: Package },
+  { href: "/admin/inventory", label: "สต็อก", icon: Layers },
+  { href: "/admin/customers", label: "ลูกค้า", icon: Users },
+  { href: "/admin/coupons", label: "คูปอง", icon: Percent },
+  { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell },
+  { href: "/admin/chat", label: "แชท", icon: MessageCircle },
+]
+
+export default function Sidebar() {
+  const pathname = usePathname()
+
+  return (
+    <aside className="hidden md:flex w-60 flex-col border-r bg-sidebar text-sidebar-foreground">
+      <div className="h-16 flex items-center px-4 text-lg font-bold bg-sidebar-primary text-sidebar-primary-foreground">
+        Admin
+      </div>
+      <nav className="flex-1 space-y-1 px-2 py-4">
+        {navItems.map(({ href, label, icon: Icon }) => {
+          const active = pathname === href || pathname.startsWith(`${href}/`)
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={clsx(
+                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                active && "bg-sidebar-primary text-sidebar-primary-foreground"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              <span>{label}</span>
+            </Link>
+          )
+        })}
+      </nav>
+    </aside>
+  )
+}
