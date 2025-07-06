@@ -54,6 +54,7 @@ export interface ChatMessage {
 export const mockProducts: Product[] = [
   {
     id: "1",
+    slug: "premium-velvet",
     name: "ผ้าคลุมโซฟา Premium Velvet",
     description: "ผ้าคลุมโซฟาผ้ากำมะหยี่คุณภาพสูง นุ่มสบาย กันน้ำ กันฝุ่น",
     price: 2990,
@@ -75,6 +76,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "2",
+    slug: "cotton-blend",
     name: "ผ้าคลุมโซฟา Cotton Blend",
     description: "ผ้าคลุมโซฟาผ้าคอตตอนผสม ระบายอากาศได้ดี เหมาะกับสภาพอากาศร้อน",
     price: 1990,
@@ -96,6 +98,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "3",
+    slug: "waterproof-pro",
     name: "ผ้าคลุมโซฟา Waterproof Pro",
     description: "ผ้าคลุมโซฟากันน้ำ 100% เหมาะสำหรับบ้านที่มีเด็กเล็กและสัตว์เลี้ยง",
     price: 3490,
@@ -116,6 +119,7 @@ export const mockProducts: Product[] = [
   },
   {
     id: "4",
+    slug: "luxury-leather-look",
     name: "ผ้าคลุมโซฟา Luxury Leather Look",
     description: "ผ้าคลุมโซฟาลุคหนัง ดูหรูหรา เพิ่มความสง่างามให้ห้องนั่งเล่น",
     price: 4990,

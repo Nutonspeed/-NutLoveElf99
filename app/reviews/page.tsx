@@ -174,7 +174,7 @@ export default function ReviewsPage() {
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   {/* Product Image */}
-                  <Link href={`/products/${review.productId}`}>
+                  <Link href={`/products/${mockProducts.find((p) => p.id === review.productId)?.slug || review.productId}`}>
                     <Image
                       src={review.productImage || "/placeholder.svg"}
                       alt={review.productName}
@@ -186,7 +186,7 @@ export default function ReviewsPage() {
 
                   <div className="flex-1 space-y-3">
                     {/* Product Name */}
-                    <Link href={`/products/${review.productId}`}>
+                    <Link href={`/products/${mockProducts.find((p) => p.id === review.productId)?.slug || review.productId}`}> 
                       <h3 className="font-semibold text-lg hover:text-primary transition-colors">
                         {review.productName}
                       </h3>
