@@ -147,14 +147,24 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
   }
 
   const copyPublicLink = () => {
-    const url = `${window.location.origin}/order/${order.publicLink}`
-    navigator.clipboard.writeText(url)
-    toast.success("คัดลอกลิงก์แล้ว")
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/order/${order.publicLink}`
+        : ""
+    if (url) {
+      navigator.clipboard.writeText(url)
+      toast.success("คัดลอกลิงก์แล้ว")
+    }
   }
 
   const openPublicLink = () => {
-    const url = `${window.location.origin}/order/${order.publicLink}`
-    window.open(url, "_blank")
+    const url =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/order/${order.publicLink}`
+        : ""
+    if (url && typeof window !== "undefined") {
+      window.open(url, "_blank")
+    }
   }
 
   const getStatusBadgeVariant = (status: ManualOrder["status"]) => {
