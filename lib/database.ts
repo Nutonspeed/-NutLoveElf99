@@ -18,6 +18,7 @@ export interface User {
 
 export interface Product {
   id: string
+  slug?: string
   name: string
   description: string
   price: number
@@ -354,6 +355,12 @@ const mockChatMessages: ChatMessage[] = [
 
 const mockCoupons: Coupon[] = []
 
+// Simple wishlist storage per user
+const mockWishlists: Record<string, Product[]> = {
+  "2": [mockProducts[0]],
+  "3": [mockProducts[1]],
+}
+
 // Database functions
 export const db = {
   // Users
@@ -464,6 +471,31 @@ export const db = {
         const index = mockProducts.findIndex((p) => p.id === id)
         if (index !== -1) {
           mockProducts.splice(index, 1)
+          resolve(true)
+        } else {
+          resolve(false)
+        }
+      }, 100)
+    })
+  },
+
+  // Wishlist
+  async getUserWishlist(userId: string): Promise<Product[]> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockWishlists[userId] ? [...mockWishlists[userId]] : [])
+      }, 100)
+    })
+  },
+
+  async removeFromWishlist(userId: string, productId: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const list = mockWishlists[userId] || []
+        const index = list.findIndex((p) => p.id === productId)
+        if (index !== -1) {
+          list.splice(index, 1)
+          mockWishlists[userId] = list
           resolve(true)
         } else {
           resolve(false)
