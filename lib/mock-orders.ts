@@ -37,6 +37,12 @@ export interface Order {
   shipping_date: string
   /** หมายเหตุการจัดส่งเพิ่มเติม */
   delivery_note: string
+  timeline: Array<{
+    timestamp: string
+    status: OrderStatus
+    note?: string
+    user: string
+  }>
 }
 
 import { supabase } from "./supabase"
@@ -75,6 +81,14 @@ const initialMockOrders: Order[] = [
     shipping_status: "pending",
     shipping_date: "2024-01-16T10:30:00Z",
     delivery_note: "-",
+    timeline: [
+      {
+        timestamp: "2024-01-15T10:30:00Z",
+        status: "depositPaid",
+        user: "admin@nutlove.co",
+        note: "Order created",
+      },
+    ],
   },
   {
     id: "ORD-002",
@@ -108,6 +122,14 @@ const initialMockOrders: Order[] = [
     shipping_status: "shipped",
     shipping_date: "2024-01-15T08:00:00Z",
     delivery_note: "ส่งตามเวลาทำการ",
+    timeline: [
+      {
+        timestamp: "2024-01-14T14:20:00Z",
+        status: "paid",
+        user: "admin@nutlove.co",
+        note: "Order created",
+      },
+    ],
   },
 ]
 
@@ -121,6 +143,7 @@ export function regenerateMockOrders() {
   mockOrders = initialMockOrders.map((o) => ({
     ...o,
     items: o.items.map((i) => ({ ...i })),
+    timeline: o.timeline.map((t) => ({ ...t })),
   }))
 }
 

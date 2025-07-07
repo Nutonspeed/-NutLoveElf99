@@ -74,6 +74,12 @@ export interface ManualOrder {
   createdAt: string
   updatedAt: string
   createdBy: string
+  timeline: Array<{
+    timestamp: string
+    status: OrderStatus
+    note?: string
+    user: string
+  }>
 }
 
 export interface OrderFormData {

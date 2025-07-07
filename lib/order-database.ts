@@ -49,6 +49,14 @@ const manualOrders: ManualOrder[] = [
     createdAt: "2024-01-15T10:30:00Z",
     updatedAt: "2024-01-15T14:20:00Z",
     createdBy: "admin",
+    timeline: [
+      {
+        timestamp: "2024-01-15T10:30:00Z",
+        status: "confirmed",
+        user: "admin@nutlove.co",
+        note: "Order created",
+      },
+    ],
   },
   {
     id: "mo-002",
@@ -83,6 +91,14 @@ const manualOrders: ManualOrder[] = [
     createdAt: "2024-01-16T09:15:00Z",
     updatedAt: "2024-01-16T11:45:00Z",
     createdBy: "admin",
+    timeline: [
+      {
+        timestamp: "2024-01-16T09:15:00Z",
+        status: "processing",
+        user: "admin@nutlove.co",
+        note: "Order created",
+      },
+    ],
   },
 ]
 
@@ -141,6 +157,14 @@ export const orderDb = {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           createdBy: "admin",
+          timeline: [
+            {
+              timestamp: new Date().toISOString(),
+              status: orderData.status || "draft",
+              user: "admin@nutlove.co",
+              note: "Order created",
+            },
+          ],
         }
 
         manualOrders.push(newOrder)
@@ -159,8 +183,17 @@ export const orderDb = {
           return
         }
 
+        const current = manualOrders[index]
+        if (updates.status && updates.status !== current.status) {
+          current.timeline.push({
+            timestamp: new Date().toISOString(),
+            status: updates.status,
+            user: "admin@nutlove.co",
+          })
+        }
+
         manualOrders[index] = {
-          ...manualOrders[index],
+          ...current,
           ...updates,
           updatedAt: new Date().toISOString(),
         }

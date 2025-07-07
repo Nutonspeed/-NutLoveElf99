@@ -84,6 +84,7 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
       shipping_fee: data.shipping_fee,
       shipping_date: data.shipping_date,
       delivery_note: data.delivery_note,
+      timeline: order.timeline,
     }
     mockOrders[orderIndex] = updated
     router.push(`/admin/orders/${order.id}`)

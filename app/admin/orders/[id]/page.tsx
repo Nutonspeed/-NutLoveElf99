@@ -27,6 +27,11 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   }
 
   const handleSave = () => {
+    mockOrders[orderIndex].timeline.push({
+      timestamp: new Date().toISOString(),
+      status,
+      user: "admin@nutlove.co",
+    })
     mockOrders[orderIndex].status = status
     toast.success("บันทึกสถานะแล้ว")
   }
