@@ -7,9 +7,12 @@ import { Star, Shield, Truck, Headphones, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { mockProducts } from "@/lib/mock-products"
+import { getCollections } from "@/lib/mock-collections"
+import type { Collection } from "@/types/collection"
 
-export default function HomePage() {
+export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)
+  const collections: Collection[] = (await getCollections()).slice(0, 4)
 
   return (
     <div className="min-h-screen">
@@ -85,6 +88,45 @@ export default function HomePage() {
               <h3 className="font-semibold text-lg">รีวิว 5 ดาว</h3>
               <p className="text-gray-600 text-sm">ความพึงพอใจของลูกค้ามากกว่า 98%</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Collections */}
+      <section className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold mb-4">คอลเลกชันแนะนำ</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {collections.map((col) => (
+              <Link
+                key={col.slug}
+                href={`/collections/${col.slug}`}
+                className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
+              >
+                <div className="relative w-full h-40">
+                  <Image
+                    src={col.all_images[0] || "/placeholder.svg"}
+                    alt={col.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-base truncate">{col.name}</h3>
+                  <p className="text-sm text-gray-600 mt-1">{col.price_range}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link href="/collections">
+              <Button variant="outline" size="lg">
+                ดูทั้งหมด
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
