@@ -10,10 +10,6 @@ import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-interface FabricDetailPageProps {
-  params: { id: string }
-}
-
 interface Fabric {
   id: string
   name: string
@@ -23,7 +19,7 @@ interface Fabric {
   price_max: number
 }
 
-export default function FabricDetailPage({ params }: FabricDetailPageProps) {
+export default function FabricDetailPage({ params }: any) {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
 
