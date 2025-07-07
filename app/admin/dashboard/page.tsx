@@ -49,24 +49,28 @@ export default function AdminDashboard() {
             value={stats?.totalOrders ?? 0}
             icon={ShoppingCart}
             iconClassName="text-blue-600"
+            href="/admin/orders"
           />
           <DashboardCard
             title="สินค้าทั้งหมด"
             value={stats?.totalProducts ?? 0}
             icon={Package}
             iconClassName="text-green-600"
+            href="/admin/products"
           />
           <DashboardCard
             title="ลูกค้าทั้งหมด"
             value={stats?.totalCustomers ?? 0}
             icon={Users}
             iconClassName="text-purple-600"
+            href="/admin/customers"
           />
           <DashboardCard
             title="ยอดขายรวม"
             value={`฿${(stats?.totalRevenue ?? 0).toLocaleString()}`}
             icon={TrendingUp}
             iconClassName="text-orange-600"
+            href="/admin/reports"
           />
         </div>
 

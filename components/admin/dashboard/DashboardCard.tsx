@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { LucideIcon } from "lucide-react"
 import clsx from "clsx"
 import { HTMLAttributes } from "react"
+import Link from "next/link"
 
 interface DashboardCardProps extends HTMLAttributes<HTMLDivElement> {
   title: string
@@ -13,6 +14,7 @@ interface DashboardCardProps extends HTMLAttributes<HTMLDivElement> {
   titleClassName?: string
   valueClassName?: string
   cardClassName?: string
+  href?: string
 }
 
 export default function DashboardCard({
@@ -23,9 +25,10 @@ export default function DashboardCard({
   titleClassName,
   valueClassName,
   cardClassName,
+  href,
   ...divProps
 }: DashboardCardProps) {
-  return (
+  const card = (
     <Card className={cardClassName} {...divProps}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
@@ -40,4 +43,6 @@ export default function DashboardCard({
       </CardContent>
     </Card>
   )
+
+  return href ? <Link href={href}>{card}</Link> : card
 }
