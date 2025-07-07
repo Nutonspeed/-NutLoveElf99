@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback } from "react"
-import type { NotificationData } from "@/lib/mock-notification-service"
+import type { NotificationData } from "@/data/mock-notification-service"
 
 export function useMockNotification() {
   const [loading, setLoading] = useState(false)

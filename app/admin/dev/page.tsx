@@ -7,12 +7,12 @@ import {
   mockOrders,
   regenerateMockOrders,
   resetMockOrders,
-} from "@/lib/mock-orders"
+} from "@/data/mock-orders"
 import {
   mockCustomers,
   regenerateMockCustomers,
   resetMockCustomers,
-} from "@/lib/mock-customers"
+} from "@/data/mock-customers"
 
 export default function AdminDevPage() {
   const { user, isAuthenticated } = useAuth()

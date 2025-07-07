@@ -5,7 +5,7 @@ import { ArrowLeft, PrinterIcon as Print } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import BillPreview from "@/components/BillPreview"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/data/mock-orders"
 
 export default function AdminOrderPrintPage({ params }: { params: { id: string } }) {
   const { id } = params

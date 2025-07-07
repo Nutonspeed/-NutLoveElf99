@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
 import Link from "next/link"
-import { fetchCustomers, getCustomerStats, type Customer } from "@/lib/mock-customers"
+import { fetchCustomers, getCustomerStats, type Customer } from "@/data/mock-customers"
 
 
 export default function AdminCustomersPage() {

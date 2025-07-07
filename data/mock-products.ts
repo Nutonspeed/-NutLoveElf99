@@ -1,5 +1,4 @@
 import type { Product } from "@/types/product"
-import { supabase } from "./supabase"
 
 export const mockProducts: Product[] = [
   {
@@ -90,17 +89,3 @@ export const mockProducts: Product[] = [
   },
 ]
 
-export async function getProducts(): Promise<Product[]> {
-  if (!supabase) {
-    return Promise.resolve(mockProducts)
-  }
-
-  const { data, error } = await supabase.from("products").select("*")
-
-  if (error || !data) {
-    console.error("Supabase fetchProducts error", error)
-    return mockProducts
-  }
-
-  return data as Product[]
-}

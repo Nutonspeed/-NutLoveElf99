@@ -9,7 +9,7 @@ import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem } from "@/types/order"
 import { supabase } from "@/lib/supabase"
-import { mockProducts } from "@/lib/mock-products"
+import { mockProducts } from "@/data/mock-products"
 
 export default function NewOrderPage() {
   const router = useRouter()

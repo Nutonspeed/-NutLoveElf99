@@ -24,7 +24,7 @@ import {
   mockCustomers,
   getCustomerOrders,
   getCustomerStats,
-} from "@/lib/mock-customers"
+} from "@/data/mock-customers"
 
 export default function CustomerDetailPage({
   params,

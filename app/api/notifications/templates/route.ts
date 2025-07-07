@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { mockNotificationService } from "@/lib/mock-notification-service"
+import { mockNotificationService } from "@/data/mock-notification-service"
 
 export async function GET() {
   try {

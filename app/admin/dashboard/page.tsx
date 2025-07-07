@@ -22,7 +22,7 @@ import {
 import Link from "next/link"
 import DashboardCard from "@/components/admin/dashboard/DashboardCard"
 import OrderTable from "@/components/admin/OrderTable"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/data/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
 
 export default function AdminDashboard() {

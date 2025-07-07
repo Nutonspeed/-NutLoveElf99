@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import type { Collection } from "@/lib/mock-collections"
+import type { Collection } from "@/data/mock-collections"
 
 interface CollectionWithFabrics extends Collection {
   fabrics: { id: string; name: string }[]

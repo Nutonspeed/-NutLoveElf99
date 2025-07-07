@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
-import { mockOrders, type Order } from "@/lib/mock-orders"
+import { mockOrders, type Order } from "@/data/mock-orders"
 import type { OrderStatus } from "@/types/order"
 import { toast } from "sonner"
 

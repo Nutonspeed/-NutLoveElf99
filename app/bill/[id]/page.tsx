@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/data/mock-orders"
 import BillPreview from "@/components/BillPreview"
 
 export default function BillPage({ params }: { params: { id: string } }) {

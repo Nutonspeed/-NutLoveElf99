@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { mockNotificationService } from "@/lib/mock-notification-service"
-import type { NotificationData } from "@/lib/mock-notification-service"
+import { mockNotificationService } from "@/data/mock-notification-service"
+import type { NotificationData } from "@/data/mock-notification-service"
 
 export async function POST(request: NextRequest) {
   try {

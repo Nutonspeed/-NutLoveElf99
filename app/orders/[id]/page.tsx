@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/data/mock-orders"
 import type { OrderStatus } from "@/types/order"
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {

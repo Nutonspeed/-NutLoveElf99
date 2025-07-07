@@ -1,6 +1,6 @@
-import { mockOrders } from "./mock-orders"
-import { mockProducts } from "./mock-products"
-import { mockCustomers } from "./mock-customers"
+import { mockOrders } from "../data/mock-orders"
+import { mockProducts } from "../data/mock-products"
+import { mockCustomers } from "../data/mock-customers"
 import type { AnalyticsData } from "@/types/analytics"
 export type { AnalyticsData }
 

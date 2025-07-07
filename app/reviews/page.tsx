@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import Link from "next/link"
 import Image from "next/image"
 import { db } from "@/lib/database"
-import { mockProducts } from "@/lib/mock-products"
+import { mockProducts } from "@/data/mock-products"
 import { DevelopmentNotice } from "@/components/development-notice"
 
 export default function ReviewsPage() {

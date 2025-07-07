@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Download, PrinterIcon as Print, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/data/mock-orders"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
   const { id } = params

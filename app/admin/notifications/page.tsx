@@ -31,7 +31,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
-import type { NotificationHistory, NotificationTemplate } from "@/lib/mock-notification-service"
+import type { NotificationHistory, NotificationTemplate } from "@/data/mock-notification-service"
 
 export default function NotificationsPage() {
   const { toast } = useToast()

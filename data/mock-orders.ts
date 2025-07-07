@@ -30,7 +30,6 @@ export interface Order {
   trackingNumber: string
 }
 
-import { supabase } from "./supabase"
 
 const initialMockOrders: Order[] = [
   {
@@ -109,20 +108,3 @@ export function regenerateMockOrders() {
   }))
 }
 
-export async function fetchOrders(): Promise<Order[]> {
-  if (!supabase) {
-    return Promise.resolve(mockOrders)
-  }
-
-  const { data, error } = await supabase
-    .from("orders")
-    .select("*")
-    .order("createdAt", { ascending: false })
-
-  if (error || !data) {
-    console.error("Supabase fetchOrders error", error)
-    return mockOrders
-  }
-
-  return data as Order[]
-}

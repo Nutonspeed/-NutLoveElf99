@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import { Eye, FileText } from "lucide-react"
 import Link from "next/link"
-import type { Order } from "@/lib/mock-orders"
+import type { Order } from "@/data/mock-orders"
 
 interface OrderTableProps {
   orders: Order[]
