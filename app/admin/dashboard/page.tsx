@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Warehouse,
   Receipt,
+  Bug,
 } from "lucide-react"
 import Link from "next/link"
 import DashboardCard from "@/components/admin/dashboard/DashboardCard"
@@ -204,6 +205,12 @@ export default function AdminDashboard() {
                 <Button variant="outline" className="w-full justify-start bg-transparent">
                   <MessageSquare className="mr-2 h-4 w-4" />
                   แชทกับลูกค้า
+                </Button>
+              </Link>
+              <Link href="/admin/dev">
+                <Button variant="outline" className="w-full justify-start bg-transparent">
+                  <Bug className="mr-2 h-4 w-4" />
+                  ข้อมูลระบบ
                 </Button>
               </Link>
             </CardContent>
