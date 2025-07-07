@@ -20,20 +20,19 @@ export default function CreateOrderPage() {
     customerName: string
     customerPhone: string
     items: any[]
+    discount: number
     deposit: number
+    total: number
+    totalDue: number
     note: string
   }) => {
-    const total = data.items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0,
-    )
     const newOrder = {
       id: `ORD-${String(mockOrders.length + 1).padStart(3, "0")}`,
       customerId: "0",
       customerName: data.customerName,
       customerEmail: "",
       items: data.items,
-      total,
+      total: data.total,
       status: "pendingPayment" as const,
       createdAt: new Date().toISOString(),
       shippingAddress: {
