@@ -61,6 +61,7 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
     color: "",
     price: 0,
     quantity: 1,
+    discount: 0,
     notes: "",
     image: "",
   })
@@ -79,6 +80,7 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
       color: newItem.color || "",
       price: newItem.price || 0,
       quantity: newItem.quantity || 1,
+      discount: newItem.discount || 0,
       notes: newItem.notes || "",
       image: newItem.image || "/placeholder.svg?height=100&width=100&text=Sofa+Cover",
     }
@@ -92,6 +94,7 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
       color: "",
       price: 0,
       quantity: 1,
+      discount: 0,
       notes: "",
       image: "",
     })
@@ -173,10 +176,30 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
                             className="w-24 h-8"
                           />
                         </div>
+                        <div>
+                          <Label htmlFor={`discount-${item.id}`} className="text-xs">
+                            ส่วนลด (%)
+                          </Label>
+                          <Input
+                            id={`discount-${item.id}`}
+                            type="number"
+                            min="0"
+                            max="100"
+                            value={item.discount ?? 0}
+                            onChange={(e) =>
+                              updateItem(item.id, {
+                                discount: Number.parseFloat(e.target.value) || 0,
+                              })
+                            }
+                            className="w-24 h-8"
+                          />
+                        </div>
                         <div className="flex items-end">
                           <div className="text-right">
-                            <div className="text-xs text-gray-500">รวม</div>
-                            <div className="font-semibold">฿{(item.price * item.quantity).toLocaleString()}</div>
+                            <div className="text-xs text-gray-500">รวมหลังส่วนลด</div>
+                            <div className="font-semibold">
+                              ฿{(item.price * item.quantity * (1 - (item.discount ?? 0) / 100)).toLocaleString()}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -270,7 +293,7 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <Label htmlFor="quantity">จำนวน</Label>
               <Input
@@ -292,11 +315,32 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
                 onChange={(e) => setNewItem({ ...newItem, price: Number.parseFloat(e.target.value) || 0 })}
               />
             </div>
+            <div>
+              <Label htmlFor="discount">ส่วนลด (%)</Label>
+              <Input
+                id="discount"
+                type="number"
+                min="0"
+                max="100"
+                value={newItem.discount}
+                onChange={(e) =>
+                  setNewItem({
+                    ...newItem,
+                    discount: Number.parseFloat(e.target.value) || 0,
+                  })
+                }
+              />
+            </div>
             <div className="flex items-end">
               <div className="w-full">
                 <Label className="text-sm text-gray-500">รวม</Label>
                 <div className="h-10 flex items-center font-semibold text-lg">
-                  ฿{((newItem.price || 0) * (newItem.quantity || 1)).toLocaleString()}
+                  ฿{
+                    ((newItem.price || 0) *
+                      (newItem.quantity || 1) *
+                      (1 - (newItem.discount || 0) / 100)
+                    ).toLocaleString()
+                  }
                 </div>
               </div>
             </div>
