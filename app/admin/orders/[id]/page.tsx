@@ -2,11 +2,12 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Save, Share2, Edit } from "lucide-react"
+import { ArrowLeft, Share2, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
+import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
@@ -27,13 +28,10 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
     )
   }
 
-  const handleSave = () => {
-    mockOrders[orderIndex].timeline.push({
-      timestamp: new Date().toISOString(),
-      status,
-      user: "admin@nutlove.co",
-    })
-    mockOrders[orderIndex].status = status
+  const handleAddEntry = (entry: TimelineEntry) => {
+    mockOrders[orderIndex].timeline.push(entry)
+    mockOrders[orderIndex].status = entry.status
+    setStatus(entry.status)
     toast.success("บันทึกสถานะแล้ว")
   }
 
@@ -56,10 +54,6 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           <CardContent className="space-y-4">
             <OrderStatusDropdown status={status} onChange={setStatus} />
             <div className="flex space-x-2 mt-2">
-              <Button onClick={handleSave}>
-                <Save className="mr-2 h-4 w-4" />
-                บันทึก
-              </Button>
               <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
                 <Share2 className="mr-2 h-4 w-4" />
                 แชร์บิล
@@ -72,12 +66,25 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               </Link>
             </div>
           </CardContent>
-        </Card>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>รายการสินค้า</CardTitle>
-          </CardHeader>
+          <Card>
+            <CardHeader>
+              <CardTitle>ไทม์ไลน์สถานะ</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <OrderTimeline
+                timeline={order.timeline}
+                editable
+                onAddEntry={handleAddEntry}
+              />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>รายการสินค้า</CardTitle>
+            </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {order.items.map((item, idx) => (
