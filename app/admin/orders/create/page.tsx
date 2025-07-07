@@ -13,8 +13,11 @@ export default function CreateOrderPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  const fromChatName = searchParams.get("name")
+  const fromChat = searchParams.get("fromChat")
+
   const initialValues = {
-    customerName: searchParams.get("name") || "",
+    customerName: fromChatName || "",
     customerPhone: searchParams.get("phone") || "",
   }
 
@@ -76,7 +79,7 @@ export default function CreateOrderPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center space-x-4 mb-8">
+        <div className="flex items-center space-x-4 mb-2">
           <Link href="/admin/orders">
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
@@ -84,6 +87,9 @@ export default function CreateOrderPage() {
           </Link>
           <h1 className="text-3xl font-bold">สร้างคำสั่งซื้อ</h1>
         </div>
+        {fromChat && (
+          <p className="text-sm text-gray-500 mb-6">เปิดจากลูกค้า: {fromChatName}</p>
+        )}
         <OrderForm
           onSave={handleSave}
           initialValues={initialValues}

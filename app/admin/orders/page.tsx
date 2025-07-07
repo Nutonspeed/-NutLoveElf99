@@ -11,7 +11,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, ArrowLeft, Eye, FileText } from "lucide-react"
 import Link from "next/link"
 import { mockOrders, type Order } from "@/lib/mock-orders"
-import { orderStatusOptions, type OrderStatus } from "@/types/order"
+import type { OrderStatus } from "@/types/order"
+
+const statusOptions = [
+  { value: "all", label: "ทั้งหมด" },
+  { value: "pendingPayment", label: "รอชำระ" },
+  { value: "depositPaid", label: "มัดจำแล้ว" },
+  { value: "paid", label: "ชำระครบ" },
+  { value: "cancelled", label: "ยกเลิก" },
+]
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>(mockOrders)
@@ -101,8 +109,7 @@ export default function AdminOrdersPage() {
                     <SelectValue placeholder="สถานะ" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">ทั้งหมด</SelectItem>
-                    {orderStatusOptions.map((opt) => (
+                    {statusOptions.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.label}
                       </SelectItem>
