@@ -1,6 +1,5 @@
 "use client"
 
-import { use } from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Save } from "lucide-react"
@@ -12,8 +11,8 @@ import { mockOrders, type Order } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
 import { toast } from "sonner"
 
-export default function AdminOrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const orderIndex = mockOrders.findIndex((o) => o.id === id)
   const order = mockOrders[orderIndex]
 
