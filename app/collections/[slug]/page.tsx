@@ -1,7 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { Button } from "@/components/ui/button"
 import Image from "next/image"
-import Link from "next/link"
 import { notFound } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 
@@ -15,51 +15,43 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
       </div>
     )
   }
-  const { data: collection, error } = await supabase
+  const { data, error } = await supabase
     .from("collections")
-    .select(
-      `id, name, description, slug,
-      fabrics(id, slug, name, image_url, image_urls, size)`
-    )
+    .select("name, slug, price_range, description, all_images")
     .eq("slug", params.slug)
     .single()
-  if (error || !collection) {
+
+  if (error || !data) {
     notFound()
   }
 
-  const fabrics = (collection as any).fabrics || []
+  const images: string[] = (data as any).all_images || []
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex-1">
-        <h1 className="text-3xl font-bold mb-2">{collection.name}</h1>
-        {collection.description && (
-          <p className="text-gray-600 mb-8">{collection.description}</p>
+        <h1 className="text-3xl font-bold mb-2">{data.name}</h1>
+        {data.price_range && (
+          <p className="text-gray-700 mb-2">{data.price_range}</p>
         )}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {fabrics.map((fabric: any) => (
-            <Link
-              key={fabric.id}
-              href={`/fabrics/${fabric.slug}`}
-              className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
-            >
+        {data.description && (
+          <p className="text-gray-600 mb-8 whitespace-pre-line">{data.description}</p>
+        )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {images.slice(0, 12).map((img, idx) => (
+            <div key={idx} className="space-y-2">
               <div className="relative aspect-square">
-                <Image
-                  src={fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"}
-                  alt={fabric.name}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={img || "/placeholder.svg"} alt={`fabric ${idx + 1}`} fill className="object-cover" />
               </div>
-              <div className="p-3 md:p-4">
-                <h3 className="font-medium text-sm md:text-base line-clamp-2">
-                  {fabric.name}
-                </h3>
-                {fabric.size && (
-                  <p className="text-xs text-gray-600 mt-1">{fabric.size}</p>
-                )}
-              </div>
-            </Link>
+              <a
+                href={`https://m.me/nutsofacover?ref=${data.slug}-${idx + 1}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="sm" className="w-full">สนใจลายนี้ ส่งให้แอดมิน</Button>
+              </a>
+            </div>
           ))}
         </div>
       </div>

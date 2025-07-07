@@ -1,9 +1,13 @@
+import { supabase } from './supabase'
+
 export interface Collection {
   id: string
   name: string
   slug: string
+  price_range: string
+  thumbnail_images: string[]
+  all_images: string[]
   description: string
-  cover_image_url: string
 }
 
 export interface Fabric {
@@ -20,15 +24,33 @@ export const mockCollections: Collection[] = [
     id: '1',
     name: 'คอลเลกชันฤดูร้อน',
     slug: 'summer',
+    price_range: '฿100 - ฿300',
+    thumbnail_images: [
+      '/placeholder.svg?height=200&width=200',
+    ],
+    all_images: [
+      '/placeholder.svg?height=300&width=300',
+      '/placeholder.svg?height=300&width=300',
+      '/placeholder.svg?height=300&width=300',
+      '/placeholder.svg?height=300&width=300',
+    ],
     description: 'ลายผ้าสดใสเหมาะกับหน้าร้อน',
-    cover_image_url: '/placeholder.svg?height=300&width=300',
   },
   {
     id: '2',
     name: 'คอลเลกชันมินิมอล',
     slug: 'minimal',
+    price_range: '฿150 - ฿350',
+    thumbnail_images: [
+      '/placeholder.svg?height=200&width=200',
+    ],
+    all_images: [
+      '/placeholder.svg?height=300&width=300',
+      '/placeholder.svg?height=300&width=300',
+      '/placeholder.svg?height=300&width=300',
+      '/placeholder.svg?height=300&width=300',
+    ],
     description: 'ลายเรียบง่ายสไตล์มินิมอล',
-    cover_image_url: '/placeholder.svg?height=300&width=300',
   },
 ]
 
@@ -122,3 +144,18 @@ export const mockFabrics: Fabric[] = [
     price_max: 380,
   },
 ]
+
+export async function getCollections(): Promise<Collection[]> {
+  if (!supabase) {
+    return Promise.resolve(mockCollections)
+  }
+
+  const { data, error } = await supabase.from('collections').select('id, name, slug, price_range, thumbnail_images, all_images, description').order('created_at', { ascending: false })
+
+  if (error || !data) {
+    console.error('Supabase fetch collections error', error)
+    return mockCollections
+  }
+
+  return data as Collection[]
+}

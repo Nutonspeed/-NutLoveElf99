@@ -65,6 +65,7 @@ export function Navbar() {
   const navigation = [
     { name: "หน้าแรก", href: "/" },
     { name: "สินค้า", href: "/products" },
+    { name: "คอลเลกชัน", href: "/collections" },
     { name: "เกี่ยวกับเรา", href: "/about" },
     { name: "ติดต่อเรา", href: "/contact" },
   ]

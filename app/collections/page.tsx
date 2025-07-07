@@ -5,14 +5,9 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import Image from "next/image"
 import Link from "next/link"
-import { supabase } from "@/lib/supabase"
+import { getCollections } from "@/lib/mock-collections"
+import type { Collection } from "@/types/collection"
 
-interface Collection {
-  id: string
-  name: string
-  slug: string
-  cover_image_url: string | null
-}
 
 export default function CollectionsPage() {
   const [collections, setCollections] = useState<Collection[]>([])
@@ -21,20 +16,11 @@ export default function CollectionsPage() {
 
   useEffect(() => {
     const fetchCollections = async () => {
-      if (!supabase) {
-        setError("Supabase client not configured")
-        setLoading(false)
-        return
-      }
-
-      const { data, error } = await supabase
-        .from("collections")
-        .select("id, name, slug, cover_image_url")
-
-      if (error) {
+      try {
+        const data = await getCollections()
+        setCollections(data.slice(0))
+      } catch (err) {
         setError("ไม่สามารถโหลดข้อมูลคอลเลกชันได้")
-      } else {
-        setCollections(data || [])
       }
       setLoading(false)
     }
@@ -69,22 +55,22 @@ export default function CollectionsPage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {collections.map((collection: Collection) => (
               <Link
-                key={collection.id}
+                key={collection.slug}
                 href={`/collections/${collection.slug}`}
                 className="border rounded-lg overflow-hidden hover:shadow transition bg-white"
               >
-                <div className="relative w-full h-40 md:h-48">
-                  <Image
-                    src={collection.cover_image_url || "/placeholder.svg"}
-                    alt={collection.name}
-                    fill
-                    className="object-cover"
-                  />
+                <div className="grid grid-cols-2 gap-0 border-b">
+                  {collection.all_images.slice(0, 4).map((img, idx) => (
+                    <div key={idx} className="relative aspect-square">
+                      <Image src={img || "/placeholder.svg"} alt={collection.name} fill className="object-cover" />
+                    </div>
+                  ))}
                 </div>
                 <div className="p-3 md:p-4">
                   <h3 className="font-semibold text-sm md:text-base truncate">
                     {collection.name}
                   </h3>
+                  <p className="text-xs text-gray-600 mt-1">{collection.price_range}</p>
                 </div>
               </Link>
             ))}

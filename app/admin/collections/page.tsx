@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
-import type { Collection } from "@/lib/mock-collections"
+import type { Collection } from "@/types/collection"
 
 interface CollectionWithFabrics extends Collection {
   fabrics: { id: string; name: string }[]
@@ -29,7 +29,9 @@ export default function AdminCollectionsPage() {
       name: "",
       slug: "",
       description: "",
-      cover_image_url: "",
+      price_range: "",
+      thumbnail_images: [],
+      all_images: [],
       id: "",
     },
   })
@@ -39,7 +41,7 @@ export default function AdminCollectionsPage() {
       if (!supabase) return
       const { data: cols } = await supabase
         .from("collections")
-        .select("id, name, slug, description, cover_image_url")
+        .select("id, name, slug, description, price_range, thumbnail_images, all_images")
       if (!cols) return
       const { data: fabs } = await supabase
         .from("fabrics")
@@ -57,7 +59,7 @@ export default function AdminCollectionsPage() {
   }, [])
 
   const resetForm = () => {
-    form.reset({ id: "", name: "", slug: "", description: "", cover_image_url: "" })
+    form.reset({ id: "", name: "", slug: "", description: "", price_range: "", thumbnail_images: [], all_images: [] })
   }
 
   const handleSubmit = async (values: Collection) => {
@@ -69,7 +71,9 @@ export default function AdminCollectionsPage() {
           name: values.name,
           slug: values.slug,
           description: values.description,
-          cover_image_url: values.cover_image_url,
+          price_range: values.price_range,
+          thumbnail_images: values.thumbnail_images,
+          all_images: values.all_images,
         })
         .eq("id", editingCollection.id)
         .select()
@@ -86,7 +90,9 @@ export default function AdminCollectionsPage() {
           name: values.name,
           slug: values.slug,
           description: values.description,
-          cover_image_url: values.cover_image_url,
+          price_range: values.price_range,
+          thumbnail_images: values.thumbnail_images,
+          all_images: values.all_images,
         })
         .select()
         .single()
@@ -191,12 +197,42 @@ export default function AdminCollectionsPage() {
                     )}
                   />
                   <FormField
-                    name="cover_image_url"
+                    name="price_range"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>ลิงก์รูปปก</FormLabel>
+                        <FormLabel>ช่วงราคา</FormLabel>
                         <FormControl>
-                          <Input placeholder="URL รูปปก" {...field} />
+                          <Input placeholder="เช่น ฿100 - ฿300" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="thumbnail_images"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>รูปตัวอย่าง (คั่นด้วย comma)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="url1,url2"
+                            value={field.value.join(',')}
+                            onChange={(e) => field.onChange(e.target.value.split(','))}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    name="all_images"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>รูปทั้งหมด (คั่นด้วย comma)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="url1,url2" 
+                            value={field.value.join(',')}
+                            onChange={(e) => field.onChange(e.target.value.split(','))}
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -245,7 +281,7 @@ export default function AdminCollectionsPage() {
                   <TableRow key={collection.id}>
                     <TableCell>
                       <Image
-                        src={collection.cover_image_url || "/placeholder.svg"}
+                        src={collection.thumbnail_images[0] || "/placeholder.svg"}
                         alt={collection.name}
                         width={50}
                         height={50}
