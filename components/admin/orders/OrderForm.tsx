@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { OrderItemForm } from "@/components/order/order-item-form"
+import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import type { OrderItem } from "@/types/order"
 
 interface OrderFormProps {
@@ -89,7 +89,7 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
         </CardContent>
       </Card>
 
-      <OrderItemForm items={items} onItemsChange={setItems} />
+      <OrderItemsRepeater items={items} onItemsChange={setItems} />
 
       <Card>
         <CardHeader>

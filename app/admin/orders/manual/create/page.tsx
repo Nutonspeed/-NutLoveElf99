@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save, Send, X } from "lucide-react"
 import Link from "next/link"
-import { OrderItemForm } from "@/components/order/order-item-form"
+import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem, ManualOrder, OrderStatus } from "@/types/order"
 import { orderStatusOptions } from "@/types/order"
@@ -210,7 +210,7 @@ export default function CreateManualOrderPage() {
             </Card>
 
             {/* Order Items */}
-            <OrderItemForm items={items} onItemsChange={setItems} />
+            <OrderItemsRepeater items={items} onItemsChange={setItems} />
 
             {/* Order Settings */}
             <Card>
