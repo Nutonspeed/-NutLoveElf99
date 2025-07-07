@@ -80,8 +80,15 @@ export default function PublicBillPage({ params }: PublicBillPageProps) {
       postalCode: "",
       phone: order.customerPhone,
     },
+    delivery_method: "",
+    tracking_number: "",
+    shipping_fee: order.shippingCost,
+    shipping_status: "pending",
+    shipping_date: "",
+    delivery_note: "",
     depositPercent: 100,
     note: order.notes,
+    timeline: order.timeline,
   }
 
   const handlePrint = () => {

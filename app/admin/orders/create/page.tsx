@@ -87,6 +87,14 @@ export default function CreateOrderPage() {
       delivery_note: data.delivery_note,
       depositPercent: data.deposit,
       note: data.note,
+      timeline: [
+        {
+          timestamp: new Date().toISOString(),
+          status: "pendingPayment",
+          user: "admin@nutlove.co",
+          note: "Order created",
+        },
+      ],
     } as Order
 
     mockOrders.push(newOrder)
