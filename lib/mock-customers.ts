@@ -12,7 +12,9 @@ export interface Customer {
   createdAt: string
 }
 
-export const mockCustomers: Customer[] = [
+import { mockOrders } from "./mock-orders"
+
+const initialMockCustomers: Customer[] = [
   {
     id: "2",
     name: "John Doe",
@@ -69,7 +71,15 @@ export const mockCustomers: Customer[] = [
   },
 ]
 
-import { mockOrders } from "./mock-orders"
+export let mockCustomers: Customer[] = [...initialMockCustomers]
+
+export function resetMockCustomers() {
+  mockCustomers = []
+}
+
+export function regenerateMockCustomers() {
+  mockCustomers = initialMockCustomers.map((c) => ({ ...c }))
+}
 
 export interface CustomerStats {
   totalOrders: number
