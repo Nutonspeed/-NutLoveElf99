@@ -22,12 +22,13 @@ interface OrderFormProps {
     customerName?: string
     customerPhone?: string
   }
+  initialItems?: OrderItem[]
 }
 
-export default function OrderForm({ onSave, initialValues }: OrderFormProps) {
+export default function OrderForm({ onSave, initialValues, initialItems }: OrderFormProps) {
   const [customerName, setCustomerName] = useState(initialValues?.customerName ?? "")
   const [customerPhone, setCustomerPhone] = useState(initialValues?.customerPhone ?? "")
-  const [items, setItems] = useState<OrderItem[]>([])
+  const [items, setItems] = useState<OrderItem[]>(initialItems ?? [])
   const [deposit, setDeposit] = useState(0)
   const [discount, setDiscount] = useState(0)
   const [totalDue, setTotalDue] = useState(0)

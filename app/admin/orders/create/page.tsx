@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/button"
 import { mockOrders, type Order } from "@/lib/mock-orders"
+import { mockProducts } from "@/lib/mock-products"
+import type { OrderItem } from "@/types/order"
 
 export default function CreateOrderPage() {
   const router = useRouter()
@@ -15,6 +17,27 @@ export default function CreateOrderPage() {
     customerName: searchParams.get("name") || "",
     customerPhone: searchParams.get("phone") || "",
   }
+
+  const productParam = searchParams.get("products")
+  const initialItems: OrderItem[] = productParam
+    ? (productParam
+        .split(",")
+        .map((id) => {
+          const product = mockProducts.find((p) => p.id === id)
+          if (!product) return null
+          return {
+            id: `item-${id}-${Date.now()}`,
+            productName: product.name,
+            size: product.sizes?.[0] || "",
+            pattern: "",
+            color: product.colors?.[0] || "",
+            price: product.price,
+            quantity: 1,
+            image: product.images?.[0] || "",
+          } as OrderItem
+        })
+        .filter(Boolean) as OrderItem[])
+    : []
 
   const handleSave = (data: {
     customerName: string
@@ -61,7 +84,11 @@ export default function CreateOrderPage() {
           </Link>
           <h1 className="text-3xl font-bold">สร้างคำสั่งซื้อ</h1>
         </div>
-        <OrderForm onSave={handleSave} initialValues={initialValues} />
+        <OrderForm
+          onSave={handleSave}
+          initialValues={initialValues}
+          initialItems={initialItems}
+        />
       </div>
     </div>
   )
