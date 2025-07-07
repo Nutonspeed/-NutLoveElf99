@@ -12,6 +12,10 @@ import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { mockOrders } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
 
 export default function OrdersPage() {
   const { user, isAuthenticated } = useAuth()
@@ -29,35 +33,6 @@ export default function OrdersPage() {
 
   const userOrders = mockOrders.filter((order) => order.customerId === user?.id)
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
-    switch (status) {
-      case "paid":
-        return "default"
-      case "depositPaid":
-        return "secondary"
-      case "pendingPayment":
-        return "outline"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case "pendingPayment":
-        return "รอชำระเงิน"
-      case "depositPaid":
-        return "มัดจำแล้ว"
-      case "paid":
-        return "ชำระแล้ว"
-      case "cancelled":
-        return "ยกเลิก"
-      default:
-        return status
-    }
-  }
 
   return (
     <div className="min-h-screen">
@@ -92,7 +67,9 @@ export default function OrdersPage() {
                         สั่งซื้อเมื่อ {new Date(order.createdAt).toLocaleDateString("th-TH")}
                       </p>
                     </div>
-                    <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                    <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                      {getOrderStatusText(order.status)}
+                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent>

@@ -9,6 +9,10 @@ import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from 
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -30,35 +34,6 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
     )
   }
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
-    switch (status) {
-      case "paid":
-        return "default"
-      case "depositPaid":
-        return "secondary"
-      case "pendingPayment":
-        return "outline"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case "pendingPayment":
-        return "รอชำระเงิน"
-      case "depositPaid":
-        return "มัดจำแล้ว"
-      case "paid":
-        return "ชำระแล้ว"
-      case "cancelled":
-        return "ยกเลิก"
-      default:
-        return status
-    }
-  }
 
   const orderSteps = [
     { status: "pendingPayment", label: "รอชำระเงิน", icon: Package },
@@ -94,7 +69,9 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>สถานะคำสั่งซื้อ</CardTitle>
-                  <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                  <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                    {getOrderStatusText(order.status)}
+                  </Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -233,7 +210,9 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 </div>
                 <div className="flex justify-between">
                   <span>สถานะ:</span>
-                  <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                  <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                    {getOrderStatusText(order.status)}
+                  </Badge>
                 </div>
                 <div className="flex justify-between">
                   <span>จำนวนสินค้า:</span>
