@@ -33,7 +33,7 @@ export default function ComparePage() {
     try {
       const loadedProducts = []
       for (const id of productIds) {
-        const product = await db.getProduct(id)
+        const product = await db.getProductById(id)
         if (product) {
           loadedProducts.push(product)
         }
