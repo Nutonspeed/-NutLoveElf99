@@ -37,3 +37,7 @@ Real data is fetched from Supabase when the following variables are provided:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – the project's anon key
 
 If these variables are absent, the app falls back to built-in mock data.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
