@@ -29,7 +29,7 @@ export interface Order {
 
 import { supabase } from "./supabase"
 
-export const mockOrders: Order[] = [
+const initialMockOrders: Order[] = [
   {
     id: "ORD-001",
     customerId: "2",
@@ -86,6 +86,19 @@ export const mockOrders: Order[] = [
     },
   },
 ]
+
+export let mockOrders: Order[] = [...initialMockOrders]
+
+export function resetMockOrders() {
+  mockOrders = []
+}
+
+export function regenerateMockOrders() {
+  mockOrders = initialMockOrders.map((o) => ({
+    ...o,
+    items: o.items.map((i) => ({ ...i })),
+  }))
+}
 
 export async function fetchOrders(): Promise<Order[]> {
   if (!supabase) {
