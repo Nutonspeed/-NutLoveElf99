@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Save } from "lucide-react"
+import { ArrowLeft, Save, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -49,10 +49,16 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           </CardHeader>
           <CardContent className="space-y-4">
             <OrderStatusDropdown status={status} onChange={setStatus} />
-            <Button onClick={handleSave} className="mt-2">
-              <Save className="mr-2 h-4 w-4" />
-              บันทึก
-            </Button>
+            <div className="flex space-x-2 mt-2">
+              <Button onClick={handleSave}>
+                <Save className="mr-2 h-4 w-4" />
+                บันทึก
+              </Button>
+              <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
+                <Share2 className="mr-2 h-4 w-4" />
+                แชร์บิล
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
