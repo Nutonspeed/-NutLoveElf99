@@ -53,6 +53,45 @@ export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
   { value: "archived", label: "เก็บถาวร" },
 ]
 
+export interface Order {
+  id: string
+  customerId: string
+  customerName: string
+  customerEmail: string
+  items: Array<{
+    productId: string
+    productName: string
+    quantity: number
+    price: number
+    size?: string
+    color?: string
+  }>
+  total: number
+  status: OrderStatus
+  depositPercent?: number
+  note?: string
+  createdAt: string
+  shippingAddress: {
+    name: string
+    address: string
+    city: string
+    postalCode: string
+    phone: string
+  }
+  delivery_method: string
+  tracking_number: string
+  shipping_fee: number
+  shipping_status: ShippingStatus
+  shipping_date: string
+  delivery_note: string
+  timeline: Array<{
+    timestamp: string
+    status: OrderStatus
+    note?: string
+    user: string
+  }>
+}
+
 export interface ManualOrder {
   id: string
   orderNumber: string

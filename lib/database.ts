@@ -35,31 +35,7 @@ export interface Product {
   updatedAt: string
 }
 
-import type { OrderStatus } from "@/types/order"
-
-export interface Order {
-  id: string
-  customerId: string
-  items: Array<{
-    productId: string
-    productName: string
-    quantity: number
-    price: number
-    image: string
-  }>
-  total: number
-  status: OrderStatus
-  shippingAddress: {
-    name: string
-    address: string
-    city: string
-    postalCode: string
-    phone: string
-  }
-  paymentMethod: string
-  createdAt: string
-  updatedAt: string
-}
+import type { OrderStatus, Order } from "@/types/order"
 
 export interface ChatMessage {
   id: string

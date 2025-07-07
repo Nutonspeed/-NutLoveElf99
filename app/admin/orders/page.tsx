@@ -10,7 +10,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
-import { mockOrders, type Order } from "@/lib/mock-orders"
+import { mockOrders } from "@/lib/mock-orders"
+import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
 
 const statusOptions = [
