@@ -1,4 +1,4 @@
-import type { OrderStatus } from "@/types/order"
+import type { OrderStatus, ShippingStatus } from "@/types/order"
 
 export interface Order {
   id: string
@@ -25,6 +25,9 @@ export interface Order {
     postalCode: string
     phone: string
   }
+  shippingStatus: ShippingStatus
+  shippingProvider: string
+  trackingNumber: string
 }
 
 import { supabase } from "./supabase"
@@ -57,6 +60,9 @@ const initialMockOrders: Order[] = [
       postalCode: "10110",
       phone: "081-234-5678",
     },
+    shippingStatus: "pending",
+    shippingProvider: "TH Post",
+    trackingNumber: "TH1234567890",
   },
   {
     id: "ORD-002",
@@ -84,6 +90,9 @@ const initialMockOrders: Order[] = [
       postalCode: "10400",
       phone: "082-345-6789",
     },
+    shippingStatus: "shipped",
+    shippingProvider: "TH Post",
+    trackingNumber: "TH0987654321",
   },
 ]
 

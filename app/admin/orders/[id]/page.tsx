@@ -112,6 +112,17 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>สถานะการจัดส่ง</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1">
+            <p>บริษัทขนส่ง: {order.shippingProvider || "-"}</p>
+            <p>เลขติดตามพัสดุ: {order.trackingNumber || "-"}</p>
+            <p>สถานะ: {order.shippingStatus}</p>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

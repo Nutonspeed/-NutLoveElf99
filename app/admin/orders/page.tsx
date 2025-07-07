@@ -128,6 +128,7 @@ export default function AdminOrdersPage() {
                   <TableHead>วันที่สั่งซื้อ</TableHead>
                   <TableHead>ยอดรวม</TableHead>
                   <TableHead>สถานะ</TableHead>
+                  <TableHead>สถานะจัดส่ง</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
                 </TableRow>
               </TableHeader>
@@ -148,23 +149,24 @@ export default function AdminOrdersPage() {
                       <p className="font-semibold">฿{order.total.toLocaleString()}</p>
                     </TableCell>
                     <TableCell>
-                      <Select
-                        value={order.status}
-                        onValueChange={(value) => updateOrderStatus(order.id, value as OrderStatus)}
-                      >
-                        <SelectTrigger className="w-32">
-                          <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {orderStatusOptions.map((opt) => (
-                            <SelectItem key={opt.value} value={opt.value}>
-                              {opt.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell className="text-right">
+                    <Select
+                      value={order.status}
+                      onValueChange={(value) => updateOrderStatus(order.id, value as OrderStatus)}
+                    >
+                      <SelectTrigger className="w-32">
+                        <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {orderStatusOptions.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>{order.shippingStatus}</TableCell>
+                  <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Dialog>
                           <DialogTrigger asChild>
@@ -195,7 +197,7 @@ export default function AdminOrdersPage() {
                                 </div>
 
                                 {/* Shipping Address */}
-                                <div>
+                               <div>
                                   <h4 className="font-semibold mb-2">ที่อยู่จัดส่ง</h4>
                                   <div className="bg-gray-50 p-4 rounded-lg">
                                     <p>{selectedOrder.shippingAddress.name}</p>
@@ -203,6 +205,11 @@ export default function AdminOrdersPage() {
                                     <p>
                                       {selectedOrder.shippingAddress.city} {selectedOrder.shippingAddress.postalCode}
                                     </p>
+                                  </div>
+                                  <div className="mt-2 text-sm space-y-1">
+                                    <p>บริษัทขนส่ง: {selectedOrder.shippingProvider || "-"}</p>
+                                    <p>เลขติดตาม: {selectedOrder.trackingNumber || "-"}</p>
+                                    <p>สถานะ: {selectedOrder.shippingStatus}</p>
                                   </div>
                                 </div>
 

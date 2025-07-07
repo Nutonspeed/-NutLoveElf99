@@ -3,9 +3,17 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
-import type { OrderItem } from "@/types/order"
+import type { OrderItem, ShippingStatus } from "@/types/order"
+import { shippingStatusOptions } from "@/types/order"
 
 interface OrderFormProps {
   onSave: (data: {
@@ -17,10 +25,16 @@ interface OrderFormProps {
     total: number
     totalDue: number
     note: string
+    shippingStatus: ShippingStatus
+    shippingProvider: string
+    trackingNumber: string
   }) => void
   initialValues?: {
     customerName?: string
     customerPhone?: string
+    shippingStatus?: ShippingStatus
+    shippingProvider?: string
+    trackingNumber?: string
   }
   initialItems?: OrderItem[]
 }
@@ -33,6 +47,15 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
   const [discount, setDiscount] = useState(0)
   const [totalDue, setTotalDue] = useState(0)
   const [note, setNote] = useState("")
+  const [shippingStatus, setShippingStatus] = useState<ShippingStatus>(
+    initialValues?.shippingStatus ?? "pending",
+  )
+  const [shippingProvider, setShippingProvider] = useState(
+    initialValues?.shippingProvider ?? "",
+  )
+  const [trackingNumber, setTrackingNumber] = useState(
+    initialValues?.trackingNumber ?? "",
+  )
 
   const subtotal = useMemo(
     () =>
@@ -63,6 +86,9 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
       total,
       totalDue,
       note,
+      shippingStatus,
+      shippingProvider,
+      trackingNumber,
     })
   }
 
@@ -95,6 +121,45 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
       </Card>
 
       <OrderItemsRepeater items={items} onItemsChange={setItems} />
+
+      <Card>
+        <CardHeader>
+          <CardTitle>ข้อมูลการจัดส่ง</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="shippingProvider">บริษัทขนส่ง</Label>
+            <Input
+              id="shippingProvider"
+              value={shippingProvider}
+              onChange={(e) => setShippingProvider(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="trackingNumber">เลขติดตามพัสดุ</Label>
+            <Input
+              id="trackingNumber"
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="shippingStatus">สถานะจัดส่ง</Label>
+            <Select value={shippingStatus} onValueChange={(v) => setShippingStatus(v as ShippingStatus)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="เลือกสถานะ" />
+              </SelectTrigger>
+              <SelectContent>
+                {shippingStatusOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>

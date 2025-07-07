@@ -26,6 +26,14 @@ export type OrderStatus =
   | "completed"
   | "archived"
 
+export type ShippingStatus = "pending" | "shipped" | "delivered"
+
+export const shippingStatusOptions: { value: ShippingStatus; label: string }[] = [
+  { value: "pending", label: "รอจัดส่ง" },
+  { value: "shipped", label: "จัดส่งแล้ว" },
+  { value: "delivered", label: "ส่งมอบแล้ว" },
+]
+
 export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
   { value: "draft", label: "ร่าง" },
   { value: "pending", label: "รอยืนยัน" },

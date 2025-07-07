@@ -115,6 +115,17 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>ออเดอร์ที่ยังไม่จัดส่ง</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <OrderTable
+              orders={mockOrders.filter((o) => o.shippingStatus !== "delivered").slice(0, 5)}
+            />
+          </CardContent>
+        </Card>
+
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
