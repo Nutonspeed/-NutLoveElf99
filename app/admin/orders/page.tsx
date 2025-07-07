@@ -165,7 +165,7 @@ export default function AdminOrdersPage() {
                       </SelectContent>
                     </Select>
                   </TableCell>
-                  <TableCell>{order.shippingStatus}</TableCell>
+                  <TableCell>{order.shipping_status}</TableCell>
                   <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Dialog>
@@ -207,9 +207,17 @@ export default function AdminOrdersPage() {
                                     </p>
                                   </div>
                                   <div className="mt-2 text-sm space-y-1">
-                                    <p>บริษัทขนส่ง: {selectedOrder.shippingProvider || "-"}</p>
-                                    <p>เลขติดตาม: {selectedOrder.trackingNumber || "-"}</p>
-                                    <p>สถานะ: {selectedOrder.shippingStatus}</p>
+                                    <p>วิธีจัดส่ง: {selectedOrder.delivery_method || "-"}</p>
+                                    <p>เลขติดตาม: {selectedOrder.tracking_number || "-"}</p>
+                                    <p>ค่าจัดส่ง: ฿{selectedOrder.shipping_fee.toLocaleString()}</p>
+                                    <p>สถานะ: {selectedOrder.shipping_status}</p>
+                                    <p>
+                                      วันที่จัดส่ง:{" "}
+                                      {selectedOrder.shipping_date
+                                        ? new Date(selectedOrder.shipping_date).toLocaleDateString("th-TH")
+                                        : "-"}
+                                    </p>
+                                    <p>หมายเหตุ: {selectedOrder.delivery_note || "-"}</p>
                                   </div>
                                 </div>
 

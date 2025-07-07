@@ -121,7 +121,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <OrderTable
-              orders={mockOrders.filter((o) => o.shippingStatus !== "delivered").slice(0, 5)}
+              orders={mockOrders.filter((o) => o.shipping_status !== "delivered").slice(0, 5)}
             />
           </CardContent>
         </Card>

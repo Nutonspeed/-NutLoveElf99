@@ -24,9 +24,12 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
   const initialValues = {
     customerName: order.customerName,
     customerPhone: order.shippingAddress.phone,
-    shippingStatus: order.shippingStatus,
-    shippingProvider: order.shippingProvider,
-    trackingNumber: order.trackingNumber,
+    shipping_status: order.shipping_status,
+    delivery_method: order.delivery_method,
+    tracking_number: order.tracking_number,
+    shipping_fee: order.shipping_fee,
+    shipping_date: order.shipping_date,
+    delivery_note: order.delivery_note,
   }
 
   const initialItems: OrderItem[] = order.items.map((item, idx) => ({
@@ -49,9 +52,12 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
     total: number
     totalDue: number
     note: string
-    shippingStatus: ShippingStatus
-    shippingProvider: string
-    trackingNumber: string
+    shipping_status: ShippingStatus
+    delivery_method: string
+    tracking_number: string
+    shipping_fee: number
+    shipping_date: string
+    delivery_note: string
   }) => {
     const updated: Order = {
       ...order,
@@ -72,9 +78,12 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
         name: data.customerName,
         phone: data.customerPhone,
       },
-      shippingStatus: data.shippingStatus,
-      shippingProvider: data.shippingProvider,
-      trackingNumber: data.trackingNumber,
+      shipping_status: data.shipping_status,
+      delivery_method: data.delivery_method,
+      tracking_number: data.tracking_number,
+      shipping_fee: data.shipping_fee,
+      shipping_date: data.shipping_date,
+      delivery_note: data.delivery_note,
     }
     mockOrders[orderIndex] = updated
     router.push(`/admin/orders/${order.id}`)
