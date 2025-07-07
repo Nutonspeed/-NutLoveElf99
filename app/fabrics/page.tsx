@@ -4,6 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
+import { getFabrics } from "@/lib/mock-fabrics"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 
 export const metadata: Metadata = {
@@ -20,29 +21,27 @@ interface Fabric {
 }
 
 export default async function FabricsPage() {
+  let fabrics: Fabric[] | null = null
+
   if (!supabase) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">Supabase client not configured</div>
-        <Footer />
-      </div>
-    )
+    fabrics = await getFabrics()
+  } else {
+    const { data, error } = await supabase
+      .from("fabrics")
+      .select("id, slug, name, image_url, image_urls")
+
+    if (error || !data) {
+      return (
+        <div className="min-h-screen">
+          <Navbar />
+          <div className="container mx-auto px-4 py-8 text-red-500">ไม่สามารถโหลดข้อมูลผ้าได้</div>
+          <Footer />
+        </div>
+      )
+    }
+    fabrics = data
   }
 
-  const { data: fabrics, error } = await supabase
-    .from("fabrics")
-    .select("id, slug, name, image_url, image_urls")
-
-  if (error || !fabrics) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">ไม่สามารถโหลดข้อมูลผ้าได้</div>
-        <Footer />
-      </div>
-    )
-  }
 
   return (
     <div className="min-h-screen">
