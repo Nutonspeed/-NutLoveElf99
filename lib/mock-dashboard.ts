@@ -1,7 +1,8 @@
 import { mockOrders } from "./mock-orders"
 import { mockProducts } from "./mock-products"
 import { mockCustomers } from "./mock-customers"
-export type { AnalyticsData } from "@/types/analytics"
+import type { AnalyticsData } from "@/types/analytics"
+export type { AnalyticsData }
 
 export interface DashboardStats {
   totalOrders: number
