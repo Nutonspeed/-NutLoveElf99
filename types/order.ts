@@ -10,6 +10,35 @@ export interface OrderItem {
   image?: string
 }
 
+export type OrderStatus =
+  | "draft"
+  | "pending"
+  | "confirmed"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled"
+  | "pendingPayment"
+  | "depositPaid"
+  | "paid"
+  | "completed"
+  | "archived"
+
+export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
+  { value: "draft", label: "ร่าง" },
+  { value: "pending", label: "รอยืนยัน" },
+  { value: "confirmed", label: "ยืนยันแล้ว" },
+  { value: "processing", label: "กำลังดำเนินการ" },
+  { value: "shipped", label: "จัดส่งแล้ว" },
+  { value: "delivered", label: "ส่งมอบแล้ว" },
+  { value: "cancelled", label: "ยกเลิก" },
+  { value: "pendingPayment", label: "รอชำระเงิน" },
+  { value: "depositPaid", label: "มัดจำแล้ว" },
+  { value: "paid", label: "ชำระแล้ว" },
+  { value: "completed", label: "เสร็จสิ้น" },
+  { value: "archived", label: "เก็บถาวร" },
+]
+
 export interface ManualOrder {
   id: string
   orderNumber: string
@@ -23,7 +52,7 @@ export interface ManualOrder {
   shippingCost: number
   tax: number
   total: number
-  status: "draft" | "pending" | "confirmed" | "processing" | "shipped" | "delivered" | "cancelled"
+  status: OrderStatus
   paymentStatus: "unpaid" | "partial" | "paid" | "refunded"
   notes?: string
   attachments: string[]

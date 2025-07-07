@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
+import type { OrderStatus } from "@/types/order"
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -31,7 +32,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     )
   }
 
-  const getStatusBadgeVariant = (status: string) => {
+  const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "paid":
         return "default"
@@ -46,7 +47,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     }
   }
 
-  const getStatusText = (status: string) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case "pendingPayment":
         return "รอชำระเงิน"

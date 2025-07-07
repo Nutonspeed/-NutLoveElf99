@@ -12,7 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Search, ArrowLeft, Plus, Eye, Edit, Trash2, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
-import type { ManualOrder } from "@/types/order"
+import type { ManualOrder, OrderStatus } from "@/types/order"
+import { orderStatusOptions } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
 import { toast } from "sonner"
 
@@ -73,7 +74,7 @@ export default function ManualOrdersPage() {
     return matchesSearch && matchesStatus
   })
 
-  const getStatusBadgeVariant = (status: ManualOrder["status"]) => {
+  const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "delivered":
         return "default"
@@ -94,7 +95,7 @@ export default function ManualOrdersPage() {
     }
   }
 
-  const getStatusText = (status: ManualOrder["status"]) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case "draft":
         return "ร่าง"
@@ -192,13 +193,11 @@ export default function ManualOrdersPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">ทั้งหมด</SelectItem>
-                    <SelectItem value="draft">ร่าง</SelectItem>
-                    <SelectItem value="pending">รอยืนยัน</SelectItem>
-                    <SelectItem value="confirmed">ยืนยันแล้ว</SelectItem>
-                    <SelectItem value="processing">กำลังดำเนินการ</SelectItem>
-                    <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
-                    <SelectItem value="delivered">ส่งมอบแล้ว</SelectItem>
-                    <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                    {orderStatusOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

@@ -16,7 +16,8 @@ import { ArrowLeft, Save, Copy, ExternalLink, X } from "lucide-react"
 import Link from "next/link"
 import { OrderItemForm } from "@/components/order/order-item-form"
 import { OrderSummary } from "@/components/order/order-summary"
-import type { OrderItem, ManualOrder } from "@/types/order"
+import type { OrderItem, ManualOrder, OrderStatus } from "@/types/order"
+import { orderStatusOptions } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
 import { toast } from "sonner"
 
@@ -167,7 +168,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
     }
   }
 
-  const getStatusBadgeVariant = (status: ManualOrder["status"]) => {
+  const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "delivered":
         return "default"
@@ -188,7 +189,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
     }
   }
 
-  const getStatusText = (status: ManualOrder["status"]) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case "draft":
         return "ร่าง"
@@ -338,18 +339,19 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="status">สถานะออเดอร์</Label>
-                    <Select value={status} onValueChange={(value: ManualOrder["status"]) => setStatus(value)}>
+                    <Select
+                      value={status}
+                      onValueChange={(value: OrderStatus) => setStatus(value)}
+                    >
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="draft">ร่าง</SelectItem>
-                        <SelectItem value="pending">รอยืนยัน</SelectItem>
-                        <SelectItem value="confirmed">ยืนยันแล้ว</SelectItem>
-                        <SelectItem value="processing">กำลังดำเนินการ</SelectItem>
-                        <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
-                        <SelectItem value="delivered">ส่งมอบแล้ว</SelectItem>
-                        <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                        {orderStatusOptions.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
