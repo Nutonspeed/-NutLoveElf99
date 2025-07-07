@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { OrderItemForm } from "@/components/order/order-item-form"
+import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem } from "@/types/order"
 import { supabase } from "@/lib/supabase"
@@ -74,7 +74,7 @@ export default function NewOrderPage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex-1 space-y-6">
         <h1 className="text-3xl font-bold mb-4">สร้างบิลใหม่</h1>
-        <OrderItemForm items={items} onItemsChange={setItems} />
+        <OrderItemsRepeater items={items} onItemsChange={setItems} />
         <OrderSummary
           items={items}
           discount={discount}

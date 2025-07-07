@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Save, Copy, ExternalLink, X } from "lucide-react"
 import Link from "next/link"
-import { OrderItemForm } from "@/components/order/order-item-form"
+import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem, ManualOrder, OrderStatus } from "@/types/order"
 import { orderStatusOptions } from "@/types/order"
@@ -328,7 +328,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
             </Card>
 
             {/* Order Items */}
-            <OrderItemForm items={items} onItemsChange={setItems} />
+            <OrderItemsRepeater items={items} onItemsChange={setItems} />
 
             {/* Order Settings */}
             <Card>
