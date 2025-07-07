@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Mail, Phone } from "lucide-react"
+import { getProductsForChat } from "@/lib/mock-chat-products"
 import { useRouter } from "next/navigation"
 import type { User as Customer } from "@/lib/database"
 
@@ -60,13 +61,17 @@ export default function CustomerProfile({ customer }: CustomerProfileProps) {
         <div>
           <Button
             className="w-full"
-            onClick={() =>
+            onClick={() => {
+              const products = getProductsForChat(customer.id)
+              const productQuery = products.length
+                ? `&products=${products.join(",")}`
+                : ""
               router.push(
                 `/admin/orders/create?fromChat=${customer.id}&name=${encodeURIComponent(
                   customer.name,
-                )}&phone=${encodeURIComponent(customer.phone || "")}`,
+                )}&phone=${encodeURIComponent(customer.phone || "")}${productQuery}`,
               )
-            }
+            }}
           >
             เปิดบิลจากแชทนี้
           </Button>
