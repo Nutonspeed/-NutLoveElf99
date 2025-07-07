@@ -10,10 +10,25 @@ import { Separator } from "@/components/ui/separator"
 import { Copy, Gift, Percent, Truck, Calendar, Check } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { db } from "@/lib/database"
+
+interface Coupon {
+  id: string
+  code: string
+  title: string
+  description: string
+  discount: number
+  type: "percentage" | "fixed"
+  minOrder?: number
+  maxDiscount?: number
+  active: boolean
+  expiryDate: string
+  usageLimit?: number | null
+  usedCount: number
+}
 import { DevelopmentNotice } from "@/components/development-notice"
 
 export default function CouponsPage() {
-  const [coupons, setCoupons] = useState<any[]>([])
+  const [coupons, setCoupons] = useState<Coupon[]>([])
   const [loading, setLoading] = useState(true)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
   const [showNotice, setShowNotice] = useState(true)
@@ -90,7 +105,7 @@ export default function CouponsPage() {
     setTimeout(() => setCopiedCode(null), 2000)
   }
 
-  const getDiscountText = (coupon: any) => {
+  const getDiscountText = (coupon: Coupon) => {
     if (coupon.type === "percentage") {
       return `ลด ${(coupon.discount * 100).toFixed(0)}%`
     } else {
@@ -98,7 +113,7 @@ export default function CouponsPage() {
     }
   }
 
-  const getIcon = (coupon: any) => {
+  const getIcon = (coupon: Coupon) => {
     if (coupon.code.includes("SHIP")) return Truck
     if (coupon.type === "percentage") return Percent
     return Gift
