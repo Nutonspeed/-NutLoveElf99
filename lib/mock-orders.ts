@@ -1,4 +1,4 @@
-import type { OrderStatus, ShippingStatus } from "@/types/order"
+import type { OrderStatus, ShippingStatus, OrderTimelineEntry } from "@/types/order"
 
 export interface Order {
   id: string
@@ -37,6 +37,7 @@ export interface Order {
   shipping_date: string
   /** หมายเหตุการจัดส่งเพิ่มเติม */
   delivery_note: string
+  timeline?: OrderTimelineEntry[]
 }
 
 import { supabase } from "./supabase"
@@ -75,6 +76,10 @@ const initialMockOrders: Order[] = [
     shipping_status: "pending",
     shipping_date: "2024-01-16T10:30:00Z",
     delivery_note: "-",
+    timeline: [
+      { status: "pendingPayment", date: "2024-01-14T10:00:00Z", admin: "admin" },
+      { status: "depositPaid", date: "2024-01-15T09:00:00Z", admin: "admin", note: "รับมัดจำ" },
+    ],
   },
   {
     id: "ORD-002",
@@ -108,6 +113,10 @@ const initialMockOrders: Order[] = [
     shipping_status: "shipped",
     shipping_date: "2024-01-15T08:00:00Z",
     delivery_note: "ส่งตามเวลาทำการ",
+    timeline: [
+      { status: "pendingPayment", date: "2024-01-13T14:00:00Z", admin: "admin" },
+      { status: "paid", date: "2024-01-14T14:20:00Z", admin: "admin", note: "ชำระเต็ม" },
+    ],
   },
 ]
 

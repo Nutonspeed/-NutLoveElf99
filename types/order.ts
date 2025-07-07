@@ -53,6 +53,13 @@ export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
   { value: "archived", label: "เก็บถาวร" },
 ]
 
+export interface OrderTimelineEntry {
+  status: OrderStatus
+  date: string
+  note?: string
+  admin?: string
+}
+
 export interface ManualOrder {
   id: string
   orderNumber: string
@@ -74,6 +81,7 @@ export interface ManualOrder {
   createdAt: string
   updatedAt: string
   createdBy: string
+  timeline?: OrderTimelineEntry[]
 }
 
 export interface OrderFormData {

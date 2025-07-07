@@ -6,6 +6,8 @@ import { ArrowLeft, Save, Share2, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
+import { Textarea } from "@/components/ui/textarea"
+import OrderTimeline from "@/components/order/OrderTimeline"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { mockOrders, type Order } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
@@ -17,6 +19,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const order = mockOrders[orderIndex]
 
   const [status, setStatus] = useState<OrderStatus>(order?.status ?? "pendingPayment")
+  const [note, setNote] = useState("")
 
   if (!order) {
     return (
@@ -28,6 +31,17 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
 
   const handleSave = () => {
     mockOrders[orderIndex].status = status
+    const entry = {
+      status,
+      date: new Date().toISOString(),
+      admin: "admin",
+      note: note.trim() || undefined,
+    }
+    mockOrders[orderIndex].timeline = [
+      ...(mockOrders[orderIndex].timeline || []),
+      entry,
+    ]
+    setNote("")
     toast.success("บันทึกสถานะแล้ว")
   }
 
@@ -49,6 +63,11 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           </CardHeader>
           <CardContent className="space-y-4">
             <OrderStatusDropdown status={status} onChange={setStatus} />
+            <Textarea
+              placeholder="หมายเหตุ (ไม่บังคับ)"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+            />
             <div className="flex space-x-2 mt-2">
               <Button onClick={handleSave}>
                 <Save className="mr-2 h-4 w-4" />
@@ -67,6 +86,10 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             </div>
           </CardContent>
         </Card>
+
+        {order.timeline && (
+          <OrderTimeline timeline={order.timeline} />
+        )}
 
         <Card>
           <CardHeader>

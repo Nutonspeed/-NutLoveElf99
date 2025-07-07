@@ -119,7 +119,7 @@ export default function ManualOrdersPage() {
   const copyPublicLink = (publicLink: string) => {
     const url =
       typeof window !== "undefined"
-        ? `${window.location.origin}/order/${publicLink}`
+        ? `${window.location.origin}/order/public/${publicLink}`
         : ""
     if (url) {
       navigator.clipboard.writeText(url)
@@ -130,7 +130,7 @@ export default function ManualOrdersPage() {
   const openPublicLink = (publicLink: string) => {
     const url =
       typeof window !== "undefined"
-        ? `${window.location.origin}/order/${publicLink}`
+        ? `${window.location.origin}/order/public/${publicLink}`
         : ""
     if (url && typeof window !== "undefined") {
       window.open(url, "_blank")

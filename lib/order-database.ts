@@ -49,6 +49,11 @@ const manualOrders: ManualOrder[] = [
     createdAt: "2024-01-15T10:30:00Z",
     updatedAt: "2024-01-15T14:20:00Z",
     createdBy: "admin",
+    timeline: [
+      { status: "confirmed", date: "2024-01-15T10:30:00Z", admin: "admin", note: "สร้างออเดอร์" },
+      { status: "processing", date: "2024-01-15T12:00:00Z", admin: "admin" },
+      { status: "delivered", date: "2024-01-16T10:00:00Z", admin: "admin" },
+    ],
   },
   {
     id: "mo-002",
@@ -83,6 +88,10 @@ const manualOrders: ManualOrder[] = [
     createdAt: "2024-01-16T09:15:00Z",
     updatedAt: "2024-01-16T11:45:00Z",
     createdBy: "admin",
+    timeline: [
+      { status: "confirmed", date: "2024-01-16T09:15:00Z", admin: "admin", note: "สร้างออเดอร์" },
+      { status: "processing", date: "2024-01-16T10:00:00Z", admin: "admin" },
+    ],
   },
 ]
 

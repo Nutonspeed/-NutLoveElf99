@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { CheckCircle, Clock, Package, Truck, MapPin, Phone, Mail, Calendar } from "lucide-react"
+import OrderTimeline from "@/components/order/OrderTimeline"
 import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
 
 interface PublicOrderPageProps {
   params: {
-    publicLink: string
+    id: string
   }
 }
 
@@ -21,11 +22,11 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
 
   useEffect(() => {
     loadOrder()
-  }, [params.publicLink])
+  }, [params.id])
 
   const loadOrder = async () => {
     try {
-      const orderData = await orderDb.getManualOrderByPublicLink(params.publicLink)
+      const orderData = await orderDb.getManualOrderByPublicLink(params.id)
       if (!orderData) {
         setError("ไม่พบออเดอร์ที่ระบุ")
         return
@@ -214,6 +215,11 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
                     )
                   })}
                 </div>
+              </div>
+            )}
+            {order.timeline && order.timeline.length > 0 && (
+              <div className="mt-6">
+                <OrderTimeline timeline={order.timeline} showAdmin={false} />
               </div>
             )}
           </CardContent>
