@@ -39,3 +39,13 @@ export async function prepareFabricImage(
   const blob = await resizeAndCompressImage(file)
   return new File([blob], fileName, { type: blob.type || 'image/jpeg' })
 }
+
+export async function prepareProductImage(
+  file: File,
+  productSlug: string,
+  index = 1,
+): Promise<File> {
+  const fileName = `product-${productSlug}-${String(index).padStart(2, '0')}.jpg`
+  const blob = await resizeAndCompressImage(file)
+  return new File([blob], fileName, { type: blob.type || 'image/jpeg' })
+}

@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, X } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
+import { prepareProductImage } from "@/lib/image-handler"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -24,7 +25,18 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
   const [category, setCategory] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageUrls, setImageUrls] = useState<string[]>([])
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+
+  const removeExistingImage = (index: number) => {
+    setImageUrls(imageUrls.filter((_, i) => i !== index))
+  }
+
+  const removeNewImage = (index: number) => {
+    setImageFiles(imageFiles.filter((_, i) => i !== index))
+    setPreviewUrls(previewUrls.filter((_, i) => i !== index))
+  }
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -53,7 +65,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         setDescription(data.description || "")
         setPrice(data.price?.toString() || "")
         setCategory(data.category || "")
-        setImageUrl(Array.isArray(data.images) ? data.images[0] || "" : "")
+        setImageUrls(Array.isArray(data.images) ? data.images : [])
       }
       setLoading(false)
     }
@@ -72,6 +84,31 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     e.preventDefault()
     if (!supabase) return
 
+    const slug = name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")
+
+    const uploaded: string[] = [...imageUrls]
+
+    for (const [idx, file] of imageFiles.entries()) {
+      const processed = await prepareProductImage(file, slug, uploaded.length + idx + 1)
+      const fileName = processed.name
+      const { error } = await supabase.storage
+        .from("product-images")
+        .upload(fileName, processed)
+      if (error) {
+        console.error("Failed to upload image", error)
+        continue
+      }
+      const { data } = supabase.storage
+        .from("product-images")
+        .getPublicUrl(fileName)
+      uploaded.push(data.publicUrl)
+    }
+
+    setImageUrls(uploaded)
+
     await supabase
       .from("products")
       .update({
@@ -79,7 +116,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         description,
         price: Number(price),
         category,
-        images: imageUrl ? [imageUrl] : [],
+        images: uploaded,
       })
       .eq("id", params.id)
 
@@ -121,8 +158,59 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                 <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image">ลิงก์รูปภาพ</Label>
-                <Input id="image" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+                <Label htmlFor="images">รูปภาพสินค้า</Label>
+                <Input
+                  id="images"
+                  type="file"
+                  multiple
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => {
+                    const files = e.target.files
+                    if (files) {
+                      const arr = Array.from(files)
+                      setImageFiles(arr)
+                      setPreviewUrls(arr.map((f) => URL.createObjectURL(f)))
+                    }
+                  }}
+                />
+                {(imageUrls.length > 0 || previewUrls.length > 0) && (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    {imageUrls.map((url, idx) => (
+                      <div key={`existing-${idx}`} className="relative">
+                        <img
+                          src={url}
+                          alt={`existing-${idx}`}
+                          className="h-24 w-full object-cover rounded-md"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-1 right-1 h-6 w-6"
+                          onClick={() => removeExistingImage(idx)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                    {previewUrls.map((url, idx) => (
+                      <div key={`new-${idx}`} className="relative">
+                        <img
+                          src={url}
+                          alt={`new-${idx}`}
+                          className="h-24 w-full object-cover rounded-md"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-1 right-1 h-6 w-6"
+                          onClick={() => removeNewImage(idx)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
