@@ -47,6 +47,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
           <TableHead>วันที่สั่งซื้อ</TableHead>
           <TableHead>ยอดรวม</TableHead>
           <TableHead>สถานะ</TableHead>
+          <TableHead>สถานะจัดส่ง</TableHead>
           <TableHead className="text-right">การจัดการ</TableHead>
         </TableRow>
       </TableHeader>
@@ -74,6 +75,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
                 onChange={(value) => updateOrderStatus(order.id, value)}
               />
             </TableCell>
+            <TableCell>{order.shippingStatus}</TableCell>
             <TableCell className="text-right">
               <div className="flex items-center justify-end space-x-2">
                 <Dialog>
@@ -119,6 +121,11 @@ export default function OrderTable({ orders }: OrderTableProps) {
                               {selectedOrder.shippingAddress.city}{" "}
                               {selectedOrder.shippingAddress.postalCode}
                             </p>
+                          </div>
+                          <div className="mt-2 text-sm space-y-1">
+                            <p>บริษัทขนส่ง: {selectedOrder.shippingProvider || "-"}</p>
+                            <p>เลขติดตาม: {selectedOrder.trackingNumber || "-"}</p>
+                            <p>สถานะ: {selectedOrder.shippingStatus}</p>
                           </div>
                         </div>
                         <div>

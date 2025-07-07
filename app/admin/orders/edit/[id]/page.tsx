@@ -6,7 +6,7 @@ import { ArrowLeft } from "lucide-react"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/button"
 import { mockOrders, type Order } from "@/lib/mock-orders"
-import type { OrderItem } from "@/types/order"
+import type { OrderItem, ShippingStatus } from "@/types/order"
 
 export default function EditOrderPage({ params }: { params: { id: string } }) {
   const router = useRouter()
@@ -24,6 +24,9 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
   const initialValues = {
     customerName: order.customerName,
     customerPhone: order.shippingAddress.phone,
+    shippingStatus: order.shippingStatus,
+    shippingProvider: order.shippingProvider,
+    trackingNumber: order.trackingNumber,
   }
 
   const initialItems: OrderItem[] = order.items.map((item, idx) => ({
@@ -46,6 +49,9 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
     total: number
     totalDue: number
     note: string
+    shippingStatus: ShippingStatus
+    shippingProvider: string
+    trackingNumber: string
   }) => {
     const updated: Order = {
       ...order,
@@ -66,6 +72,9 @@ export default function EditOrderPage({ params }: { params: { id: string } }) {
         name: data.customerName,
         phone: data.customerPhone,
       },
+      shippingStatus: data.shippingStatus,
+      shippingProvider: data.shippingProvider,
+      trackingNumber: data.trackingNumber,
     }
     mockOrders[orderIndex] = updated
     router.push(`/admin/orders/${order.id}`)

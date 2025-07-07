@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/button"
 import { mockOrders, type Order } from "@/lib/mock-orders"
+import type { ShippingStatus } from "@/types/order"
 import { mockProducts } from "@/lib/mock-products"
 import { mockCustomers } from "@/lib/mock-customers"
 import type { OrderItem } from "@/types/order"
@@ -55,6 +56,9 @@ export default function CreateOrderPage() {
     total: number
     totalDue: number
     note: string
+    shippingStatus: ShippingStatus
+    shippingProvider: string
+    trackingNumber: string
   }) => {
     const newOrder = {
       id: `ORD-${String(mockOrders.length + 1).padStart(3, "0")}`,
@@ -72,6 +76,9 @@ export default function CreateOrderPage() {
         postalCode: "",
         phone: data.customerPhone,
       },
+      shippingStatus: data.shippingStatus,
+      shippingProvider: data.shippingProvider,
+      trackingNumber: data.trackingNumber,
       depositPercent: data.deposit,
       note: data.note,
     } as Order
