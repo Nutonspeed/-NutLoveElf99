@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,7 +12,10 @@ interface OrderFormProps {
     customerName: string
     customerPhone: string
     items: OrderItem[]
+    discount: number
     deposit: number
+    total: number
+    totalDue: number
     note: string
   }) => void
   initialValues?: {
@@ -26,11 +29,35 @@ export default function OrderForm({ onSave, initialValues }: OrderFormProps) {
   const [customerPhone, setCustomerPhone] = useState(initialValues?.customerPhone ?? "")
   const [items, setItems] = useState<OrderItem[]>([])
   const [deposit, setDeposit] = useState(0)
+  const [discount, setDiscount] = useState(0)
+  const [totalDue, setTotalDue] = useState(0)
   const [note, setNote] = useState("")
+
+  const subtotal = useMemo(
+    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [items],
+  )
+  const total = useMemo(
+    () => subtotal - (subtotal * discount) / 100,
+    [subtotal, discount],
+  )
+
+  useEffect(() => {
+    setTotalDue(total * (deposit / 100))
+  }, [total, deposit])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave({ customerName, customerPhone, items, deposit, note })
+    onSave({
+      customerName,
+      customerPhone,
+      items,
+      discount,
+      deposit,
+      total,
+      totalDue,
+      note,
+    })
   }
 
   return (
@@ -69,6 +96,17 @@ export default function OrderForm({ onSave, initialValues }: OrderFormProps) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
+            <Label htmlFor="discount">ส่วนลด (%)</Label>
+            <Input
+              id="discount"
+              type="number"
+              min="0"
+              max="100"
+              value={discount}
+              onChange={(e) => setDiscount(Number.parseFloat(e.target.value) || 0)}
+            />
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="deposit">มัดจำ (%)</Label>
             <Input
               id="deposit"
@@ -87,6 +125,20 @@ export default function OrderForm({ onSave, initialValues }: OrderFormProps) {
               onChange={(e) => setNote(e.target.value)}
               rows={3}
             />
+          </div>
+          <div className="space-y-1 border-t pt-4 text-sm">
+            <div className="flex justify-between">
+              <span>ยอดรวมสินค้า:</span>
+              <span>฿{subtotal.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>ยอดสุทธิหลังส่วนลด:</span>
+              <span>฿{total.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>ยอดมัดจำที่ต้องชำระ:</span>
+              <span>฿{totalDue.toLocaleString()}</span>
+            </div>
           </div>
           <div className="pt-4 flex justify-end">
             <Button type="submit">บันทึก</Button>
