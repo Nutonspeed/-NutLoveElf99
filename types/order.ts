@@ -6,6 +6,8 @@ export interface OrderItem {
   color: string
   price: number
   quantity: number
+  /** Percent discount for this item */
+  discount?: number
   notes?: string
   image?: string
 }
