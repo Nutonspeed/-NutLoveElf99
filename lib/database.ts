@@ -34,6 +34,8 @@ export interface Product {
   updatedAt: string
 }
 
+import type { OrderStatus } from "@/types/order"
+
 export interface Order {
   id: string
   customerId: string
@@ -45,7 +47,7 @@ export interface Order {
     image: string
   }>
   total: number
-  status: "pendingPayment" | "depositPaid" | "paid" | "cancelled"
+  status: OrderStatus
   shippingAddress: {
     name: string
     address: string

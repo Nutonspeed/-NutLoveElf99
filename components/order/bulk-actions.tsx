@@ -9,7 +9,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Download, Trash2, Archive, CheckCircle, XCircle, Mail, Printer } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { ConfirmationDialog } from "./confirmation-dialog"
-import type { Order } from "@/types/order"
+import type { Order } from "@/lib/mock-orders"
+import type { OrderStatus } from "@/types/order"
 
 interface BulkActionsProps {
   orders: Order[]
@@ -96,7 +97,7 @@ export function BulkActions({ orders, selectedOrders, onSelectionChange, onOrder
     })
   }
 
-  const handleUpdateStatus = async (status: Order["status"]) => {
+  const handleUpdateStatus = async (status: OrderStatus) => {
     const updatedOrders = orders.map((order) => (selectedOrders.includes(order.id) ? { ...order, status } : order))
     onOrdersUpdate(updatedOrders)
     onSelectionChange([])

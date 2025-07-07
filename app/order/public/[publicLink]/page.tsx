@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { CheckCircle, Clock, Package, Truck, MapPin, Phone, Mail, Calendar } from "lucide-react"
-import type { ManualOrder } from "@/types/order"
+import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
 
 interface PublicOrderPageProps {
@@ -65,7 +65,7 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
     )
   }
 
-  const getStatusInfo = (status: ManualOrder["status"]) => {
+  const getStatusInfo = (status: OrderStatus) => {
     switch (status) {
       case "draft":
         return { text: "ร่าง", color: "bg-gray-500", icon: Clock }

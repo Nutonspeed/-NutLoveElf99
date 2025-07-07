@@ -11,6 +11,7 @@ import { Package, Eye, Download, MessageCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { mockOrders } from "@/lib/mock-orders"
+import type { OrderStatus } from "@/types/order"
 
 export default function OrdersPage() {
   const { user, isAuthenticated } = useAuth()
@@ -28,7 +29,7 @@ export default function OrdersPage() {
 
   const userOrders = mockOrders.filter((order) => order.customerId === user?.id)
 
-  const getStatusBadgeVariant = (status: string) => {
+  const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "paid":
         return "default"
@@ -43,7 +44,7 @@ export default function OrdersPage() {
     }
   }
 
-  const getStatusText = (status: string) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case "pendingPayment":
         return "รอชำระเงิน"

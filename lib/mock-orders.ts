@@ -1,3 +1,5 @@
+import type { OrderStatus } from "@/types/order"
+
 export interface Order {
   id: string
   customerId: string
@@ -12,7 +14,7 @@ export interface Order {
     color?: string
   }>
   total: number
-  status: "pendingPayment" | "depositPaid" | "paid" | "cancelled"
+  status: OrderStatus
   depositPercent?: number
   note?: string
   createdAt: string

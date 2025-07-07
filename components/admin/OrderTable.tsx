@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import { orderStatusOptions, type OrderStatus } from "@/types/order"
 import {
   Dialog,
   DialogContent,
@@ -37,13 +38,13 @@ export default function OrderTable({ orders }: OrderTableProps) {
   const [orderList, setOrderList] = useState<Order[]>(orders)
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
-  const updateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
+  const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
     setOrderList((prev) =>
       prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o)),
     )
   }
 
-  const getStatusBadgeVariant = (status: Order["status"]) => {
+  const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "paid":
         return "default"
@@ -58,7 +59,7 @@ export default function OrderTable({ orders }: OrderTableProps) {
     }
   }
 
-  const getStatusText = (status: Order["status"]) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case "pendingPayment":
         return "รอชำระเงิน"
@@ -116,10 +117,11 @@ export default function OrderTable({ orders }: OrderTableProps) {
                   </Badge>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pendingPayment">รอชำระเงิน</SelectItem>
-                  <SelectItem value="depositPaid">มัดจำแล้ว</SelectItem>
-                  <SelectItem value="paid">ชำระแล้ว</SelectItem>
-                  <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                  {orderStatusOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </TableCell>

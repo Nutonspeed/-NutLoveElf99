@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, ArrowLeft, Eye, FileText } from "lucide-react"
 import Link from "next/link"
 import { mockOrders, type Order } from "@/lib/mock-orders"
+import { orderStatusOptions, type OrderStatus } from "@/types/order"
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>(mockOrders)
@@ -29,11 +30,11 @@ export default function AdminOrdersPage() {
     return matchesSearch && matchesStatus
   })
 
-  const updateOrderStatus = (orderId: string, newStatus: Order["status"]) => {
+  const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
   }
 
-  const getStatusBadgeVariant = (status: Order["status"]) => {
+  const getStatusBadgeVariant = (status: OrderStatus) => {
     switch (status) {
       case "paid":
         return "default"
@@ -48,7 +49,7 @@ export default function AdminOrdersPage() {
     }
   }
 
-  const getStatusText = (status: Order["status"]) => {
+  const getStatusText = (status: OrderStatus) => {
     switch (status) {
       case "pendingPayment":
         return "รอชำระเงิน"
@@ -101,10 +102,11 @@ export default function AdminOrdersPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">ทั้งหมด</SelectItem>
-                    <SelectItem value="pendingPayment">รอชำระเงิน</SelectItem>
-                    <SelectItem value="depositPaid">มัดจำแล้ว</SelectItem>
-                    <SelectItem value="paid">ชำระแล้ว</SelectItem>
-                    <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                    {orderStatusOptions.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -141,16 +143,17 @@ export default function AdminOrdersPage() {
                     <TableCell>
                       <Select
                         value={order.status}
-                        onValueChange={(value) => updateOrderStatus(order.id, value as Order["status"])}
+                        onValueChange={(value) => updateOrderStatus(order.id, value as OrderStatus)}
                       >
                         <SelectTrigger className="w-32">
                           <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pendingPayment">รอชำระเงิน</SelectItem>
-                          <SelectItem value="depositPaid">มัดจำแล้ว</SelectItem>
-                          <SelectItem value="paid">ชำระแล้ว</SelectItem>
-                          <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                          {orderStatusOptions.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </TableCell>
