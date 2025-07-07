@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Download, Trash2, Archive, CheckCircle, XCircle, Mail, Printer } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { ConfirmationDialog } from "./confirmation-dialog"
-import type { Order } from "@/lib/mock-orders"
+import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
 
 interface BulkActionsProps {

@@ -7,8 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import BillPreview from "@/components/BillPreview"
 import { orderDb } from "@/lib/order-database"
-import type { ManualOrder } from "@/types/order"
-import type { Order } from "@/lib/mock-orders"
+import type { ManualOrder, Order } from "@/types/order"
 
 interface PublicBillPageProps {
   params: {

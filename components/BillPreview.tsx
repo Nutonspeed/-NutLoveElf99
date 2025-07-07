@@ -1,5 +1,5 @@
 import { Separator } from "@/components/ui/separator"
-import type { Order } from "@/lib/mock-orders"
+import type { Order } from "@/types/order"
 
 interface BillPreviewProps {
   order: Order
