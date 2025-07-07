@@ -18,6 +18,10 @@ import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem, ManualOrder, OrderStatus } from "@/types/order"
 import { orderStatusOptions } from "@/types/order"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
 import { orderDb } from "@/lib/order-database"
 import { toast } from "sonner"
 
@@ -168,47 +172,6 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
     }
   }
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
-    switch (status) {
-      case "delivered":
-        return "default"
-      case "shipped":
-        return "secondary"
-      case "processing":
-        return "outline"
-      case "confirmed":
-        return "default"
-      case "pending":
-        return "destructive"
-      case "draft":
-        return "outline"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case "draft":
-        return "ร่าง"
-      case "pending":
-        return "รอยืนยัน"
-      case "confirmed":
-        return "ยืนยันแล้ว"
-      case "processing":
-        return "กำลังดำเนินการ"
-      case "shipped":
-        return "จัดส่งแล้ว"
-      case "delivered":
-        return "ส่งมอบแล้ว"
-      case "cancelled":
-        return "ยกเลิก"
-      default:
-        return status
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -224,7 +187,9 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
             <div>
               <div className="flex items-center space-x-2 mb-1">
                 <h1 className="text-3xl font-bold">{order.orderNumber}</h1>
-                <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                  {getOrderStatusText(order.status)}
+                </Badge>
               </div>
               <p className="text-gray-600">แก้ไขออเดอร์แมนนวล</p>
             </div>

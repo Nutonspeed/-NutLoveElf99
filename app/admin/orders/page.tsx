@@ -13,6 +13,10 @@ import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
 
 const statusOptions = [
   { value: "all", label: "ทั้งหมด" },
@@ -43,35 +47,6 @@ export default function AdminOrdersPage() {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
   }
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
-    switch (status) {
-      case "paid":
-        return "default"
-      case "depositPaid":
-        return "secondary"
-      case "pendingPayment":
-        return "outline"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case "pendingPayment":
-        return "รอชำระเงิน"
-      case "depositPaid":
-        return "มัดจำแล้ว"
-      case "paid":
-        return "ชำระแล้ว"
-      case "cancelled":
-        return "ยกเลิก"
-      default:
-        return status
-    }
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,7 +130,9 @@ export default function AdminOrdersPage() {
                       onValueChange={(value) => updateOrderStatus(order.id, value as OrderStatus)}
                     >
                       <SelectTrigger className="w-32">
-                        <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                        <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                          {getOrderStatusText(order.status)}
+                        </Badge>
                       </SelectTrigger>
                       <SelectContent>
                         {orderStatusOptions.map((opt) => (

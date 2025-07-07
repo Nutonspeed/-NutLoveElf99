@@ -8,6 +8,10 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { OrderStatus } from "@/types/order"
 import { orderStatusOptions } from "@/types/order"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
 import { format } from "date-fns"
 
 interface TimelineEntry {
@@ -23,34 +27,6 @@ interface OrderTimelineProps {
   onAddEntry?: (entry: TimelineEntry) => void
 }
 
-function getStatusBadgeVariant(status: OrderStatus) {
-  switch (status) {
-    case "paid":
-    case "delivered":
-    case "completed":
-    case "done":
-      return "default"
-    case "depositPaid":
-    case "shipped":
-    case "confirmed":
-    case "producing":
-      return "secondary"
-    case "pendingPayment":
-    case "processing":
-    case "draft":
-      return "outline"
-    case "cancelled":
-    case "archived":
-      return "destructive"
-    default:
-      return "outline"
-  }
-}
-
-function getStatusText(status: OrderStatus) {
-  const opt = orderStatusOptions.find((o) => o.value === status)
-  return opt ? opt.label : status
-}
 
 export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderTimelineProps) {
   const [status, setStatus] = useState<OrderStatus>(orderStatusOptions[0].value)
@@ -81,8 +57,8 @@ export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderT
             <span className="w-44 text-sm text-gray-500">
               {format(new Date(entry.timestamp), "dd MMM yyyy HH:mm")}
             </span>
-            <Badge variant={getStatusBadgeVariant(entry.status)}>
-              {getStatusText(entry.status)}
+            <Badge variant={getOrderStatusBadgeVariant(entry.status)}>
+              {getOrderStatusText(entry.status)}
             </Badge>
             {entry.note && <span className="text-sm">{entry.note}</span>}
           </li>

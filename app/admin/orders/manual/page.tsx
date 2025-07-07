@@ -14,6 +14,10 @@ import { Search, ArrowLeft, Plus, Eye, Edit, Trash2, Copy, ExternalLink } from "
 import Link from "next/link"
 import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderStatusOptions } from "@/types/order"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
 import { orderDb } from "@/lib/order-database"
 import { toast } from "sonner"
 
@@ -74,47 +78,6 @@ export default function ManualOrdersPage() {
     return matchesSearch && matchesStatus
   })
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
-    switch (status) {
-      case "delivered":
-        return "default"
-      case "shipped":
-        return "secondary"
-      case "processing":
-        return "outline"
-      case "confirmed":
-        return "default"
-      case "pending":
-        return "destructive"
-      case "draft":
-        return "outline"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case "draft":
-        return "ร่าง"
-      case "pending":
-        return "รอยืนยัน"
-      case "confirmed":
-        return "ยืนยันแล้ว"
-      case "processing":
-        return "กำลังดำเนินการ"
-      case "shipped":
-        return "จัดส่งแล้ว"
-      case "delivered":
-        return "ส่งมอบแล้ว"
-      case "cancelled":
-        return "ยกเลิก"
-      default:
-        return status
-    }
-  }
 
   const copyPublicLink = (publicLink: string) => {
     const url =
@@ -235,7 +198,9 @@ export default function ManualOrdersPage() {
                       <p className="font-semibold">฿{order.total.toLocaleString()}</p>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={getStatusBadgeVariant(order.status)}>{getStatusText(order.status)}</Badge>
+                      <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                        {getOrderStatusText(order.status)}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
