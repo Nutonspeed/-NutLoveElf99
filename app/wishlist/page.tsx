@@ -13,14 +13,14 @@ import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
-import { db } from "@/lib/database"
+import { db, type Product } from "@/lib/database"
 
 export default function WishlistPage() {
   const { user, isAuthenticated } = useAuth()
   const { dispatch } = useCart()
   const { toast } = useToast()
   const router = useRouter()
-  const [wishlistItems, setWishlistItems] = useState<any[]>([])
+  const [wishlistItems, setWishlistItems] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -204,7 +204,7 @@ export default function WishlistPage() {
                           />
                         ))}
                       </div>
-                      <span className="text-sm text-gray-600">({product.reviews})</span>
+                      <span className="text-sm text-gray-600">({product.reviewCount})</span>
                     </div>
 
                     <div className="flex items-center space-x-2">
