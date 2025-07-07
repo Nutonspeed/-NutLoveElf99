@@ -17,6 +17,8 @@ export type OrderStatus =
   | "pending"
   | "confirmed"
   | "processing"
+  | "producing"
+  | "done"
   | "shipped"
   | "delivered"
   | "cancelled"
@@ -39,6 +41,8 @@ export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
   { value: "pending", label: "รอยืนยัน" },
   { value: "confirmed", label: "ยืนยันแล้ว" },
   { value: "processing", label: "กำลังดำเนินการ" },
+  { value: "producing", label: "กำลังผลิต" },
+  { value: "done", label: "ผลิตเสร็จแล้ว" },
   { value: "shipped", label: "จัดส่งแล้ว" },
   { value: "delivered", label: "ส่งมอบแล้ว" },
   { value: "cancelled", label: "ยกเลิก" },

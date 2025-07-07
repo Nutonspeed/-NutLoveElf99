@@ -14,10 +14,12 @@ function getStatusBadgeVariant(status: OrderStatus) {
     case "paid":
     case "delivered":
     case "completed":
+    case "done":
       return "default"
     case "depositPaid":
     case "shipped":
     case "confirmed":
+    case "producing":
       return "secondary"
     case "pendingPayment":
     case "processing":
