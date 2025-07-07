@@ -58,6 +58,9 @@ export default function CustomerDetailPage({
         </div>
 
         <CustomerCard customer={customer} />
+        <div className="text-lg font-semibold">
+          ยอดซื้อรวม: ฿{stats.totalSpent.toLocaleString()}
+        </div>
 
         <Tabs defaultValue="orders" className="space-y-4">
           <TabsList>

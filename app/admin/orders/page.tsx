@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, ArrowLeft, Eye, FileText, Edit, Copy } from "lucide-react"
+import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { mockOrders, type Order } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
@@ -246,6 +246,11 @@ export default function AdminOrdersPage() {
                         <Link href={`/admin/orders/edit/${order.id}`}>
                           <Button variant="outline" size="icon">
                             <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Link href={`/admin/orders/${order.id}`}>
+                          <Button variant="outline" size="icon">
+                            <ExternalLink className="h-4 w-4" />
                           </Button>
                         </Link>
                         <Button
