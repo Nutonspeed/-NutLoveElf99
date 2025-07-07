@@ -25,16 +25,22 @@ interface OrderFormProps {
     total: number
     totalDue: number
     note: string
-    shippingStatus: ShippingStatus
-    shippingProvider: string
-    trackingNumber: string
+    shipping_status: ShippingStatus
+    delivery_method: string
+    tracking_number: string
+    shipping_fee: number
+    shipping_date: string
+    delivery_note: string
   }) => void
   initialValues?: {
     customerName?: string
     customerPhone?: string
-    shippingStatus?: ShippingStatus
-    shippingProvider?: string
-    trackingNumber?: string
+    shipping_status?: ShippingStatus
+    delivery_method?: string
+    tracking_number?: string
+    shipping_fee?: number
+    shipping_date?: string
+    delivery_note?: string
   }
   initialItems?: OrderItem[]
 }
@@ -48,13 +54,22 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
   const [totalDue, setTotalDue] = useState(0)
   const [note, setNote] = useState("")
   const [shippingStatus, setShippingStatus] = useState<ShippingStatus>(
-    initialValues?.shippingStatus ?? "pending",
+    initialValues?.shipping_status ?? "pending",
   )
-  const [shippingProvider, setShippingProvider] = useState(
-    initialValues?.shippingProvider ?? "",
+  const [deliveryMethod, setDeliveryMethod] = useState(
+    initialValues?.delivery_method ?? "",
   )
   const [trackingNumber, setTrackingNumber] = useState(
-    initialValues?.trackingNumber ?? "",
+    initialValues?.tracking_number ?? "",
+  )
+  const [shippingFee, setShippingFee] = useState(
+    initialValues?.shipping_fee ?? 0,
+  )
+  const [shippingDate, setShippingDate] = useState(
+    initialValues?.shipping_date ?? "",
+  )
+  const [deliveryNote, setDeliveryNote] = useState(
+    initialValues?.delivery_note ?? "",
   )
 
   const subtotal = useMemo(
@@ -86,9 +101,12 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
       total,
       totalDue,
       note,
-      shippingStatus,
-      shippingProvider,
-      trackingNumber,
+      shipping_status: shippingStatus,
+      delivery_method: deliveryMethod,
+      tracking_number: trackingNumber,
+      shipping_fee: shippingFee,
+      shipping_date: shippingDate,
+      delivery_note: deliveryNote,
     })
   }
 
@@ -128,11 +146,11 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="shippingProvider">บริษัทขนส่ง</Label>
+            <Label htmlFor="deliveryMethod">วิธีจัดส่ง</Label>
             <Input
-              id="shippingProvider"
-              value={shippingProvider}
-              onChange={(e) => setShippingProvider(e.target.value)}
+              id="deliveryMethod"
+              value={deliveryMethod}
+              onChange={(e) => setDeliveryMethod(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -141,6 +159,24 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
               id="trackingNumber"
               value={trackingNumber}
               onChange={(e) => setTrackingNumber(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="shippingFee">ค่าจัดส่ง</Label>
+            <Input
+              id="shippingFee"
+              type="number"
+              value={shippingFee}
+              onChange={(e) => setShippingFee(Number.parseFloat(e.target.value) || 0)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="shippingDate">วันที่จัดส่ง</Label>
+            <Input
+              id="shippingDate"
+              type="date"
+              value={shippingDate}
+              onChange={(e) => setShippingDate(e.target.value)}
             />
           </div>
           <div className="space-y-2">
@@ -157,6 +193,15 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="deliveryNote">หมายเหตุการจัดส่ง</Label>
+            <Textarea
+              id="deliveryNote"
+              value={deliveryNote}
+              onChange={(e) => setDeliveryNote(e.target.value)}
+              rows={2}
+            />
           </div>
         </CardContent>
       </Card>

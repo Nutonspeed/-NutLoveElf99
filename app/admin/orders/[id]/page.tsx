@@ -118,9 +118,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             <CardTitle>สถานะการจัดส่ง</CardTitle>
           </CardHeader>
           <CardContent className="space-y-1">
-            <p>บริษัทขนส่ง: {order.shippingProvider || "-"}</p>
-            <p>เลขติดตามพัสดุ: {order.trackingNumber || "-"}</p>
-            <p>สถานะ: {order.shippingStatus}</p>
+            <p>วิธีจัดส่ง: {order.delivery_method || "-"}</p>
+            <p>เลขติดตามพัสดุ: {order.tracking_number || "-"}</p>
+            <p>ค่าจัดส่ง: ฿{order.shipping_fee.toLocaleString()}</p>
+            <p>สถานะ: {order.shipping_status}</p>
+            <p>วันที่จัดส่ง: {order.shipping_date ? new Date(order.shipping_date).toLocaleDateString("th-TH") : "-"}</p>
+            <p>หมายเหตุ: {order.delivery_note || "-"}</p>
           </CardContent>
         </Card>
       </div>

@@ -25,9 +25,18 @@ export interface Order {
     postalCode: string
     phone: string
   }
-  shippingStatus: ShippingStatus
-  shippingProvider: string
-  trackingNumber: string
+  /** วิธีจัดส่ง เช่น ชื่อบริษัทขนส่ง */
+  delivery_method: string
+  /** หมายเลขติดตามพัสดุ */
+  tracking_number: string
+  /** ค่าจัดส่ง */
+  shipping_fee: number
+  /** สถานะการจัดส่ง */
+  shipping_status: ShippingStatus
+  /** วันที่จัดส่งสินค้า */
+  shipping_date: string
+  /** หมายเหตุการจัดส่งเพิ่มเติม */
+  delivery_note: string
 }
 
 import { supabase } from "./supabase"
@@ -60,9 +69,12 @@ const initialMockOrders: Order[] = [
       postalCode: "10110",
       phone: "081-234-5678",
     },
-    shippingStatus: "pending",
-    shippingProvider: "TH Post",
-    trackingNumber: "TH1234567890",
+    delivery_method: "TH Post",
+    tracking_number: "TH1234567890",
+    shipping_fee: 80,
+    shipping_status: "pending",
+    shipping_date: "2024-01-16T10:30:00Z",
+    delivery_note: "-",
   },
   {
     id: "ORD-002",
@@ -90,9 +102,12 @@ const initialMockOrders: Order[] = [
       postalCode: "10400",
       phone: "082-345-6789",
     },
-    shippingStatus: "shipped",
-    shippingProvider: "TH Post",
-    trackingNumber: "TH0987654321",
+    delivery_method: "TH Post",
+    tracking_number: "TH0987654321",
+    shipping_fee: 80,
+    shipping_status: "shipped",
+    shipping_date: "2024-01-15T08:00:00Z",
+    delivery_note: "ส่งตามเวลาทำการ",
   },
 ]
 

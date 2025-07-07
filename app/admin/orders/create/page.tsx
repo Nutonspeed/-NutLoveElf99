@@ -56,9 +56,12 @@ export default function CreateOrderPage() {
     total: number
     totalDue: number
     note: string
-    shippingStatus: ShippingStatus
-    shippingProvider: string
-    trackingNumber: string
+    shipping_status: ShippingStatus
+    delivery_method: string
+    tracking_number: string
+    shipping_fee: number
+    shipping_date: string
+    delivery_note: string
   }) => {
     const newOrder = {
       id: `ORD-${String(mockOrders.length + 1).padStart(3, "0")}`,
@@ -76,9 +79,12 @@ export default function CreateOrderPage() {
         postalCode: "",
         phone: data.customerPhone,
       },
-      shippingStatus: data.shippingStatus,
-      shippingProvider: data.shippingProvider,
-      trackingNumber: data.trackingNumber,
+      shipping_status: data.shipping_status,
+      delivery_method: data.delivery_method,
+      tracking_number: data.tracking_number,
+      shipping_fee: data.shipping_fee,
+      shipping_date: data.shipping_date,
+      delivery_note: data.delivery_note,
       depositPercent: data.deposit,
       note: data.note,
     } as Order

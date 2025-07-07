@@ -114,7 +114,7 @@ export default function BillPreview({ order }: BillPreviewProps) {
             </div>
             <div className="flex justify-between">
               <span>ค่าจัดส่ง:</span>
-              <span>ฟรี</span>
+              <span>฿{order.shipping_fee.toLocaleString()}</span>
             </div>
             {depositPercent < 100 && (
               <div className="flex justify-between">
