@@ -1,0 +1,73 @@
+"use client"
+
+import { use } from "react"
+import Link from "next/link"
+import { ArrowLeft, Download, PrinterIcon as Print } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { mockOrders } from "@/lib/mock-orders"
+import BillPreview from "@/components/BillPreview"
+
+export default function BillPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params)
+  const order = mockOrders.find((o) => o.id === id)
+
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">ไม่พบบิล</h1>
+          <Link href="/orders">
+            <Button>กลับไปหน้าคำสั่งซื้อ</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print()
+    }
+  }
+
+  const handleDownload = () => {
+    alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="print:hidden bg-white border-b px-4 py-4">
+        <div className="container mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Link href="/orders">
+              <Button variant="outline" size="icon">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            </Link>
+            <h1 className="text-xl font-semibold">บิล {order.id}</h1>
+          </div>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={handlePrint}>
+              <Print className="mr-2 h-4 w-4" />
+              พิมพ์
+            </Button>
+            <Button onClick={handleDownload}>
+              <Download className="mr-2 h-4 w-4" />
+              ดาวน์โหลด PDF
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8 print:p-0">
+        <Card className="max-w-4xl mx-auto print:shadow-none print:border-none">
+          <CardContent className="p-8 print:p-6">
+            <BillPreview order={order} />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
