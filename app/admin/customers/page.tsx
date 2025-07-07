@@ -46,7 +46,8 @@ export default function AdminCustomersPage() {
   const filteredCustomers = customers.filter(
     (customer) =>
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()),
+      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer.phone?.includes(searchTerm),
   )
 
 
@@ -166,6 +167,7 @@ export default function AdminCustomersPage() {
                 <TableRow>
                   <TableHead>ลูกค้า</TableHead>
                   <TableHead>ติดต่อ</TableHead>
+                  <TableHead>แท็ก/โน้ต</TableHead>
                   <TableHead>คำสั่งซื้อ</TableHead>
                   <TableHead>ยอดซื้อรวม</TableHead>
                   <TableHead>ซื้อล่าสุด</TableHead>
@@ -197,6 +199,18 @@ export default function AdminCustomersPage() {
                             <Phone className="h-4 w-4 text-gray-400" />
                             <span className="text-sm">{customer.phone}</span>
                           </div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        {customer.tags?.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="mr-1">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {customer.note && (
+                          <p className="text-xs text-gray-500">{customer.note}</p>
                         )}
                       </div>
                     </TableCell>

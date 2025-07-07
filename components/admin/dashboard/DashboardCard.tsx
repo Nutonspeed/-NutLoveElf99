@@ -31,7 +31,9 @@ export default function DashboardCard({
         <div className="flex items-center justify-between">
           <div>
             <p className={clsx("text-sm font-medium", titleClassName)}>{title}</p>
-            <p className={clsx("text-2xl font-bold", valueClassName)}>{value}</p>
+            <p className={clsx("text-2xl font-bold", valueClassName)}>
+              {value ?? "-"}
+            </p>
           </div>
           <Icon className={clsx("h-8 w-8", iconClassName)} />
         </div>

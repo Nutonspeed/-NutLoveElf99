@@ -12,7 +12,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
-import { mockUsers } from "@/lib/mock-data"
+import { mockUsers } from "@/lib/mock-users"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")

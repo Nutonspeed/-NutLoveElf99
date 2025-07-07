@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Search, ArrowLeft, Eye, FileText } from "lucide-react"
+import { Search, ArrowLeft, Eye, FileText, Edit, Copy } from "lucide-react"
 import Link from "next/link"
 import { mockOrders, type Order } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
@@ -243,7 +243,26 @@ export default function AdminOrdersPage() {
                           </DialogContent>
                         </Dialog>
 
-                        <Link href={`/admin/invoice/${order.id}`}>
+                        <Link href={`/admin/orders/edit/${order.id}`}>
+                          <Button variant="outline" size="icon">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            const copy: Order = {
+                              ...order,
+                              id: `ORD-${String(orders.length + 1).padStart(3, "0")}`,
+                              createdAt: new Date().toISOString(),
+                            }
+                            setOrders((prev) => [...prev, copy])
+                          }}
+                        >
+                          <Copy className="h-4 w-4" />
+                        </Button>
+                        <Link href={`/admin/invoice/${order.id}`}> 
                           <Button variant="outline" size="icon">
                             <FileText className="h-4 w-4" />
                           </Button>

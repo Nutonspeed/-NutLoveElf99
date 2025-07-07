@@ -1,14 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import {
-  ArrowLeft,
-  Mail,
-  Phone,
-} from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import CustomerCard from "@/components/admin/customers/CustomerCard"
 import {
   Tabs,
   TabsContent,
@@ -60,23 +57,7 @@ export default function CustomerDetailPage({
           <h1 className="text-3xl font-bold">ข้อมูลลูกค้า</h1>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>{customer.name}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Mail className="h-4 w-4 text-gray-500" />
-              <span>{customer.email}</span>
-            </div>
-            {customer.phone && (
-              <div className="flex items-center space-x-2">
-                <Phone className="h-4 w-4 text-gray-500" />
-                <span>{customer.phone}</span>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <CustomerCard customer={customer} />
 
         <Tabs defaultValue="orders" className="space-y-4">
           <TabsList>

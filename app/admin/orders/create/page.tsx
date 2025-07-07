@@ -7,6 +7,7 @@ import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/button"
 import { mockOrders, type Order } from "@/lib/mock-orders"
 import { mockProducts } from "@/lib/mock-products"
+import { mockCustomers } from "@/lib/mock-customers"
 import type { OrderItem } from "@/types/order"
 
 export default function CreateOrderPage() {
@@ -15,10 +16,13 @@ export default function CreateOrderPage() {
 
   const fromChatName = searchParams.get("name")
   const fromChat = searchParams.get("fromChat")
+  const customerFromChat = fromChat
+    ? mockCustomers.find((c) => c.id === fromChat)
+    : null
 
   const initialValues = {
-    customerName: fromChatName || "",
-    customerPhone: searchParams.get("phone") || "",
+    customerName: fromChatName || customerFromChat?.name || "",
+    customerPhone: searchParams.get("phone") || customerFromChat?.phone || "",
   }
 
   const productParam = searchParams.get("products")
@@ -88,7 +92,21 @@ export default function CreateOrderPage() {
           <h1 className="text-3xl font-bold">สร้างคำสั่งซื้อ</h1>
         </div>
         {fromChat && (
-          <p className="text-sm text-gray-500 mb-6">เปิดจากลูกค้า: {fromChatName}</p>
+          customerFromChat ? (
+            <p className="text-sm text-gray-500 mb-6">
+              เปิดจากลูกค้า: {fromChatName}{" "}
+              <Link href={`/admin/chat?room=${fromChat}`} className="underline text-blue-600">
+                กลับไปแชท
+              </Link>
+            </p>
+          ) : (
+            <p className="text-sm text-red-500 mb-6">
+              ไม่พบลูกค้า กรุณาเพิ่มใหม่{" "}
+              <Link href="/admin/chat" className="underline">
+                กลับไปแชท
+              </Link>
+            </p>
+          )
         )}
         <OrderForm
           onSave={handleSave}
