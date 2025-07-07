@@ -604,7 +604,6 @@ export const db = {
           },
           orders: {
             total: mockOrders.length,
-            thisMonth: thisMonthOrders.length,
             pending: mockOrders.filter((o) => o.status === "pendingPayment").length,
             completed: mockOrders.filter((o) => o.status === "paid").length,
           },
@@ -614,9 +613,7 @@ export const db = {
             outOfStock: mockProducts.filter((p) => !p.inStock).length,
           },
           users: {
-            total: mockUsers.length,
             customers: mockUsers.filter((u) => u.role === "customer").length,
-            admins: mockUsers.filter((u) => u.role === "admin").length,
           },
         })
       }, 100)
