@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Save, Share2 } from "lucide-react"
+import { ArrowLeft, Save, Share2, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -58,6 +58,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 <Share2 className="mr-2 h-4 w-4" />
                 แชร์บิล
               </Button>
+              <Link href={`/admin/orders/edit/${id}`}>
+                <Button variant="outline">
+                  <Edit className="mr-2 h-4 w-4" />
+                  แก้ไขบิล
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
