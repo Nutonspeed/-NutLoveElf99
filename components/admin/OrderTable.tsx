@@ -9,16 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
-import { orderStatusOptions, type OrderStatus } from "@/types/order"
+import OrderStatusDropdown from "./orders/OrderStatusDropdown"
+import type { OrderStatus } from "@/types/order"
 import {
   Dialog,
   DialogContent,
@@ -44,35 +37,6 @@ export default function OrderTable({ orders }: OrderTableProps) {
     )
   }
 
-  const getStatusBadgeVariant = (status: OrderStatus) => {
-    switch (status) {
-      case "paid":
-        return "default"
-      case "depositPaid":
-        return "secondary"
-      case "pendingPayment":
-        return "outline"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case "pendingPayment":
-        return "รอชำระเงิน"
-      case "depositPaid":
-        return "มัดจำแล้ว"
-      case "paid":
-        return "ชำระแล้ว"
-      case "cancelled":
-        return "ยกเลิก"
-      default:
-        return status
-    }
-  }
 
   return (
     <Table>
@@ -105,25 +69,10 @@ export default function OrderTable({ orders }: OrderTableProps) {
               <p className="font-semibold">฿{order.total.toLocaleString()}</p>
             </TableCell>
             <TableCell>
-              <Select
-                value={order.status}
-                onValueChange={(value) =>
-                  updateOrderStatus(order.id, value as Order["status"])
-                }
-              >
-                <SelectTrigger className="w-32">
-                  <Badge variant={getStatusBadgeVariant(order.status)}>
-                    {getStatusText(order.status)}
-                  </Badge>
-                </SelectTrigger>
-                <SelectContent>
-                  {orderStatusOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <OrderStatusDropdown
+                status={order.status}
+                onChange={(value) => updateOrderStatus(order.id, value)}
+              />
             </TableCell>
             <TableCell className="text-right">
               <div className="flex items-center justify-end space-x-2">
