@@ -38,7 +38,7 @@ export default function AdminOrderPrintPage({ params }: { params: { id: string }
       <div className="print:hidden bg-white border-b px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Link href={`/admin/orders/${order.id}`}>\
+            <Link href={`/admin/orders/${order.id}`}>
               <Button variant="outline" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
