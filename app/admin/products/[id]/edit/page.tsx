@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, X, ArrowUp, ArrowDown } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -24,7 +24,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
   const [category, setCategory] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
+  const [images, setImages] = useState<string[]>([])
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -53,7 +53,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         setDescription(data.description || "")
         setPrice(data.price?.toString() || "")
         setCategory(data.category || "")
-        setImageUrl(Array.isArray(data.images) ? data.images[0] || "" : "")
+        setImages(Array.isArray(data.images) ? data.images : [])
       }
       setLoading(false)
     }
@@ -62,6 +62,31 @@ export default function EditProductPage({ params }: EditProductPageProps) {
 
   if (!isAuthenticated || user?.role !== "admin") {
     return null
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (files) {
+      const newImages = Array.from(files).map((file) => URL.createObjectURL(file))
+      setImages((prev) => [...prev, ...newImages])
+    }
+  }
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const moveImage = (index: number, direction: "up" | "down") => {
+    setImages((prev) => {
+      const arr = [...prev]
+      if (direction === "up" && index > 0) {
+        ;[arr[index - 1], arr[index]] = [arr[index], arr[index - 1]]
+      }
+      if (direction === "down" && index < arr.length - 1) {
+        ;[arr[index], arr[index + 1]] = [arr[index + 1], arr[index]]
+      }
+      return arr
+    })
   }
 
   if (loading) {
@@ -79,7 +104,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         description,
         price: Number(price),
         category,
-        images: imageUrl ? [imageUrl] : [],
+        images,
       })
       .eq("id", params.id)
 
@@ -121,8 +146,28 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                 <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image">ลิงก์รูปภาพ</Label>
-                <Input id="image" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} />
+                <Label htmlFor="images">รูปภาพสินค้า</Label>
+                <Input id="images" type="file" multiple accept="image/*" onChange={handleImageUpload} />
+                {images.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                    {images.map((img, index) => (
+                      <div key={index} className="relative">
+                        <img src={img} alt={`Preview ${index + 1}`} className="w-full h-24 object-cover rounded-lg" />
+                        <div className="absolute top-1 right-1 flex space-x-1">
+                          <Button variant="outline" size="icon" className="h-5 w-5" onClick={() => moveImage(index, 'up')} disabled={index === 0}>
+                            <ArrowUp className="h-3 w-3" />
+                          </Button>
+                          <Button variant="outline" size="icon" className="h-5 w-5" onClick={() => moveImage(index, 'down')} disabled={index === images.length - 1}>
+                            <ArrowDown className="h-3 w-3" />
+                          </Button>
+                          <Button variant="destructive" size="icon" className="h-5 w-5" onClick={() => removeImage(index)}>
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
