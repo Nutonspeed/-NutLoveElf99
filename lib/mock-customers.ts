@@ -7,6 +7,8 @@ export interface Customer {
   city?: string
   postalCode?: string
   avatar?: string
+  tags?: string[]
+  note?: string
   createdAt: string
 }
 
@@ -20,6 +22,8 @@ export const mockCustomers: Customer[] = [
     city: "กรุงเทพฯ",
     postalCode: "10110",
     avatar: "/placeholder.svg?height=40&width=40",
+    tags: ["ลูกค้าประจำ"],
+    note: "ชอบผ้ากำมะหยี่",
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -31,6 +35,8 @@ export const mockCustomers: Customer[] = [
     city: "กรุงเทพฯ",
     postalCode: "10400",
     avatar: "/placeholder.svg?height=40&width=40",
+    tags: ["COD"],
+    note: "เก็บเงินปลายทาง",
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {

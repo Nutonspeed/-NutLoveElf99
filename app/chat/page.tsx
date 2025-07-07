@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Send, Paperclip, Smile, Phone, Video } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { mockChatMessages, type ChatMessage } from "@/lib/mock-data"
+import { mockChatMessages, type ChatMessage } from "@/lib/mock-chat-messages"
 
 export default function ChatPage() {
   const { user, isAuthenticated } = useAuth()

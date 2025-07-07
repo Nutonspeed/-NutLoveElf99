@@ -1,4 +1,3 @@
-
 export interface ChatMessage {
   id: string
   senderId: string
@@ -41,26 +40,10 @@ export const mockChatMessages: ChatMessage[] = [
     id: "4",
     senderId: "1",
     senderName: "Admin",
-    message: "ผ้าคลุมโซฟา Premium Velvet มี 4 สีค่ะ: Navy Blue, Charcoal Gray, Burgundy, และ Forest Green ค่ะ",
+    message:
+      "ผ้าคลุมโซฟา Premium Velvet มี 4 สีค่ะ: Navy Blue, Charcoal Gray, Burgundy, และ Forest Green ค่ะ",
     timestamp: "2024-01-15T09:07:00Z",
     type: "text",
     isAdmin: true,
-  },
-]
-
-export const mockUsers = [
-  {
-    id: "1",
-    name: "Admin User",
-    email: "admin@sofacover.com",
-    role: "admin" as const,
-    avatar: "/placeholder.svg?height=40&width=40",
-  },
-  {
-    id: "2",
-    name: "John Doe",
-    email: "john@example.com",
-    role: "customer" as const,
-    avatar: "/placeholder.svg?height=40&width=40",
   },
 ]

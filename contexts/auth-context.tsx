@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, type ReactNode } from "react"
-import { mockUsers } from "@/lib/mock-data"
+import { mockUsers } from "@/lib/mock-users"
 
 interface User {
   id: string
