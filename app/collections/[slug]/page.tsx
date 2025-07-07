@@ -4,25 +4,29 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { supabase } from "@/lib/supabase"
+import { getCollections } from "@/lib/mock-collections"
 
 export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
-  if (!supabase) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">Supabase client not configured</div>
-        <Footer />
-      </div>
-    )
-  }
-  const { data, error } = await supabase
-    .from("collections")
-    .select("name, slug, price_range, description, all_images")
-    .eq("slug", params.slug)
-    .single()
+  let data: any
 
-  if (error || !data) {
-    notFound()
+  if (!supabase) {
+    const collections = await getCollections()
+    data = collections.find((c) => c.slug === params.slug)
+    if (!data) {
+      notFound()
+    }
+  } else {
+    const { data: dbData, error } = await supabase
+      .from("collections")
+      .select("name, slug, price_range, description, all_images")
+      .eq("slug", params.slug)
+      .single()
+
+    if (error || !dbData) {
+      notFound()
+    }
+
+    data = dbData
   }
 
   const images: string[] = (data as any).all_images || []
