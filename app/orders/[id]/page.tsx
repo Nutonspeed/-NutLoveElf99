@@ -1,6 +1,4 @@
 "use client"
-
-import { use } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -12,8 +10,8 @@ import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
 
-export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function OrderDetailPage({ params }: { params: { id: string } }) {
+  const { id } = params
   const order = mockOrders.find((o) => o.id === id)
 
   if (!order) {

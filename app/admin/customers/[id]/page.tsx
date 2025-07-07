@@ -1,6 +1,5 @@
 "use client"
 
-import { use } from "react"
 import Link from "next/link"
 import {
   ArrowLeft,
@@ -25,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {
-  fetchCustomerById,
+  mockCustomers,
   getCustomerOrders,
   getCustomerStats,
 } from "@/lib/mock-customers"
@@ -33,10 +32,10 @@ import {
 export default function CustomerDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }) {
-  const { id } = use(params)
-  const customer = use(fetchCustomerById(id))
+  const { id } = params
+  const customer = mockCustomers.find((c) => c.id === id)
 
   if (!customer) {
     return (

@@ -1,6 +1,4 @@
 "use client"
-
-import { use } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -8,8 +6,8 @@ import { Download, PrinterIcon as Print, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 
-export default function InvoicePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function InvoicePage({ params }: { params: { id: string } }) {
+  const { id } = params
   const order = mockOrders.find((o) => o.id === id)
 
   if (!order) {
