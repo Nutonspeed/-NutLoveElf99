@@ -2,11 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { supabase } from "@/lib/supabase"
+import { getCollections, mockFabrics } from "@/lib/mock-collections"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
@@ -38,16 +37,9 @@ export default function AdminCollectionsPage() {
 
   useEffect(() => {
     const fetchCollections = async () => {
-      if (!supabase) return
-      const { data: cols } = await supabase
-        .from("collections")
-        .select("id, name, slug, description, price_range, thumbnail_images, all_images")
-      if (!cols) return
-      const { data: fabs } = await supabase
-        .from("fabrics")
-        .select("id, name, collection_id")
+      const cols = await getCollections()
       const map: Record<string, { id: string; name: string }[]> = {}
-      fabs?.forEach((f) => {
+      mockFabrics.forEach((f) => {
         if (!map[f.collection_id]) map[f.collection_id] = []
         map[f.collection_id].push({ id: f.id, name: f.name })
       })
@@ -62,43 +54,20 @@ export default function AdminCollectionsPage() {
     form.reset({ id: "", name: "", slug: "", description: "", price_range: "", thumbnail_images: [], all_images: [] })
   }
 
-  const handleSubmit = async (values: Collection) => {
-    if (!supabase) return
+  const handleSubmit = (values: Collection) => {
     if (editingCollection) {
-      const { data, error } = await supabase
-        .from("collections")
-        .update({
-          name: values.name,
-          slug: values.slug,
-          description: values.description,
-          price_range: values.price_range,
-          thumbnail_images: values.thumbnail_images,
-          all_images: values.all_images,
-        })
-        .eq("id", editingCollection.id)
-        .select()
-        .single()
-      if (!error && data) {
-        setCollections((prev) =>
-          prev.map((c) => (c.id === editingCollection.id ? data : c)),
-        )
-      }
+      setCollections((prev) =>
+        prev.map((c) =>
+          c.id === editingCollection.id ? { ...c, ...values } : c,
+        ),
+      )
     } else {
-      const { data, error } = await supabase
-        .from("collections")
-        .insert({
-          name: values.name,
-          slug: values.slug,
-          description: values.description,
-          price_range: values.price_range,
-          thumbnail_images: values.thumbnail_images,
-          all_images: values.all_images,
-        })
-        .select()
-        .single()
-      if (!error && data) {
-        setCollections((prev) => [...prev, data])
+      const newCollection: CollectionWithFabrics = {
+        ...values,
+        id: Date.now().toString(),
+        fabrics: [],
       }
+      setCollections((prev) => [...prev, newCollection])
     }
     setIsDialogOpen(false)
     setEditingCollection(null)
@@ -111,14 +80,8 @@ export default function AdminCollectionsPage() {
     setIsDialogOpen(true)
   }
 
-  const handleDeleteCollection = async (id: string) => {
-    if (!supabase) return
-    const previous = collections
-    setCollections(collections.filter((c) => c.id !== id))
-    const { error } = await supabase.from("collections").delete().eq("id", id)
-    if (error) {
-      setCollections(previous)
-    }
+  const handleDeleteCollection = (id: string) => {
+    setCollections((prev) => prev.filter((c) => c.id !== id))
   }
 
   const filteredCollections = collections.filter(
