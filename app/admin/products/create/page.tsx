@@ -22,7 +22,7 @@ export default function CreateProductPage() {
   const [price, setPrice] = useState("")
   const [category, setCategory] = useState("")
   const [collectionId, setCollectionId] = useState("")
-  const [images, setImages] = useState("")
+  const [images, setImages] = useState<string[]>([])
   const [sizes, setSizes] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
   const [features, setFeatures] = useState<string[]>([])
@@ -59,7 +59,7 @@ export default function CreateProductPage() {
       price: Number(price),
       category,
       collectionId,
-      images: images.split(',').map((s) => s.trim()).filter(Boolean),
+      images,
       originalPrice: undefined,
       inStock: true,
       rating: 0,
@@ -138,7 +138,18 @@ export default function CreateProductPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="images">รูปภาพ (คั่นด้วย comma)</Label>
-                <Input id="images" value={images} onChange={(e) => setImages(e.target.value)} />
+                <Input
+                  id="images"
+                  value={images.join(',')}
+                  onChange={(e) =>
+                    setImages(
+                      e.target.value
+                        .split(',')
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    )
+                  }
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="sizes">ขนาด (คั่นด้วย comma)</Label>
