@@ -7,6 +7,7 @@ export interface Product {
   originalPrice?: number
   images: string[]
   category: string
+  collectionId: string
   sizes: string[]
   colors: string[]
   inStock: boolean
