@@ -5,6 +5,8 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { CartProvider } from "@/contexts/cart-context"
 import { AuthProvider } from "@/contexts/auth-context"
+import { WishlistProvider } from "@/contexts/wishlist-context"
+import { CompareProvider } from "@/contexts/compare-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,8 +26,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <CartProvider>
-            {children}
-            <Toaster />
+            <WishlistProvider>
+              <CompareProvider>
+                {children}
+                <Toaster />
+              </CompareProvider>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </body>

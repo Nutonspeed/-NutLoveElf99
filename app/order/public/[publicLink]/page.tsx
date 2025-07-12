@@ -241,12 +241,12 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
             )}
             <div className="mt-4 flex justify-center">
               <Link
-                href={`https://m.me/nutsofacover?ref=${order.orderNumber}&text=${encodeURIComponent(
-                  `Hi, I'm checking on my order #${order.orderNumber}`,
+                href={`https://m.me/elfsofacover?text=${encodeURIComponent(
+                  `สอบถามสถานะออเดอร์ ${order.orderNumber}`,
                 )}`}
                 target="_blank"
               >
-                <Button>สอบถามสถานะทาง Messenger</Button>
+                <Button>สอบถามผ่าน Facebook</Button>
               </Link>
             </div>
             <div className="mt-6">
