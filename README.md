@@ -35,6 +35,7 @@ Real data is fetched from Supabase when the following variables are provided:
 
 - `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – the project's anon key
+- `NEXT_PUBLIC_CHATWOOT_URL` – URL of your Chatwoot instance (defaults to `http://localhost:3000`)
 
 If these variables are absent, the app falls back to built-in mock data.
 
