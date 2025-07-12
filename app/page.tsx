@@ -107,7 +107,7 @@ export default async function HomePage() {
               >
                 <div className="relative w-full h-40">
                   <Image
-                    src={col.all_images[0] || "/placeholder.svg"}
+                    src={col.images[0] || "/placeholder.svg"}
                     alt={col.name}
                     fill
                     className="object-cover"
@@ -115,7 +115,7 @@ export default async function HomePage() {
                 </div>
                 <div className="p-4">
                   <h3 className="font-semibold text-base truncate">{col.name}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{col.price_range}</p>
+                  <p className="text-sm text-gray-600 mt-1">{col.priceRange}</p>
                 </div>
               </Link>
             ))}

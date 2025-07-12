@@ -88,7 +88,7 @@ export interface Order {
     timestamp: string
     status: OrderStatus
     note?: string
-    user: string
+    updatedBy: string
   }>
 }
 
@@ -117,7 +117,7 @@ export interface ManualOrder {
     timestamp: string
     status: OrderStatus
     note?: string
-    user: string
+    updatedBy: string
   }>
 }
 

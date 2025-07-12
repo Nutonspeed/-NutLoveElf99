@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
+import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
@@ -23,7 +24,18 @@ interface Fabric {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  if (!supabase) return {}
+  if (!supabase) {
+    const fabric = mockFabrics.find((f) => f.slug === params.slug)
+    if (!fabric) return {}
+    const title = `${fabric.name} | SofaCover Pro`
+    const description = `รายละเอียดลายผ้า ${fabric.name}`
+    const image = fabric.images[0]
+    return {
+      title,
+      description,
+      openGraph: { title, description, images: [{ url: image }] },
+    }
+  }
   const { data } = await supabase
     .from("fabrics")
     .select("name, description, image_url, image_urls")
@@ -45,35 +57,46 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function FabricDetailPage({ params }: { params: { slug: string } }) {
-  if (!supabase) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">Supabase client not configured</div>
-        <Footer />
-      </div>
-    )
-  }
-
-  const { data: fabric, error } = await supabase
-    .from("fabrics")
-    .select("id, slug, name, description, size, collection_id, image_url, image_urls, price_min, price_max")
-    .eq("slug", params.slug)
-    .single()
-
-  if (error || !fabric) {
-    notFound()
-  }
-
+  let fabric: Fabric | null = null
   let collection: { name: string; slug: string } | null = null
-  if (fabric.collection_id) {
-    const { data: col } = await supabase
-      .from("collections")
-      .select("name, slug")
-      .eq("id", fabric.collection_id)
+
+  if (!supabase) {
+    const f = mockFabrics.find((fab) => fab.slug === params.slug)
+    if (!f) {
+      notFound()
+    }
+    fabric = {
+      id: f!.id,
+      slug: f!.slug,
+      name: f!.name,
+      description: '',
+      image_urls: f!.images,
+      price_min: f!.price,
+      price_max: f!.price,
+    }
+  } else {
+    const { data, error } = await supabase
+      .from("fabrics")
+      .select("id, slug, name, description, size, collection_id, image_url, image_urls, price_min, price_max")
+      .eq("slug", params.slug)
       .single()
-    if (col) collection = col
+
+    if (error || !data) {
+      notFound()
+    }
+    fabric = data as Fabric
+
+    if (fabric.collection_id) {
+      const { data: col } = await supabase
+        .from("collections")
+        .select("name, slug")
+        .eq("id", fabric.collection_id)
+        .single()
+      if (col) collection = col
+    }
   }
+
+
 
   return (
     <div className="min-h-screen">

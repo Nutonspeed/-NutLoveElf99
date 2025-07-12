@@ -53,7 +53,7 @@ const manualOrders: ManualOrder[] = [
       {
         timestamp: "2024-01-15T10:30:00Z",
         status: "confirmed",
-        user: "admin@nutlove.co",
+        updatedBy: "admin@nutlove.co",
         note: "Order created",
       },
     ],
@@ -95,7 +95,7 @@ const manualOrders: ManualOrder[] = [
       {
         timestamp: "2024-01-16T09:15:00Z",
         status: "processing",
-        user: "admin@nutlove.co",
+        updatedBy: "admin@nutlove.co",
         note: "Order created",
       },
     ],
@@ -161,7 +161,7 @@ export const orderDb = {
             {
               timestamp: new Date().toISOString(),
               status: orderData.status || "draft",
-              user: "admin@nutlove.co",
+              updatedBy: "admin@nutlove.co",
               note: "Order created",
             },
           ],
@@ -188,7 +188,7 @@ export const orderDb = {
           current.timeline.push({
             timestamp: new Date().toISOString(),
             status: updates.status,
-            user: "admin@nutlove.co",
+            updatedBy: "admin@nutlove.co",
           })
         }
 

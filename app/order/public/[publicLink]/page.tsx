@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { CheckCircle, Clock, Package, Truck, MapPin, Phone, Mail, Calendar } from "lucide-react"
+import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
 
@@ -247,6 +248,10 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
               >
                 <Button>สอบถามสถานะทาง Messenger</Button>
               </Link>
+            </div>
+            <div className="mt-6">
+              <h4 className="font-semibold mb-4">ไทม์ไลน์สถานะ</h4>
+              <OrderTimeline timeline={order.timeline} />
             </div>
           </CardContent>
         </Card>

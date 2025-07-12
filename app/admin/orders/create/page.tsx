@@ -92,7 +92,7 @@ export default function CreateOrderPage() {
         {
           timestamp: new Date().toISOString(),
           status: "pendingPayment",
-          user: "admin@nutlove.co",
+          updatedBy: "admin@nutlove.co",
           note: "Order created",
         },
       ],
