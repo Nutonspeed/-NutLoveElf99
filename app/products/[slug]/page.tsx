@@ -8,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus } from "lucide-react"
+import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus, MessageCircle } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { mockProducts } from "@/lib/mock-products"
@@ -223,6 +223,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               <Link href={`/order/new?product=${product.slug}`} className="flex-1">
                 <Button className="w-full" size="lg">สั่งซื้อ</Button>
               </Link>
+              <Link href="/chat" className="flex-1">
+                <Button variant="outline" className="w-full" size="lg">
+                  <MessageCircle className="mr-2 h-5 w-5" />
+                  แชทสอบถาม
+                </Button>
+              </Link>
               <Button
                 variant="outline"
                 size="lg"
@@ -299,7 +305,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             <TabsContent value="features" className="mt-6">
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-semibold text-lg mb-4">คุณสมบัติพิเศษ</h3>
+                  <h3 className="font-semibold text-lg mb-4">คุณสมบัติผ้า</h3>
                   <div className="grid grid-cols-2 gap-4">
                     {product.features.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-2">
@@ -391,7 +397,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
           <h2 className="text-2xl font-bold mb-8">สินค้าที่เกี่ยวข้อง</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {mockProducts
-              .filter((p) => p.id !== product.id && p.category === product.category)
+              .filter((p) => p.id !== product.id && p.collectionId === product.collectionId)
               .slice(0, 4)
               .map((relatedProduct) => (
                 <Card key={relatedProduct.id} className="group hover:shadow-lg transition-shadow">

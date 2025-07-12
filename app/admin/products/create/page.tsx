@@ -23,6 +23,10 @@ export default function CreateProductPage() {
   const [category, setCategory] = useState("")
   const [collectionId, setCollectionId] = useState("")
   const [images, setImages] = useState("")
+  const [features, setFeatures] = useState("")
+  const [sizes, setSizes] = useState("")
+  const [colors, setColors] = useState("")
+  const [showPreview, setShowPreview] = useState(false)
   const { addProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
 
@@ -60,9 +64,9 @@ export default function CreateProductPage() {
       inStock: true,
       rating: 0,
       reviews: 0,
-      sizes: [],
-      colors: [],
-      features: [],
+      sizes: sizes.split(',').map((s) => s.trim()).filter(Boolean),
+      colors: colors.split(',').map((s) => s.trim()).filter(Boolean),
+      features: features.split(',').map((s) => s.trim()).filter(Boolean),
       material: "",
       care: [],
     })
@@ -123,12 +127,44 @@ export default function CreateProductPage() {
                 <Label htmlFor="images">รูปภาพ (คั่นด้วย comma)</Label>
                 <Input id="images" value={images} onChange={(e) => setImages(e.target.value)} />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="features">คุณสมบัติผ้า (คั่นด้วย comma)</Label>
+                <Input id="features" value={features} onChange={(e) => setFeatures(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="sizes">ขนาดที่มี (คั่นด้วย comma)</Label>
+                <Input id="sizes" value={sizes} onChange={(e) => setSizes(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="colors">สีที่มี (คั่นด้วย comma)</Label>
+                <Input id="colors" value={colors} onChange={(e) => setColors(e.target.value)} />
+              </div>
               <div className="pt-4 flex justify-end">
+                <Button type="button" variant="outline" onClick={() => setShowPreview(!showPreview)} className="mr-2">
+                  Preview
+                </Button>
                 <Button type="submit">บันทึก</Button>
               </div>
             </form>
           </CardContent>
         </Card>
+        {showPreview && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>ตัวอย่างสินค้า</CardTitle>
+            </CardHeader>
+            <CardContent className="flex space-x-4">
+              <div className="relative w-32 h-32 flex-shrink-0">
+                <img src={images.split(',')[0] || '/placeholder.svg'} alt={name} className="w-full h-full object-cover rounded-lg" />
+              </div>
+              <div className="space-y-1">
+                <p className="font-semibold">{name || 'ชื่อสินค้า'}</p>
+                <p className="text-sm text-gray-600">฿{price || 0}</p>
+                <p className="text-sm text-gray-600">{features}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   )
