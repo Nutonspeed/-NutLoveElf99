@@ -4,144 +4,35 @@ export interface Collection {
   id: string
   name: string
   slug: string
-  price_range: string
-  thumbnail_images: string[]
-  all_images: string[]
+  priceRange: string
   description: string
-}
-
-export interface Fabric {
-  id: string
-  name: string
-  collection_id: string
-  image_urls: string[]
-  price_min: number
-  price_max: number
+  images: string[]
 }
 
 export const mockCollections: Collection[] = [
   {
     id: '1',
-    name: 'คอลเลกชันฤดูร้อน',
-    slug: 'summer',
-    price_range: '฿100 - ฿300',
-    thumbnail_images: [
-      '/placeholder.svg?height=200&width=200',
-    ],
-    all_images: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    description: 'ลายผ้าสดใสเหมาะกับหน้าร้อน',
+    name: 'Cozy Earth',
+    slug: 'cozy-earth',
+    priceRange: '890–2190',
+    description: 'ผ้านุ่มสบาย สไตล์มินิมอล',
+    images: ['/images/035.jpg', '/images/036.jpg', '/images/037.jpg', '/images/038.jpg'],
   },
   {
     id: '2',
-    name: 'คอลเลกชันมินิมอล',
-    slug: 'minimal',
-    price_range: '฿150 - ฿350',
-    thumbnail_images: [
-      '/placeholder.svg?height=200&width=200',
-    ],
-    all_images: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    description: 'ลายเรียบง่ายสไตล์มินิมอล',
-  },
-]
-
-export const mockFabrics: Fabric[] = [
-  {
-    id: 'f1',
-    name: 'ลายดอกไม้ A',
-    collection_id: '1',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 100,
-    price_max: 200,
+    name: 'Modern Loft',
+    slug: 'modern-loft',
+    priceRange: '990–1990',
+    description: 'โทนเข้ม มีสไตล์',
+    images: ['/images/039.jpg', '/images/040.jpg', '/images/041.jpg', '/images/042.jpg'],
   },
   {
-    id: 'f2',
-    name: 'ลายดอกไม้ B',
-    collection_id: '1',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 120,
-    price_max: 220,
-  },
-  {
-    id: 'f3',
-    name: 'ลายกราฟิก A',
-    collection_id: '1',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 150,
-    price_max: 250,
-  },
-  {
-    id: 'f4',
-    name: 'ลายกราฟิก B',
-    collection_id: '1',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 180,
-    price_max: 280,
-  },
-  {
-    id: 'f5',
-    name: 'ลายเรียบ A',
-    collection_id: '2',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 200,
-    price_max: 300,
-  },
-  {
-    id: 'f6',
-    name: 'ลายเรียบ B',
-    collection_id: '2',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 220,
-    price_max: 320,
-  },
-  {
-    id: 'f7',
-    name: 'ลายเส้น A',
-    collection_id: '2',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 250,
-    price_max: 350,
-  },
-  {
-    id: 'f8',
-    name: 'ลายเส้น B',
-    collection_id: '2',
-    image_urls: [
-      '/placeholder.svg?height=300&width=300',
-      '/placeholder.svg?height=300&width=300',
-    ],
-    price_min: 280,
-    price_max: 380,
+    id: '3',
+    name: 'Vintage Vibes',
+    slug: 'vintage-vibes',
+    priceRange: '890–2590',
+    description: 'ลายวินเทจคลาสสิก',
+    images: ['/images/043.jpg', '/images/044.jpg', '/images/045.jpg', '/images/046.jpg'],
   },
 ]
 
@@ -149,13 +40,22 @@ export async function getCollections(): Promise<Collection[]> {
   if (!supabase) {
     return Promise.resolve(mockCollections)
   }
-
-  const { data, error } = await supabase.from('collections').select('id, name, slug, price_range, thumbnail_images, all_images, description').order('created_at', { ascending: false })
+  const { data, error } = await supabase
+    .from('collections')
+    .select('id, name, slug, price_range, description, all_images')
+    .order('created_at', { ascending: false })
 
   if (error || !data) {
     console.error('Supabase fetch collections error', error)
     return mockCollections
   }
 
-  return data as Collection[]
+  return data.map((c) => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    priceRange: c.price_range,
+    description: c.description,
+    images: c.all_images || [],
+  })) as Collection[]
 }

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { getCollections, mockFabrics } from "@/lib/mock-collections"
+import { getCollections } from "@/lib/mock-collections"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -28,9 +28,8 @@ export default function AdminCollectionsPage() {
       name: "",
       slug: "",
       description: "",
-      price_range: "",
-      thumbnail_images: [],
-      all_images: [],
+      priceRange: "",
+      images: [],
       id: "",
     },
   })
@@ -38,20 +37,15 @@ export default function AdminCollectionsPage() {
   useEffect(() => {
     const fetchCollections = async () => {
       const cols = await getCollections()
-      const map: Record<string, { id: string; name: string }[]> = {}
-      mockFabrics.forEach((f) => {
-        if (!map[f.collection_id]) map[f.collection_id] = []
-        map[f.collection_id].push({ id: f.id, name: f.name })
-      })
       setCollections(
-        cols.map((c) => ({ ...c, fabrics: map[c.id] || [] })) as CollectionWithFabrics[],
+        cols.map((c) => ({ ...c, fabrics: [] })) as CollectionWithFabrics[],
       )
     }
     fetchCollections()
   }, [])
 
   const resetForm = () => {
-    form.reset({ id: "", name: "", slug: "", description: "", price_range: "", thumbnail_images: [], all_images: [] })
+    form.reset({ id: "", name: "", slug: "", description: "", priceRange: "", images: [] })
   }
 
   const handleSubmit = (values: Collection) => {
@@ -160,7 +154,7 @@ export default function AdminCollectionsPage() {
                     )}
                   />
                   <FormField
-                    name="price_range"
+                    name="priceRange"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>ช่วงราคา</FormLabel>
@@ -171,28 +165,13 @@ export default function AdminCollectionsPage() {
                     )}
                   />
                   <FormField
-                    name="thumbnail_images"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>รูปตัวอย่าง (คั่นด้วย comma)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="url1,url2"
-                            value={field.value.join(',')}
-                            onChange={(e) => field.onChange(e.target.value.split(','))}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="all_images"
+                    name="images"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>รูปทั้งหมด (คั่นด้วย comma)</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="url1,url2" 
+                            placeholder="url1,url2"
                             value={field.value.join(',')}
                             onChange={(e) => field.onChange(e.target.value.split(','))}
                           />
@@ -244,7 +223,7 @@ export default function AdminCollectionsPage() {
                   <TableRow key={collection.id}>
                     <TableCell>
                       <Image
-                        src={collection.thumbnail_images[0] || "/placeholder.svg"}
+                        src={collection.images[0] || "/placeholder.svg"}
                         alt={collection.name}
                         width={50}
                         height={50}

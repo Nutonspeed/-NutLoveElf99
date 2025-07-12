@@ -40,7 +40,7 @@ const initialMockOrders: Order[] = [
       {
         timestamp: "2024-01-15T10:30:00Z",
         status: "depositPaid",
-        user: "admin@nutlove.co",
+        updatedBy: "admin@nutlove.co",
         note: "Order created",
       },
     ],
@@ -81,7 +81,7 @@ const initialMockOrders: Order[] = [
       {
         timestamp: "2024-01-14T14:20:00Z",
         status: "paid",
-        user: "admin@nutlove.co",
+        updatedBy: "admin@nutlove.co",
         note: "Order created",
       },
     ],

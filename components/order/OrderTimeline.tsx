@@ -18,7 +18,7 @@ interface TimelineEntry {
   timestamp: string
   status: OrderStatus
   note?: string
-  user: string
+  updatedBy: string
 }
 
 interface OrderTimelineProps {
@@ -39,7 +39,7 @@ export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderT
         status,
         note: note || undefined,
         timestamp: new Date().toISOString(),
-        user: "admin@nutlove.co",
+        updatedBy: "admin@nutlove.co",
       })
       setNote("")
     }

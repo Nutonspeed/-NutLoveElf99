@@ -18,7 +18,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
   } else {
     const { data: dbData, error } = await supabase
       .from("collections")
-      .select("name, slug, price_range, description, all_images")
+      .select("id, name, slug, price_range, description, all_images")
       .eq("slug", params.slug)
       .single()
 
@@ -26,18 +26,25 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
       notFound()
     }
 
-    data = dbData
+    data = {
+      id: dbData.id,
+      name: dbData.name,
+      slug: dbData.slug,
+      priceRange: dbData.price_range,
+      description: dbData.description,
+      images: dbData.all_images || [],
+    }
   }
 
-  const images: string[] = (data as any).all_images || []
+  const images: string[] = (data as any).images || []
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex-1">
         <h1 className="text-3xl font-bold mb-2">{data.name}</h1>
-        {data.price_range && (
-          <p className="text-gray-700 mb-2">{data.price_range}</p>
+        {data.priceRange && (
+          <p className="text-gray-700 mb-2">{data.priceRange}</p>
         )}
         {data.description && (
           <p className="text-gray-600 mb-8 whitespace-pre-line">{data.description}</p>

@@ -60,7 +60,7 @@ export default function CollectionsPage() {
                 className="border rounded-lg overflow-hidden hover:shadow transition bg-white"
               >
                 <div className="grid grid-cols-2 gap-0 border-b">
-                  {collection.all_images.slice(0, 4).map((img, idx) => (
+                  {collection.images.slice(0, 4).map((img, idx) => (
                     <div key={idx} className="relative aspect-square">
                       <Image src={img || "/placeholder.svg"} alt={collection.name} fill className="object-cover" />
                     </div>
@@ -70,7 +70,7 @@ export default function CollectionsPage() {
                   <h3 className="font-semibold text-sm md:text-base truncate">
                     {collection.name}
                   </h3>
-                  <p className="text-xs text-gray-600 mt-1">{collection.price_range}</p>
+                  <p className="text-xs text-gray-600 mt-1">{collection.priceRange}</p>
                 </div>
               </Link>
             ))}
