@@ -36,6 +36,7 @@ Real data is fetched from Supabase when the following variables are provided:
 - `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – the project's anon key
 - `NEXT_PUBLIC_CHATWOOT_URL` – URL of your Chatwoot instance (defaults to `http://localhost:3000`)
+- `CHATWOOT_PORT` – port to expose the Chatwoot Rails server (defaults to `3000`)
 
 If these variables are absent, the app falls back to built-in mock data.
 
@@ -48,11 +49,12 @@ To run Chatwoot locally:
 ```bash
 cd chatwoot
 cp .env.example .env
+# Optionally change CHATWOOT_PORT in `.env` if 3000 is in use
 docker-compose build
 docker-compose up -d
 ```
 
-Chatwoot will be available at `http://localhost:3000`. The admin dashboard
+Chatwoot will be available at `http://localhost:${CHATWOOT_PORT}` (3000 by default). The admin dashboard
 includes a button to open Chatwoot in a new browser tab.
 
 ## Testing
