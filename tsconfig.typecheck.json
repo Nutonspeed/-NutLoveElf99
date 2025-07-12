@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "app/**/*",
+    "components/**/*",
+    "hooks/**/*",
+    "contexts/**/*",
+    "lib/**/*",
+    "types/**/*"
+  ],
+  "exclude": ["node_modules", "chatwoot", ".next"]
+}

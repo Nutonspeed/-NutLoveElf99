@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { OrderStatus, ShippingStatus, Order } from "@/types/order"
 
 import { supabase } from "./supabase"

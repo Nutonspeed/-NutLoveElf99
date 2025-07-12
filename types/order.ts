@@ -1,9 +1,10 @@
 export interface OrderItem {
-  id: string
+  id?: string
+  productId?: string
   productName: string
-  size: string
-  pattern: string
-  color: string
+  size?: string
+  pattern?: string
+  color?: string
   price: number
   quantity: number
   /** Percent discount for this item */
@@ -58,19 +59,13 @@ export interface Order {
   customerId: string
   customerName: string
   customerEmail: string
-  items: Array<{
-    productId: string
-    productName: string
-    quantity: number
-    price: number
-    size?: string
-    color?: string
-  }>
+  items: OrderItem[]
   total: number
   status: OrderStatus
   depositPercent?: number
   note?: string
   createdAt: string
+  updatedAt?: string
   shippingAddress: {
     name: string
     address: string
