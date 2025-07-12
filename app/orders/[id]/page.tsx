@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
+import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle, FileText } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 import type { OrderStatus } from "@/types/order"
@@ -172,11 +172,18 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <CardTitle>การดำเนินการ</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {order.status === "paid" && (
+                {order.status === "paid" ? (
                   <Link href={`/invoice/${order.id}`}>
                     <Button className="w-full bg-transparent" variant="outline">
                       <Download className="mr-2 h-4 w-4" />
                       ดาวน์โหลดใบเสร็จ
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link href={`/invoice/${order.id}`}>
+                    <Button className="w-full bg-transparent" variant="outline">
+                      <FileText className="mr-2 h-4 w-4" />
+                      เปิดบิล
                     </Button>
                   </Link>
                 )}

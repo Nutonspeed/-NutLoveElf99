@@ -20,6 +20,7 @@ import Image from "next/image"
 import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { mockOrders } from "@/lib/mock-orders"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -47,6 +48,7 @@ export default function CheckoutPage() {
   })
 
   const [agreeTerms, setAgreeTerms] = useState(false)
+  const [slip, setSlip] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const shipping = state.total >= 1500 ? 0 : 100
@@ -83,6 +85,47 @@ export default function CheckoutPage() {
       toast({
         title: "สั่งซื้อสำเร็จ!",
         description: `คำสั่งซื้อ ${orderId} ได้รับการยืนยันแล้ว`,
+      })
+
+      mockOrders.push({
+        id: orderId,
+        customerId: user?.id || "1",
+        customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+        customerEmail: shippingInfo.email,
+        items: state.items.map((i) => ({
+          productId: i.id,
+          productName: i.name,
+          quantity: i.quantity,
+          price: i.price,
+          size: i.size,
+          color: i.color,
+        })),
+        total: finalTotal,
+        status: "pendingPayment",
+        depositPercent: 100,
+        slipImage: slip || "",
+        createdAt: new Date().toISOString(),
+        shippingAddress: {
+          name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+          address: shippingInfo.address,
+          city: shippingInfo.city,
+          postalCode: shippingInfo.postalCode,
+          phone: shippingInfo.phone,
+        },
+        delivery_method: "",
+        tracking_number: "",
+        shipping_fee: shipping,
+        shipping_status: "pending",
+        shipping_date: "",
+        delivery_note: shippingInfo.notes,
+        timeline: [
+          {
+            timestamp: new Date().toISOString(),
+            status: "pendingPayment",
+            updatedBy: "system",
+            note: "Order created",
+          },
+        ],
       })
 
       dispatch({ type: "CLEAR_CART" })
@@ -285,6 +328,34 @@ export default function CheckoutPage() {
                           required
                         />
                       </div>
+                    </div>
+                  )}
+
+                  {paymentMethod !== "credit-card" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="slip">แนบสลิปโอนเงิน</Label>
+                      <Input
+                        id="slip"
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            const reader = new FileReader()
+                            reader.onload = () => setSlip(reader.result as string)
+                            reader.readAsDataURL(file)
+                          } else {
+                            setSlip(null)
+                          }
+                        }}
+                      />
+                      {slip && (
+                        <img
+                          src={slip}
+                          alt="slip preview"
+                          className="h-40 w-auto rounded border mt-2"
+                        />
+                      )}
                     </div>
                   )}
                 </CardContent>

@@ -71,6 +71,8 @@ export interface Order {
   total: number
   status: OrderStatus
   depositPercent?: number
+  /** URL or base64 string for uploaded payment slip */
+  slipImage?: string
   note?: string
   createdAt: string
   shippingAddress: {

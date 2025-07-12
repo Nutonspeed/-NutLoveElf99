@@ -13,6 +13,8 @@ import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
+import { Checkbox } from "@/components/ui/checkbox"
+import { toast } from "sonner"
 import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
@@ -31,6 +33,7 @@ export default function AdminOrdersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [pinnedOrders, setPinnedOrders] = useState<string[]>([])
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -41,6 +44,13 @@ export default function AdminOrdersPage() {
     const matchesStatus = statusFilter === "all" || order.status === statusFilter
 
     return matchesSearch && matchesStatus
+  })
+
+  const sortedOrders = [...filteredOrders].sort((a, b) => {
+    const aPinned = pinnedOrders.includes(a.id)
+    const bPinned = pinnedOrders.includes(b.id)
+    if (aPinned === bPinned) return 0
+    return aPinned ? -1 : 1
   })
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
@@ -92,6 +102,7 @@ export default function AdminOrdersPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Button variant="outline" onClick={() => toast.info("มีออเดอร์ใหม่เข้ามา")}>ทดสอบแจ้งเตือน</Button>
               </div>
             </div>
           </CardHeader>
@@ -99,6 +110,7 @@ export default function AdminOrdersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-8">Pin</TableHead>
                   <TableHead>รหัสคำสั่งซื้อ</TableHead>
                   <TableHead>ลูกค้า</TableHead>
                   <TableHead>วันที่สั่งซื้อ</TableHead>
@@ -109,8 +121,20 @@ export default function AdminOrdersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders.map((order) => (
+                {sortedOrders.map((order) => (
                   <TableRow key={order.id}>
+                    <TableCell>
+                      <Checkbox
+                        checked={pinnedOrders.includes(order.id)}
+                        onCheckedChange={() =>
+                          setPinnedOrders((prev) =>
+                            prev.includes(order.id)
+                              ? prev.filter((p) => p !== order.id)
+                              : [...prev, order.id],
+                          )
+                        }
+                      />
+                    </TableCell>
                     <TableCell>
                       <p className="font-medium">{order.id}</p>
                     </TableCell>
@@ -224,15 +248,27 @@ export default function AdminOrdersPage() {
                                       </div>
                                     ))}
                                   </div>
-                                  <div className="border-t pt-2 mt-2">
-                                    <div className="flex justify-between items-center font-semibold text-lg">
-                                      <span>ยอดรวม:</span>
-                                      <span>฿{selectedOrder.total.toLocaleString()}</span>
-                                    </div>
+                                <div className="border-t pt-2 mt-2">
+                                  <div className="flex justify-between items-center font-semibold text-lg">
+                                    <span>ยอดรวม:</span>
+                                    <span>฿{selectedOrder.total.toLocaleString()}</span>
                                   </div>
                                 </div>
-                              </div>
-                            )}
+                                </div>
+
+                                {selectedOrder.slipImage && (
+                                  <div>
+                                    <h4 className="font-semibold mb-2">สลิปโอนเงิน</h4>
+                                    <img src={selectedOrder.slipImage} alt="slip" className="h-40 rounded border" />
+                                    <div className="flex space-x-2 mt-2">
+                                      <Button onClick={() => toast.success("ยืนยันรับยอดแล้ว")}>ยืนยันรับยอด</Button>
+                                      <Button variant="destructive" onClick={() => toast.error("ปฏิเสธสลิปแล้ว")}>ปฏิเสธ</Button>
+                                    </div>
+                                  </div>
+                                )}
+                                </div>
+                             </div>
+                           )}
                           </DialogContent>
                         </Dialog>
 

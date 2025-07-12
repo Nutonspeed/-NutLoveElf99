@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Share2, Edit, PrinterIcon as Print } from "lucide-react"
+import { ArrowLeft, Share2, Edit, PrinterIcon as Print, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -17,6 +17,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const { id } = params
   const orderIndex = mockOrders.findIndex((o) => o.id === id)
   const order = mockOrders[orderIndex]
+  const chatwootUrl = process.env.NEXT_PUBLIC_CHATWOOT_URL || "http://localhost:3000"
 
   const [status, setStatus] = useState<OrderStatus>(order?.status ?? "pendingPayment")
 
@@ -61,6 +62,10 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/label`, "_blank") }>
                 <Print className="mr-2 h-4 w-4" />
                 พิมพ์ใบจ่าหน้า
+              </Button>
+              <Button variant="outline" onClick={() => window.open(`${chatwootUrl}/?cid=${order.customerId}`, "_blank") }>
+                <MessageCircle className="mr-2 h-4 w-4" />
+                แชทลูกค้า
               </Button>
               <Link href={`/admin/orders/edit/${id}`}>
                 <Button variant="outline">
