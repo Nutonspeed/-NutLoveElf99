@@ -38,6 +38,22 @@ Real data is fetched from Supabase when the following variables are provided:
 
 If these variables are absent, the app falls back to built-in mock data.
 
+## Chatwoot
+
+The store now uses [Chatwoot](https://www.chatwoot.com/) for the customer chat
+system. The source for Chatwoot is included under the `chatwoot/` directory.
+To run Chatwoot locally:
+
+```bash
+cd chatwoot
+cp .env.example .env
+docker-compose build
+docker-compose up -d
+```
+
+Chatwoot will be available at `http://localhost:3000`. The admin dashboard
+includes a button to open Chatwoot in a new browser tab.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
