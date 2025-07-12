@@ -492,7 +492,7 @@ export default function NotificationSettingsPage() {
                         </a>
                       </li>
                       <li>เข้าสู่ระบบด้วยบัญชี Line</li>
-                      <li>คลิก "Generate token"</li>
+                        <li>คลิก &ldquo;Generate token&rdquo;</li>
                       <li>เลือกกลุ่มหรือแชทที่ต้องการรับการแจ้งเตือน</li>
                       <li>คัดลอก Token ที่ได้</li>
                     </ol>
