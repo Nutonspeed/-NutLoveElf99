@@ -55,6 +55,20 @@ docker-compose up -d
 Chatwoot will be available at `http://localhost:3000`. The admin dashboard
 includes a button to open Chatwoot in a new browser tab.
 
+## Testing
+
+Run unit tests with:
+
+```bash
+pnpm test
+```
+
+For watch mode during development:
+
+```bash
+pnpm test:watch
+```
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
