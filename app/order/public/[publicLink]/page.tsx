@@ -3,7 +3,9 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import Link from "next/link"
 import { CheckCircle, Clock, Package, Truck, MapPin, Phone, Mail, Calendar } from "lucide-react"
 import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
@@ -129,6 +131,16 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
 
   const currentStepIndex = getCurrentStepIndex()
 
+  const estimatedDeliveryDate = (() => {
+    const lastEntry = [...order.timeline]
+      .filter((e) => e.status === "processing" || e.status === "shipped")
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0]
+    if (!lastEntry) return null
+    const date = new Date(lastEntry.timestamp)
+    date.setDate(date.getDate() + 7)
+    return date
+  })()
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -216,6 +228,26 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
                 </div>
               </div>
             )}
+            {estimatedDeliveryDate && (
+              <p className="mt-4 text-center text-sm text-gray-600">
+                คาดว่าจะได้รับสินค้าภายใน{' '}
+                {estimatedDeliveryDate.toLocaleDateString('th-TH', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            )}
+            <div className="mt-4 flex justify-center">
+              <Link
+                href={`https://m.me/nutsofacover?ref=${order.orderNumber}&text=${encodeURIComponent(
+                  `Hi, I'm checking on my order #${order.orderNumber}`,
+                )}`}
+                target="_blank"
+              >
+                <Button>สอบถามสถานะทาง Messenger</Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
 
