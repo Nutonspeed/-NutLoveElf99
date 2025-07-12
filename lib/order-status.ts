@@ -20,6 +20,7 @@ export function getOrderStatusBadgeVariant(
     case "shipped":
     case "confirmed":
     case "producing":
+    case "packed":
       return "secondary"
     case "pendingPayment":
     case "processing":

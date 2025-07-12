@@ -40,6 +40,15 @@ const manualOrders: ManualOrder[] = [
     total: 3800,
     status: "confirmed",
     paymentStatus: "paid",
+    payments: [
+      {
+        id: "pay-001",
+        date: "2024-01-15T11:00:00Z",
+        amount: 1900,
+        bank: "SCB",
+        confirmed: true,
+      },
+    ],
     notes: "ลูกค้า VIP ส่งด่วน",
     attachments: [
       "/placeholder.svg?height=200&width=300&text=Reference+Image+1",
@@ -85,6 +94,15 @@ const manualOrders: ManualOrder[] = [
     total: 2780,
     status: "processing",
     paymentStatus: "partial",
+    payments: [
+      {
+        id: "pay-002",
+        date: "2024-01-16T10:00:00Z",
+        amount: 1000,
+        bank: "KBank",
+        confirmed: false,
+      },
+    ],
     notes: "รอการชำระเงินส่วนที่เหลือ",
     attachments: [],
     publicLink: "pub-mo-002-abc",
@@ -151,6 +169,7 @@ export const orderDb = {
           total: orderData.total || 0,
           status: orderData.status || "draft",
           paymentStatus: orderData.paymentStatus || "unpaid",
+          payments: orderData.payments || [],
           notes: orderData.notes || "",
           attachments: orderData.attachments || [],
           publicLink: `pub-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -195,6 +214,7 @@ export const orderDb = {
         manualOrders[index] = {
           ...current,
           ...updates,
+          payments: updates.payments ?? current.payments,
           updatedAt: new Date().toISOString(),
         }
 

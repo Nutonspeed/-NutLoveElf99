@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -16,10 +16,28 @@ import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
 } from "@/lib/order-status"
+import { Progress } from "@/components/ui/progress"
+
+function getProgress(status: OrderStatus) {
+  switch (status) {
+    case "depositPaid":
+      return 25
+    case "paid":
+    case "packed":
+      return 50
+    case "shipped":
+      return 75
+    case "delivered":
+      return 100
+    default:
+      return 10
+  }
+}
 
 export default function OrdersPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
+  const [statusFilter, setStatusFilter] = useState<string>("all")
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -31,7 +49,9 @@ export default function OrdersPage() {
     return null
   }
 
-  const userOrders = mockOrders.filter((order) => order.customerId === user?.id)
+  const userOrders = mockOrders.filter(
+    (order) => order.customerId === user?.id && (statusFilter === "all" || order.status === statusFilter),
+  )
 
 
   return (
@@ -44,6 +64,18 @@ export default function OrdersPage() {
             <h1 className="text-3xl font-bold">ประวัติการสั่งซื้อ</h1>
             <p className="text-gray-600">ตรวจสอบสถานะและรายละเอียดคำสั่งซื้อของคุณ</p>
           </div>
+          <select
+            className="border rounded-md p-2"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">ทั้งหมด</option>
+            <option value="pendingPayment">รอชำระเงิน</option>
+            <option value="depositPaid">มัดจำแล้ว</option>
+            <option value="paid">ชำระแล้ว</option>
+            <option value="shipped">จัดส่งแล้ว</option>
+            <option value="delivered">ส่งมอบแล้ว</option>
+          </select>
         </div>
 
         {userOrders.length === 0 ? (
@@ -67,9 +99,12 @@ export default function OrdersPage() {
                         สั่งซื้อเมื่อ {new Date(order.createdAt).toLocaleDateString("th-TH")}
                       </p>
                     </div>
-                    <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                      {getOrderStatusText(order.status)}
-                    </Badge>
+                    <div className="flex items-center space-x-2">
+                      <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                        {getOrderStatusText(order.status)}
+                      </Badge>
+                      <Progress className="w-24" value={getProgress(order.status)} />
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>

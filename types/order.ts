@@ -19,6 +19,7 @@ export type OrderStatus =
   | "processing"
   | "producing"
   | "done"
+  | "packed"
   | "shipped"
   | "delivered"
   | "cancelled"
@@ -43,6 +44,7 @@ export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
   { value: "processing", label: "กำลังดำเนินการ" },
   { value: "producing", label: "กำลังผลิต" },
   { value: "done", label: "ผลิตเสร็จแล้ว" },
+  { value: "packed", label: "แพ็กของแล้ว" },
   { value: "shipped", label: "จัดส่งแล้ว" },
   { value: "delivered", label: "ส่งมอบแล้ว" },
   { value: "cancelled", label: "ยกเลิก" },
@@ -88,6 +90,7 @@ export interface Order {
     timestamp: string
     status: OrderStatus
     note?: string
+    flag?: "urgent" | "normal"
     updatedBy: string
   }>
 }
@@ -107,6 +110,13 @@ export interface ManualOrder {
   total: number
   status: OrderStatus
   paymentStatus: "unpaid" | "partial" | "paid" | "refunded"
+  payments?: Array<{
+    id: string
+    date: string
+    amount: number
+    bank: string
+    confirmed?: boolean
+  }>
   notes?: string
   attachments: string[]
   publicLink: string
@@ -117,6 +127,7 @@ export interface ManualOrder {
     timestamp: string
     status: OrderStatus
     note?: string
+    flag?: "urgent" | "normal"
     updatedBy: string
   }>
 }
