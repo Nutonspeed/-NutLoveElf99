@@ -16,7 +16,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react"
+import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 
 interface Fabric {
@@ -35,6 +37,9 @@ export default function AdminFabricsPage() {
   const { toast } = useToast()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
   const [imgError, setImgError] = useState<Record<string, boolean>>({})
+  const [searchTerm, setSearchTerm] = useState("")
+  const [collectionFilter, setCollectionFilter] = useState("all")
+  const [collectionOptions, setCollectionOptions] = useState<{id: string; name: string}[]>([])
 
   const handleDelete = async (id: string) => {
     if (
@@ -89,6 +94,9 @@ export default function AdminFabricsPage() {
       collectionsData?.forEach((c) => {
         collectionMap[c.id] = c.name
       })
+      if (collectionsData) {
+        setCollectionOptions(collectionsData)
+      }
       const withCollectionName = fabricsData.map((f) => ({
         ...f,
         collection_name: collectionMap[f.collection_id] || null,
@@ -97,6 +105,15 @@ export default function AdminFabricsPage() {
     }
     fetchFabrics()
   }, [])
+
+  const filteredFabrics = fabrics.filter((f) => {
+    const matchesSearch =
+      f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.collection_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCollection =
+      collectionFilter === "all" || f.collection_id === collectionFilter
+    return matchesSearch && matchesCollection
+  })
 
   if (!isAuthenticated || user?.role !== "admin") {
     return null
@@ -127,10 +144,36 @@ export default function AdminFabricsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>รายการผ้า ({fabrics.length})</CardTitle>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <CardTitle>รายการผ้า ({filteredFabrics.length})</CardTitle>
+              <div className="flex items-center space-x-2">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="ค้นหา..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-60"
+                  />
+                </div>
+                <Select value={collectionFilter} onValueChange={setCollectionFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="คอลเลกชัน" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">ทั้งหมด</SelectItem>
+                    {collectionOptions.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="overflow-x-auto">
-            {fabrics.length > 0 ? (
+            {filteredFabrics.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -142,7 +185,7 @@ export default function AdminFabricsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {fabrics.map((fabric) => (
+                  {filteredFabrics.map((fabric) => (
                     <TableRow key={fabric.id}>
                       <TableCell>
                         <div className="h-20 w-20 flex items-center justify-center">
@@ -191,7 +234,11 @@ export default function AdminFabricsPage() {
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-8">ยังไม่มีผ้าในระบบ</div>
+              <div className="text-center py-8">
+                {fabrics.length === 0
+                  ? "ยังไม่มีผ้าในระบบ"
+                  : "ไม่พบผ้าที่ตรงกับเงื่อนไขการค้นหา"}
+              </div>
             )}
           </CardContent>
         </Card>
