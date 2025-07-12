@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, X } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { supabase } from "@/lib/supabase"
-import { prepareProductImage } from "@/lib/image-handler"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useAdminProducts } from "@/contexts/admin-products-context"
+import { useAdminCollections } from "@/contexts/admin-collections-context"
 
 interface EditProductPageProps {
   params: { id: string }
@@ -25,18 +26,11 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
   const [category, setCategory] = useState("")
-  const [imageUrls, setImageUrls] = useState<string[]>([])
-  const [imageFiles, setImageFiles] = useState<File[]>([])
-  const [previewUrls, setPreviewUrls] = useState<string[]>([])
+  const [collectionId, setCollectionId] = useState("")
+  const [images, setImages] = useState("")
+  const { products, updateProduct } = useAdminProducts()
+  const { collections } = useAdminCollections()
 
-  const removeExistingImage = (index: number) => {
-    setImageUrls(imageUrls.filter((_, i) => i !== index))
-  }
-
-  const removeNewImage = (index: number) => {
-    setImageFiles(imageFiles.filter((_, i) => i !== index))
-    setPreviewUrls(previewUrls.filter((_, i) => i !== index))
-  }
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -50,27 +44,17 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   }, [isAuthenticated, user, router])
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      if (!supabase || !params.id) {
-        setLoading(false)
-        return
-      }
-      const { data } = await supabase
-        .from("products")
-        .select("name, description, price, category, images")
-        .eq("id", params.id)
-        .single()
-      if (data) {
-        setName(data.name || "")
-        setDescription(data.description || "")
-        setPrice(data.price?.toString() || "")
-        setCategory(data.category || "")
-        setImageUrls(Array.isArray(data.images) ? data.images : [])
-      }
-      setLoading(false)
+    const p = products.find((pr) => pr.id === params.id)
+    if (p) {
+      setName(p.name)
+      setDescription(p.description)
+      setPrice(p.price.toString())
+      setCategory(p.category)
+      setCollectionId(p.collectionId)
+      setImages(p.images.join(','))
     }
-    fetchProduct()
-  }, [params.id])
+    setLoading(false)
+  }, [params.id, products])
 
   if (!isAuthenticated || user?.role !== "admin") {
     return null
@@ -80,45 +64,22 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     return <div>Loading...</div>
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!supabase) return
-
     const slug = name
       .toLowerCase()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "")
 
-    const uploaded: string[] = [...imageUrls]
-
-    for (const [idx, file] of imageFiles.entries()) {
-      const processed = await prepareProductImage(file, slug, uploaded.length + idx + 1)
-      const fileName = processed.name
-      const { error } = await supabase.storage
-        .from("product-images")
-        .upload(fileName, processed)
-      if (error) {
-        console.error("Failed to upload image", error)
-        continue
-      }
-      const { data } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(fileName)
-      uploaded.push(data.publicUrl)
-    }
-
-    setImageUrls(uploaded)
-
-    await supabase
-      .from("products")
-      .update({
-        name,
-        description,
-        price: Number(price),
-        category,
-        images: uploaded,
-      })
-      .eq("id", params.id)
+    updateProduct(params.id, {
+      slug,
+      name,
+      description,
+      price: Number(price),
+      category,
+      collectionId,
+      images: images.split(',').map((s) => s.trim()).filter(Boolean),
+    })
 
     router.push("/admin/products")
   }
@@ -158,59 +119,23 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                 <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="images">รูปภาพสินค้า</Label>
-                <Input
-                  id="images"
-                  type="file"
-                  multiple
-                  accept="image/png, image/jpeg"
-                  onChange={(e) => {
-                    const files = e.target.files
-                    if (files) {
-                      const arr = Array.from(files)
-                      setImageFiles(arr)
-                      setPreviewUrls(arr.map((f) => URL.createObjectURL(f)))
-                    }
-                  }}
-                />
-                {(imageUrls.length > 0 || previewUrls.length > 0) && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                    {imageUrls.map((url, idx) => (
-                      <div key={`existing-${idx}`} className="relative">
-                        <img
-                          src={url}
-                          alt={`existing-${idx}`}
-                          className="h-24 w-full object-cover rounded-md"
-                        />
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={() => removeExistingImage(idx)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
+                <Label htmlFor="collection">คอลเลกชัน</Label>
+                <Select value={collectionId} onValueChange={setCollectionId}>
+                  <SelectTrigger id="collection">
+                    <SelectValue placeholder="เลือกคอลเลกชัน" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {collections.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
+                      </SelectItem>
                     ))}
-                    {previewUrls.map((url, idx) => (
-                      <div key={`new-${idx}`} className="relative">
-                        <img
-                          src={url}
-                          alt={`new-${idx}`}
-                          className="h-24 w-full object-cover rounded-md"
-                        />
-                        <Button
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-1 right-1 h-6 w-6"
-                          onClick={() => removeNewImage(idx)}
-                        >
-                          <X className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="images">รูปภาพ (คั่นด้วย comma)</Label>
+                <Input id="images" value={images} onChange={(e) => setImages(e.target.value)} />
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>

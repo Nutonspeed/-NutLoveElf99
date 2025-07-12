@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
@@ -13,37 +13,16 @@ import { Plus, Search, Edit, Trash2, ArrowLeft, Eye } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { type Product } from "@/types/product"
-import { supabase } from "@/lib/supabase"
+import { useAdminProducts } from "@/contexts/admin-products-context"
+import { useAdminCollections } from "@/contexts/admin-collections-context"
 
 export default function AdminProductsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
-  const [products, setProducts] = useState<Product[]>([])
+  const { products, deleteProduct } = useAdminProducts()
+  const { collections } = useAdminCollections()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login")
-      return
-    }
-    if (user?.role !== "admin") {
-      router.push("/")
-      return
-    }
-  }, [isAuthenticated, user, router])
-
-  const fetchProducts = async () => {
-    if (!supabase) return
-    const { data } = await supabase.from("products").select("*")
-    if (data) {
-      setProducts(data as Product[])
-    }
-  }
-
-  useEffect(() => {
-    fetchProducts()
-  }, [])
 
   if (!isAuthenticated) {
     return (
@@ -77,22 +56,8 @@ export default function AdminProductsPage() {
       product.category.toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
-  const handleAddProduct = async (data: Omit<Product, "id">) => {
-    if (!supabase) return
-    await supabase.from("products").insert(data)
-    fetchProducts()
-  }
-
-  const handleEditProduct = async (id: string, data: Partial<Product>) => {
-    if (!supabase) return
-    await supabase.from("products").update(data).eq("id", id)
-    fetchProducts()
-  }
-
-  const handleDeleteProduct = async (productId: string) => {
-    if (!supabase) return
-    await supabase.from("products").delete().eq("id", productId)
-    fetchProducts()
+  const handleDeleteProduct = (productId: string) => {
+    deleteProduct(productId)
   }
 
   return (
@@ -144,6 +109,7 @@ export default function AdminProductsPage() {
                   <TableHead>รูปภาพ</TableHead>
                   <TableHead>ชื่อสินค้า</TableHead>
                   <TableHead>หมวดหมู่</TableHead>
+                  <TableHead>คอลเลกชัน</TableHead>
                   <TableHead>ราคา</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>คะแนน</TableHead>
@@ -170,6 +136,9 @@ export default function AdminProductsPage() {
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">{product.category}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      {collections.find((c) => c.id === product.collectionId)?.name || "-"}
                     </TableCell>
                     <TableCell>
                       <div>
@@ -220,6 +189,9 @@ export default function AdminProductsPage() {
                                     <div className="space-y-1">
                                       <p>
                                         <strong>หมวดหมู่:</strong> {selectedProduct.category}
+                                      </p>
+                                      <p>
+                                        <strong>คอลเลกชัน:</strong> {collections.find((c) => c.id === selectedProduct.collectionId)?.name || "-"}
                                       </p>
                                       <p>
                                         <strong>วัสดุ:</strong> {selectedProduct.material}
