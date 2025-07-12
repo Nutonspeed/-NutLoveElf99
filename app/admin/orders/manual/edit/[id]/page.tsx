@@ -51,6 +51,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
   const [attachments, setAttachments] = useState<string[]>([])
   const [status, setStatus] = useState<ManualOrder["status"]>("draft")
   const [paymentStatus, setPaymentStatus] = useState<ManualOrder["paymentStatus"]>("unpaid")
+  const [payments, setPayments] = useState<ManualOrder["payments"]>([])
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
@@ -86,6 +87,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
       setAttachments(orderData.attachments)
       setStatus(orderData.status)
       setPaymentStatus(orderData.paymentStatus)
+      setPayments(orderData.payments || [])
     } catch (error) {
       toast.error("ไม่สามารถโหลดข้อมูลออเดอร์ได้")
       router.push("/admin/orders/manual")
@@ -142,6 +144,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
         paymentStatus,
         notes,
         attachments,
+        payments,
       }
 
       await orderDb.updateManualOrder(params.id, updates)
@@ -402,6 +405,31 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
               onShippingCostChange={setShippingCost}
               onTaxChange={setTax}
             />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>การชำระเงิน</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {payments.map((p) => (
+                  <div key={p.id} className="flex justify-between items-center border-b pb-1 last:border-b-0">
+                    <div>
+                      <p className="font-medium">฿{p.amount.toLocaleString()}</p>
+                      <p className="text-sm text-gray-500">{p.bank} - {new Date(p.date).toLocaleDateString('th-TH')}</p>
+                    </div>
+                    {!p.confirmed && (
+                      <Button size="sm" onClick={() => {
+                        const updated = payments.map((pp) =>
+                          pp.id === p.id ? { ...pp, confirmed: true } : pp,
+                        )
+                        setPayments(updated)
+                        setOrder({ ...order!, payments: updated })
+                      }}>ยืนยัน</Button>
+                    )}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
 
             {/* Quick Actions */}
             <Card>

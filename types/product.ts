@@ -16,4 +16,5 @@ export interface Product {
   features: string[]
   material: string
   care: string[]
+  status?: "active" | "draft"
 }

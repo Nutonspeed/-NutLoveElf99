@@ -24,6 +24,7 @@ export const mockProducts: Product[] = [
     features: ["กันน้ำ", "กันฝุ่น", "ซักได้", "ป้องกันขนสัตว์"],
     material: "Velvet 100%",
     care: ["ซักเครื่องน้ำเย็น", "ไม่ควรใช้น้ำยาฟอก", "ตากแห้งในที่ร่ม"],
+    status: "active",
   },
   {
     id: "2",
@@ -47,6 +48,7 @@ export const mockProducts: Product[] = [
     features: ["ระบายอากาศ", "ซักง่าย", "ไม่ย่น", "ป้องกันรอยขีดข่วน"],
     material: "Cotton 70%, Polyester 30%",
     care: ["ซักเครื่องน้ำอุ่น", "รีดได้", "ตากแดดได้"],
+    status: "active",
   },
   {
     id: "3",
@@ -69,6 +71,7 @@ export const mockProducts: Product[] = [
     features: ["กันน้ำ 100%", "กันคราบ", "ป้องกันขนสัตว์", "ทำความสะอาดง่าย"],
     material: "Polyester with TPU coating",
     care: ["เช็ดทำความสะอาดด้วยผ้าชื้น", "ซักเครื่องได้", "ไม่ควรรีด"],
+    status: "active",
   },
   {
     id: "4",
@@ -91,6 +94,7 @@ export const mockProducts: Product[] = [
     features: ["ลุคหนังแท้", "ทนทาน", "ง่ายต่อการดูแล", "ดูหรูหรา"],
     material: "PU Leather",
     care: ["เช็ดด้วยผ้าชื้น", "ใช้ครีมบำรุงหนัง", "หลีกเลี่ยงแสงแดดจัด"],
+    status: "active",
   },
 ]
 

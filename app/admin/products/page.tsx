@@ -19,7 +19,7 @@ import { useAdminCollections } from "@/contexts/admin-collections-context"
 export default function AdminProductsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
-  const { products, deleteProduct } = useAdminProducts()
+  const { products, deleteProduct, updateProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
@@ -111,6 +111,7 @@ export default function AdminProductsPage() {
                   <TableHead>หมวดหมู่</TableHead>
                   <TableHead>คอลเลกชัน</TableHead>
                   <TableHead>ราคา</TableHead>
+                  <TableHead>สต็อก</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>คะแนน</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
@@ -154,6 +155,23 @@ export default function AdminProductsPage() {
                       <Badge variant={product.inStock ? "default" : "destructive"}>
                         {product.inStock ? "มีสินค้า" : "หมด"}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={product.status === "active" ? "default" : "secondary"}>
+                        {product.status === "active" ? "เปิด" : "ร่าง"}
+                      </Badge>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="ml-2"
+                        onClick={() =>
+                          updateProduct(product.id, {
+                            status: product.status === "active" ? "draft" : "active",
+                          })
+                        }
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-1">

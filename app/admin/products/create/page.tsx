@@ -23,6 +23,7 @@ export default function CreateProductPage() {
   const [category, setCategory] = useState("")
   const [collectionId, setCollectionId] = useState("")
   const [images, setImages] = useState("")
+  const [status, setStatus] = useState<"active" | "draft">("draft")
   const { addProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
 
@@ -65,6 +66,7 @@ export default function CreateProductPage() {
       features: [],
       material: "",
       care: [],
+      status,
     })
 
     router.push("/admin/products")
@@ -116,6 +118,18 @@ export default function CreateProductPage() {
                         {c.name}
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">สถานะ</Label>
+                <Select value={status} onValueChange={(v) => setStatus(v as "active" | "draft")}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="เลือกสถานะ" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">เปิดใช้งาน</SelectItem>
+                    <SelectItem value="draft">ร่าง</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

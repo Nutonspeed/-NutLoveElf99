@@ -30,6 +30,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [images, setImages] = useState("")
   const [newImage, setNewImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
+  const [status, setStatus] = useState<"active" | "draft">("draft")
   const { products, updateProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
 
@@ -54,6 +55,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       setCategory(p.category)
       setCollectionId(p.collectionId)
       setImages(p.images.join(','))
+      setStatus(p.status ?? 'active')
     }
     setLoading(false)
   }, [params.id, products])
@@ -93,6 +95,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         ...images.split(',').map((s) => s.trim()).filter(Boolean),
         ...(preview ? [preview] : []),
       ],
+      status,
     })
 
     router.push("/admin/products")
@@ -144,6 +147,18 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                         {c.name}
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="status">สถานะ</Label>
+                <Select value={status} onValueChange={(v) => setStatus(v as "active" | "draft")}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="เลือกสถานะ" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">เปิดใช้งาน</SelectItem>
+                    <SelectItem value="draft">ร่าง</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

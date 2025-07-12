@@ -18,6 +18,7 @@ interface TimelineEntry {
   timestamp: string
   status: OrderStatus
   note?: string
+  flag?: "urgent" | "normal"
   updatedBy: string
 }
 
@@ -31,6 +32,7 @@ interface OrderTimelineProps {
 export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderTimelineProps) {
   const [status, setStatus] = useState<OrderStatus>(orderStatusOptions[0].value)
   const [note, setNote] = useState("")
+  const [flag, setFlag] = useState<"urgent" | "normal">("normal")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,6 +40,7 @@ export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderT
       onAddEntry({
         status,
         note: note || undefined,
+        flag,
         timestamp: new Date().toISOString(),
         updatedBy: "admin@nutlove.co",
       })
@@ -60,7 +63,9 @@ export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderT
             <Badge variant={getOrderStatusBadgeVariant(entry.status)}>
               {getOrderStatusText(entry.status)}
             </Badge>
-            {entry.note && <span className="text-sm">{entry.note}</span>}
+            {entry.note && (
+              <span className={`text-sm ${entry.flag === 'urgent' ? 'text-red-600' : ''}`}>{entry.note}</span>
+            )}
           </li>
         ))}
       </ul>
@@ -81,6 +86,18 @@ export function OrderTimeline({ timeline, editable = false, onAddEntry }: OrderT
                     {opt.label}
                   </SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="timeline-flag">ความเร่งด่วน</Label>
+            <Select value={flag} onValueChange={(v) => setFlag(v as "urgent" | "normal") }>
+              <SelectTrigger id="timeline-flag" className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="normal">ปกติ</SelectItem>
+                <SelectItem value="urgent">ด่วน</SelectItem>
               </SelectContent>
             </Select>
           </div>

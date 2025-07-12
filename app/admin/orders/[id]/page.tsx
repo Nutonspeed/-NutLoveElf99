@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Share2, Edit } from "lucide-react"
+import { ArrowLeft, Share2, Edit, PrinterIcon as Print } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -57,6 +57,10 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
                 <Share2 className="mr-2 h-4 w-4" />
                 แชร์บิล
+              </Button>
+              <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/label`, "_blank") }>
+                <Print className="mr-2 h-4 w-4" />
+                พิมพ์ใบจ่าหน้า
               </Button>
               <Link href={`/admin/orders/edit/${id}`}>
                 <Button variant="outline">

@@ -18,7 +18,11 @@ export function AdminProductsProvider({ children }: { children: ReactNode }) {
   const [products, setProducts] = useLocalStorage<Product[]>("admin-products", mockProducts)
 
   const addProduct = (data: Omit<Product, "id">) => {
-    const newProduct: Product = { id: Date.now().toString(), ...data }
+    const newProduct: Product = {
+      id: Date.now().toString(),
+      status: "active",
+      ...data,
+    }
     setProducts((prev) => [...prev, newProduct])
   }
 
