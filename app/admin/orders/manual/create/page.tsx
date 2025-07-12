@@ -53,7 +53,10 @@ export default function CreateManualOrderPage() {
     return null
   }
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
+    0
+  )
   const total = subtotal - discount + shippingCost + tax
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
