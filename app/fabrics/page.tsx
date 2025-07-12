@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import Image from "next/image"
-import Link from "next/link"
+import { FabricsList } from "@/components/FabricsList"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
@@ -51,29 +50,7 @@ export default async function FabricsPage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">แกลเลอรี่ลายผ้า</h1>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-          {fabrics.map((fabric: Fabric) => (
-            <Link
-              key={fabric.id}
-              href={`/fabrics/${fabric.slug || fabric.id}`}
-              className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
-            >
-              <div className="relative aspect-square">
-                <Image
-                  src={
-                    fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
-                  }
-                  alt={fabric.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-2 text-center">
-                <p className="font-medium line-clamp-2">{fabric.name}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <FabricsList fabrics={fabrics} />
       </div>
       <Footer />
       <AnalyticsTracker event="ViewContent" />

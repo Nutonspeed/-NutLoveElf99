@@ -3,6 +3,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
+import { WishlistButton } from "@/components/WishlistButton"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
@@ -117,7 +118,10 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             />
           </div>
           <div className="space-y-4">
-            <h1 className="text-3xl font-bold">{fabric.name}</h1>
+            <div className="flex items-center space-x-2">
+              <h1 className="text-3xl font-bold">{fabric.name}</h1>
+              <WishlistButton slug={fabric.slug || fabric.id} />
+            </div>
             {fabric.price_min && fabric.price_max && (
               <p className="text-lg text-gray-700">
                 ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
@@ -136,9 +140,18 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             )}
             {fabric.description && <p className="text-gray-700 whitespace-pre-line">{fabric.description}</p>}
             <div className="flex space-x-4 pt-2">
-              <Button className="flex-1" size="lg">
-                <MessageSquare className="h-5 w-5 mr-2" />สอบถามลายนี้
-              </Button>
+              <a
+                href={`https://m.me/elfsofacover?text=${encodeURIComponent(
+                  `สนใจลายผ้า ${fabric.slug || fabric.id} ครับ`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1"
+              >
+                <Button className="w-full" size="lg">
+                  <MessageSquare className="h-5 w-5 mr-2" />สอบถามผ่าน Facebook
+                </Button>
+              </a>
               <Button variant="outline" size="lg">
                 <Receipt className="h-5 w-5 mr-2" />เปิดบิล
               </Button>
