@@ -665,10 +665,10 @@ export default function NotificationsPage() {
                   <div className="bg-blue-50 p-4 rounded-lg">
                     <h4 className="font-semibold mb-2">วิธีการทดสอบ</h4>
                     <ol className="text-sm space-y-1 list-decimal list-inside">
-                      <li>คลิกปุ่ม "ทดสอบการแจ้งเตือน"</li>
+                      <li>คลิกปุ่ม &ldquo;ทดสอบการแจ้งเตือน&rdquo;</li>
                       <li>เลือกประเภทการแจ้งเตือนที่ต้องการ</li>
                       <li>ใส่อีเมลหรือเบอร์โทร (ไม่บังคับ)</li>
-                      <li>คลิก "ส่งทดสอบ"</li>
+                      <li>คลิก &ldquo;ส่งทดสอบ&rdquo;</li>
                       <li>ตรวจสอบผลลัพธ์ใน Console</li>
                     </ol>
                   </div>
