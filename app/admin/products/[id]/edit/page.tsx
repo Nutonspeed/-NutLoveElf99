@@ -28,6 +28,8 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [category, setCategory] = useState("")
   const [collectionId, setCollectionId] = useState("")
   const [images, setImages] = useState("")
+  const [newImage, setNewImage] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string | null>(null)
   const { products, updateProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
 
@@ -64,6 +66,15 @@ export default function EditProductPage({ params }: EditProductPageProps) {
     return <div>Loading...</div>
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setNewImage(file)
+    const reader = new FileReader()
+    reader.onload = () => setPreview(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const slug = name
@@ -78,7 +89,10 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       price: Number(price),
       category,
       collectionId,
-      images: images.split(',').map((s) => s.trim()).filter(Boolean),
+      images: [
+        ...images.split(',').map((s) => s.trim()).filter(Boolean),
+        ...(preview ? [preview] : []),
+      ],
     })
 
     router.push("/admin/products")
@@ -136,6 +150,13 @@ export default function EditProductPage({ params }: EditProductPageProps) {
               <div className="space-y-2">
                 <Label htmlFor="images">รูปภาพ (คั่นด้วย comma)</Label>
                 <Input id="images" value={images} onChange={(e) => setImages(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="upload">อัพโหลดรูปใหม่</Label>
+                <Input id="upload" type="file" accept="image/*" onChange={handleImageChange} />
+                {preview && (
+                  <img src={preview} alt="preview" className="h-32 w-32 object-cover rounded-md" />
+                )}
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
