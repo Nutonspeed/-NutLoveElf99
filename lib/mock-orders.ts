@@ -21,6 +21,7 @@ const initialMockOrders: Order[] = [
     total: 2990,
     status: "depositPaid",
     depositPercent: 50,
+    slipImage: "/placeholder.svg?height=200&width=200&text=Slip",
     note: "Deposit received",
     createdAt: "2024-01-15T10:30:00Z",
     shippingAddress: {
@@ -71,6 +72,7 @@ const initialMockOrders: Order[] = [
     total: 3980,
     status: "paid",
     depositPercent: 100,
+    slipImage: "/placeholder.svg?height=200&width=200&text=Slip",
     createdAt: "2024-01-14T14:20:00Z",
     shippingAddress: {
       name: "Jane Smith",
