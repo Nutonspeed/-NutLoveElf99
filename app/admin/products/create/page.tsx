@@ -23,6 +23,9 @@ export default function CreateProductPage() {
   const [category, setCategory] = useState("")
   const [collectionId, setCollectionId] = useState("")
   const [images, setImages] = useState("")
+  const [sizes, setSizes] = useState<string[]>([])
+  const [colors, setColors] = useState<string[]>([])
+  const [features, setFeatures] = useState<string[]>([])
   const [status, setStatus] = useState<"active" | "draft">("draft")
   const { addProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
@@ -61,9 +64,9 @@ export default function CreateProductPage() {
       inStock: true,
       rating: 0,
       reviews: 0,
-      sizes: [],
-      colors: [],
-      features: [],
+      sizes,
+      colors,
+      features,
       material: "",
       care: [],
       status,
@@ -136,6 +139,51 @@ export default function CreateProductPage() {
               <div className="space-y-2">
                 <Label htmlFor="images">รูปภาพ (คั่นด้วย comma)</Label>
                 <Input id="images" value={images} onChange={(e) => setImages(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="sizes">ขนาด (คั่นด้วย comma)</Label>
+                <Input
+                  id="sizes"
+                  value={sizes.join(',')}
+                  onChange={(e) =>
+                    setSizes(
+                      e.target.value
+                        .split(',')
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    )
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="colors">สี (คั่นด้วย comma)</Label>
+                <Input
+                  id="colors"
+                  value={colors.join(',')}
+                  onChange={(e) =>
+                    setColors(
+                      e.target.value
+                        .split(',')
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    )
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="features">คุณสมบัติ (คั่นด้วย comma)</Label>
+                <Input
+                  id="features"
+                  value={features.join(',')}
+                  onChange={(e) =>
+                    setFeatures(
+                      e.target.value
+                        .split(',')
+                        .map((s) => s.trim())
+                        .filter(Boolean),
+                    )
+                  }
+                />
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
