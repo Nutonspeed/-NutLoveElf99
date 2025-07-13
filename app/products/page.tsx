@@ -13,6 +13,7 @@ import { Star, Filter, Grid, List } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { mockProducts } from "@/lib/mock-products"
+import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -181,6 +182,9 @@ export default function ProductsPage() {
                               ลด {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                             </Badge>
                           )}
+                          {mockCoViewLog[product.slug] && (
+                            <Badge className="absolute top-2 right-2">ดูด้วยกันบ่อย</Badge>
+                          )}
                         </div>
 
                         <div className="p-4 space-y-2">
@@ -229,6 +233,9 @@ export default function ProductsPage() {
                             <Badge className="absolute top-1 left-1 bg-red-500 text-xs">
                               ลด {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                             </Badge>
+                          )}
+                          {mockCoViewLog[product.slug] && (
+                            <Badge className="absolute top-1 right-1 text-xs">ดูด้วยกันบ่อย</Badge>
                           )}
                         </div>
 

@@ -23,6 +23,7 @@ import { useToast } from "@/hooks/use-toast"
 import { mockOrders } from "@/lib/mock-orders"
 import type { OrderStatus, ShippingStatus } from "@/types/order"
 import { db } from "@/lib/database"
+import { SuggestedExtras } from "@/components/SuggestedExtras"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -414,6 +415,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <Separator />
+                  <SuggestedExtras />
 
                   {/* Price Breakdown */}
                   <div className="space-y-2">

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { useCompare } from "@/contexts/compare-context"
+import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
 interface Fabric {
   id: string
@@ -30,11 +31,17 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
         {fabrics.map((fabric) => {
           const slug = fabric.slug || fabric.id
           const checked = items.includes(slug)
+          const coViewed = mockCoViewLog[slug]?.length
           return (
             <div
               key={slug}
               className="border rounded-lg overflow-hidden bg-white hover:shadow transition relative"
             >
+              {coViewed && (
+                <span className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded">
+                  ดูด้วยกันบ่อย
+                </span>
+              )}
               <Checkbox
                 checked={checked}
                 onCheckedChange={() => toggleCompare(slug)}
