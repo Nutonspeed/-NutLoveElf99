@@ -13,7 +13,13 @@ export let sofaSizes: SofaSize[] = []
 export function loadSofaSizes() {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('sofaSizes')
-    if (stored) sofaSizes = JSON.parse(stored)
+    if (stored) {
+      try {
+        sofaSizes = JSON.parse(stored)
+      } catch {
+        sofaSizes = []
+      }
+    }
   }
 }
 
