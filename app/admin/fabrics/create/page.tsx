@@ -53,7 +53,7 @@ export default function CreateFabricPage() {
           .single()
         if (data?.slug) slug = data.slug
       }
-      const processedFile = await prepareFabricImage(imageFile, slug, 1)
+      const processedFile = await prepareFabricImage(imageFile, slug, 1, 'image/webp')
       const fileName = processedFile.name
       const { error: uploadError } = await supabase.storage
         .from("fabric-images")
@@ -125,7 +125,7 @@ export default function CreateFabricPage() {
                 <Input
                   id="image"
                   type="file"
-                  accept="image/png, image/jpeg"
+                  accept="image/png, image/jpeg, image/webp"
                   onChange={(e) => {
                     const file = e.target.files?.[0]
                     if (file) {
