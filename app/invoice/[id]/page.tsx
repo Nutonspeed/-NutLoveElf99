@@ -6,6 +6,8 @@ import { Separator } from "@/components/ui/separator"
 import { Download, PrinterIcon as Print, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
+import { Badge } from "@/components/ui/badge"
+import { packingStatusOptions } from "@/types/order"
 import { mockBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
 import { toast } from "sonner"
@@ -119,6 +121,12 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
                   </p>
                 </div>
               </div>
+            </div>
+
+            <div className="mb-6 text-right">
+              <Badge>
+                {packingStatusOptions.find((p) => p.value === order.packingStatus)?.label}
+              </Badge>
             </div>
 
             {/* Customer Info */}

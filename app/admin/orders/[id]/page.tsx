@@ -8,10 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders, setPackingStatus } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
-import type { OrderStatus, ShippingStatus } from "@/types/order"
-import { shippingStatusOptions } from "@/types/order"
+import type { OrderStatus, ShippingStatus, PackingStatus } from "@/types/order"
+import { shippingStatusOptions, packingStatusOptions } from "@/types/order"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
@@ -23,6 +23,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
 
   const [status, setStatus] = useState<OrderStatus>(order?.status ?? "pendingPayment")
   const [shippingStatus, setShippingStatus] = useState<ShippingStatus>(order?.shipping_status ?? "pending")
+  const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
 
   if (!order) {
     return (
@@ -44,6 +45,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
     mockOrders[orderIndex].shipping_date = new Date().toISOString()
     setShippingStatus(value)
     toast.success("อัปเดตสถานะจัดส่งแล้ว")
+  }
+
+  const handlePackingChange = (value: PackingStatus) => {
+    setPackingStatus(order.id, value)
+    setPackingStatusState(value)
+    toast.success("อัปเดตสถานะแพ็กแล้ว")
   }
 
   return (
@@ -157,6 +164,21 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 </SelectTrigger>
                 <SelectContent>
                   {shippingStatusOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span>แพ็กสินค้า:</span>
+              <Select value={packingStatus} onValueChange={(v) => handlePackingChange(v as PackingStatus)}>
+                <SelectTrigger className="w-32">
+                  <Badge>{packingStatusOptions.find((o) => o.value === packingStatus)?.label}</Badge>
+                </SelectTrigger>
+                <SelectContent>
+                  {packingStatusOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
                       {opt.label}
                     </SelectItem>

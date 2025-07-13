@@ -11,11 +11,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders, setPackingStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
-import type { Order } from "@/types/order"
-import type { OrderStatus } from "@/types/order"
+import type { Order, OrderStatus, PackingStatus } from "@/types/order"
+import { packingStatusOptions } from "@/types/order"
 import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
@@ -52,6 +52,11 @@ export default function AdminOrdersPage() {
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
+  }
+
+  const updatePackingStatus = (orderId: string, status: PackingStatus) => {
+    setOrders(orders.map((o) => (o.id === orderId ? { ...o, packingStatus: status } : o)))
+    setPackingStatus(orderId, status)
   }
 
   const handleCreateBill = (orderId: string) => {
@@ -165,6 +170,7 @@ export default function AdminOrdersPage() {
                   <TableHead>วันที่สั่งซื้อ</TableHead>
                   <TableHead>ยอดรวม</TableHead>
                   <TableHead>สถานะ</TableHead>
+                  <TableHead>สถานะการแพ็ก</TableHead>
                   <TableHead>สถานะจัดส่ง</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
                 </TableRow>
@@ -197,6 +203,23 @@ export default function AdminOrdersPage() {
                       </SelectTrigger>
                       <SelectContent>
                         {orderStatusOptions.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={order.packingStatus}
+                      onValueChange={(v) => updatePackingStatus(order.id, v as PackingStatus)}
+                    >
+                      <SelectTrigger className="w-28">
+                        <Badge>{packingStatusOptions.find((o) => o.value === order.packingStatus)?.label}</Badge>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {packingStatusOptions.map((opt) => (
                           <SelectItem key={opt.value} value={opt.value}>
                             {opt.label}
                           </SelectItem>
