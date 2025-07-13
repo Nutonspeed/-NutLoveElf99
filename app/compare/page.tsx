@@ -14,6 +14,7 @@ interface Fabric {
   id: string
   slug: string
   name: string
+  sku: string
   color: string
   price: number
   images: string[]
@@ -24,7 +25,11 @@ export default function ComparePage() {
   const [fabrics, setFabrics] = useState<Fabric[]>([])
 
   useEffect(() => {
-    setFabrics(mockFabrics.filter((f) => items.includes(f.slug)))
+    setFabrics(
+      mockFabrics
+        .filter((f) => items.includes(f.slug))
+        .map((f) => ({ ...f }))
+    )
   }, [items])
 
   if (fabrics.length === 0) {

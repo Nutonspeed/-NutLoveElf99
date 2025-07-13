@@ -69,8 +69,18 @@ export default function CreateFabricPage() {
       setImageUrl(uploadedUrl)
     }
 
+    const { data: last } = await supabase
+      .from("fabrics")
+      .select("sku")
+      .order("sku", { ascending: false })
+      .limit(1)
+      .single()
+    const lastNum = last?.sku ? parseInt(last.sku.split("-")[1]) : 0
+    const sku = `FBC-${String(lastNum + 1).padStart(3, "0")}`
+
     const { error } = await supabase.from("fabrics").insert({
       name,
+      sku,
       image_url: uploadedUrl,
       collection_id: collectionId,
     })

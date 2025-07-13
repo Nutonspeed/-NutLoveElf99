@@ -11,6 +11,7 @@ interface Fabric {
   id: string
   slug: string | null
   name: string
+  sku?: string | null
   image_url?: string | null
   image_urls?: string[] | null
 }
