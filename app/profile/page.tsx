@@ -14,6 +14,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { User, MapPin, Shield, Bell } from "lucide-react"
+import Link from "next/link"
+import { mockCustomers } from "@/lib/mock-customers"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 
@@ -21,6 +23,8 @@ export default function ProfilePage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
+
+  const customer = mockCustomers.find((c) => c.id === user?.id)
 
   const [profileData, setProfileData] = useState({
     firstName: "John",
@@ -71,6 +75,22 @@ export default function ProfilePage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold mb-8">โปรไฟล์ของฉัน</h1>
+
+          {customer && (
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle>{customer.name}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <p className="text-sm text-gray-600">{customer.email}</p>
+                <p>แต้มสะสม: {customer.points ?? 0}</p>
+                <p>Tier: {customer.tier || "-"}</p>
+                <Link href="/profile/orders">
+                  <Button className="mt-2">ดูคำสั่งซื้อ</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
 
           <Tabs defaultValue="profile" className="space-y-6">
             <TabsList className="grid w-full grid-cols-4">

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState } from "react"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -24,6 +25,8 @@ import {
   mockCustomers,
   getCustomerOrders,
   getCustomerStats,
+  updateCustomerPoints,
+  setCustomerTier,
 } from "@/lib/mock-customers"
 
 export default function CustomerDetailPage({
@@ -44,6 +47,8 @@ export default function CustomerDetailPage({
 
   const orders = getCustomerOrders(customer.id)
   const stats = getCustomerStats(customer.id)
+  const [pointDelta, setPointDelta] = useState(0)
+  const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -61,6 +66,62 @@ export default function CustomerDetailPage({
         <div className="text-lg font-semibold">
           ยอดซื้อรวม: ฿{stats.totalSpent.toLocaleString()}
         </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>แต้มสะสม</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <p>คะแนนปัจจุบัน: {customer.points ?? 0}</p>
+            <div className="flex space-x-2 items-center">
+              <input
+                type="number"
+                className="border px-2 py-1 rounded w-24"
+                value={pointDelta}
+                onChange={(e) => setPointDelta(Number(e.target.value))}
+              />
+              <Button
+                variant="outline"
+                onClick={() => {
+                  updateCustomerPoints(customer.id, pointDelta)
+                  setPointDelta(0)
+                }}
+              >
+                ปรับแต้ม
+              </Button>
+            </div>
+            {customer.pointHistory && customer.pointHistory.length > 0 && (
+              <div className="text-sm space-y-1">
+                {customer.pointHistory.map((h, i) => (
+                  <p key={i}>
+                    {new Date(h.timestamp).toLocaleDateString("th-TH")} :{' '}
+                    {h.change > 0 ? `+${h.change}` : h.change}
+                  </p>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Tier</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <select
+              className="border px-2 py-1 rounded"
+              value={tierValue}
+              onChange={(e) => {
+                setTierValue(e.target.value)
+                setCustomerTier(customer.id, e.target.value as any)
+              }}
+            >
+              <option value="Silver">Silver</option>
+              <option value="Gold">Gold</option>
+              <option value="VIP">VIP</option>
+            </select>
+          </CardContent>
+        </Card>
 
         <Tabs defaultValue="orders" className="space-y-4">
           <TabsList>
