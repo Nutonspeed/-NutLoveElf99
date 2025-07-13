@@ -1,15 +1,15 @@
-"use client"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ArrowLeft } from "lucide-react"
-import { useAuth } from "@/contexts/auth-context"
-import { Button } from "@/components/ui/button"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
+"use client";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context";
+import { Button } from "@/components/ui/button";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   loadAutoMessage,
   autoMessage,
@@ -23,41 +23,48 @@ import {
   loadAutoReminder,
   autoReminder,
   setAutoReminder,
-} from "@/lib/mock-settings"
+  loadReviewReminder,
+  reviewReminder,
+  setReviewReminder,
+} from "@/lib/mock-settings";
 
 export default function SettingsPage() {
-  const { user, isAuthenticated } = useAuth()
-  const router = useRouter()
-  const [message, setMessage] = useState(autoMessage)
-  const [links, setLinks] = useState(socialLinks)
-  const [security, setSecurity] = useState(billSecurity)
-  const [reminder, setReminder] = useState(autoReminder)
+  const { user, isAuthenticated } = useAuth();
+  const router = useRouter();
+  const [message, setMessage] = useState(autoMessage);
+  const [links, setLinks] = useState(socialLinks);
+  const [security, setSecurity] = useState(billSecurity);
+  const [reminder, setReminder] = useState(autoReminder);
+  const [reviewRemind, setReviewRemind] = useState(reviewReminder);
 
   useEffect(() => {
-    loadAutoMessage()
-    loadSocialLinks()
-    loadBillSecurity()
-    loadAutoReminder()
-    setMessage(autoMessage)
-    setLinks(socialLinks)
-    setSecurity(billSecurity)
-    setReminder(autoReminder)
+    loadAutoMessage();
+    loadSocialLinks();
+    loadBillSecurity();
+    loadAutoReminder();
+    loadReviewReminder();
+    setMessage(autoMessage);
+    setLinks(socialLinks);
+    setSecurity(billSecurity);
+    setReminder(autoReminder);
+    setReviewRemind(reviewReminder);
     if (!isAuthenticated) {
-      router.push("/login")
+      router.push("/login");
     } else if (user?.role !== "admin") {
-      router.push("/")
+      router.push("/");
     }
-  }, [isAuthenticated, user, router])
+  }, [isAuthenticated, user, router]);
 
-  if (!isAuthenticated || user?.role !== "admin") return null
+  if (!isAuthenticated || user?.role !== "admin") return null;
 
   const handleSave = () => {
-    setAutoMessage(message)
-    setSocialLinks(links)
-    setBillSecurity(security)
-    setAutoReminder(reminder)
-    alert("บันทึกข้อความแล้ว")
-  }
+    setAutoMessage(message);
+    setSocialLinks(links);
+    setBillSecurity(security);
+    setAutoReminder(reminder);
+    setReviewReminder(reviewRemind);
+    alert("บันทึกข้อความแล้ว");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,7 +82,10 @@ export default function SettingsPage() {
             <CardTitle>ข้อความขอบคุณ</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Textarea value={message} onChange={(e) => setMessage(e.target.value)} />
+            <Textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
             <Button onClick={handleSave}>บันทึก</Button>
           </CardContent>
         </Card>
@@ -109,6 +119,14 @@ export default function SettingsPage() {
               />
               <Label htmlFor="auto-remind">แจ้งเตือนบิลค้างชำระ</Label>
             </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="review-remind"
+                checked={reviewRemind}
+                onCheckedChange={(v) => setReviewRemind(Boolean(v))}
+              />
+              <Label htmlFor="review-remind">เตือนให้รีวิวหลัง 3 วัน</Label>
+            </div>
           </CardContent>
         </Card>
         <Card className="mt-6">
@@ -120,23 +138,29 @@ export default function SettingsPage() {
               <Checkbox
                 id="sec-enabled"
                 checked={security.enabled}
-                onCheckedChange={(v) => setSecurity({ ...security, enabled: Boolean(v) })}
+                onCheckedChange={(v) =>
+                  setSecurity({ ...security, enabled: Boolean(v) })
+                }
               />
               <Label htmlFor="sec-enabled">ต้องยืนยันก่อนเข้าบิล</Label>
             </div>
             <Input
               placeholder="เบอร์โทร"
               value={security.phone}
-              onChange={(e) => setSecurity({ ...security, phone: e.target.value })}
+              onChange={(e) =>
+                setSecurity({ ...security, phone: e.target.value })
+              }
             />
             <Input
               placeholder="PIN"
               value={security.pin}
-              onChange={(e) => setSecurity({ ...security, pin: e.target.value })}
+              onChange={(e) =>
+                setSecurity({ ...security, pin: e.target.value })
+              }
             />
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

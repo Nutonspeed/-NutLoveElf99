@@ -32,6 +32,7 @@ export function setSocialLinks(links: { facebook: string; line: string }) {
 export let billSecurity = { enabled: false, phone: "", pin: "" }
 
 export let autoReminder = false
+export let reviewReminder = false
 
 export function loadBillSecurity() {
   if (typeof window !== 'undefined') {
@@ -54,9 +55,23 @@ export function loadAutoReminder() {
   }
 }
 
+export function loadReviewReminder() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('reviewReminder')
+    if (stored) reviewReminder = JSON.parse(stored)
+  }
+}
+
 export function setAutoReminder(val: boolean) {
   autoReminder = val
   if (typeof window !== 'undefined') {
     localStorage.setItem('autoReminder', JSON.stringify(val))
+  }
+}
+
+export function setReviewReminder(val: boolean) {
+  reviewReminder = val
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('reviewReminder', JSON.stringify(val))
   }
 }
