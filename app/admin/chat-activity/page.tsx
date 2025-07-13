@@ -7,16 +7,54 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { chatActivity, loadChatActivity, type ChatActivity } from "@/lib/mock-chat-activity"
+import {
+  chatActivity,
+  loadChatActivity,
+  type ChatActivity,
+  CHAT_ACTIVITY_EVENT,
+} from "@/lib/mock-chat-activity"
+import { mockOrders } from "@/lib/mock-orders"
+import { useToast } from "@/hooks/use-toast"
 import { mockCustomers } from "@/lib/mock-customers"
 
 export default function AdminChatActivityPage() {
   const [customerId, setCustomerId] = useState("all")
   const [activity, setActivity] = useState<ChatActivity[]>([])
+  const { toast } = useToast()
 
   useEffect(() => {
     loadChatActivity()
     setActivity([...chatActivity])
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<ChatActivity>).detail
+      setActivity((prev) => {
+        const updated = [...prev, detail]
+        const orders = mockOrders.filter((o) => o.customerId === detail.customerId)
+        const hasPending = orders.some(
+          (o) => o.status !== "paid" && o.status !== "completed"
+        )
+        if (detail.action === "customer_message" && hasPending) {
+          toast({
+            title: "ข้อความใหม่",
+            description: `${getName(detail.customerId)} ส่งข้อความใหม่`,
+          })
+        }
+        if (detail.action === "open_chat") {
+          const previouslyOpened = prev.some(
+            (a) => a.customerId === detail.customerId && a.action === "open_chat"
+          )
+          if (previouslyOpened) {
+            toast({
+              title: "ลูกค้าเปิดแชทอีกครั้ง",
+              description: getName(detail.customerId),
+            })
+          }
+        }
+        return updated
+      })
+    }
+    window.addEventListener(CHAT_ACTIVITY_EVENT, handler)
+    return () => window.removeEventListener(CHAT_ACTIVITY_EVENT, handler)
   }, [])
 
   const filtered =
