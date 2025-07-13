@@ -1,4 +1,5 @@
 // Mock Notification Service สำหรับการทดสอบ
+import { notifyTeams, loadNotifyTeams } from './mock-settings'
 export interface NotificationTemplate {
   id: string
   name: string
@@ -305,6 +306,7 @@ export class MockNotificationService {
 
     // โหลดประวัติจาก localStorage
     this.loadHistory()
+    loadNotifyTeams()
   }
 
   private loadHistory(): void {
@@ -365,6 +367,18 @@ export class MockNotificationService {
 
   async sendNotification(notificationData: NotificationData): Promise<boolean> {
     const { type, recipient, data, priority } = notificationData
+    const teamMap: Record<NotificationData['type'], keyof typeof notifyTeams> = {
+      stock_low: 'packing',
+      stock_out: 'packing',
+      stock_critical: 'packing',
+      order_created: 'packing',
+      order_updated: 'packing',
+      system_alert: 'finance',
+    }
+    const team = teamMap[type]
+    if (team && !notifyTeams[team]) {
+      return true
+    }
     let success = false
 
     // เตรียมข้อมูลทั่วไป

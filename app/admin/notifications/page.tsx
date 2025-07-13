@@ -28,10 +28,13 @@ import {
   AlertTriangle,
   Trash2,
   RefreshCw,
+  Package,
+  BadgeDollarSign,
 } from "lucide-react"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import type { NotificationHistory, NotificationTemplate } from "@/lib/mock-notification-service"
+import { notifyTeams, loadNotifyTeams, setNotifyTeams } from "@/lib/mock-settings"
 
 export default function NotificationsPage() {
   const { toast } = useToast()
@@ -50,9 +53,12 @@ export default function NotificationsPage() {
     lineEnabled: true,
     testMode: true, // เปิดโหมดทดสอบเป็นค่าเริ่มต้น
   })
+  const [teams, setTeams] = useState(notifyTeams)
 
   useEffect(() => {
     loadData()
+    loadNotifyTeams()
+    setTeams(notifyTeams)
   }, [])
 
   const loadData = async () => {
@@ -149,6 +155,12 @@ export default function NotificationsPage() {
         variant: "destructive",
       })
     }
+  }
+
+  const updateTeam = (key: 'packing' | 'finance', value: boolean) => {
+    const updated = { ...teams, [key]: value }
+    setTeams(updated)
+    setNotifyTeams(updated)
   }
 
 
@@ -652,6 +664,41 @@ export default function NotificationsPage() {
                     <Switch
                       checked={settings.testMode}
                       onCheckedChange={(checked) => setSettings((prev) => ({ ...prev, testMode: checked }))}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>ทีมที่รับการแจ้งเตือน</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <Package className="h-4 w-4" />
+                      <div>
+                        <Label>ทีมแพ็คสินค้า</Label>
+                        <p className="text-sm text-gray-500">แจ้งเตือนงานจัดส่ง</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={teams.packing}
+                      onCheckedChange={(checked) => updateTeam('packing', checked)}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <BadgeDollarSign className="h-4 w-4" />
+                      <div>
+                        <Label>ทีมการเงิน</Label>
+                        <p className="text-sm text-gray-500">แจ้งเตือนเรื่องชำระเงิน</p>
+                      </div>
+                    </div>
+                    <Switch
+                      checked={teams.finance}
+                      onCheckedChange={(checked) => updateTeam('finance', checked)}
                     />
                   </div>
                 </CardContent>
