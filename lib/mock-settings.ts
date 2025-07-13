@@ -34,6 +34,8 @@ export let billSecurity = { enabled: false, phone: "", pin: "" }
 export let autoReminder = false
 export let reviewReminder = false
 
+export let notifyTeams = { packing: true, finance: true }
+
 export function loadBillSecurity() {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('billSecurity')
@@ -73,5 +75,19 @@ export function setReviewReminder(val: boolean) {
   reviewReminder = val
   if (typeof window !== 'undefined') {
     localStorage.setItem('reviewReminder', JSON.stringify(val))
+  }
+}
+
+export function loadNotifyTeams() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('notifyTeams')
+    if (stored) notifyTeams = JSON.parse(stored)
+  }
+}
+
+export function setNotifyTeams(val: { packing: boolean; finance: boolean }) {
+  notifyTeams = val
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('notifyTeams', JSON.stringify(val))
   }
 }
