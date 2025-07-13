@@ -1,4 +1,5 @@
 import type { ManualOrder } from "@/types/order"
+import { addChatMessage } from "./mock-chat-messages"
 
 // Mock database for manual orders
 const manualOrders: ManualOrder[] = [
@@ -209,6 +210,7 @@ export const orderDb = {
             status: updates.status,
             updatedBy: "admin@nutlove.co",
           })
+          addChatMessage(id, 'status_' + updates.status)
         }
 
         manualOrders[index] = {

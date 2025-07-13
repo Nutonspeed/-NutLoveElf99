@@ -1,6 +1,7 @@
 import type { OrderStatus, ShippingStatus, Order, PackingStatus } from "@/types/order"
 
 import { supabase } from "./supabase"
+import { addChatMessage } from "./mock-chat-messages"
 
 const initialMockOrders: Order[] = [
   {
@@ -121,6 +122,20 @@ export function regenerateMockOrders() {
 export function setPackingStatus(orderId: string, status: PackingStatus) {
   const order = mockOrders.find((o) => o.id === orderId)
   if (order) order.packingStatus = status
+}
+
+export function setOrderStatus(orderId: string, status: OrderStatus) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return
+  if (order.status !== status) {
+    order.status = status
+    order.timeline.push({
+      timestamp: new Date().toISOString(),
+      status,
+      updatedBy: "admin@nutlove.co",
+    })
+    addChatMessage(orderId, 'status_' + status)
+  }
 }
 
 export async function fetchOrders(): Promise<Order[]> {
