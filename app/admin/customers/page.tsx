@@ -8,12 +8,18 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
 import Link from "next/link"
-import { fetchCustomers, getCustomerStats, type Customer } from "@/lib/mock-customers"
+import {
+  fetchCustomers,
+  getCustomerStats,
+  getCustomerOrders,
+  type Customer,
+} from "@/lib/mock-customers"
 
 
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [behaviorFilter, setBehaviorFilter] = useState("all")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -43,12 +49,25 @@ export default function AdminCustomersPage() {
   }
 
 
-  const filteredCustomers = customers.filter(
-    (customer) =>
+  const filteredCustomers = customers.filter((customer) => {
+    const matchSearch =
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone?.includes(searchTerm),
-  )
+      customer.phone?.includes(searchTerm)
+
+    const orders = getCustomerOrders(customer.id)
+    const hasUnpaid = orders.some((o) => o.status === "pendingPayment")
+    const isRepeat = orders.length > 1
+    const isFrequent = orders.length >= 3
+
+    const matchBehavior =
+      behaviorFilter === "all" ||
+      (behaviorFilter === "noRepeat" && !isRepeat) ||
+      (behaviorFilter === "frequent" && isFrequent) ||
+      (behaviorFilter === "unpaid" && hasUnpaid)
+
+    return matchSearch && matchBehavior
+  })
 
 
   if (loading) {
@@ -150,14 +169,26 @@ export default function AdminCustomersPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle>รายการลูกค้า ({filteredCustomers.length})</CardTitle>
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="ค้นหาลูกค้า..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8 w-64"
-                />
+              <div className="flex space-x-2 items-center">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="ค้นหาลูกค้า..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-64"
+                  />
+                </div>
+                <select
+                  className="border px-2 py-1 rounded"
+                  value={behaviorFilter}
+                  onChange={(e) => setBehaviorFilter(e.target.value)}
+                >
+                  <option value="all">ทั้งหมด</option>
+                  <option value="noRepeat">ไม่เคยสั่งซ้ำ</option>
+                  <option value="frequent">ซื้อบ่อย</option>
+                  <option value="unpaid">ค้างจ่าย</option>
+                </select>
               </div>
             </div>
           </CardHeader>
@@ -168,7 +199,8 @@ export default function AdminCustomersPage() {
                   <TableHead>ลูกค้า</TableHead>
                   <TableHead>ติดต่อ</TableHead>
                   <TableHead>แท็ก/โน้ต</TableHead>
-                  <TableHead>คำสั่งซื้อ</TableHead>
+                  <TableHead>ยอดสะสม</TableHead>
+                  <TableHead>สั่งกี่ครั้ง</TableHead>
                   <TableHead>ยอดซื้อรวม</TableHead>
                   <TableHead>ซื้อล่าสุด</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
@@ -214,6 +246,7 @@ export default function AdminCustomersPage() {
                         )}
                       </div>
                     </TableCell>
+                    <TableCell>{customer.points ?? 0}</TableCell>
                     <TableCell>
                       <Badge variant={customer.totalOrders > 0 ? "default" : "secondary"}>
                         {customer.totalOrders} คำสั่งซื้อ

@@ -61,6 +61,13 @@ export default function AdminOrdersPage() {
     window.open(`/bill/${bill.id}`, "_blank")
   }
 
+  const handlePrebookBill = (orderId: string) => {
+    const due = window.prompt("กำหนดวันครบชำระ YYYY-MM-DD") || undefined
+    const bill = createBill(orderId, "pending", due)
+    setBills([...mockBills])
+    toast.success(`จองล่วงหน้า ${bill.id}`)
+  }
+
   const handleConfirmBill = (billId: string, orderId: string) => {
     confirmBill(billId)
     setBills([...mockBills])
@@ -342,6 +349,13 @@ export default function AdminOrdersPage() {
                           onClick={() => handleCreateBill(order.id)}
                         >
                           เปิดบิล
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handlePrebookBill(order.id)}
+                        >
+                          จองล่วงหน้า
                         </Button>
                         {bills.find((b) => b.orderId === order.id) && (
                           <Button

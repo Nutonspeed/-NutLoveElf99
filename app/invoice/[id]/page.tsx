@@ -1,10 +1,14 @@
 "use client"
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Download, PrinterIcon as Print, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
+import { mockBills } from "@/lib/mock-bills"
+import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
+import { toast } from "sonner"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -33,6 +37,21 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
     // In a real app, this would generate and download a PDF
     alert("ดาวน์โหลดใบเสร็จ (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
   }
+
+  useEffect(() => {
+    loadAutoReminder()
+    if (autoReminder) {
+      const bill = mockBills.find((b) => b.orderId === order.id)
+      if (
+        bill &&
+        (bill.status === "unpaid" || bill.status === "pending") &&
+        bill.dueDate &&
+        new Date(bill.dueDate).getTime() < Date.now() - 3 * 24 * 60 * 60 * 1000
+      ) {
+        toast.warning("บิลนี้เกินกำหนดชำระ")
+      }
+    }
+  }, [order.id])
 
   const tax = Math.round(order.total * 0.07)
   const subtotal = order.total - tax

@@ -20,6 +20,9 @@ import {
   loadBillSecurity,
   billSecurity,
   setBillSecurity,
+  loadAutoReminder,
+  autoReminder,
+  setAutoReminder,
 } from "@/lib/mock-settings"
 
 export default function SettingsPage() {
@@ -28,14 +31,17 @@ export default function SettingsPage() {
   const [message, setMessage] = useState(autoMessage)
   const [links, setLinks] = useState(socialLinks)
   const [security, setSecurity] = useState(billSecurity)
+  const [reminder, setReminder] = useState(autoReminder)
 
   useEffect(() => {
     loadAutoMessage()
     loadSocialLinks()
     loadBillSecurity()
+    loadAutoReminder()
     setMessage(autoMessage)
     setLinks(socialLinks)
     setSecurity(billSecurity)
+    setReminder(autoReminder)
     if (!isAuthenticated) {
       router.push("/login")
     } else if (user?.role !== "admin") {
@@ -49,6 +55,7 @@ export default function SettingsPage() {
     setAutoMessage(message)
     setSocialLinks(links)
     setBillSecurity(security)
+    setAutoReminder(reminder)
     alert("บันทึกข้อความแล้ว")
   }
 
@@ -87,6 +94,21 @@ export default function SettingsPage() {
               onChange={(e) => setLinks({ ...links, line: e.target.value })}
               placeholder="Line URL"
             />
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>เตือนอัตโนมัติ</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="auto-remind"
+                checked={reminder}
+                onCheckedChange={(v) => setReminder(Boolean(v))}
+              />
+              <Label htmlFor="auto-remind">แจ้งเตือนบิลค้างชำระ</Label>
+            </div>
           </CardContent>
         </Card>
         <Card className="mt-6">
