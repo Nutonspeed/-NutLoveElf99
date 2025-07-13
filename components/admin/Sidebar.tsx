@@ -15,7 +15,10 @@ import {
   List,
 } from "lucide-react"
 import clsx from "clsx"
-import { mockNotifications } from "@/lib/mock-notifications"
+import {
+  mockNotifications,
+  loadNotifications,
+} from "@/lib/mock-notifications"
 import {
   loadNotificationStatus,
   unreadCount,
@@ -41,6 +44,7 @@ export default function Sidebar({ className = "" }: { className?: string }) {
   const [count, setCount] = useState(0)
 
   useEffect(() => {
+    loadNotifications()
     loadNotificationStatus()
     setCount(unreadCount(mockNotifications.map((n) => n.id)))
   }, [pathname])

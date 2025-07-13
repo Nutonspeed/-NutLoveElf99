@@ -7,7 +7,14 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -15,6 +22,8 @@ import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
 import { exportCSV } from "@/lib/mock-export"
+import { addNotification } from "@/lib/mock-notifications"
+import { addAdminLog } from "@/lib/mock-admin-logs"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
 import { packingStatusOptions } from "@/types/order"
 import {
@@ -37,6 +46,13 @@ export default function AdminOrdersPage() {
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [bills, setBills] = useState(mockBills)
+  const [notifyTarget, setNotifyTarget] = useState<string | null>(null)
+  const [preset, setPreset] = useState("รบกวนชำระยอดด้วยค่ะ")
+  const presets = [
+    "รบกวนชำระยอดด้วยค่ะ",
+    "สินค้าพร้อมจัดส่งแล้วค่ะ",
+    "ขอบคุณที่อุดหนุนค่ะ",
+  ]
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -80,6 +96,19 @@ export default function AdminOrdersPage() {
     setBills([...mockBills])
     updateOrderStatus(orderId, "paid")
     toast.success("ยืนยันยอดแล้ว")
+  }
+
+  const handleNotify = () => {
+    if (!notifyTarget) return
+    addNotification({
+      id: Date.now().toString(),
+      type: "order",
+      message: `${preset} (${notifyTarget})`,
+      link: `/admin/orders/${notifyTarget}`,
+    })
+    addAdminLog(`notify customer ${notifyTarget}`, "mockAdminId")
+    toast.success("ส่งข้อความแล้ว")
+    setNotifyTarget(null)
   }
 
 
@@ -397,6 +426,13 @@ export default function AdminOrdersPage() {
                             ยืนยันยอด
                           </Button>
                         )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setNotifyTarget(order.id)}
+                        >
+                          แจ้งลูกค้า
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -411,6 +447,28 @@ export default function AdminOrdersPage() {
             )}
           </CardContent>
         </Card>
+        <Dialog open={notifyTarget !== null} onOpenChange={(v) => !v && setNotifyTarget(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>แจ้งลูกค้า {notifyTarget}</DialogTitle>
+            </DialogHeader>
+            <Select value={preset} onValueChange={setPreset}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="ข้อความ" />
+              </SelectTrigger>
+              <SelectContent>
+                {presets.map((p) => (
+                  <SelectItem key={p} value={p}>
+                    {p}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <DialogFooter>
+              <Button onClick={handleNotify}>ส่งข้อความ</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   )

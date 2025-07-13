@@ -1,6 +1,11 @@
 import { mockOrders } from "./mock-orders"
 import { mockProducts } from "./mock-products"
 import { mockCustomers } from "./mock-customers"
+import { mockNotifications, loadNotifications } from "./mock-notifications"
+import {
+  loadNotificationStatus,
+  unreadCount,
+} from "./mock-read-status"
 import type { AnalyticsData } from "@/types/analytics"
 export type { AnalyticsData }
 
@@ -16,12 +21,17 @@ export interface DashboardStats {
 
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
+  if (typeof window !== "undefined") {
+    loadNotifications()
+    loadNotificationStatus()
+  }
   const totalOrders = mockOrders.length
   const totalProducts = mockProducts.length
   const totalCustomers = mockCustomers.length
   const totalRevenue = mockOrders.reduce((sum, o) => sum + o.total, 0)
   const lowStockItems = mockProducts.filter((p) => !p.inStock).length
   const pendingOrders = mockOrders.filter((o) => o.status === "pendingPayment").length
+  const newNotifications = unreadCount(mockNotifications.map((n) => n.id))
 
   return {
     totalOrders,
@@ -30,7 +40,7 @@ export async function fetchDashboardStats(): Promise<DashboardStats> {
     totalRevenue,
     lowStockItems,
     pendingOrders,
-    newNotifications: 0,
+    newNotifications,
   }
 }
 
