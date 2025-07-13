@@ -6,6 +6,7 @@ import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import CustomerCard from "@/components/admin/customers/CustomerCard"
 import {
   Tabs,
@@ -27,6 +28,7 @@ import {
   getCustomerStats,
   updateCustomerPoints,
   setCustomerTier,
+  setCustomerMuted,
 } from "@/lib/mock-customers"
 
 export default function CustomerDetailPage({
@@ -49,6 +51,7 @@ export default function CustomerDetailPage({
   const stats = getCustomerStats(customer.id)
   const [pointDelta, setPointDelta] = useState(0)
   const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
+  const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -120,6 +123,21 @@ export default function CustomerDetailPage({
               <option value="Gold">Gold</option>
               <option value="VIP">VIP</option>
             </select>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Mute notifications</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Switch
+              checked={muted}
+              onCheckedChange={(v) => {
+                setMuted(v)
+                setCustomerMuted(customer.id, v)
+              }}
+            />
           </CardContent>
         </Card>
 

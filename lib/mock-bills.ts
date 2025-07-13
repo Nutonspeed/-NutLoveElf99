@@ -1,4 +1,6 @@
 import type { Bill, BillPayment, BillStatus } from "@/types/bill"
+import { mockOrders } from "./mock-orders"
+import { mockCustomers } from "./mock-customers"
 
 export let mockBills: Bill[] = []
 
@@ -7,6 +9,8 @@ export function createBill(
   status: BillStatus = "unpaid",
   dueDate?: string,
 ): Bill {
+  const order = mockOrders.find((o) => o.id === orderId)
+  const customer = order && mockCustomers.find((c) => c.id === order.customerId)
   const id = `bill-${Math.random().toString(36).slice(2, 8)}`
   const bill: Bill = {
     id,
@@ -15,6 +19,9 @@ export function createBill(
     payments: [],
     createdAt: new Date().toISOString(),
     dueDate,
+  }
+  if (customer?.muted) {
+    bill.hidden = true
   }
   mockBills.push(bill)
   return bill

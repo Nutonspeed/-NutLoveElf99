@@ -13,6 +13,8 @@ export interface Customer {
   points?: number
   /** membership tier */
   tier?: "Silver" | "Gold" | "VIP"
+  /** mute notifications */
+  muted?: boolean
   /** point change history */
   pointHistory?: PointLog[]
   createdAt: string
@@ -159,4 +161,10 @@ export function setCustomerTier(id: string, tier: "Silver" | "Gold" | "VIP") {
   const customer = mockCustomers.find((c) => c.id === id)
   if (!customer) return
   customer.tier = tier
+}
+
+export function setCustomerMuted(id: string, muted: boolean) {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return
+  customer.muted = muted
 }
