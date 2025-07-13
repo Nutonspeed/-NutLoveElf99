@@ -1,4 +1,7 @@
 import nodemailer from "nodemailer"
+import { mockCustomers } from "./mock-customers"
+import { mockOrders } from "./mock-orders"
+import type { Customer } from "./mock-customers"
 
 // Types
 export interface NotificationTemplate {
@@ -378,6 +381,22 @@ export class NotificationService {
 
   async sendNotification(notificationData: NotificationData): Promise<boolean> {
     const { type, recipient, data, priority } = notificationData
+    let customer: Customer | undefined
+    if ((data as any).orderId) {
+      const order = mockOrders.find((o) => o.id === (data as any).orderId)
+      if (order) {
+        customer = mockCustomers.find((c) => c.id === order.customerId)
+      }
+    }
+    if (!customer && recipient.email) {
+      customer = mockCustomers.find((c) => c.email === recipient.email)
+    }
+    if (!customer && recipient.phone) {
+      customer = mockCustomers.find((c) => c.phone === recipient.phone)
+    }
+    if (customer?.muted) {
+      return false
+    }
     let success = false
 
     // Prepare common data

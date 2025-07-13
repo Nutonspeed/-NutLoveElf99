@@ -1,5 +1,8 @@
 // Mock Notification Service สำหรับการทดสอบ
 import { notifyTeams, loadNotifyTeams } from './mock-settings'
+import { mockCustomers } from './mock-customers'
+import { mockOrders } from './mock-orders'
+import type { Customer } from './mock-customers'
 export interface NotificationTemplate {
   id: string
   name: string
@@ -367,6 +370,22 @@ export class MockNotificationService {
 
   async sendNotification(notificationData: NotificationData): Promise<boolean> {
     const { type, recipient, data, priority } = notificationData
+    let customer: Customer | undefined
+    if ((data as any).orderId) {
+      const order = mockOrders.find((o) => o.id === (data as any).orderId)
+      if (order) {
+        customer = mockCustomers.find((c) => c.id === order.customerId)
+      }
+    }
+    if (!customer && recipient.email) {
+      customer = mockCustomers.find((c) => c.email === recipient.email)
+    }
+    if (!customer && recipient.phone) {
+      customer = mockCustomers.find((c) => c.phone === recipient.phone)
+    }
+    if (customer?.muted) {
+      return false
+    }
     const teamMap: Record<NotificationData['type'], keyof typeof notifyTeams> = {
       stock_low: 'packing',
       stock_out: 'packing',
