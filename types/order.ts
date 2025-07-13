@@ -88,6 +88,13 @@ export interface Order {
   delivery_note: string
   scheduledDeliveryDate?: string
   reorderedFromId?: string
+  validated?: boolean
+  demo?: boolean
+  guest?: boolean
+  checklist?: {
+    items: string[]
+    passed: boolean
+  }
   timeline: Array<{
     timestamp: string
     status: OrderStatus

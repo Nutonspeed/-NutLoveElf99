@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
@@ -12,10 +13,13 @@ import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plu
 import Image from "next/image"
 import Link from "next/link"
 import { mockProducts } from "@/lib/mock-products"
+import { mockOrders } from "@/lib/mock-orders"
 import { mockReviewImages } from "@/lib/mock-review-images"
 import { useReviewImagesSetting } from "@/contexts/review-images-context"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/contexts/auth-context"
+import type { ShippingStatus } from "@/types/order"
 import { loadSocialLinks, socialLinks } from "@/lib/mock-settings"
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
@@ -99,6 +103,51 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   const copyLink = () => {
     navigator.clipboard.writeText(shareUrl)
     toast({ title: 'คัดลอกลิงก์แล้ว' })
+  }
+
+  const router = useRouter()
+  const { user, isAuthenticated, guestId } = useAuth()
+  const demoPurchase = () => {
+    const orderId = `DEMO-${Date.now()}`
+    mockOrders.push({
+      id: orderId,
+      customerId: user?.id || guestId || 'guest',
+      customerName: 'Demo User',
+      customerEmail: user?.email || 'demo@example.com',
+      items: [
+        {
+          productId: product.id,
+          productName: product.name,
+          quantity,
+          price: product.price,
+          size: selectedSize || product.sizes?.[0],
+          color: selectedColor || product.colors?.[0],
+        },
+      ],
+      total: product.price * quantity,
+      status: 'paid',
+      depositPercent: 100,
+      createdAt: new Date().toISOString(),
+      shippingAddress: {
+        name: 'Demo',
+        address: '-',
+        city: '-',
+        postalCode: '-',
+        phone: '-',
+      },
+      delivery_method: '',
+      tracking_number: '',
+      shipping_fee: 0,
+      shipping_status: 'pending' as ShippingStatus,
+      shipping_date: '',
+      delivery_note: '',
+      validated: true,
+      demo: true,
+      guest: !isAuthenticated,
+      checklist: { items: [], passed: true },
+      timeline: [],
+    })
+    router.push(`/success/${orderId}`)
   }
 
   return (
@@ -253,6 +302,9 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               <Link href={`/order/new?product=${product.slug}`} className="flex-1">
                 <Button className="w-full" size="lg">สั่งซื้อ</Button>
               </Link>
+              <Button onClick={demoPurchase} className="flex-1" size="lg" variant="outline">
+                ลองสั่งซื้อ
+              </Button>
               <Button
                 variant="outline"
                 size="lg"

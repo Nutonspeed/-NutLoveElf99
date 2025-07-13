@@ -14,6 +14,7 @@ interface User {
 interface AuthState {
   user: User | null
   isAuthenticated: boolean
+  guestId: string | null
   /**
    * Indicates whether the authentication state is still being determined.
    * Since this mock auth provider performs no async checks, the value is
@@ -29,6 +30,7 @@ const AuthContext = createContext<AuthState | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
+  const [guestId] = useState(() => `guest-${crypto.randomUUID()}`)
   // Since authentication is mocked, the loading state simply starts as false.
   const [isLoading] = useState(false)
 
@@ -51,6 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         isAuthenticated: !!user,
+        guestId: user ? null : guestId,
         isLoading,
         login,
         logout,
