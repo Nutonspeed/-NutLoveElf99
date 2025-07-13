@@ -7,6 +7,9 @@ import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import {
   loadAutoMessage,
   autoMessage,
@@ -14,6 +17,9 @@ import {
   loadSocialLinks,
   socialLinks,
   setSocialLinks,
+  loadBillSecurity,
+  billSecurity,
+  setBillSecurity,
 } from "@/lib/mock-settings"
 
 export default function SettingsPage() {
@@ -21,12 +27,15 @@ export default function SettingsPage() {
   const router = useRouter()
   const [message, setMessage] = useState(autoMessage)
   const [links, setLinks] = useState(socialLinks)
+  const [security, setSecurity] = useState(billSecurity)
 
   useEffect(() => {
     loadAutoMessage()
     loadSocialLinks()
+    loadBillSecurity()
     setMessage(autoMessage)
     setLinks(socialLinks)
+    setSecurity(billSecurity)
     if (!isAuthenticated) {
       router.push("/login")
     } else if (user?.role !== "admin") {
@@ -39,6 +48,7 @@ export default function SettingsPage() {
   const handleSave = () => {
     setAutoMessage(message)
     setSocialLinks(links)
+    setBillSecurity(security)
     alert("บันทึกข้อความแล้ว")
   }
 
@@ -76,6 +86,31 @@ export default function SettingsPage() {
               value={links.line}
               onChange={(e) => setLinks({ ...links, line: e.target.value })}
               placeholder="Line URL"
+            />
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>ความปลอดภัยหน้าบิล</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="sec-enabled"
+                checked={security.enabled}
+                onCheckedChange={(v) => setSecurity({ ...security, enabled: Boolean(v) })}
+              />
+              <Label htmlFor="sec-enabled">ต้องยืนยันก่อนเข้าบิล</Label>
+            </div>
+            <Input
+              placeholder="เบอร์โทร"
+              value={security.phone}
+              onChange={(e) => setSecurity({ ...security, phone: e.target.value })}
+            />
+            <Input
+              placeholder="PIN"
+              value={security.pin}
+              onChange={(e) => setSecurity({ ...security, pin: e.target.value })}
             />
           </CardContent>
         </Card>

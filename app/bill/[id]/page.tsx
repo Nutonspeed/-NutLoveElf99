@@ -1,16 +1,27 @@
 "use client"
+import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { mockOrders } from "@/lib/mock-orders"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import BillPreview from "@/components/BillPreview"
+import { OrderTimeline } from "@/components/order/OrderTimeline"
+import { mockOrders } from "@/lib/mock-orders"
+import { getBill, addBillPayment } from "@/lib/mock-bills"
+import { billSecurity } from "@/lib/mock-settings"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
-  const order = mockOrders.find((o) => o.id === id)
+  const bill = getBill(id)
+  const order = mockOrders.find((o) => o.id === bill?.orderId)
+  const [access, setAccess] = useState(!billSecurity.enabled)
+  const [code, setCode] = useState("")
+  const [amount, setAmount] = useState("")
+  const [slip, setSlip] = useState<File | null>(null)
 
-  if (!order) {
+  if (!bill || !order) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -31,6 +42,40 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   const handleDownload = () => {
     alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+  }
+
+  const handleVerify = () => {
+    if (code === billSecurity.phone || code === billSecurity.pin) {
+      setAccess(true)
+    } else {
+      alert("ข้อมูลไม่ถูกต้อง")
+    }
+  }
+
+  const handleSendSlip = () => {
+    addBillPayment(bill.id, {
+      id: `pay-${Date.now()}`,
+      date: new Date().toISOString(),
+      amount: parseFloat(amount) || 0,
+      slip: slip?.name,
+    })
+    setAmount("")
+    setSlip(null)
+    alert("ส่งข้อมูลแล้ว")
+  }
+
+  if (!access) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="code">เบอร์โทรหรือ PIN</Label>
+            <Input id="code" value={code} onChange={(e) => setCode(e.target.value)} />
+          </div>
+          <Button onClick={handleVerify}>ยืนยัน</Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -60,8 +105,18 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
       <div className="container mx-auto px-4 py-8 print:p-0">
         <Card className="max-w-4xl mx-auto print:shadow-none print:border-none">
-          <CardContent className="p-8 print:p-6">
+          <CardContent className="p-8 print:p-6 space-y-6">
             <BillPreview order={order} />
+            <div className="flex justify-center">
+              <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
+            </div>
+            <OrderTimeline timeline={order.timeline} />
+            <div className="space-y-2">
+              <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
+              <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <Input type="file" onChange={(e) => setSlip(e.target.files?.[0] ?? null)} />
+              <Button onClick={handleSendSlip}>ส่งหลักฐานโอน</Button>
+            </div>
           </CardContent>
         </Card>
       </div>

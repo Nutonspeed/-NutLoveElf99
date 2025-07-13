@@ -13,6 +13,7 @@ import Link from "next/link"
 import { toast } from "sonner"
 import { mockOrders } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
+import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
 import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -34,6 +35,7 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [bills, setBills] = useState(mockBills)
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -50,6 +52,28 @@ export default function AdminOrdersPage() {
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
+  }
+
+  const handleCreateBill = (orderId: string) => {
+    const bill = createBill(orderId)
+    setBills([...mockBills])
+    toast.success(`สร้างบิล ${bill.id}`)
+    window.open(`/bill/${bill.id}`, "_blank")
+  }
+
+  const handleConfirmBill = (billId: string, orderId: string) => {
+    confirmBill(billId)
+    setBills([...mockBills])
+    updateOrderStatus(orderId, "paid")
+    const idx = mockOrders.findIndex((o) => o.id === orderId)
+    if (idx !== -1) {
+      mockOrders[idx].timeline.push({
+        timestamp: new Date().toISOString(),
+        status: "paid",
+        updatedBy: "admin@nutlove.co",
+      })
+    }
+    toast.success("ยืนยันยอดแล้ว")
   }
 
 
@@ -307,11 +331,32 @@ export default function AdminOrdersPage() {
                         >
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Link href={`/admin/invoice/${order.id}`}> 
+                        <Link href={`/admin/invoice/${order.id}`}>
                           <Button variant="outline" size="icon">
                             <FileText className="h-4 w-4" />
                           </Button>
                         </Link>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleCreateBill(order.id)}
+                        >
+                          เปิดบิล
+                        </Button>
+                        {bills.find((b) => b.orderId === order.id) && (
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() =>
+                              handleConfirmBill(
+                                bills.find((b) => b.orderId === order.id)!.id,
+                                order.id,
+                              )
+                            }
+                          >
+                            ยืนยันยอด
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
