@@ -33,12 +33,13 @@ import {
 import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useDevelopmentNotice } from "@/hooks/use-development-notice"
+import { addChatActivity, loadChatActivity } from "@/lib/mock-chat-activity"
 
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { state } = useCart()
-  const { user, isAuthenticated, logout } = useAuth()
+  const { user, guestId, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const { showDevelopmentNotice } = useDevelopmentNotice()
 
@@ -168,7 +169,16 @@ export function Navbar() {
 
                   {userMenuItems.map((item) => (
                     <DropdownMenuItem key={item.name} asChild>
-                      <Link href={item.href} className="flex items-center">
+                      <Link
+                        href={item.href}
+                        onClick={() => {
+                          if (item.href === "/chat") {
+                            loadChatActivity()
+                            addChatActivity(user?.id || guestId!, "open_chat")
+                          }
+                        }}
+                        className="flex items-center"
+                      >
                         <item.icon className="mr-2 h-4 w-4" />
                         {item.name}
                       </Link>
@@ -247,6 +257,12 @@ export function Navbar() {
                           <Link
                             key={item.name}
                             href={item.href}
+                            onClick={() => {
+                              if (item.href === "/chat") {
+                                loadChatActivity()
+                                addChatActivity(user?.id || guestId!, "open_chat")
+                              }
+                            }}
                             className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
                           >
                             <item.icon className="mr-2 h-4 w-4" />

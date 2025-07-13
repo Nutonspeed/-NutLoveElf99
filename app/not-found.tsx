@@ -3,8 +3,11 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Home, Search, ArrowLeft } from "lucide-react"
+import { addChatActivity, loadChatActivity } from "@/lib/mock-chat-activity"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function NotFound() {
+  const { user, guestId } = useAuth()
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
       <div className="text-center space-y-8 px-4">
@@ -66,10 +69,14 @@ export default function NotFound() {
                 ติดต่อเรา
               </Button>
             </Link>
-            <Link href="/chat">
-              <Button variant="ghost" size="sm">
-                แชทสด
-              </Button>
+            <Link
+              href="/chat"
+              onClick={() => {
+                loadChatActivity()
+                addChatActivity(user?.id || guestId!, "open_chat")
+              }}
+            >
+              <Button variant="ghost" size="sm">แชทสด</Button>
             </Link>
           </div>
         </div>
