@@ -14,6 +14,12 @@ import {
   getCustomerOrders,
   type Customer,
 } from "@/lib/mock-customers"
+import {
+  loadCustomerNotes,
+  listCustomerNotes,
+} from "@/lib/mock-customer-notes"
+import { loadCustomerTags, listCustomerTags } from "@/lib/mock-customer-tags"
+import { loadFlaggedUsers, getFlagStatus } from "@/lib/mock-flagged-users"
 import { exportCSV } from "@/lib/mock-export"
 
 
@@ -24,6 +30,9 @@ export default function AdminCustomersPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    loadCustomerNotes()
+    loadCustomerTags()
+    loadFlaggedUsers()
     loadData()
   }, [])
 
@@ -40,6 +49,10 @@ export default function AdminCustomersPage() {
           lastOrderDate: stats.lastOrderDate,
         }
       })
+
+      customersData.sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
 
       setCustomers(customersData)
     } catch (error) {
@@ -244,13 +257,18 @@ export default function AdminCustomersPage() {
                     </TableCell>
                     <TableCell>
                       <div className="space-y-1">
-                        {customer.tags?.map((tag) => (
-                          <Badge key={tag} variant="secondary" className="mr-1">
-                            {tag}
+                        {listCustomerTags(customer.id).map((t) => (
+                          <Badge key={t.id} variant="secondary" className="mr-1">
+                            {t.tag}
                           </Badge>
                         ))}
-                        {customer.note && (
-                          <p className="text-xs text-gray-500">{customer.note}</p>
+                        {listCustomerNotes(customer.id)[0] && (
+                          <p className="text-xs text-gray-500">
+                            {listCustomerNotes(customer.id)[0].note}
+                          </p>
+                        )}
+                        {getFlagStatus(customer.id) && (
+                          <Badge variant="destructive">ต้องตรวจสอบก่อนตอบ</Badge>
                         )}
                       </div>
                     </TableCell>

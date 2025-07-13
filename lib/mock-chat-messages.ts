@@ -29,3 +29,9 @@ export function listChatMessages(conversationId: string): ChatMessageEntry[] {
   return chatMessages[conversationId] || []
 }
 
+export function getLatestChatMessage(conversationId: string): ChatMessageEntry | undefined {
+  const msgs = chatMessages[conversationId]
+  if (!msgs || msgs.length === 0) return undefined
+  return msgs[msgs.length - 1]
+}
+

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,6 +30,21 @@ import {
   setCustomerTier,
   setCustomerMuted,
 } from "@/lib/mock-customers"
+import {
+  loadCustomerNotes,
+  listCustomerNotes,
+  addCustomerNote,
+} from "@/lib/mock-customer-notes"
+import {
+  loadCustomerTags,
+  listCustomerTags,
+  addCustomerTag,
+} from "@/lib/mock-customer-tags"
+import {
+  loadFlaggedUsers,
+  getFlagStatus,
+} from "@/lib/mock-flagged-users"
+import { getLatestChatMessage } from "@/lib/mock-chat-messages"
 
 export default function CustomerDetailPage({
   params,
@@ -38,6 +53,12 @@ export default function CustomerDetailPage({
 }) {
   const { id } = params
   const customer = mockCustomers.find((c) => c.id === id)
+
+  useEffect(() => {
+    loadCustomerNotes()
+    loadCustomerTags()
+    loadFlaggedUsers()
+  }, [])
 
   if (!customer) {
     return (
@@ -52,6 +73,9 @@ export default function CustomerDetailPage({
   const [pointDelta, setPointDelta] = useState(0)
   const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
+  const [noteInput, setNoteInput] = useState("")
+  const [tagInput, setTagInput] = useState("")
+  const latestMessage = getLatestChatMessage(customer.id)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -66,9 +90,76 @@ export default function CustomerDetailPage({
         </div>
 
         <CustomerCard customer={customer} />
+        {getFlagStatus(customer.id) && (
+          <Badge variant="destructive">ต้องตรวจสอบก่อนตอบ</Badge>
+        )}
+        <div className="space-y-2">
+          <div>
+            <p className="font-semibold">แท็ก</p>
+            <div className="flex flex-wrap gap-1 py-1">
+              {listCustomerTags(customer.id).map((t) => (
+                <Badge key={t.id} variant="secondary">
+                  {t.tag}
+                </Badge>
+              ))}
+            </div>
+            <div className="flex space-x-2 pt-1">
+              <input
+                value={tagInput}
+                onChange={(e) => setTagInput(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (tagInput) {
+                    addCustomerTag(customer.id, tagInput)
+                    setTagInput("")
+                  }
+                }}
+              >
+                เพิ่มแท็ก
+              </Button>
+            </div>
+          </div>
+          <div>
+            <p className="font-semibold">โน้ต</p>
+            <div className="space-y-1 py-1">
+              {listCustomerNotes(customer.id).map((n) => (
+                <p key={n.id} className="text-sm text-gray-500">
+                  {n.note}
+                </p>
+              ))}
+            </div>
+            <div className="flex space-x-2 pt-1">
+              <input
+                value={noteInput}
+                onChange={(e) => setNoteInput(e.target.value)}
+                className="border px-2 py-1 rounded"
+              />
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (noteInput) {
+                    addCustomerNote(customer.id, noteInput)
+                    setNoteInput("")
+                  }
+                }}
+              >
+                เพิ่มโน้ต
+              </Button>
+            </div>
+          </div>
+        </div>
         <div className="text-lg font-semibold">
           ยอดซื้อรวม: ฿{stats.totalSpent.toLocaleString()}
         </div>
+        {latestMessage && (
+          <div className="text-sm text-gray-600">แชทล่าสุด: {latestMessage.text}</div>
+        )}
+        <Link href="/chat">
+          <Button variant="outline">เปิดใน Chatwoot</Button>
+        </Link>
 
         <Card>
           <CardHeader>
