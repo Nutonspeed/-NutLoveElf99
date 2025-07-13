@@ -1,0 +1,13 @@
+# Ignore Chatwoot Ruby backend
+chatwoot/
+
+# Documentation
+/docs/
+
+# Test directories and files
+**/__tests__/
+**/*.test.*
+**/*.spec.*
+
+# Local dependencies
+node_modules/
