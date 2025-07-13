@@ -20,6 +20,8 @@ export function saveChatActivity() {
   }
 }
 
+export const CHAT_ACTIVITY_EVENT = 'chatActivity'
+
 export function addChatActivity(customerId: string, action: string) {
   const entry: ChatActivity = {
     id: Date.now().toString(),
@@ -29,6 +31,9 @@ export function addChatActivity(customerId: string, action: string) {
   }
   chatActivity.push(entry)
   saveChatActivity()
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(CHAT_ACTIVITY_EVENT, { detail: entry }))
+  }
 }
 
 export function listChatActivity(customerId?: string) {
