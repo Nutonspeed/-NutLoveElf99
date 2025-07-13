@@ -172,6 +172,7 @@ export default function AdminOrdersPage() {
                   <TableHead>สถานะ</TableHead>
                   <TableHead>สถานะการแพ็ก</TableHead>
                   <TableHead>สถานะจัดส่ง</TableHead>
+                  <TableHead>เหตุผลทิ้งบิล</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
                 </TableRow>
               </TableHeader>
@@ -228,6 +229,7 @@ export default function AdminOrdersPage() {
                     </Select>
                   </TableCell>
                   <TableCell>{order.shipping_status}</TableCell>
+                  <TableCell>{bills.find((b) => b.orderId === order.id)?.abandonReason || "-"}</TableCell>
                   <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Dialog>

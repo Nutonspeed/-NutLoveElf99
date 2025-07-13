@@ -25,6 +25,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [shippingStatus, setShippingStatus] = useState<ShippingStatus>(order?.shipping_status ?? "pending")
   const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
+  const [chatNote, setChatNote] = useState(order?.chatNote || "")
 
   if (!order) {
     return (
@@ -211,6 +212,28 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               }
             }}>
               เพิ่มบันทึกการโทร/ส่ง
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>โน้ตจากแชท</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <textarea
+              className="border rounded w-full p-2"
+              value={chatNote}
+              onChange={(e) => setChatNote(e.target.value)}
+            />
+            <Button
+              variant="outline"
+              onClick={() => {
+                mockOrders[orderIndex].chatNote = chatNote
+                toast.success("บันทึกแล้ว")
+              }}
+            >
+              บันทึก
             </Button>
           </CardContent>
         </Card>
