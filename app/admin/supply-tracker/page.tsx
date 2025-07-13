@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { listAllSupply, type SupplyItem } from "@/lib/mock-supply"
 import { getMockNow } from "@/lib/mock-date"
+import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 
 export default function SupplyTrackerPage() {
   const items = listAllSupply()
@@ -21,8 +22,12 @@ export default function SupplyTrackerPage() {
           <h1 className="text-3xl font-bold">ติดตามวัตถุดิบ</h1>
         </div>
         <Card>
-          <CardHeader>
+          <CardHeader className="flex justify-between items-center">
             <CardTitle>รายการวัตถุดิบ</CardTitle>
+            <div className="space-x-2">
+              <Button onClick={() => downloadCSV(items, 'supply.csv')}>Export CSV</Button>
+              <Button onClick={() => downloadPDF('supply', 'supply.pdf')}>Export PDF</Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>

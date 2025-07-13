@@ -1,14 +1,16 @@
 "use client"
 import Link from 'next/link'
+import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { mockAdminLogs } from '@/lib/mock-admin-logs'
+import { mockAdminLogs, addAdminLog } from '@/lib/mock-admin-logs'
 
 export default function AdminLogsPage() {
   const { user, isAuthenticated } = useAuth()
+  const [logs, setLogs] = useState([...mockAdminLogs])
 
   if (!isAuthenticated || user?.role !== 'admin') {
     return (
@@ -35,8 +37,11 @@ export default function AdminLogsPage() {
           <h1 className="text-3xl font-bold">บันทึกการทำงาน</h1>
         </div>
         <Card>
-          <CardHeader>
-            <CardTitle>Admin Logs ({mockAdminLogs.length})</CardTitle>
+          <CardHeader className="flex justify-between items-center">
+            <CardTitle>Admin Logs ({logs.length})</CardTitle>
+            {process.env.NODE_ENV !== 'production' && (
+              <Button onClick={() => { addAdminLog('dev mock', 'admin'); setLogs([...mockAdminLogs]) }}>สร้าง log ใหม่ (dev only)</Button>
+            )}
           </CardHeader>
           <CardContent>
             <Table>
@@ -48,7 +53,7 @@ export default function AdminLogsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockAdminLogs.map((log) => (
+                {logs.map((log) => (
                   <TableRow key={log.id}>
                     <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
                     <TableCell>{log.admin}</TableCell>

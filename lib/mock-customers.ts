@@ -110,6 +110,16 @@ export function regenerateMockCustomers() {
   mockCustomers = initialMockCustomers.map((c) => ({ ...c }))
 }
 
+export function addCustomer(data: Omit<Customer, 'id' | 'createdAt'>): Customer {
+  const customer: Customer = {
+    id: Date.now().toString(),
+    createdAt: new Date().toISOString(),
+    ...data,
+  }
+  mockCustomers.push(customer)
+  return customer
+}
+
 export interface CustomerStats {
   totalOrders: number
   totalSpent: number

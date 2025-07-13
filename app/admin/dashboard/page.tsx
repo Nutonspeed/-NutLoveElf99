@@ -22,6 +22,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import DashboardCard from "@/components/admin/dashboard/DashboardCard"
+import { Skeleton } from "@/components/ui/skeleton"
 import OrderTable from "@/components/admin/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
@@ -181,34 +182,42 @@ export default function AdminDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {!stats ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="h-24 w-full" />
+            ))
+          ) : (
+            <>
           <DashboardCard
             title="ออเดอร์ทั้งหมด"
-            value={stats?.totalOrders ?? 0}
+            value={stats.totalOrders}
             icon={ShoppingCart}
             iconClassName="text-blue-600"
             href="/admin/orders"
           />
           <DashboardCard
             title="สินค้าทั้งหมด"
-            value={stats?.totalProducts ?? 0}
+            value={stats.totalProducts}
             icon={Package}
             iconClassName="text-green-600"
             href="/admin/products"
           />
           <DashboardCard
             title="ลูกค้าทั้งหมด"
-            value={stats?.totalCustomers ?? 0}
+            value={stats.totalCustomers}
             icon={Users}
             iconClassName="text-purple-600"
             href="/admin/customers"
           />
           <DashboardCard
             title="ยอดขายรวม"
-            value={`฿${(stats?.totalRevenue ?? 0).toLocaleString()}`}
+            value={`฿${stats.totalRevenue.toLocaleString()}`}
             icon={TrendingUp}
             iconClassName="text-orange-600"
             href="/admin/reports"
           />
+            </>
+          )}
         </div>
 
         {/* Alert Cards */}

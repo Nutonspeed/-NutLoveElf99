@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAuth } from '@/contexts/auth-context'
 import { mockClaims, updateClaim } from '@/lib/mock-claims'
-import { exportCSV } from '@/lib/mock-export'
+import { downloadCSV, downloadPDF } from '@/lib/mock-export'
 
 export default function AdminClaimsPage() {
   const { user, isAuthenticated } = useAuth()
@@ -47,7 +47,8 @@ export default function AdminClaimsPage() {
             </Button>
           </Link>
           <h1 className="text-3xl font-bold">เคลมสินค้า</h1>
-          <Button onClick={() => { const csv = exportCSV(claims); const preview = csv.split('\n').slice(0,4).join('\n'); alert(preview); }}>Export CSV</Button>
+          <Button onClick={() => downloadCSV(claims, 'claims.csv')}>Export CSV</Button>
+          <Button onClick={() => downloadPDF('claims report', 'claims.pdf')}>Export PDF</Button>
         </div>
         <Card>
           <CardHeader>
@@ -72,15 +73,21 @@ export default function AdminClaimsPage() {
                       <img src={c.image} alt="img" className="h-12 w-12" />
                     </TableCell>
                     <TableCell>{c.reason}</TableCell>
-                    <TableCell>{c.status}</TableCell>
-                    <TableCell className="text-right space-x-2">
-                      <Button size="sm" onClick={() => handleApprove(c.id)}>
-                        อนุมัติ
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleReject(c.id)}>
-                        ปฏิเสธ
-                      </Button>
+                    <TableCell>
+                      <select
+                        className="border px-2 py-1 rounded"
+                        value={c.status}
+                        onChange={(e) => {
+                          updateClaim(c.id, { status: e.target.value as any })
+                          setClaims([...mockClaims])
+                        }}
+                      >
+                        <option value="pending">pending</option>
+                        <option value="approved">approved</option>
+                        <option value="rejected">rejected</option>
+                      </select>
                     </TableCell>
+                    <TableCell className="text-right"></TableCell>
                   </TableRow>
                 ))}
               </TableBody>
