@@ -46,7 +46,6 @@ import {
   getFlagStatus,
 } from "@/lib/mock-flagged-users"
 import { getLatestChatMessage } from "@/lib/mock-chat-messages"
-import { useRouter } from "next/navigation"
 
 export default function CustomerDetailPage({
   params,
