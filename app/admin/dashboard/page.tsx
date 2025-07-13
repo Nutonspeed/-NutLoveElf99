@@ -25,14 +25,35 @@ import DashboardCard from "@/components/admin/dashboard/DashboardCard"
 import OrderTable from "@/components/admin/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
-import { addNotification } from "@/lib/mock-notifications"
+import { mockCustomers, type Customer } from "@/lib/mock-customers"
+import { mockProducts } from "@/lib/mock-products"
+import {
+  mockNotifications,
+  addNotification,
+} from "@/lib/mock-notifications"
+import { getLowStockItems } from "@/lib/mock-stock"
 import { mockBills, cleanupOldBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts"
 import { toast } from "sonner"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
   const [hideCancelled, setHideCancelled] = useState(false)
+  const [salesSummary, setSalesSummary] = useState({ today: 0, week: 0, month: 0 })
+  const [dailySales, setDailySales] = useState<Array<{ date: string; revenue: number }>>([])
+  const [newCustomers, setNewCustomers] = useState<Customer[]>([])
+  const [topProducts, setTopProducts] = useState<Array<{ id: string; name: string; count: number; image?: string }>>([])
+  const lowStockItems = getLowStockItems()
 
   useEffect(() => {
     fetchDashboardStats().then(setStats)
@@ -46,6 +67,65 @@ export default function AdminDashboard() {
       )
       if (overdue) toast.warning("มีบิลค้างชำระเกิน 3 วัน")
     }
+  }, [])
+
+  useEffect(() => {
+    const now = new Date()
+    const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const startWeek = new Date(now)
+    startWeek.setDate(now.getDate() - 6)
+    const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+    let today = 0
+    let week = 0
+    let month = 0
+    const daily: Array<{ date: string; revenue: number }> = []
+
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now)
+      d.setDate(now.getDate() - i)
+      const revenue = mockOrders
+        .filter((o) => new Date(o.createdAt).toDateString() === d.toDateString())
+        .reduce((sum, o) => sum + o.total, 0)
+      daily.push({
+        date: d.toLocaleDateString("th-TH", { month: "short", day: "numeric" }),
+        revenue,
+      })
+    }
+
+    for (const o of mockOrders) {
+      const d = new Date(o.createdAt)
+      if (d >= startToday) today += o.total
+      if (d >= startWeek) week += o.total
+      if (d >= startMonth) month += o.total
+    }
+
+    const weekStart = new Date(now)
+    weekStart.setDate(now.getDate() - 7)
+    const newCust = mockCustomers
+      .filter((c) => new Date(c.createdAt) >= weekStart)
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+
+    const freq: Record<string, number> = {}
+    mockOrders.forEach((o) => {
+      if (new Date(o.createdAt) >= weekStart) {
+        o.items.forEach((i) => {
+          freq[i.productId] = (freq[i.productId] || 0) + i.quantity
+        })
+      }
+    })
+    const top = Object.entries(freq)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([id, count]) => {
+        const p = mockProducts.find((pr) => pr.id === id)
+        return { id, name: p?.name || id, count, image: p?.images[0] }
+      })
+
+    setSalesSummary({ today, week, month })
+    setDailySales(daily)
+    setNewCustomers(newCust)
+    setTopProducts(top)
   }, [])
 
   useEffect(() => {
@@ -151,7 +231,7 @@ export default function AdminDashboard() {
             icon={Receipt}
             iconClassName="text-blue-600"
           />
-          <DashboardCard
+        <DashboardCard
             cardClassName="border-green-200 bg-green-50"
             title="การแจ้งเตือนใหม่"
             value={stats?.newNotifications ?? 0}
@@ -161,6 +241,125 @@ export default function AdminDashboard() {
             iconClassName="text-green-600"
           />
         </div>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>ยอดขายสัปดาห์นี้</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 text-center mb-4">
+              <div>
+                <p className="text-sm text-gray-600">วันนี้</p>
+                <p className="text-xl font-bold">
+                  ฿{salesSummary.today.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">7 วัน</p>
+                <p className="text-xl font-bold">
+                  ฿{salesSummary.week.toLocaleString()}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">เดือนนี้</p>
+                <p className="text-xl font-bold">
+                  ฿{salesSummary.month.toLocaleString()}
+                </p>
+              </div>
+            </div>
+            <div className="h-60">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dailySales}>
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="revenue" fill="#8884d8" name="ยอดขาย" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>ลูกค้าใหม่ในสัปดาห์นี้</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="mb-2">รวม {newCustomers.length} คน</p>
+            <ul className="list-disc pl-5 space-y-1">
+              {newCustomers.slice(0, 3).map((c) => (
+                <li key={c.id}>{c.name}</li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>สินค้าขายดีสัปดาห์นี้</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {topProducts.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex items-center justify-between gap-2"
+                >
+                  {p.image && (
+                    <img
+                      src={p.image}
+                      alt={p.name}
+                      className="h-8 w-8 rounded"
+                    />
+                  )}
+                  <span className="flex-1 truncate">{p.name}</span>
+                  <span className="text-sm text-gray-600">{p.count} ชิ้น</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>สินค้าคงเหลือน้อย</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {lowStockItems.length === 0 ? (
+              <p>สต็อกเพียงพอ</p>
+            ) : (
+              <div className="space-y-2">
+                {lowStockItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between"
+                  >
+                    <span>{item.name}</span>
+                    <Button variant="outline" size="sm">Refill</Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card className="mb-8">
+          <CardHeader className="flex items-center justify-between">
+            <CardTitle>แจ้งเตือนล่าสุด</CardTitle>
+            <Link href="/admin/notifications">
+              <Button variant="outline" size="sm">ดูทั้งหมด</Button>
+            </Link>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {mockNotifications.slice(0, 5).map((n) => (
+                <Link key={n.id} href={n.link} className="block hover:underline">
+                  {n.message}
+                </Link>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recent Orders */}
         <Card className="mb-8">
