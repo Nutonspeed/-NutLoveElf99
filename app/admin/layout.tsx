@@ -9,6 +9,7 @@ import { useState } from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { AdminProductsProvider } from "@/contexts/admin-products-context"
 import { AdminCollectionsProvider } from "@/contexts/admin-collections-context"
+import { AdminToast } from "@/components/admin/AdminToast"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin } = useAdminGuard()
@@ -45,6 +46,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex flex-1 flex-col">
             <Topbar onMenuClick={() => setSidebarOpen(true)} />
             <main className="flex-1 p-4">{children}</main>
+            <AdminToast />
           </div>
         </div>
       </AdminProductsProvider>
