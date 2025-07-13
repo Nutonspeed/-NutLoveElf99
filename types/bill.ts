@@ -1,4 +1,4 @@
-export type BillStatus = "unpaid" | "paid"
+export type BillStatus = "unpaid" | "paid" | "pending" | "cancelled"
 
 export interface BillPayment {
   id: string
@@ -15,4 +15,7 @@ export interface Bill {
   pin?: string
   status: BillStatus
   payments: BillPayment[]
+  createdAt: string
+  dueDate?: string
+  hidden?: boolean
 }

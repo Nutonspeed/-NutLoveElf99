@@ -25,12 +25,26 @@ import OrderTable from "@/components/admin/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
 import { addAdminNotification } from "@/lib/mock-admin-notifications"
+import { mockBills, cleanupOldBills } from "@/lib/mock-bills"
+import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
+import { toast } from "sonner"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
+  const [hideCancelled, setHideCancelled] = useState(false)
 
   useEffect(() => {
     fetchDashboardStats().then(setStats)
+    loadAutoReminder()
+    if (autoReminder) {
+      const overdue = mockBills.find(
+        (b) =>
+          (b.status === "unpaid" || b.status === "pending") &&
+          b.dueDate &&
+          new Date(b.dueDate).getTime() < Date.now() - 3 * 24 * 60 * 60 * 1000,
+      )
+      if (overdue) toast.warning("มีบิลค้างชำระเกิน 3 วัน")
+    }
   }, [])
 
 
@@ -42,6 +56,21 @@ export default function AdminDashboard() {
           <h1 className="text-3xl font-bold mb-2">แดชบอร์ดผู้ดูแลระบบ</h1>
           <p className="text-gray-600">ภาพรวมการดำเนินงานของร้าน Sofa Cover Store</p>
           <Button className="mt-4" onClick={() => addAdminNotification('มีออเดอร์ใหม่รอการตรวจสอบ')}>ทดสอบการแจ้งเตือน</Button>
+        </div>
+
+        <div className="flex gap-2 mt-4">
+          <Button
+            variant="outline"
+            onClick={() => {
+              cleanupOldBills(14)
+              toast.success('ล้างข้อมูล mock แล้ว')
+            }}
+          >
+            ล้าง mock ที่เก่าเกิน 14 วัน
+          </Button>
+          <Button variant="outline" onClick={() => setHideCancelled((v) => !v)}>
+            {hideCancelled ? 'แสดงบิลยกเลิก' : 'ซ่อนบิลยกเลิก'}
+          </Button>
         </div>
 
         {/* Stats Cards */}
