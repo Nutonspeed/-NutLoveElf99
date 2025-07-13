@@ -12,6 +12,8 @@ import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plu
 import Image from "next/image"
 import Link from "next/link"
 import { mockProducts } from "@/lib/mock-products"
+import { mockReviewImages } from "@/lib/mock-review-images"
+import { useReviewImagesSetting } from "@/contexts/review-images-context"
 import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 
@@ -24,7 +26,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   const [quantity, setQuantity] = useState(1)
   const [isWishlisted, setIsWishlisted] = useState(false)
   const { dispatch } = useCart()
+  const { showImages } = useReviewImagesSetting()
   const { toast } = useToast()
+  const reviewImages = mockReviewImages.filter(
+    (img) => img.productId === product?.id && img.active,
+  )
+  const [zoomImg, setZoomImg] = useState<string | null>(null)
 
   if (!product) {
     return (
@@ -349,6 +356,30 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                         <div className="text-sm text-gray-600">{product.reviews} รีวิว</div>
                       </div>
                     </div>
+
+                    {showImages && reviewImages.length > 0 && (
+                      <>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                          {reviewImages.map((img, idx) => (
+                            <img
+                              key={idx}
+                              src={img.url}
+                              alt="review"
+                              className="rounded cursor-pointer"
+                              onClick={() => setZoomImg(img.url)}
+                            />
+                          ))}
+                        </div>
+                        {zoomImg && (
+                          <div
+                            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+                            onClick={() => setZoomImg(null)}
+                          >
+                            <img src={zoomImg} className="max-w-full max-h-full" />
+                          </div>
+                        )}
+                      </>
+                    )}
 
                     <div className="space-y-4">
                       {/* Mock reviews */}

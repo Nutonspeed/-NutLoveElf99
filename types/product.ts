@@ -17,4 +17,6 @@ export interface Product {
   material: string
   care: string[]
   status?: "active" | "draft"
+  tags?: string[]
+  curated?: boolean
 }

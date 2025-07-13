@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { useAdminProducts } from "@/contexts/admin-products-context"
 import { useAdminCollections } from "@/contexts/admin-collections-context"
 
@@ -26,6 +27,7 @@ export default function CreateProductPage() {
   const [sizes, setSizes] = useState<string[]>([])
   const [colors, setColors] = useState<string[]>([])
   const [features, setFeatures] = useState<string[]>([])
+  const [isCurated, setIsCurated] = useState(false)
   const [status, setStatus] = useState<"active" | "draft">("draft")
   const { addProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
@@ -69,6 +71,7 @@ export default function CreateProductPage() {
       features,
       material: "",
       care: [],
+      curated: isCurated,
       status,
     })
 
@@ -195,6 +198,10 @@ export default function CreateProductPage() {
                     )
                   }
                 />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="curated" checked={isCurated} onCheckedChange={setIsCurated} />
+                <Label htmlFor="curated">แสดงใน Curated Picks</Label>
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>

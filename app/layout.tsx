@@ -7,6 +7,7 @@ import { CartProvider } from "@/contexts/cart-context"
 import { AuthProvider } from "@/contexts/auth-context"
 import { WishlistProvider } from "@/contexts/wishlist-context"
 import { CompareProvider } from "@/contexts/compare-context"
+import { ReviewImagesProvider } from "@/contexts/review-images-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,8 +29,10 @@ export default function RootLayout({
           <CartProvider>
             <WishlistProvider>
               <CompareProvider>
-                {children}
-                <Toaster />
+                <ReviewImagesProvider>
+                  {children}
+                  <Toaster />
+                </ReviewImagesProvider>
               </CompareProvider>
             </WishlistProvider>
           </CartProvider>

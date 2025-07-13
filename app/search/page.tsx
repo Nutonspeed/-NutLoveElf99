@@ -14,6 +14,7 @@ import { Star, Search, Filter, SlidersHorizontal } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { db } from "@/lib/database"
+import { getCollections } from "@/lib/mock-collections"
 
 export default function SearchPage() {
   const searchParams = useSearchParams()
@@ -29,6 +30,7 @@ export default function SearchPage() {
   const [selectedColors, setSelectedColors] = useState<string[]>([])
   const [selectedSizes, setSelectedSizes] = useState<string[]>([])
   const [minRating, setMinRating] = useState(0)
+  const [collectionMap, setCollectionMap] = useState<Record<string, string>>({})
 
   useEffect(() => {
     loadProducts()
@@ -41,6 +43,12 @@ export default function SearchPage() {
   const loadProducts = async () => {
     try {
       const data = await db.getProducts()
+      const cols = await getCollections()
+      const map: Record<string, string> = {}
+      cols.forEach((c) => {
+        map[c.id] = c.slug
+      })
+      setCollectionMap(map)
       setProducts(data)
     } catch (error) {
       console.error("Error loading products:", error)
@@ -52,11 +60,14 @@ export default function SearchPage() {
   const filterProducts = () => {
     const filtered = products.filter((product) => {
       // Search query filter
+      const query = searchQuery.toLowerCase()
       const matchesSearch =
-        !searchQuery ||
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.category.toLowerCase().includes(searchQuery.toLowerCase())
+        !query ||
+        product.name.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query) ||
+        (product.tags && product.tags.some((t: string) => t.toLowerCase().includes(query))) ||
+        (collectionMap[product.collectionId]?.toLowerCase().includes(query) ?? false)
 
       // Price range filter
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]

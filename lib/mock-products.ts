@@ -25,6 +25,8 @@ export const mockProducts: Product[] = [
     material: "Velvet 100%",
     care: ["ซักเครื่องน้ำเย็น", "ไม่ควรใช้น้ำยาฟอก", "ตากแห้งในที่ร่ม"],
     status: "active",
+    tags: ["premium", "velvet", "curated"],
+    curated: true,
   },
   {
     id: "2",
@@ -49,6 +51,8 @@ export const mockProducts: Product[] = [
     material: "Cotton 70%, Polyester 30%",
     care: ["ซักเครื่องน้ำอุ่น", "รีดได้", "ตากแดดได้"],
     status: "active",
+    tags: ["cotton", "standard"],
+    curated: false,
   },
   {
     id: "3",
@@ -72,6 +76,8 @@ export const mockProducts: Product[] = [
     material: "Polyester with TPU coating",
     care: ["เช็ดทำความสะอาดด้วยผ้าชื้น", "ซักเครื่องได้", "ไม่ควรรีด"],
     status: "active",
+    tags: ["waterproof", "pro", "curated"],
+    curated: true,
   },
   {
     id: "4",
@@ -95,6 +101,8 @@ export const mockProducts: Product[] = [
     material: "PU Leather",
     care: ["เช็ดด้วยผ้าชื้น", "ใช้ครีมบำรุงหนัง", "หลีกเลี่ยงแสงแดดจัด"],
     status: "active",
+    tags: ["luxury", "leather"],
+    curated: false,
   },
 ]
 

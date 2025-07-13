@@ -329,7 +329,34 @@ const mockChatMessages: ChatMessage[] = [
   },
 ]
 
-const mockCoupons: Coupon[] = []
+const mockCoupons: Coupon[] = [
+  {
+    id: "c1",
+    code: "ELF10",
+    discount: 10,
+    type: "percentage",
+    active: true,
+    minAmount: 0,
+    usageLimit: 0,
+    usageCount: 0,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+    description: "ส่วนลด 10% ทุกคำสั่งซื้อ",
+  },
+  {
+    id: "c2",
+    code: "SAVE100",
+    discount: 100,
+    type: "fixed",
+    active: true,
+    minAmount: 1000,
+    usageLimit: 0,
+    usageCount: 0,
+    validFrom: new Date().toISOString(),
+    validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+    description: "ลดทันที 100 บาท เมื่อซื้อขั้นต่ำ 1000",
+  },
+]
 
 // Simple wishlist storage per user
 const mockWishlists: Record<string, Product[]> = {

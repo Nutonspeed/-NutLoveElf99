@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Switch } from "@/components/ui/switch"
 import { useAdminProducts } from "@/contexts/admin-products-context"
 import { useAdminCollections } from "@/contexts/admin-collections-context"
 
@@ -31,6 +32,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [newImage, setNewImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [status, setStatus] = useState<"active" | "draft">("draft")
+  const [isCurated, setIsCurated] = useState(false)
   const { products, updateProduct } = useAdminProducts()
   const { collections } = useAdminCollections()
 
@@ -56,6 +58,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       setCollectionId(p.collectionId)
       setImages(p.images.join(','))
       setStatus(p.status ?? 'active')
+      setIsCurated(!!p.curated)
     }
     setLoading(false)
   }, [params.id, products])
@@ -95,6 +98,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         ...images.split(',').map((s) => s.trim()).filter(Boolean),
         ...(preview ? [preview] : []),
       ],
+      curated: isCurated,
       status,
     })
 
@@ -172,6 +176,10 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                 {preview && (
                   <img src={preview} alt="preview" className="h-32 w-32 object-cover rounded-md" />
                 )}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch id="curated" checked={isCurated} onCheckedChange={setIsCurated} />
+                <Label htmlFor="curated">แสดงใน Curated Picks</Label>
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>

@@ -45,13 +45,38 @@ export default function CheckoutPage() {
     cvv: "",
     cardName: "",
   })
+  const [couponCode, setCouponCode] = useState("")
+  const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null)
 
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const shipping = state.total >= 1500 ? 0 : 100
   const tax = Math.round(state.total * 0.07)
-  const finalTotal = state.total + shipping + tax
+  const discountAmount = appliedCoupon
+    ? appliedCoupon.type === "percentage"
+      ? Math.round(state.total * (appliedCoupon.discount / 100))
+      : appliedCoupon.discount
+    : 0
+  const finalTotal = state.total - discountAmount + shipping + tax
+
+  const handleApplyCoupon = async () => {
+    const coupons = await db.getCoupons()
+    const found = coupons.find(
+      (c) => c.code.toUpperCase() === couponCode.toUpperCase() && c.active,
+    )
+    if (!found) {
+      toast({ title: "รหัสไม่ถูกต้อง", variant: "destructive" })
+      setAppliedCoupon(null)
+      return
+    }
+    if (found.minAmount && state.total < found.minAmount) {
+      toast({ title: "ยอดซื้อไม่ถึงขั้นต่ำ" , variant: "destructive" })
+      return
+    }
+    setAppliedCoupon(found)
+    toast({ title: "ใช้คูปองแล้ว", description: found.code })
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -326,6 +351,19 @@ export default function CheckoutPage() {
 
                   {/* Price Breakdown */}
                   <div className="space-y-2">
+                    <div className="flex space-x-2">
+                      <Input
+                        placeholder="รหัสคูปอง"
+                        value={couponCode}
+                        onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      />
+                      <Button type="button" onClick={handleApplyCoupon}>ใช้</Button>
+                    </div>
+                    {appliedCoupon && (
+                      <p className="text-sm text-green-600">
+                        ใช้คูปอง {appliedCoupon.code} ลด {appliedCoupon.type === "percentage" ? `${appliedCoupon.discount}%` : `฿${appliedCoupon.discount}`}
+                      </p>
+                    )}
                     <div className="flex justify-between">
                       <span>ยอดรวมสินค้า</span>
                       <span>฿{state.total.toLocaleString()}</span>
