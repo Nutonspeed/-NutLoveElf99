@@ -12,6 +12,7 @@ import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
 import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
+import { FabricSuggestions } from "@/components/FabricSuggestions"
 
 interface Fabric {
   id: string
@@ -171,6 +172,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
           </div>
         </div>
       </div>
+      <FabricSuggestions slug={params.slug} />
       <Footer />
       <AnalyticsTracker event="ViewContent" />
     </div>

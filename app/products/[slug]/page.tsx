@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/auth-context"
 import type { ShippingStatus } from "@/types/order"
 import { loadSocialLinks, socialLinks } from "@/lib/mock-settings"
+import { RecommendedAddons } from "@/components/RecommendedAddons"
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
   const { slug } = params
@@ -500,6 +501,8 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             </TabsContent>
           </Tabs>
         </div>
+
+        <RecommendedAddons slug={product.slug} />
 
         {/* Related Products */}
         <div className="mt-16">
