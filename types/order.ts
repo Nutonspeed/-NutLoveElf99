@@ -96,7 +96,8 @@ export interface Order {
   packingStatus: PackingStatus
   shipping_date: string
   delivery_note: string
-  scheduledDeliveryDate?: string
+  /** Scheduled date and time for delivery */
+  scheduledDelivery?: string
   reorderedFromId?: string
   validated?: boolean
   demo?: boolean

@@ -37,7 +37,7 @@ const initialMockOrders: Order[] = [
     packingStatus: "packing",
     shipping_date: "2024-01-16T10:30:00Z",
     delivery_note: "-",
-    scheduledDeliveryDate: "2024-01-20",
+    scheduledDelivery: "2024-01-20T10:00",
     timeline: [
       {
         timestamp: "2024-01-15T10:30:00Z",
@@ -88,7 +88,7 @@ const initialMockOrders: Order[] = [
     packingStatus: "packing",
     shipping_date: "2024-01-15T08:00:00Z",
     delivery_note: "ส่งตามเวลาทำการ",
-    scheduledDeliveryDate: "2024-01-18",
+    scheduledDelivery: "2024-01-18T10:00",
     timeline: [
       {
         timestamp: "2024-01-14T14:20:00Z",
