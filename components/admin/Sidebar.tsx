@@ -29,6 +29,7 @@ const navItems = [
   { href: "/admin/inventory", label: "สต็อก", icon: Layers },
   { href: "/admin/customers", label: "ลูกค้า", icon: Users },
   { href: "/admin/coupons", label: "คูปอง", icon: Percent },
+  { href: "/admin/quotes", label: "ใบเสนอราคา", icon: FileText },
   { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell },
   { href: "/admin/chat", label: "แชท", icon: MessageCircle },
   { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText },
