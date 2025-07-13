@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { addCollection } from "@/lib/mock-collections"
+import { addCollection, mockCollections } from "@/lib/mock-collections"
+import { uniqueCollectionName } from "@/lib/speed-namer"
 
 function slugify(str: string) {
   return str
@@ -50,6 +51,13 @@ export default function CreateCollectionPage() {
     } catch {}
   }, [])
 
+  const handleRandomName = () => {
+    const slugs = mockCollections.map((c) => c.slug)
+    const newName = uniqueCollectionName(slugs)
+    setName(newName)
+    setSlug(slugify(newName))
+  }
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     addCollection({
@@ -84,7 +92,10 @@ export default function CreateCollectionPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">ชื่อคอลเลกชัน</Label>
-                <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                <div className="flex space-x-2">
+                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                  <Button type="button" onClick={handleRandomName}>สุ่มชื่อ</Button>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="slug">Slug</Label>
