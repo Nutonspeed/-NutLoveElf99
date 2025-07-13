@@ -18,4 +18,5 @@ export interface Bill {
   createdAt: string
   dueDate?: string
   hidden?: boolean
+  abandonReason?: string
 }

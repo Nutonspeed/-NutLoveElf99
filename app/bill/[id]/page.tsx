@@ -11,6 +11,7 @@ import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { billSecurity } from "@/lib/mock-settings"
+import { getMockNow } from "@/lib/mock-date"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -20,6 +21,12 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [code, setCode] = useState("")
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
+  const [reason, setReason] = useState(bill?.abandonReason || "")
+
+  const baseDate = new Date(bill?.dueDate || bill.createdAt)
+  const expired =
+    bill.status !== "paid" &&
+    getMockNow().getTime() > baseDate.getTime() + 3 * 24 * 60 * 60 * 1000
 
   if (!bill || !order) {
     return (
@@ -116,6 +123,21 @@ export default function BillPage({ params }: { params: { id: string } }) {
               <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
               <Input type="file" onChange={(e) => setSlip(e.target.files?.[0] ?? null)} />
               <Button onClick={handleSendSlip}>ส่งหลักฐานโอน</Button>
+              {expired && !reason && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    const r = window.prompt("บอกเหตุผลการไม่ชำระ")
+                    if (r) {
+                      setReason(r)
+                      bill.abandonReason = r
+                    }
+                  }}
+                >
+                  บอกเหตุผล
+                </Button>
+              )}
+              {reason && <p className="text-sm text-gray-600">เหตุผล: {reason}</p>}
             </div>
           </CardContent>
         </Card>

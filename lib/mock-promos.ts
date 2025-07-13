@@ -2,15 +2,24 @@ export interface Promo {
   id: string
   code: string
   customerId: string
+  startDate: string
+  endDate: string
 }
 
 export let mockPromos: Promo[] = []
 
-export function createPromo(code: string, customerId: string): Promo {
+export function createPromo(
+  code: string,
+  customerId: string,
+  startDate: string,
+  endDate: string,
+): Promo {
   const promo: Promo = {
     id: `promo-${Math.random().toString(36).slice(2, 8)}`,
     code,
     customerId,
+    startDate,
+    endDate,
   }
   mockPromos.push(promo)
   return promo

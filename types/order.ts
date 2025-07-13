@@ -80,6 +80,7 @@ export interface Order {
   status: OrderStatus
   depositPercent?: number
   note?: string
+  chatNote?: string
   createdAt: string
   shippingAddress: {
     name: string

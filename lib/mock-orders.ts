@@ -22,6 +22,7 @@ const initialMockOrders: Order[] = [
     status: "depositPaid",
     depositPercent: 50,
     note: "Deposit received",
+    chatNote: "",
     createdAt: "2024-01-15T10:30:00Z",
     shippingAddress: {
       name: "John Doe",
@@ -73,6 +74,7 @@ const initialMockOrders: Order[] = [
     total: 3980,
     status: "paid",
     depositPercent: 100,
+    chatNote: "",
     createdAt: "2024-01-14T14:20:00Z",
     shippingAddress: {
       name: "Jane Smith",

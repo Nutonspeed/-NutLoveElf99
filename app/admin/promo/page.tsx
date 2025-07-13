@@ -13,10 +13,12 @@ export default function AdminPromoPage() {
   const [promos, setPromos] = useState<Promo[]>(listPromos())
   const [code, setCode] = useState("")
   const [customerId, setCustomerId] = useState("2")
+  const [startDate, setStartDate] = useState("2024-01-21")
+  const [endDate, setEndDate] = useState("2024-01-31")
 
   const handleCreate = () => {
     if (!code) return
-    createPromo(code, customerId)
+    createPromo(code, customerId, startDate, endDate)
     setPromos(listPromos())
     setCode("")
   }
@@ -58,6 +60,8 @@ export default function AdminPromoPage() {
                 </option>
               ))}
             </select>
+            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             <Button onClick={handleCreate}>สร้าง</Button>
           </CardContent>
         </Card>
@@ -71,6 +75,8 @@ export default function AdminPromoPage() {
                 <TableRow>
                   <TableHead>โค้ด</TableHead>
                   <TableHead>ลูกค้า</TableHead>
+                  <TableHead>เริ่ม</TableHead>
+                  <TableHead>สิ้นสุด</TableHead>
                   <TableHead>ลิงก์</TableHead>
                   <TableHead></TableHead>
                 </TableRow>
@@ -80,6 +86,8 @@ export default function AdminPromoPage() {
                   <TableRow key={p.id}>
                     <TableCell>{p.code}</TableCell>
                     <TableCell>{mockCustomers.find((c) => c.id === p.customerId)?.name}</TableCell>
+                    <TableCell>{p.startDate}</TableCell>
+                    <TableCell>{p.endDate}</TableCell>
                     <TableCell>
                       <Link href={`/promo/${p.code}`}>{`/promo/${p.code}`}</Link>
                     </TableCell>
