@@ -9,7 +9,19 @@ export interface Customer {
   avatar?: string
   tags?: string[]
   note?: string
+  /** mock reward points */
+  points?: number
+  /** membership tier */
+  tier?: "Silver" | "Gold" | "VIP"
+  /** point change history */
+  pointHistory?: PointLog[]
   createdAt: string
+}
+
+export interface PointLog {
+  timestamp: string
+  change: number
+  reason?: string
 }
 
 import { mockOrders } from "./mock-orders"
@@ -26,6 +38,11 @@ const initialMockCustomers: Customer[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     tags: ["ลูกค้าประจำ"],
     note: "ชอบผ้ากำมะหยี่",
+    points: 120,
+    tier: "Gold",
+    pointHistory: [
+      { timestamp: new Date().toISOString(), change: 120, reason: "สมัครสมาชิก" },
+    ],
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -39,6 +56,8 @@ const initialMockCustomers: Customer[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     tags: ["COD"],
     note: "เก็บเงินปลายทาง",
+    points: 60,
+    tier: "Silver",
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -46,6 +65,8 @@ const initialMockCustomers: Customer[] = [
     name: "Mike Johnson",
     email: "mike@example.com",
     avatar: "/placeholder.svg?height=40&width=40",
+    points: 200,
+    tier: "VIP",
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -53,6 +74,8 @@ const initialMockCustomers: Customer[] = [
     name: "Sarah Wilson",
     email: "sarah@example.com",
     avatar: "/placeholder.svg?height=40&width=40",
+    points: 10,
+    tier: "Silver",
     createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -60,6 +83,8 @@ const initialMockCustomers: Customer[] = [
     name: "David Brown",
     email: "david@example.com",
     avatar: "/placeholder.svg?height=40&width=40",
+    points: 40,
+    tier: "Gold",
     createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -67,6 +92,8 @@ const initialMockCustomers: Customer[] = [
     name: "Lisa Anderson",
     email: "lisa@example.com",
     avatar: "/placeholder.svg?height=40&width=40",
+    points: 80,
+    tier: "Gold",
     createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ]
@@ -110,4 +137,26 @@ export async function fetchCustomers(): Promise<Customer[]> {
 
 export async function fetchCustomerById(id: string): Promise<Customer | undefined> {
   return Promise.resolve(mockCustomers.find((c) => c.id === id))
+}
+
+export function updateCustomerPoints(
+  id: string,
+  change: number,
+  reason?: string,
+) {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return
+  customer.points = (customer.points || 0) + change
+  if (!customer.pointHistory) customer.pointHistory = []
+  customer.pointHistory.push({
+    timestamp: new Date().toISOString(),
+    change,
+    reason,
+  })
+}
+
+export function setCustomerTier(id: string, tier: "Silver" | "Gold" | "VIP") {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return
+  customer.tier = tier
 }

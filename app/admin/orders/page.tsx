@@ -12,6 +12,7 @@ import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "luci
 import Link from "next/link"
 import { toast } from "sonner"
 import { mockOrders } from "@/lib/mock-orders"
+import { mockCustomers } from "@/lib/mock-customers"
 import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -31,6 +32,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>(mockOrders)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
 
   const filteredOrders = orders.filter((order) => {
@@ -40,8 +42,10 @@ export default function AdminOrdersPage() {
       order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase())
 
     const matchesStatus = statusFilter === "all" || order.status === statusFilter
+    const matchesCustomer =
+      customerFilter === "all" || order.customerId === customerFilter
 
-    return matchesSearch && matchesStatus
+    return matchesSearch && matchesStatus && matchesCustomer
   })
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
@@ -89,6 +93,19 @@ export default function AdminOrdersPage() {
                     {statusOptions.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value}>
                         {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={customerFilter} onValueChange={setCustomerFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="ลูกค้า" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">ทั้งหมด</SelectItem>
+                    {mockCustomers.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -181,8 +198,25 @@ export default function AdminOrdersPage() {
                                     <p>
                                       <strong>อีเมล:</strong> {selectedOrder.customerEmail}
                                     </p>
-                                    <p>
-                                      <strong>เบอร์โทร:</strong> {selectedOrder.shippingAddress.phone}
+                                    <p className="flex items-center space-x-2">
+                                      <strong>เบอร์โทร:</strong>
+                                      <a
+                                        href={`tel:${selectedOrder.shippingAddress.phone}`}
+                                        className="underline"
+                                      >
+                                        {selectedOrder.shippingAddress.phone}
+                                      </a>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() =>
+                                          navigator.clipboard.writeText(
+                                            selectedOrder.shippingAddress.phone,
+                                          )
+                                        }
+                                      >
+                                        <Copy className="h-4 w-4" />
+                                      </Button>
                                     </p>
                                   </div>
                                 </div>
