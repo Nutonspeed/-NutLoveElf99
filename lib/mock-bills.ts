@@ -2,6 +2,7 @@ import type { Bill, BillPayment, BillStatus } from "@/types/bill"
 import { mockOrders } from "./mock-orders"
 import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
+import { addChatMessage } from "./mock-chat-messages"
 
 export let mockBills: Bill[] = []
 
@@ -26,6 +27,7 @@ export function createBill(
   }
   mockBills.push(bill)
   addAdminLog(`create bill ${bill.id}`, 'mockAdminId')
+  addChatMessage(orderId, 'bill_created')
   return bill
 }
 

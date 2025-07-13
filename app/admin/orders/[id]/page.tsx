@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
-import { mockOrders, setPackingStatus } from "@/lib/mock-orders"
+import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
 import type { OrderStatus, ShippingStatus, PackingStatus } from "@/types/order"
 import { shippingStatusOptions, packingStatusOptions } from "@/types/order"
@@ -37,7 +37,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
 
   const handleAddEntry = (entry: TimelineEntry) => {
     mockOrders[orderIndex].timeline.push(entry)
-    mockOrders[orderIndex].status = entry.status
+    setOrderStatus(order.id, entry.status)
     setStatus(entry.status)
     toast.success("บันทึกสถานะแล้ว")
   }

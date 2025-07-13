@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
-import { mockOrders, setPackingStatus } from "@/lib/mock-orders"
+import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
 import { exportCSV } from "@/lib/mock-export"
@@ -53,6 +53,7 @@ export default function AdminOrdersPage() {
 
   const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
     setOrders(orders.map((order) => (order.id === orderId ? { ...order, status: newStatus } : order)))
+    setOrderStatus(orderId, newStatus)
   }
 
   const updatePackingStatus = (orderId: string, status: PackingStatus) => {
@@ -78,14 +79,6 @@ export default function AdminOrdersPage() {
     confirmBill(billId)
     setBills([...mockBills])
     updateOrderStatus(orderId, "paid")
-    const idx = mockOrders.findIndex((o) => o.id === orderId)
-    if (idx !== -1) {
-      mockOrders[idx].timeline.push({
-        timestamp: new Date().toISOString(),
-        status: "paid",
-        updatedBy: "admin@nutlove.co",
-      })
-    }
     toast.success("ยืนยันยอดแล้ว")
   }
 
