@@ -141,7 +141,7 @@ export default function CheckoutPage() {
         shipping_status: "pending" as ShippingStatus,
         shipping_date: "",
         delivery_note: "",
-        scheduledDeliveryDate: deliveryDate || undefined,
+        scheduledDelivery: deliveryDate || undefined,
         reorderedFromId: sessionStorage.getItem("reorderFromId") || undefined,
         checklist: {
           items: ["confirmSize", "confirmColor"],
@@ -300,7 +300,7 @@ export default function CheckoutPage() {
                   <Label htmlFor="deliveryDate">วันนัดจัดส่ง</Label>
                   <Input
                     id="deliveryDate"
-                    type="date"
+                    type="datetime-local"
                     value={deliveryDate}
                     onChange={(e) => setDeliveryDate(e.target.value)}
                   />

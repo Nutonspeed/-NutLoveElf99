@@ -24,6 +24,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [status, setStatus] = useState<OrderStatus>(order?.status ?? "pendingPayment")
   const [shippingStatus, setShippingStatus] = useState<ShippingStatus>(order?.shipping_status ?? "pending")
   const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
+  const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
 
   if (!order) {
     return (
@@ -186,12 +187,20 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 </SelectContent>
               </Select>
             </div>
-            <p>
-              วันนัดจัดส่ง:{" "}
-              {order.scheduledDeliveryDate
-                ? new Date(order.scheduledDeliveryDate).toLocaleDateString("th-TH")
-                : "-"}
-            </p>
+            <div className="space-y-1">
+              <label htmlFor="scheduledDelivery">วันนัดจัดส่ง:</label>
+              <input
+                id="scheduledDelivery"
+                type="datetime-local"
+                className="border rounded px-2 py-1"
+                value={scheduledDelivery}
+                onChange={(e) => {
+                  const val = e.target.value
+                  setScheduledDelivery(val)
+                  mockOrders[orderIndex].scheduledDelivery = val
+                }}
+              />
+            </div>
             <p>วันที่เปลี่ยน: {order.shipping_date ? new Date(order.shipping_date).toLocaleDateString("th-TH") : "-"}</p>
             <p>หมายเหตุ: {order.delivery_note || "-"}</p>
             <Button variant="outline" onClick={() => {
