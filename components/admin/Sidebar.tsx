@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, ShoppingCart, Package, Layers, Users, Percent, Bell, MessageCircle, FileText } from "lucide-react"
+import { Home, ShoppingCart, Package, Layers, Users, Percent, Bell, MessageCircle, FileText, Link2 } from "lucide-react"
 import clsx from "clsx"
 
 const navItems = [
@@ -15,6 +15,7 @@ const navItems = [
   { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell },
   { href: "/admin/chat", label: "แชท", icon: MessageCircle },
   { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText },
+  { href: "/admin/chat-customers", label: "ผูกลูกค้ากับแชท", icon: Link2 },
 ]
 
 export default function Sidebar({ className = "" }: { className?: string }) {
