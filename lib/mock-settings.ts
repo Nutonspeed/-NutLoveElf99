@@ -1,4 +1,5 @@
 export let autoMessage = "ขอบคุณที่สั่งซื้อกับเรา";
+export let socialLinks = { facebook: "", line: "" };
 
 export function loadAutoMessage() {
   if (typeof window !== 'undefined') {
@@ -11,5 +12,19 @@ export function setAutoMessage(msg: string) {
   autoMessage = msg;
   if (typeof window !== 'undefined') {
     localStorage.setItem('autoMessage', msg);
+  }
+}
+
+export function loadSocialLinks() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('socialLinks');
+    if (stored) socialLinks = JSON.parse(stored);
+  }
+}
+
+export function setSocialLinks(links: { facebook: string; line: string }) {
+  socialLinks = links;
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('socialLinks', JSON.stringify(links));
   }
 }

@@ -24,6 +24,7 @@ import DashboardCard from "@/components/admin/dashboard/DashboardCard"
 import OrderTable from "@/components/admin/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
+import { addAdminNotification } from "@/lib/mock-admin-notifications"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
@@ -40,6 +41,7 @@ export default function AdminDashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">แดชบอร์ดผู้ดูแลระบบ</h1>
           <p className="text-gray-600">ภาพรวมการดำเนินงานของร้าน Sofa Cover Store</p>
+          <Button className="mt-4" onClick={() => addAdminNotification('มีออเดอร์ใหม่รอการตรวจสอบ')}>ทดสอบการแจ้งเตือน</Button>
         </div>
 
         {/* Stats Cards */}

@@ -7,16 +7,26 @@ import { useAuth } from "@/contexts/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
-import { loadAutoMessage, autoMessage, setAutoMessage } from "@/lib/mock-settings"
+import {
+  loadAutoMessage,
+  autoMessage,
+  setAutoMessage,
+  loadSocialLinks,
+  socialLinks,
+  setSocialLinks,
+} from "@/lib/mock-settings"
 
 export default function SettingsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
   const [message, setMessage] = useState(autoMessage)
+  const [links, setLinks] = useState(socialLinks)
 
   useEffect(() => {
     loadAutoMessage()
+    loadSocialLinks()
     setMessage(autoMessage)
+    setLinks(socialLinks)
     if (!isAuthenticated) {
       router.push("/login")
     } else if (user?.role !== "admin") {
@@ -28,6 +38,7 @@ export default function SettingsPage() {
 
   const handleSave = () => {
     setAutoMessage(message)
+    setSocialLinks(links)
     alert("บันทึกข้อความแล้ว")
   }
 
@@ -49,6 +60,23 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <Textarea value={message} onChange={(e) => setMessage(e.target.value)} />
             <Button onClick={handleSave}>บันทึก</Button>
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>ลิงก์ Social</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Input
+              value={links.facebook}
+              onChange={(e) => setLinks({ ...links, facebook: e.target.value })}
+              placeholder="Facebook Page URL"
+            />
+            <Input
+              value={links.line}
+              onChange={(e) => setLinks({ ...links, line: e.target.value })}
+              placeholder="Line URL"
+            />
           </CardContent>
         </Card>
       </div>
