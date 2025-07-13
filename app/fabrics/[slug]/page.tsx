@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import Link from "next/link"
 import { WishlistButton } from "@/components/WishlistButton"
+import { FavoriteButton } from "@/components/FavoriteButton"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
@@ -121,6 +122,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             <div className="flex items-center space-x-2">
               <h1 className="text-3xl font-bold">{fabric.name}</h1>
               <WishlistButton slug={fabric.slug || fabric.id} />
+              <FavoriteButton slug={fabric.slug || fabric.id} />
             </div>
             {fabric.price_min && fabric.price_max && (
               <p className="text-lg text-gray-700">

@@ -48,6 +48,19 @@ export default function AdminDashboard() {
     }
   }, [])
 
+  useEffect(() => {
+    let timestamps: number[] = []
+    const interval = setInterval(() => {
+      const now = Date.now()
+      timestamps = timestamps.filter((t) => now - t < 5 * 60 * 1000)
+      timestamps.push(now)
+      if (timestamps.length > 5) {
+        toast.warning('มีออเดอร์ใหม่จำนวนมากผิดปกติ')
+      }
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
 
   return (
     <div className="min-h-screen bg-gray-50">
