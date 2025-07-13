@@ -7,12 +7,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { exportQuotesCSV, mockQuotes } from '@/lib/mock-quotes'
+import { Input } from '@/components/ui/input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function AdminQuotesPage() {
   const [csvPreview, setCsvPreview] = useState('')
   const [status, setStatus] = useState('all')
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
 
-  const filtered = mockQuotes.filter(q => status === 'all' || q.status === status)
+  const filtered = mockQuotes.filter(q => {
+    const matchStatus = status === 'all' || q.status === status
+    const created = new Date(q.createdAt)
+    const matchStart = !startDate || created >= new Date(startDate)
+    const matchEnd = !endDate || created <= new Date(endDate)
+    return matchStatus && matchStart && matchEnd
+  })
 
   const prepareExport = () => {
     setCsvPreview(exportQuotesCSV())
@@ -49,6 +59,29 @@ export default function AdminQuotesPage() {
         <Card>
           <CardHeader>
             <CardTitle>รายการ</CardTitle>
+            <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger>
+                  <SelectValue placeholder="สถานะ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">ทั้งหมด</SelectItem>
+                  <SelectItem value="pending">รอประเมิน</SelectItem>
+                  <SelectItem value="quoted">เสนอราคาแล้ว</SelectItem>
+                  <SelectItem value="rejected">ปฏิเสธ</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+              <Input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
