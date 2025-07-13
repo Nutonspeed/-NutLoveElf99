@@ -8,6 +8,8 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { WishlistProvider } from "@/contexts/wishlist-context"
 import { CompareProvider } from "@/contexts/compare-context"
 import { ReviewImagesProvider } from "@/contexts/review-images-context"
+import { DebugProvider } from "@/contexts/debug-context"
+import { UtmMessage } from "@/components/UtmMessage"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -25,18 +27,21 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={inter.className}>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                <ReviewImagesProvider>
-                  {children}
-                  <Toaster />
-                </ReviewImagesProvider>
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+        <DebugProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <CompareProvider>
+                  <ReviewImagesProvider>
+                    {children}
+                    <UtmMessage />
+                    <Toaster />
+                  </ReviewImagesProvider>
+                </CompareProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </DebugProvider>
       </body>
     </html>
   )
