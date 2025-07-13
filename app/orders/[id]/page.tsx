@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
+import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
 import {
   getOrderStatusBadgeVariant,
@@ -160,6 +161,15 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                   </p>
                   <p>เบอร์โทร: {order.shippingAddress.phone}</p>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>ไทม์ไลน์การจัดส่ง</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <OrderTimeline timeline={order.timeline} />
               </CardContent>
             </Card>
           </div>

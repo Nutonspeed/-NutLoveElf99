@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { toast } from "sonner"
 import { mockOrders } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
 import type { OrderStatus } from "@/types/order"
@@ -92,6 +93,18 @@ export default function AdminOrdersPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Button variant="outline" onClick={() => {
+                  const id = window.prompt("สแกน QR เพื่อค้นหาออเดอร์")
+                  if (!id) return
+                  const o = mockOrders.find((m) => m.id === id)
+                  if (o) {
+                    toast.success(`พบคำสั่งซื้อ ${o.id}`)
+                  } else {
+                    toast.error("ไม่พบคำสั่งซื้อ")
+                  }
+                }}>
+                  สแกน QR
+                </Button>
               </div>
             </div>
           </CardHeader>

@@ -181,6 +181,12 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
               </div>
             </div>
 
+            <div className="flex justify-center my-8">
+              <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">
+                QR {order.id}
+              </div>
+            </div>
+
             {/* Payment Info */}
             <div className="mt-8 pt-8 border-t">
               <div className="grid grid-cols-2 gap-8">

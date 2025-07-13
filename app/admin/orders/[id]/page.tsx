@@ -10,7 +10,10 @@ import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import type { Order } from "@/types/order"
-import type { OrderStatus } from "@/types/order"
+import type { OrderStatus, ShippingStatus } from "@/types/order"
+import { shippingStatusOptions } from "@/types/order"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 
 export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
@@ -19,6 +22,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const order = mockOrders[orderIndex]
 
   const [status, setStatus] = useState<OrderStatus>(order?.status ?? "pendingPayment")
+  const [shippingStatus, setShippingStatus] = useState<ShippingStatus>(order?.shipping_status ?? "pending")
 
   if (!order) {
     return (
@@ -33,6 +37,13 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
     mockOrders[orderIndex].status = entry.status
     setStatus(entry.status)
     toast.success("บันทึกสถานะแล้ว")
+  }
+
+  const handleShippingChange = (value: ShippingStatus) => {
+    mockOrders[orderIndex].shipping_status = value
+    mockOrders[orderIndex].shipping_date = new Date().toISOString()
+    setShippingStatus(value)
+    toast.success("อัปเดตสถานะจัดส่งแล้ว")
   }
 
   return (
@@ -134,13 +145,42 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           <CardHeader>
             <CardTitle>สถานะการจัดส่ง</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-1">
+          <CardContent className="space-y-2">
             <p>วิธีจัดส่ง: {order.delivery_method || "-"}</p>
             <p>เลขติดตามพัสดุ: {order.tracking_number || "-"}</p>
             <p>ค่าจัดส่ง: ฿{order.shipping_fee.toLocaleString()}</p>
-            <p>สถานะ: {order.shipping_status}</p>
-            <p>วันที่จัดส่ง: {order.shipping_date ? new Date(order.shipping_date).toLocaleDateString("th-TH") : "-"}</p>
+            <div className="flex items-center space-x-2">
+              <span>สถานะ:</span>
+              <Select value={shippingStatus} onValueChange={(v) => handleShippingChange(v as ShippingStatus)}>
+                <SelectTrigger className="w-32">
+                  <Badge>{shippingStatus}</Badge>
+                </SelectTrigger>
+                <SelectContent>
+                  {shippingStatusOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <p>
+              วันนัดจัดส่ง:{" "}
+              {order.scheduledDeliveryDate
+                ? new Date(order.scheduledDeliveryDate).toLocaleDateString("th-TH")
+                : "-"}
+            </p>
+            <p>วันที่เปลี่ยน: {order.shipping_date ? new Date(order.shipping_date).toLocaleDateString("th-TH") : "-"}</p>
             <p>หมายเหตุ: {order.delivery_note || "-"}</p>
+            <Button variant="outline" onClick={() => {
+              const note = window.prompt("เพิ่มบันทึกการโทร/ส่ง")
+              if (note) {
+                mockOrders[orderIndex].delivery_note = note
+                toast.success("บันทึกแล้ว")
+              }
+            }}>
+              เพิ่มบันทึกการโทร/ส่ง
+            </Button>
           </CardContent>
         </Card>
       </div>
