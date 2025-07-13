@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { packingStatusOptions } from "@/types/order"
 import { mockBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
+import { createClaim } from "@/lib/mock-claims"
 import { toast } from "sonner"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
@@ -38,6 +39,14 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
   const handleDownload = () => {
     // In a real app, this would generate and download a PDF
     alert("ดาวน์โหลดใบเสร็จ (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+  }
+
+  const handleClaim = () => {
+    const reason = window.prompt('แจ้งปัญหา') || ''
+    if (!reason) return
+    const image = '/mock/img' + Date.now() + '.jpg'
+    createClaim({ orderId: order.id, image, reason })
+    alert('ส่งคำขอเคลมแล้ว')
   }
 
   useEffect(() => {
@@ -79,6 +88,9 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
             <Button onClick={handleDownload}>
               <Download className="mr-2 h-4 w-4" />
               ดาวน์โหลด PDF
+            </Button>
+            <Button variant="destructive" onClick={handleClaim}>
+              แจ้งเคลม
             </Button>
           </div>
         </div>

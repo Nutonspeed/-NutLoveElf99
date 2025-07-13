@@ -1,3 +1,4 @@
+export const isDevMock = true;
 export let autoMessage = "ขอบคุณที่สั่งซื้อกับเรา";
 export let socialLinks = { facebook: "", line: "" };
 
