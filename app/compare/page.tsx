@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { useCompare } from "@/contexts/compare-context"
 import { mockFabrics } from "@/lib/mock-fabrics"
 
@@ -47,26 +48,34 @@ export default function ComparePage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">เปรียบเทียบลายผ้า</h1>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-center border">
-            <thead>
-              <tr>
-                <th className="px-4 py-2">รายละเอียด</th>
-                {fabrics.map((f) => (
-                  <th key={f.slug} className="px-4 py-2">
-                    <Image
-                      src={f.images[0] || "/placeholder.svg"}
-                      alt={f.name}
-                      width={100}
-                      height={100}
-                      className="mx-auto rounded"
-                    />
-                    <p className="mt-2 font-medium">{f.name}</p>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
+        <Dialog defaultOpen>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="mb-4">เปิดตารางเปรียบเทียบ</Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>เปรียบเทียบลายผ้า</DialogTitle>
+            </DialogHeader>
+            <div className="overflow-x-auto">
+                <table className="min-w-full text-center border">
+                  <thead>
+                    <tr>
+                      <th className="px-4 py-2">รายละเอียด</th>
+                      {fabrics.map((f) => (
+                        <th key={f.slug} className="px-4 py-2">
+                          <Image
+                            src={f.images[0] || "/placeholder.svg"}
+                            alt={f.name}
+                            width={100}
+                            height={100}
+                            className="mx-auto rounded"
+                          />
+                          <p className="mt-2 font-medium">{f.name}</p>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
               <tr>
                 <td className="font-medium">สี</td>
                 {fabrics.map((f) => (
@@ -92,12 +101,12 @@ export default function ComparePage() {
                 ))}
               </tr>
             </tbody>
-          </table>
-        </div>
+              </table>
+            </div>
+          </DialogContent>
+        </Dialog>
         <div className="mt-6 text-center">
-          <Button variant="outline" onClick={clear}>
-            ล้างรายการเปรียบเทียบ
-          </Button>
+          <Button variant="outline" onClick={clear}>ล้างรายการเปรียบเทียบ</Button>
         </div>
       </div>
       <Footer />

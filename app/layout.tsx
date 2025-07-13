@@ -8,6 +8,8 @@ import { AuthProvider } from "@/contexts/auth-context"
 import { WishlistProvider } from "@/contexts/wishlist-context"
 import { CompareProvider } from "@/contexts/compare-context"
 import { ReviewImagesProvider } from "@/contexts/review-images-context"
+import { FavoritesProvider } from "@/contexts/favorites-context"
+import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,10 +31,14 @@ export default function RootLayout({
           <CartProvider>
             <WishlistProvider>
               <CompareProvider>
-                <ReviewImagesProvider>
-                  {children}
-                  <Toaster />
-                </ReviewImagesProvider>
+                <FavoritesProvider>
+                  <AdminProductGroupsProvider>
+                    <ReviewImagesProvider>
+                      {children}
+                      <Toaster />
+                    </ReviewImagesProvider>
+                  </AdminProductGroupsProvider>
+                </FavoritesProvider>
               </CompareProvider>
             </WishlistProvider>
           </CartProvider>
