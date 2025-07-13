@@ -28,3 +28,19 @@ export function setSocialLinks(links: { facebook: string; line: string }) {
     localStorage.setItem('socialLinks', JSON.stringify(links));
   }
 }
+
+export let billSecurity = { enabled: false, phone: "", pin: "" }
+
+export function loadBillSecurity() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('billSecurity')
+    if (stored) billSecurity = JSON.parse(stored)
+  }
+}
+
+export function setBillSecurity(sec: { enabled: boolean; phone: string; pin: string }) {
+  billSecurity = sec
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('billSecurity', JSON.stringify(sec))
+  }
+}
