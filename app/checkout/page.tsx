@@ -21,6 +21,7 @@ import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { mockOrders } from "@/lib/mock-orders"
+import { createQuote } from "@/lib/mock-quotes"
 import type { OrderStatus, ShippingStatus } from "@/types/order"
 import { db } from "@/lib/database"
 import { SuggestedExtras } from "@/components/SuggestedExtras"
@@ -171,6 +172,11 @@ export default function CheckoutPage() {
       dispatch({ type: "CLEAR_CART" })
       router.push(`/success/${orderId}`)
     }, 3000)
+  }
+
+  const handleRequestQuote = () => {
+    const quote = createQuote(user?.id || guestId || 'guest', state.items)
+    router.push(`/quote-request/${quote.id}`)
   }
 
   if (state.items.length === 0) {
@@ -508,6 +514,15 @@ export default function CheckoutPage() {
                     }
                   >
                     {isProcessing ? "กำลังดำเนินการ..." : `ชำระเงิน ฿${finalTotal.toLocaleString()}`}
+                  </Button>
+
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full mt-2"
+                    onClick={handleRequestQuote}
+                  >
+                    ขอใบเสนอราคาแทนการสั่งซื้อ
                   </Button>
 
                   <div className="text-center">
