@@ -1,4 +1,4 @@
-import type { OrderStatus, ShippingStatus, Order } from "@/types/order"
+import type { OrderStatus, ShippingStatus, Order, PackingStatus } from "@/types/order"
 
 import { supabase } from "./supabase"
 
@@ -34,6 +34,7 @@ const initialMockOrders: Order[] = [
     tracking_number: "TH1234567890",
     shipping_fee: 80,
     shipping_status: "pending",
+    packingStatus: "packing",
     shipping_date: "2024-01-16T10:30:00Z",
     delivery_note: "-",
     scheduledDeliveryDate: "2024-01-20",
@@ -84,6 +85,7 @@ const initialMockOrders: Order[] = [
     tracking_number: "TH0987654321",
     shipping_fee: 80,
     shipping_status: "shipped",
+    packingStatus: "packing",
     shipping_date: "2024-01-15T08:00:00Z",
     delivery_note: "ส่งตามเวลาทำการ",
     scheduledDeliveryDate: "2024-01-18",
@@ -109,8 +111,14 @@ export function regenerateMockOrders() {
   mockOrders = initialMockOrders.map((o) => ({
     ...o,
     items: o.items.map((i) => ({ ...i })),
+    packingStatus: o.packingStatus,
     timeline: o.timeline.map((t) => ({ ...t })),
   }))
+}
+
+export function setPackingStatus(orderId: string, status: PackingStatus) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (order) order.packingStatus = status
 }
 
 export async function fetchOrders(): Promise<Order[]> {

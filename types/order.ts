@@ -37,6 +37,14 @@ export const shippingStatusOptions: { value: ShippingStatus; label: string }[] =
   { value: "delivered", label: "ส่งมอบแล้ว" },
 ]
 
+export type PackingStatus = "packing" | "done" | "ready"
+
+export const packingStatusOptions: { value: PackingStatus; label: string }[] = [
+  { value: "packing", label: "กำลังแพ็ก" },
+  { value: "done", label: "แพ็กเสร็จ" },
+  { value: "ready", label: "พร้อมส่ง" },
+]
+
 export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
   { value: "draft", label: "ร่าง" },
   { value: "pending", label: "รอยืนยัน" },
@@ -84,6 +92,8 @@ export interface Order {
   tracking_number: string
   shipping_fee: number
   shipping_status: ShippingStatus
+  /** Status of packing before shipment */
+  packingStatus: PackingStatus
   shipping_date: string
   delivery_note: string
   scheduledDeliveryDate?: string
