@@ -14,6 +14,7 @@ import {
   getCustomerOrders,
   type Customer,
 } from "@/lib/mock-customers"
+import { exportCSV } from "@/lib/mock-export"
 
 
 export default function AdminCustomersPage() {
@@ -189,6 +190,13 @@ export default function AdminCustomersPage() {
                   <option value="frequent">ซื้อบ่อย</option>
                   <option value="unpaid">ค้างจ่าย</option>
                 </select>
+                <Button onClick={() => {
+                  const csv = exportCSV(customers)
+                  const preview = csv.split('\n').slice(0,4).join('\n')
+                  alert(preview)
+                }}>
+                  Export CSV
+                </Button>
               </div>
             </div>
           </CardHeader>

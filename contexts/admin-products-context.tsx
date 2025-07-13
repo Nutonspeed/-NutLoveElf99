@@ -4,6 +4,7 @@ import { createContext, useContext, type ReactNode } from "react"
 import { useLocalStorage } from "@/hooks/use-local-storage"
 import { mockProducts } from "@/lib/mock-products"
 import type { Product } from "@/types/product"
+import { addAdminLog } from "@/lib/mock-admin-logs"
 
 interface AdminProductsContextValue {
   products: Product[]
@@ -24,14 +25,17 @@ export function AdminProductsProvider({ children }: { children: ReactNode }) {
       ...data,
     }
     setProducts((prev) => [...prev, newProduct])
+    addAdminLog(`add product ${newProduct.id}`, 'mockAdminId')
   }
 
   const updateProduct = (id: string, data: Partial<Product>) => {
     setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...data } : p)))
+    addAdminLog(`update product ${id}`, 'mockAdminId')
   }
 
   const deleteProduct = (id: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== id))
+    addAdminLog(`delete product ${id}`, 'mockAdminId')
   }
 
   return (

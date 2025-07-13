@@ -1,6 +1,7 @@
 "use client"
 
 import { useAuth } from "@/contexts/auth-context"
+import { isDevMock } from "@/lib/mock-settings"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,6 +17,20 @@ import {
 
 export default function AdminDevPage() {
   const { user, isAuthenticated } = useAuth()
+  if (!isDevMock) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>ไม่อนุญาต</p>
+      </div>
+    )
+  }
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>ไม่มีสิทธิ์เข้าถึง</p>
+      </div>
+    )
+  }
   const handleClear = () => {
     resetMockOrders()
     resetMockCustomers()

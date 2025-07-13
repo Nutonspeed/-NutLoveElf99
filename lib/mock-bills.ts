@@ -1,6 +1,7 @@
 import type { Bill, BillPayment, BillStatus } from "@/types/bill"
 import { mockOrders } from "./mock-orders"
 import { mockCustomers } from "./mock-customers"
+import { addAdminLog } from "./mock-admin-logs"
 
 export let mockBills: Bill[] = []
 
@@ -24,6 +25,7 @@ export function createBill(
     bill.hidden = true
   }
   mockBills.push(bill)
+  addAdminLog(`create bill ${bill.id}`, 'mockAdminId')
   return bill
 }
 
@@ -33,7 +35,10 @@ export function getBill(id: string): Bill | null {
 
 export function confirmBill(id: string) {
   const b = getBill(id)
-  if (b) b.status = "paid"
+  if (b) {
+    b.status = "paid"
+    addAdminLog(`confirm bill ${id}`, 'mockAdminId')
+  }
 }
 
 export function addBillPayment(id: string, payment: BillPayment) {

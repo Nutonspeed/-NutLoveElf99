@@ -1,0 +1,65 @@
+"use client"
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
+import { useAuth } from '@/contexts/auth-context'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { mockAdminLogs } from '@/lib/mock-admin-logs'
+
+export default function AdminLogsPage() {
+  const { user, isAuthenticated } = useAuth()
+
+  if (!isAuthenticated || user?.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
+          <Link href="/">
+            <Button>กลับหน้าแรก</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center space-x-4 mb-8">
+          <Link href="/admin/dashboard">
+            <Button variant="outline" size="icon">
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <h1 className="text-3xl font-bold">บันทึกการทำงาน</h1>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Admin Logs ({mockAdminLogs.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>เวลา</TableHead>
+                  <TableHead>ผู้ดำเนินการ</TableHead>
+                  <TableHead>การกระทำ</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockAdminLogs.map((log) => (
+                  <TableRow key={log.id}>
+                    <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                    <TableCell>{log.admin}</TableCell>
+                    <TableCell>{log.action}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
