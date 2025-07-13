@@ -23,6 +23,9 @@ import {
   loadAutoReminder,
   autoReminder,
   setAutoReminder,
+  loadAutoArchive,
+  autoArchive,
+  setAutoArchive,
   loadReviewReminder,
   reviewReminder,
   setReviewReminder,
@@ -36,17 +39,20 @@ export default function SettingsPage() {
   const [security, setSecurity] = useState(billSecurity);
   const [reminder, setReminder] = useState(autoReminder);
   const [reviewRemind, setReviewRemind] = useState(reviewReminder);
+  const [archiveOld, setArchiveOld] = useState(autoArchive);
 
   useEffect(() => {
     loadAutoMessage();
     loadSocialLinks();
     loadBillSecurity();
     loadAutoReminder();
+    loadAutoArchive();
     loadReviewReminder();
     setMessage(autoMessage);
     setLinks(socialLinks);
     setSecurity(billSecurity);
     setReminder(autoReminder);
+    setArchiveOld(autoArchive);
     setReviewRemind(reviewReminder);
     if (!isAuthenticated) {
       router.push("/login");
@@ -62,6 +68,7 @@ export default function SettingsPage() {
     setSocialLinks(links);
     setBillSecurity(security);
     setAutoReminder(reminder);
+    setAutoArchive(archiveOld);
     setReviewReminder(reviewRemind);
     alert("บันทึกข้อความแล้ว");
   };
@@ -118,6 +125,14 @@ export default function SettingsPage() {
                 onCheckedChange={(v) => setReminder(Boolean(v))}
               />
               <Label htmlFor="auto-remind">แจ้งเตือนบิลค้างชำระ</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="auto-archive"
+                checked={archiveOld}
+                onCheckedChange={(v) => setArchiveOld(Boolean(v))}
+              />
+              <Label htmlFor="auto-archive">ซ่อนบิลเกิน 14 วัน</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox

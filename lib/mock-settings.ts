@@ -33,6 +33,7 @@ export let billSecurity = { enabled: false, phone: "", pin: "" }
 
 export let autoReminder = false
 export let reviewReminder = false
+export let autoArchive = false
 
 export let notifyTeams = { packing: true, finance: true }
 
@@ -64,6 +65,13 @@ export function loadReviewReminder() {
   }
 }
 
+export function loadAutoArchive() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('autoArchive')
+    if (stored) autoArchive = JSON.parse(stored)
+  }
+}
+
 export function setAutoReminder(val: boolean) {
   autoReminder = val
   if (typeof window !== 'undefined') {
@@ -75,6 +83,13 @@ export function setReviewReminder(val: boolean) {
   reviewReminder = val
   if (typeof window !== 'undefined') {
     localStorage.setItem('reviewReminder', JSON.stringify(val))
+  }
+}
+
+export function setAutoArchive(val: boolean) {
+  autoArchive = val
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('autoArchive', JSON.stringify(val))
   }
 }
 
