@@ -43,7 +43,7 @@ export default function AdminDevPage() {
         </CardHeader>
         <CardContent>
           <pre className="whitespace-pre-wrap break-all text-sm bg-gray-100 p-4 rounded">
-            {JSON.stringify({ isAuthenticated, user }, null, 2)}
+            {JSON.stringify({ isAuthenticated, user, lastOrder: mockOrders[mockOrders.length - 1] }, null, 2)}
           </pre>
         </CardContent>
       </Card>

@@ -26,7 +26,7 @@ import { db } from "@/lib/database"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
-  const { user, isAuthenticated } = useAuth()
+  const { user, isAuthenticated, guestId } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
 
@@ -53,6 +53,7 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null)
 
   const [agreeTerms, setAgreeTerms] = useState(false)
+  const [checklist, setChecklist] = useState({ confirmSize: false, confirmColor: false })
   const [isProcessing, setIsProcessing] = useState(false)
 
   const shipping = state.total >= 1500 ? 0 : 100
@@ -85,12 +86,13 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!isAuthenticated) {
-      toast({
-        title: "กรุณาเข้าสู่ระบบ",
-        description: "คุณต้องเข้าสู่ระบบก่อนทำการสั่งซื้อ",
-        variant: "destructive",
-      })
+    if (!shippingInfo.firstName || !shippingInfo.phone || !shippingInfo.address) {
+      toast({ title: "กรุณากรอกข้อมูลให้ครบ", variant: "destructive" })
+      return
+    }
+
+    if (!checklist.confirmSize || !checklist.confirmColor) {
+      toast({ title: "กรุณาทำ checklist ให้ครบ", variant: "destructive" })
       return
     }
 
@@ -111,7 +113,7 @@ export default function CheckoutPage() {
 
       mockOrders.push({
         id: orderId,
-        customerId: user?.id || "0",
+        customerId: user?.id || guestId || "guest",
         customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
         customerEmail: shippingInfo.email,
         items: state.items.map((item) => ({
@@ -141,6 +143,12 @@ export default function CheckoutPage() {
         delivery_note: "",
         scheduledDeliveryDate: deliveryDate || undefined,
         reorderedFromId: sessionStorage.getItem("reorderFromId") || undefined,
+        checklist: {
+          items: ["confirmSize", "confirmColor"],
+          passed: checklist.confirmSize && checklist.confirmColor,
+        },
+        validated: true,
+        guest: !isAuthenticated,
         timeline: [
           {
             timestamp: new Date().toISOString(),
@@ -446,25 +454,57 @@ export default function CheckoutPage() {
               {/* Terms and Submit */}
               <Card>
                 <CardContent className="p-6 space-y-4">
-                  <div className="flex items-start space-x-2">
-                    <Checkbox
-                      id="terms"
-                      checked={agreeTerms}
-                      onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
-                    />
-                    <Label htmlFor="terms" className="text-sm leading-relaxed">
-                      ฉันยอมรับ{" "}
-                      <a href="/terms" className="text-blue-600 hover:underline">
-                        เงื่อนไขการใช้งาน
-                      </a>{" "}
-                      และ{" "}
-                      <a href="/privacy" className="text-blue-600 hover:underline">
-                        นโยบายความเป็นส่วนตัว
-                      </a>
-                    </Label>
+                  <div className="space-y-2">
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="size-ok"
+                        checked={checklist.confirmSize}
+                        onCheckedChange={(v) =>
+                          setChecklist({ ...checklist, confirmSize: v as boolean })
+                        }
+                      />
+                      <Label htmlFor="size-ok" className="text-sm">ยืนยันขนาดถูกต้อง</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="color-ok"
+                        checked={checklist.confirmColor}
+                        onCheckedChange={(v) =>
+                          setChecklist({ ...checklist, confirmColor: v as boolean })
+                        }
+                      />
+                      <Label htmlFor="color-ok" className="text-sm">ยืนยันสีถูกต้อง</Label>
+                    </div>
+                    <div className="flex items-start space-x-2">
+                      <Checkbox
+                        id="terms"
+                        checked={agreeTerms}
+                        onCheckedChange={(checked) => setAgreeTerms(checked as boolean)}
+                      />
+                      <Label htmlFor="terms" className="text-sm leading-relaxed">
+                        ฉันยอมรับ{' '}
+                        <a href="/terms" className="text-blue-600 hover:underline">
+                          เงื่อนไขการใช้งาน
+                        </a>{' '}
+                        และ{' '}
+                        <a href="/privacy" className="text-blue-600 hover:underline">
+                          นโยบายความเป็นส่วนตัว
+                        </a>
+                      </Label>
+                    </div>
                   </div>
 
-                  <Button type="submit" className="w-full" size="lg" disabled={!agreeTerms || isProcessing}>
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    size="lg"
+                    disabled={
+                      !agreeTerms ||
+                      isProcessing ||
+                      !checklist.confirmSize ||
+                      !checklist.confirmColor
+                    }
+                  >
                     {isProcessing ? "กำลังดำเนินการ..." : `ชำระเงิน ฿${finalTotal.toLocaleString()}`}
                   </Button>
 
