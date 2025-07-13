@@ -1,5 +1,34 @@
 import { supabase } from './supabase'
 
+const STORAGE_KEY = 'admin-collections'
+
+function slugify(str: string) {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function loadCollections(): Collection[] {
+  if (typeof window === 'undefined') return mockCollections
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    return raw ? (JSON.parse(raw) as Collection[]) : mockCollections
+  } catch {
+    return mockCollections
+  }
+}
+
+function saveCollections(list: Collection[]) {
+  if (typeof window === 'undefined') return
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
+  } catch {}
+}
+
 export interface Collection {
   id: string
   name: string
@@ -38,7 +67,7 @@ export const mockCollections: Collection[] = [
 
 export async function getCollections(): Promise<Collection[]> {
   if (!supabase) {
-    return Promise.resolve(mockCollections)
+    return Promise.resolve(loadCollections())
   }
   const { data, error } = await supabase
     .from('collections')
@@ -58,4 +87,22 @@ export async function getCollections(): Promise<Collection[]> {
     description: c.description,
     images: c.all_images || [],
   })) as Collection[]
+}
+
+export function addCollection(data: Omit<Collection, 'id'>): Collection {
+  const list = loadCollections()
+  const base = slugify(data.slug || data.name)
+  let slug = base
+  let i = 1
+  while (list.some((c) => c.slug === slug)) {
+    slug = `${base}-${i++}`
+  }
+  const newCollection: Collection = {
+    ...data,
+    slug,
+    id: Date.now().toString(),
+  }
+  list.push(newCollection)
+  saveCollections(list)
+  return newCollection
 }
