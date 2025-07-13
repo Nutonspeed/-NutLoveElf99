@@ -10,8 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { Package, Eye, Download, MessageCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
+import { useCart } from "@/contexts/cart-context"
 import { mockOrders } from "@/lib/mock-orders"
-import type { OrderStatus } from "@/types/order"
+import type { OrderStatus, Order } from "@/types/order"
 import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
@@ -36,6 +37,7 @@ function getProgress(status: OrderStatus) {
 
 export default function OrdersPage() {
   const { user, isAuthenticated } = useAuth()
+  const { dispatch } = useCart()
   const router = useRouter()
   const [statusFilter, setStatusFilter] = useState<string>("all")
 
@@ -52,6 +54,26 @@ export default function OrdersPage() {
   const userOrders = mockOrders.filter(
     (order) => order.customerId === user?.id && (statusFilter === "all" || order.status === statusFilter),
   )
+
+  const handleReorder = (order: Order) => {
+    order.items.forEach((item) => {
+      dispatch({
+        type: "ADD_ITEM",
+        payload: {
+          id: item.productId,
+          name: item.productName,
+          price: item.price,
+          image: "/placeholder.svg",
+          quantity: item.quantity,
+          size: item.size,
+          color: item.color,
+        },
+      })
+    })
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("reorderFromId", order.id)
+    }
+  }
 
 
   return (
@@ -149,6 +171,10 @@ export default function OrdersPage() {
                           </Button>
                         </Link>
                       )}
+
+                      <Button variant="outline" size="sm" onClick={() => handleReorder(order)}>
+                        สั่งซ้ำ
+                      </Button>
 
                       <Link href="/chat">
                         <Button variant="outline" size="sm">

@@ -86,6 +86,8 @@ export interface Order {
   shipping_status: ShippingStatus
   shipping_date: string
   delivery_note: string
+  scheduledDeliveryDate?: string
+  reorderedFromId?: string
   timeline: Array<{
     timestamp: string
     status: OrderStatus

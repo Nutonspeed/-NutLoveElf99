@@ -20,6 +20,9 @@ import Image from "next/image"
 import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
+import { mockOrders } from "@/lib/mock-orders"
+import type { OrderStatus, ShippingStatus } from "@/types/order"
+import { db } from "@/lib/database"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -37,6 +40,7 @@ export default function CheckoutPage() {
     postalCode: "",
     notes: "",
   })
+  const [deliveryDate, setDeliveryDate] = useState("")
 
   const [paymentMethod, setPaymentMethod] = useState("credit-card")
   const [cardInfo, setCardInfo] = useState({
@@ -105,13 +109,58 @@ export default function CheckoutPage() {
     setTimeout(() => {
       const orderId = `ORD-${Date.now()}`
 
+      mockOrders.push({
+        id: orderId,
+        customerId: user?.id || "0",
+        customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+        customerEmail: shippingInfo.email,
+        items: state.items.map((item) => ({
+          productId: item.id,
+          productName: item.name,
+          quantity: item.quantity,
+          price: item.price,
+          size: item.size,
+          color: item.color,
+        })),
+        total: finalTotal,
+        status: "paid",
+        depositPercent: 100,
+        createdAt: new Date().toISOString(),
+        shippingAddress: {
+          name: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
+          address: shippingInfo.address,
+          city: shippingInfo.city,
+          postalCode: shippingInfo.postalCode,
+          phone: shippingInfo.phone,
+        },
+        delivery_method: "",
+        tracking_number: "",
+        shipping_fee: shipping,
+        shipping_status: "pending" as ShippingStatus,
+        shipping_date: "",
+        delivery_note: "",
+        scheduledDeliveryDate: deliveryDate || undefined,
+        reorderedFromId: sessionStorage.getItem("reorderFromId") || undefined,
+        timeline: [
+          {
+            timestamp: new Date().toISOString(),
+            status: "paid" as OrderStatus,
+            updatedBy: user?.email || "customer",
+            note: "Order placed",
+            flag: "normal",
+          },
+        ],
+      })
+
+      sessionStorage.removeItem("reorderFromId")
+
       toast({
         title: "สั่งซื้อสำเร็จ!",
         description: `คำสั่งซื้อ ${orderId} ได้รับการยืนยันแล้ว`,
       })
 
       dispatch({ type: "CLEAR_CART" })
-      router.push(`/orders/${orderId}`)
+      router.push(`/success/${orderId}`)
     }, 3000)
   }
 
@@ -231,16 +280,25 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="notes">หมายเหตุ (ไม่บังคับ)</Label>
-                    <Textarea
-                      id="notes"
-                      placeholder="หมายเหตุเพิ่มเติมสำหรับการจัดส่ง"
-                      value={shippingInfo.notes}
-                      onChange={(e) => setShippingInfo({ ...shippingInfo, notes: e.target.value })}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+                  <Label htmlFor="notes">หมายเหตุ (ไม่บังคับ)</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder="หมายเหตุเพิ่มเติมสำหรับการจัดส่ง"
+                    value={shippingInfo.notes}
+                    onChange={(e) => setShippingInfo({ ...shippingInfo, notes: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="deliveryDate">วันนัดจัดส่ง</Label>
+                  <Input
+                    id="deliveryDate"
+                    type="date"
+                    value={deliveryDate}
+                    onChange={(e) => setDeliveryDate(e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
 
               {/* Payment Method */}
               <Card>
