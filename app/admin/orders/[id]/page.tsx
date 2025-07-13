@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, Share2, Edit, PrinterIcon as Print } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,6 +19,7 @@ import { toast } from "sonner"
 
 export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
+  const router = useRouter()
   const orderIndex = mockOrders.findIndex((o) => o.id === id)
   const order = mockOrders[orderIndex]
 
@@ -27,13 +29,16 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
 
-  if (!order) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>ไม่พบคำสั่งซื้อ</p>
-      </div>
-    )
-  }
+  useEffect(() => {
+    if (!order) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Mock Error at orders/[id]')
+      }
+      router.replace('/admin/orders')
+    }
+  }, [order, router])
+
+  if (!order) return null
 
   const handleAddEntry = (entry: TimelineEntry) => {
     mockOrders[orderIndex].timeline.push(entry)

@@ -14,7 +14,7 @@ import { toast } from "sonner"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
-import { exportCSV } from "@/lib/mock-export"
+import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
 import { packingStatusOptions } from "@/types/order"
 import {
@@ -152,12 +152,11 @@ export default function AdminOrdersPage() {
                 }}>
                   สแกน QR
                 </Button>
-                <Button onClick={() => {
-                  const csv = exportCSV(mockOrders)
-                  const preview = csv.split('\n').slice(0,4).join('\n')
-                  alert(preview)
-                }}>
+                <Button onClick={() => downloadCSV(mockOrders, 'orders.csv')}>
                   Export CSV
+                </Button>
+                <Button onClick={() => downloadPDF('orders', 'orders.pdf')}>
+                  Export PDF
                 </Button>
               </div>
             </div>

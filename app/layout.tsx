@@ -10,6 +10,7 @@ import { CompareProvider } from "@/contexts/compare-context"
 import { ReviewImagesProvider } from "@/contexts/review-images-context"
 import { FavoritesProvider } from "@/contexts/favorites-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
+import { validateMockData } from "@/lib/mock-validator"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -24,6 +25,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  if (process.env.NODE_ENV === "development") {
+    validateMockData()
+  }
   return (
     <html lang="th">
       <body className={inter.className}>

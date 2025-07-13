@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { AdminProductsProvider } from "@/contexts/admin-products-context"
 import { AdminCollectionsProvider } from "@/contexts/admin-collections-context"
 import { AdminToast } from "@/components/admin/AdminToast"
+import ErrorBoundary from "@/components/ErrorBoundary"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin } = useAdminGuard()
@@ -32,24 +33,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <AdminCollectionsProvider>
-      <AdminProductsProvider>
-        <div className="flex min-h-screen">
-          <Sidebar className="hidden md:flex" />
-          {isMobile && (
-            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-              <SheetContent side="left" className="p-0 w-60">
-                <Sidebar />
-              </SheetContent>
-            </Sheet>
-          )}
-          <div className="flex flex-1 flex-col">
-            <Topbar onMenuClick={() => setSidebarOpen(true)} />
-            <main className="flex-1 p-4">{children}</main>
-            <AdminToast />
+    <ErrorBoundary>
+      <AdminCollectionsProvider>
+        <AdminProductsProvider>
+          <div className="flex min-h-screen">
+            <Sidebar className="hidden md:flex" />
+            {isMobile && (
+              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+                <SheetContent side="left" className="p-0 w-60">
+                  <Sidebar />
+                </SheetContent>
+              </Sheet>
+            )}
+            <div className="flex flex-1 flex-col">
+              <Topbar onMenuClick={() => setSidebarOpen(true)} />
+              <main className="flex-1 p-4">{children}</main>
+              <AdminToast />
+            </div>
           </div>
-        </div>
-      </AdminProductsProvider>
-    </AdminCollectionsProvider>
+        </AdminProductsProvider>
+      </AdminCollectionsProvider>
+    </ErrorBoundary>
   )
 }

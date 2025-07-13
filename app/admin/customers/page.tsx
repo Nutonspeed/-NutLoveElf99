@@ -12,6 +12,7 @@ import {
   fetchCustomers,
   getCustomerStats,
   getCustomerOrders,
+  addCustomer,
   type Customer,
 } from "@/lib/mock-customers"
 import {
@@ -20,7 +21,7 @@ import {
 } from "@/lib/mock-customer-notes"
 import { loadCustomerTags, listCustomerTags } from "@/lib/mock-customer-tags"
 import { loadFlaggedUsers, getFlagStatus } from "@/lib/mock-flagged-users"
-import { exportCSV } from "@/lib/mock-export"
+import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 
 
 export default function AdminCustomersPage() {
@@ -28,6 +29,9 @@ export default function AdminCustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [behaviorFilter, setBehaviorFilter] = useState("all")
   const [loading, setLoading] = useState(true)
+  const [showAdd, setShowAdd] = useState(false)
+  const [newName, setNewName] = useState("")
+  const [newEmail, setNewEmail] = useState("")
 
   useEffect(() => {
     loadCustomerNotes()
@@ -60,6 +64,16 @@ export default function AdminCustomersPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newName || !newEmail) return
+    addCustomer({ name: newName, email: newEmail })
+    setNewName('')
+    setNewEmail('')
+    setShowAdd(false)
+    loadData()
   }
 
 
@@ -111,7 +125,17 @@ export default function AdminCustomersPage() {
               <p className="text-gray-600">ข้อมูลและประวัติการซื้อของลูกค้า</p>
             </div>
           </div>
+          {process.env.NODE_ENV !== 'production' && (
+            <Button onClick={() => setShowAdd((v) => !v)}>เพิ่มลูกค้าใหม่</Button>
+          )}
         </div>
+        {showAdd && process.env.NODE_ENV !== 'production' && (
+          <form onSubmit={handleAdd} className="flex space-x-2 mb-4">
+            <Input placeholder="ชื่อ" value={newName} onChange={(e) => setNewName(e.target.value)} />
+            <Input placeholder="อีเมล" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
+            <Button type="submit">บันทึก</Button>
+          </form>
+        )}
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -203,12 +227,11 @@ export default function AdminCustomersPage() {
                   <option value="frequent">ซื้อบ่อย</option>
                   <option value="unpaid">ค้างจ่าย</option>
                 </select>
-                <Button onClick={() => {
-                  const csv = exportCSV(customers)
-                  const preview = csv.split('\n').slice(0,4).join('\n')
-                  alert(preview)
-                }}>
+                <Button onClick={() => downloadCSV(customers, 'customers.csv')}>
                   Export CSV
+                </Button>
+                <Button onClick={() => downloadPDF('customers', 'customers.pdf')}>
+                  Export PDF
                 </Button>
               </div>
             </div>
