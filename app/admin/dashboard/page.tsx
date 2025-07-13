@@ -25,7 +25,7 @@ import DashboardCard from "@/components/admin/dashboard/DashboardCard"
 import OrderTable from "@/components/admin/OrderTable"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
-import { addAdminNotification } from "@/lib/mock-admin-notifications"
+import { addNotification } from "@/lib/mock-notifications"
 import { mockBills, cleanupOldBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
 import { toast } from "sonner"
@@ -69,7 +69,19 @@ export default function AdminDashboard() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">แดชบอร์ดผู้ดูแลระบบ</h1>
           <p className="text-gray-600">ภาพรวมการดำเนินงานของร้าน Sofa Cover Store</p>
-          <Button className="mt-4" onClick={() => addAdminNotification('มีออเดอร์ใหม่รอการตรวจสอบ')}>ทดสอบการแจ้งเตือน</Button>
+          <Button
+            className="mt-4"
+            onClick={() =>
+              addNotification({
+                id: Date.now().toString(),
+                type: 'order',
+                message: 'มีออเดอร์ใหม่รอการตรวจสอบ',
+                link: '/admin/orders',
+              })
+            }
+          >
+            ทดสอบการแจ้งเตือน
+          </Button>
         </div>
 
         <div className="flex gap-2 mt-4">

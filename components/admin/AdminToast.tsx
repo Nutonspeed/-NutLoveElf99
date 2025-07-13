@@ -1,27 +1,49 @@
 "use client"
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { X } from "lucide-react"
-import { adminNotifications, loadAdminNotifications, markAdminNotificationRead } from "@/lib/mock-admin-notifications"
+import {
+  mockNotifications,
+  loadNotifications,
+  type Notification,
+} from "@/lib/mock-notifications"
+import {
+  loadNotificationStatus,
+  getStatus,
+  markRead,
+} from "@/lib/mock-read-status"
+import {
+  loadNotificationSettings,
+  getNotificationSettings,
+} from "@/lib/mock-notification-settings"
 
 export function AdminToast() {
-  const [notifs, setNotifs] = useState(adminNotifications)
+  const [items, setItems] = useState<Notification[]>([])
+  const [settings, setSettings] = useState<Record<string, boolean>>({})
 
   useEffect(() => {
-    loadAdminNotifications()
-    setNotifs([...adminNotifications])
+    loadNotificationSettings()
+    loadNotificationStatus()
+    loadNotifications()
+    setSettings(getNotificationSettings())
+    setItems([...mockNotifications])
   }, [])
 
-  const current = notifs.find((n) => !n.read)
+  const current = items.find(
+    (n) => !getStatus(n.id).read && settings[n.type],
+  )
   if (!current) return null
 
   const close = () => {
-    markAdminNotificationRead(current.id)
-    setNotifs([...adminNotifications])
+    markRead(current.id)
+    setItems([...mockNotifications])
   }
 
   return (
     <div className="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded shadow flex items-start space-x-2">
-      <span>{current.message}</span>
+      <Link href={current.link} className="hover:underline">
+        {current.message}
+      </Link>
       <button onClick={close} className="ml-2">
         <X className="h-4 w-4" />
       </button>
