@@ -11,11 +11,13 @@ import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
+import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 
 interface Fabric {
   id: string
   slug: string | null
   name: string
+  sku?: string | null
   description?: string | null
   size?: string | null
   collection_id?: string | null
@@ -40,7 +42,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
   const { data } = await supabase
     .from("fabrics")
-    .select("name, description, image_url, image_urls")
+    .select("name, description, sku, image_url, image_urls")
     .eq("slug", params.slug)
     .single()
   if (!data) return {}
@@ -71,6 +73,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
       id: f!.id,
       slug: f!.slug,
       name: f!.name,
+      sku: f!.sku,
       description: '',
       image_urls: f!.images,
       price_min: f!.price,
@@ -79,7 +82,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
   } else {
     const { data, error } = await supabase
       .from("fabrics")
-      .select("id, slug, name, description, size, collection_id, image_url, image_urls, price_min, price_max")
+      .select("id, slug, name, sku, description, size, collection_id, image_url, image_urls, price_min, price_max")
       .eq("slug", params.slug)
       .single()
 
@@ -132,6 +135,9 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             {fabric.size && (
               <p className="text-gray-600">ขนาด: {fabric.size}</p>
             )}
+            {fabric.sku && (
+              <p className="text-gray-600">SKU: {fabric.sku}</p>
+            )}
             {collection && (
               <p className="text-gray-600">
                 คอลเลกชัน:{" "}
@@ -157,6 +163,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
               <Button variant="outline" size="lg">
                 <Receipt className="h-5 w-5 mr-2" />เปิดบิล
               </Button>
+              <CopyToClipboardButton text={fabric.slug || fabric.sku || fabric.id} />
               <Button variant="outline" size="lg">
                 <Share2 className="h-5 w-5" />
               </Button>

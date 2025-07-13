@@ -17,6 +17,7 @@ interface FabricDetailPageProps {
 interface Fabric {
   id: string
   name: string
+  sku: string
   collection_id: string
   image_urls: string[]
   price_min: number
@@ -50,7 +51,7 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
       }
       const { data, error } = await supabase
         .from("fabrics")
-        .select("id, name, collection_id, image_urls, price_min, price_max")
+        .select("id, name, sku, collection_id, image_urls, price_min, price_max")
         .eq("id", params.id)
         .single()
       if (error || !data) {
@@ -119,6 +120,7 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
                   <p>คอลเลกชัน: {collectionName}</p>
                 )}
                 <p>รหัสคอลเลกชัน: {fabric.collection_id}</p>
+                <p>SKU: {fabric.sku}</p>
                 <p>
                   ราคา: ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
                 </p>

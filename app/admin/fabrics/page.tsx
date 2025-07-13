@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast"
 interface Fabric {
   id: string
   name: string
+  sku: string
   collection_id: string
   image_url: string | null
   price_min: number
@@ -82,7 +83,7 @@ export default function AdminFabricsPage() {
       if (!supabase) return
       const { data: fabricsData, error } = await supabase
         .from("fabrics")
-        .select("id, name, collection_id, image_url, price_min, price_max")
+        .select("id, name, sku, collection_id, image_url, price_min, price_max")
       if (error || !fabricsData) {
         console.error("Failed to fetch fabrics", error)
         return

@@ -15,6 +15,7 @@ interface Fabric {
   id: string
   slug: string | null
   name: string
+  sku?: string | null
   image_url?: string | null
   image_urls?: string[] | null
 }
@@ -26,12 +27,13 @@ export default async function FabricsPage() {
       id: f.id,
       slug: f.slug,
       name: f.name,
+      sku: f.sku,
       image_urls: f.images,
     }))
   } else {
     const { data, error } = await supabase
       .from("fabrics")
-      .select("id, slug, name, image_url, image_urls")
+      .select("id, slug, name, sku, image_url, image_urls")
 
     if (error || !data) {
       return (
