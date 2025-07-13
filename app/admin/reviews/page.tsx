@@ -7,12 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Search, Star, Eye, MessageSquare, Trash2, CheckCircle, XCircle } from "lucide-react"
 import Link from "next/link"
+import { Switch } from "@/components/ui/switch"
+import { useReviewImagesSetting } from "@/contexts/review-images-context"
 
 interface Review {
   id: string
@@ -30,6 +33,7 @@ interface Review {
 export default function AdminReviewsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
+  const { showImages, toggle } = useReviewImagesSetting()
   const [reviews, setReviews] = useState<Review[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -223,6 +227,10 @@ export default function AdminReviewsPage() {
           <div>
             <h1 className="text-3xl font-bold">จัดการรีวิวลูกค้า</h1>
             <p className="text-gray-600">อนุมัติและจัดการรีวิวจากลูกค้า</p>
+          </div>
+          <div className="ml-auto flex items-center space-x-2">
+            <Switch id="toggleImgs" checked={showImages} onCheckedChange={toggle} />
+            <Label htmlFor="toggleImgs">แสดงรูปรีวิว</Label>
           </div>
         </div>
 

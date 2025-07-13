@@ -12,6 +12,7 @@ import type { Collection } from "@/types/collection"
 
 export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)
+  const curatedProducts = mockProducts.filter((p) => p.curated).slice(0, 4)
   const collections: Collection[] = (await getCollections()).slice(0, 4)
 
   return (
@@ -47,6 +48,45 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {curatedProducts.length > 0 && (
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl font-bold mb-4">Curated Picks</h2>
+              <p className="text-gray-600">สินค้าที่คัดสรรมาเป็นพิเศษสำหรับคุณ</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {curatedProducts.map((product) => (
+                <Card key={product.id} className="group hover:shadow-lg transition-shadow">
+                  <CardContent className="p-0">
+                    <Link href={`/products/${product.slug}`}>
+                      <div className="relative overflow-hidden rounded-t-lg">
+                        <Image
+                          src={product.images[0] || "/placeholder.svg"}
+                          alt={product.name}
+                          width={300}
+                          height={300}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="p-4 space-y-2">
+                        <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xl font-bold text-primary">฿{product.price.toLocaleString()}</span>
+                          {product.originalPrice && (
+                            <span className="text-sm text-gray-500 line-through">฿{product.originalPrice.toLocaleString()}</span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Features Section */}
       <section className="py-16 bg-gray-50">
