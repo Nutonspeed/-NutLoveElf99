@@ -18,6 +18,7 @@ import {
   Warehouse,
   Receipt,
   Bug,
+  ClipboardList,
 } from "lucide-react"
 import Link from "next/link"
 import DashboardCard from "@/components/admin/dashboard/DashboardCard"
@@ -253,15 +254,44 @@ export default function AdminDashboard() {
                   แชทกับลูกค้า
                 </Button>
               </Link>
-              <Link href="/admin/dev">
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <Bug className="mr-2 h-4 w-4" />
-                  ข้อมูลระบบ
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
+          <Link href="/admin/dev">
+            <Button variant="outline" className="w-full justify-start bg-transparent">
+              <Bug className="mr-2 h-4 w-4" />
+              ข้อมูลระบบ
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <ClipboardList className="mr-2 h-5 w-5" />
+            งานทีม
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Link href="/team/production">
+            <Button variant="outline" className="w-full justify-start bg-transparent">
+              <ClipboardList className="mr-2 h-4 w-4" />
+              งานฝ่ายผลิต
+            </Button>
+          </Link>
+          <Link href="/team/shipping">
+            <Button variant="outline" className="w-full justify-start bg-transparent">
+              <ClipboardList className="mr-2 h-4 w-4" />
+              งานฝ่ายจัดส่ง
+            </Button>
+          </Link>
+          <Link href="/team/support">
+            <Button variant="outline" className="w-full justify-start bg-transparent">
+              <ClipboardList className="mr-2 h-4 w-4" />
+              งานฝ่ายบริการลูกค้า
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    </div>
 
         {/* Mock-up Notice */}
         <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
