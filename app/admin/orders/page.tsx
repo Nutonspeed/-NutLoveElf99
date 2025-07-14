@@ -22,6 +22,18 @@ import {
   getOrderStatusText,
 } from "@/lib/order-status"
 
+const statusTag = (o: Order) => {
+  if (o.status === "depositPaid")
+    return <Badge className="bg-blue-500 text-white">รอมัดจำ</Badge>
+  if (o.status === "paid" && o.shipping_status === "pending")
+    return <Badge className="bg-yellow-500 text-white">รอจัดส่ง</Badge>
+  if (o.status === "completed" || o.shipping_status === "delivered")
+    return <Badge className="bg-green-500 text-white">ปิดยอดแล้ว</Badge>
+  if (o.status === "pendingPayment")
+    return <Badge className="bg-red-500 text-white">ยังไม่โอน</Badge>
+  return null
+}
+
 const statusOptions = [
   { value: "all", label: "ทั้งหมด" },
   { value: "pendingPayment", label: "รอชำระ" },
@@ -210,6 +222,7 @@ export default function AdminOrdersPage() {
                         ))}
                       </SelectContent>
                     </Select>
+                    {statusTag(order)}
                   </TableCell>
                   <TableCell>
                     <Select
