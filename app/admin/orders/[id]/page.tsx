@@ -21,6 +21,18 @@ import { toast } from "sonner"
 import { getBillLink } from "@/lib/mock-quick-bills"
 import { getPayment, verifyPayment } from "@/lib/mock/payment"
 
+const statusTag = (o: Order) => {
+  if (o.status === "depositPaid")
+    return <Badge className="bg-blue-500 text-white">รอมัดจำ</Badge>
+  if (o.status === "paid" && o.shipping_status === "pending")
+    return <Badge className="bg-yellow-500 text-white">รอจัดส่ง</Badge>
+  if (o.status === "completed" || o.shipping_status === "delivered")
+    return <Badge className="bg-green-500 text-white">ปิดยอดแล้ว</Badge>
+  if (o.status === "pendingPayment")
+    return <Badge className="bg-red-500 text-white">ยังไม่โอน</Badge>
+  return null
+}
+
 export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
   const router = useRouter()
@@ -109,6 +121,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           </CardHeader>
           <CardContent className="space-y-4">
             <OrderStatusDropdown status={status} onChange={setStatus} />
+            {statusTag(order)}
             <div className="flex space-x-2 mt-2">
               {order.items.length > 0 && (
                 <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
