@@ -41,7 +41,19 @@ export default function BillPage({ params }: { params: { id: string } }) {
       }
       return null
     }
-    return <EmptyState title="ไม่พบบิล" subtitle="ตรวจสอบลิงก์อีกครั้ง" />
+    if (typeof window !== "undefined") {
+      setTimeout(() => window.location.replace('/chat'), 3000)
+    }
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p>ไม่พบข้อมูลบิล อาจถูกลบหรือหมดอายุ</p>
+          <Link href="/chat" className="text-primary underline">
+            ไปที่แชท
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const handlePrint = () => {
