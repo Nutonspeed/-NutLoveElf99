@@ -5,6 +5,7 @@ import CreateChatBillDialog from '@/components/admin/chat/CreateChatBillDialog'
 import ChatHotkey from './hotkey'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
+import { toast } from 'sonner'
 
 export default function AdminChatPage() {
   const chatwootUrl = process.env.NEXT_PUBLIC_CHATWOOT_URL || 'http://localhost:3000'
@@ -16,14 +17,14 @@ export default function AdminChatPage() {
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
+    <div className="flex min-h-screen flex-col items-center justify-center space-y-4 px-4 text-center">
       <p>กำลังเปิดหน้าต่างแชท...</p>
       <CreateChatBillDialog onCreated={setNewBillId} />
       <ChatHotkey />
       {newBillId && (
         <div className="space-y-2 text-center">
           <p>บิลสร้างแล้ว:</p>
-          <Link href={`/chat-bill/${newBillId}`} className="text-blue-600 underline">
+          <Link href={`/chat-bill/${newBillId}`} className="text-blue-600 underline break-all">
             {`${origin}/chat-bill/${newBillId}`}
           </Link>
           <div>
@@ -31,7 +32,7 @@ export default function AdminChatPage() {
               variant="outline"
               onClick={() => {
                 navigator.clipboard.writeText(`${origin}/chat-bill/${newBillId}`)
-                alert('คัดลอกลิงก์แล้ว')
+                toast.success('คัดลอกลิงก์แล้ว')
               }}
             >
               คัดลอกลิงก์เพื่อส่งในแชท

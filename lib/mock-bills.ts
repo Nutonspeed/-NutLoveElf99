@@ -15,9 +15,11 @@ export function createBill(
   const order = mockOrders.find((o) => o.id === orderId)
   const customer = order && mockCustomers.find((c) => c.id === order.customerId)
   const id = `bill-${Math.random().toString(36).slice(2, 8)}`
+  const referenceCode = `BILL-${Math.floor(Math.random() * 9000 + 1000)}`
   const bill: Bill = {
     id,
     orderId,
+    referenceCode,
     status,
     payments: [],
     createdAt: new Date().toISOString(),

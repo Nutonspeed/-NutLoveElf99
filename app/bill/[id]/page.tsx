@@ -2,6 +2,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -21,6 +22,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
   const bill = getBill(id)
   const quickBill = getQuickBill(id)
+  const reference = bill?.referenceCode || `BILL-${id.slice(-4).toUpperCase()}`
   const order = mockOrders.find((o) => o.id === bill?.orderId)
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
@@ -68,7 +70,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   const handleCopy = () => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href)
+      navigator.clipboard.writeText(`${reference} ${window.location.href}`)
+      toast.success("คัดลอกแล้ว")
     }
   }
 
@@ -132,7 +135,10 @@ export default function BillPage({ params }: { params: { id: string } }) {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="text-xl font-semibold">บิล {order.id}</h1>
+            <div>
+              <h1 className="text-xl font-semibold">บิล {order.id}</h1>
+              <p className="text-sm text-gray-500">{reference}</p>
+            </div>
             <Badge variant="secondary">{bill.status}</Badge>
           </div>
           <div className="flex space-x-2">
@@ -142,7 +148,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
             </Button>
             <Button variant="outline" onClick={handleCopy}>
               <Copy className="mr-2 h-4 w-4" />
-              คัดลอกลิงก์
+              คัดลอกบิล
             </Button>
             <Button onClick={handleDownload}>
               <Download className="mr-2 h-4 w-4" />

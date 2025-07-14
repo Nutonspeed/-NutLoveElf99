@@ -66,12 +66,12 @@ export default function CreateChatBillDialog({
       <DialogTrigger asChild>
         <Button variant="outline">สร้างบิลใหม่</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="sm:max-w-2xl max-w-sm">
         <DialogHeader>
           <DialogTitle>สร้างบิลจากแชท</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             <div>
               <Label htmlFor="fbName">ชื่อในเฟสบุ๊ค</Label>
               <Input id="fbName" value={fbName} onChange={(e)=>setFbName(e.target.value)} />
