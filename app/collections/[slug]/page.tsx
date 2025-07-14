@@ -1,11 +1,11 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
-import Image from "next/image"
-import { notFound } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { getCollections } from "@/lib/mock-collections"
 import { WishlistButton } from "@/components/WishlistButton"
+import { mockFabrics } from "@/lib/mock-fabrics"
+import { FabricsList } from "@/components/FabricsList"
 
 export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
   let data: any
@@ -14,7 +14,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
     const collections = await getCollections()
     data = collections.find((c) => c.slug === params.slug)
     if (!data) {
-      notFound()
+      return <div className="p-4 text-red-500">ไม่พบคอลเลกชันนี้</div>
     }
   } else {
     const { data: dbData, error } = await supabase
@@ -24,7 +24,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
       .single()
 
     if (error || !dbData) {
-      notFound()
+      return <div className="p-4 text-red-500">ไม่พบคอลเลกชันนี้</div>
     }
 
     data = {
@@ -37,7 +37,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
     }
   }
 
-  const images: string[] = (data as any).images || []
+  const fabrics = mockFabrics.filter((f) => f.collectionSlug === data.slug)
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,24 +64,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
             <Button size="sm">💬 สอบถามผ่าน Facebook</Button>
           </a>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {images.slice(0, 12).map((img, idx) => (
-            <div key={idx} className="space-y-2">
-              <div className="relative aspect-square">
-                <Image src={img || "/placeholder.svg"} alt={`fabric ${idx + 1}`} fill className="object-cover" />
-              </div>
-              <a
-                href={`https://m.me/elfsofacover?text=${encodeURIComponent(
-                  `สนใจลายผ้า ${data.slug} ครับ`,
-                )}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button size="sm" className="w-full">สนใจลายนี้ ส่งให้แอดมิน</Button>
-              </a>
-            </div>
-          ))}
-        </div>
+        <FabricsList fabrics={fabrics} />
       </div>
       <Footer />
     </div>
