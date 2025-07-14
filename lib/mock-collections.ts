@@ -38,32 +38,19 @@ export interface Collection {
   images: string[]
 }
 
-export const mockCollections: Collection[] = [
-  {
-    id: '1',
-    name: 'Cozy Earth',
-    slug: 'cozy-earth',
-    priceRange: '890–2190',
-    description: 'ผ้านุ่มสบาย สไตล์มินิมอล',
-    images: ['/images/035.jpg', '/images/036.jpg', '/images/037.jpg', '/images/038.jpg'],
-  },
-  {
-    id: '2',
-    name: 'Modern Loft',
-    slug: 'modern-loft',
-    priceRange: '990–1990',
-    description: 'โทนเข้ม มีสไตล์',
-    images: ['/images/039.jpg', '/images/040.jpg', '/images/041.jpg', '/images/042.jpg'],
-  },
-  {
-    id: '3',
-    name: 'Vintage Vibes',
-    slug: 'vintage-vibes',
-    priceRange: '890–2590',
-    description: 'ลายวินเทจคลาสสิก',
-    images: ['/images/043.jpg', '/images/044.jpg', '/images/045.jpg', '/images/046.jpg'],
-  },
-]
+export const mockCollections: Collection[] = Array.from({ length: 40 }, (_, i) => ({
+  id: String(i + 1),
+  slug: `col-${i + 1}`,
+  name: `คอลเลกชัน #${i + 1}`,
+  priceRange: '',
+  description: `ลายผ้าในชุด ${i + 1}`,
+  images: [
+    '/placeholder.jpg',
+    '/placeholder.jpg',
+    '/placeholder.jpg',
+    '/placeholder.jpg',
+  ],
+}))
 
 export async function getCollections(): Promise<Collection[]> {
   if (!supabase) {

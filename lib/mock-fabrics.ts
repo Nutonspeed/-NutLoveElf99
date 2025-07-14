@@ -8,6 +8,7 @@ export interface Fabric {
   color: string
   price: number
   images: string[]
+  collectionSlug: string
 }
 
 export const mockFabrics: Fabric[] = [
@@ -19,6 +20,7 @@ export const mockFabrics: Fabric[] = [
     color: 'ครีม',
     price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
+    collectionSlug: 'cozy-earth',
   },
   {
     id: 'f02',
@@ -28,6 +30,7 @@ export const mockFabrics: Fabric[] = [
     color: 'เทา',
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
+    collectionSlug: 'cozy-earth',
   },
   {
     id: 'f03',
@@ -37,6 +40,7 @@ export const mockFabrics: Fabric[] = [
     color: 'น้ำเงิน',
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
+    collectionSlug: 'modern-loft',
   },
   {
     id: 'f04',
@@ -46,6 +50,7 @@ export const mockFabrics: Fabric[] = [
     color: 'กรม',
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
+    collectionSlug: 'modern-loft',
   },
   {
     id: 'f05',
@@ -55,6 +60,7 @@ export const mockFabrics: Fabric[] = [
     color: 'ชมพู',
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
+    collectionSlug: 'vintage-vibes',
   },
 ]
 
