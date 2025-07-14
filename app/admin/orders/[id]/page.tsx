@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { getBillLink } from "@/lib/mock-quick-bills"
+import { getPayment, verifyPayment } from "@/lib/mock/payment"
 
 export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -31,6 +32,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
+  const [payment, setPayment] = useState(() => getPayment(id))
 
   useEffect(() => {
     if (!order) {
@@ -39,6 +41,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
       }
       router.replace('/admin/orders')
     }
+    setPayment(getPayment(id))
   }, [order, router])
 
   if (!order) return null
@@ -136,17 +139,42 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 title={getBillLink(id) ? undefined : "ไม่พบลิงก์บิลนี้"}
               >
                 คัดลอกลิงก์
-              </Button>
-              <Button variant="outline" onClick={handleReorder}>
-                สั่งซ้ำ
-              </Button>
-            </div>
-          </CardContent>
-          </Card>
+          </Button>
+          <Button variant="outline" onClick={handleReorder}>
+            สั่งซ้ำ
+          </Button>
+        </div>
+      </CardContent>
+      </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>ไทม์ไลน์สถานะ</CardTitle>
+      <Card>
+        <CardHeader>
+          <CardTitle>สถานะการโอน</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {payment ? (
+            <div className="space-y-1">
+              <p>วันที่: {new Date(payment.date).toLocaleDateString('th-TH')}</p>
+              <p>จำนวน: ฿{payment.amount.toLocaleString()}</p>
+              {payment.slip && <p className="text-sm text-gray-600">{payment.slip}</p>}
+              {!payment.verified && (
+                <Button size="sm" onClick={() => {
+                  verifyPayment(id)
+                  setPayment({ ...payment, verified: true })
+                  setOrderStatus(id, 'processing')
+                  toast.success('ยืนยันการชำระแล้ว')
+                }}>Mark as Verified</Button>
+              )}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-600">Awaiting payment</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>ไทม์ไลน์สถานะ</CardTitle>
             </CardHeader>
             <CardContent>
               <OrderTimeline
