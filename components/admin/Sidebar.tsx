@@ -34,6 +34,7 @@ const navItems = [
   { href: "/admin/chat", label: "แชท", icon: MessageCircle },
   { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText },
   { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List },
+  { href: "/admin/logs", label: "Log", icon: FileText },
 ]
 
 export default function Sidebar({ className = "" }: { className?: string }) {

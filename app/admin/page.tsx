@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { mockOrders, updateOrderStatus } from "@/lib/mock/orders";
 import { mockNotifications } from "@/lib/mock-notifications";
 import { chatNotifications } from "@/lib/mock/chat-notify";
+import DebugPanel from "@/components/admin/DebugPanel";
+import { logEvent } from "@/lib/logs";
 import type { Order } from "@/types/order";
 import { toast } from "sonner";
 
@@ -16,6 +18,7 @@ export default function AdminIndex() {
     process.env.NEXT_PUBLIC_CHATWOOT_URL || "http://localhost:3000";
 
   const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const [debugOpen, setDebugOpen] = useState(false);
 
   let todayCount = 0;
   let todayIncome = 0;
@@ -62,12 +65,14 @@ export default function AdminIndex() {
   const markReady = (id: string) => {
     updateOrderStatus(id, "packed");
     setOrders([...mockOrders]);
+    logEvent('order_ready', { id });
     toast.success("สถานะอัปเดตแล้ว");
   };
 
   const markCompleted = (id: string) => {
     updateOrderStatus(id, "completed");
     setOrders([...mockOrders]);
+    logEvent('order_completed', { id });
     toast.success("สถานะอัปเดตแล้ว");
   };
 
@@ -85,6 +90,18 @@ export default function AdminIndex() {
         <Link href="/admin/dashboard">
           <Button variant="outline" size="lg" className="h-12">เข้าสู่แดชบอร์ด</Button>
         </Link>
+        <Button
+          variant="outline"
+          size="lg"
+          className="h-12"
+          onClick={() => {
+            const next = !debugOpen
+            setDebugOpen(next)
+            logEvent('toggle_debug', { open: next })
+          }}
+        >
+          {debugOpen ? 'ปิด Debug' : 'เปิด Debug'}
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -191,11 +208,12 @@ export default function AdminIndex() {
                 </li>
               ))}
             </ul>
-          ) : (
-            <p>ไม่มีข้อมูลคำสั่งซื้อ</p>
-          )}
-        </CardContent>
+      ) : (
+        <p>ไม่มีข้อมูลคำสั่งซื้อ</p>
+      )}
+      </CardContent>
       </Card>
+      {debugOpen && <DebugPanel />}
     </div>
   );
 }
