@@ -60,6 +60,19 @@ export default function BillPage({ params }: { params: { id: string } }) {
     alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
   }
 
+  const downloadQr = () => {
+    const img = document.getElementById("qr-img") as HTMLImageElement | null
+    if (!img) return
+    const link = document.createElement("a")
+    if (typeof link.download === "undefined") {
+      alert("เบราว์เซอร์ไม่รองรับการดาวน์โหลด")
+      return
+    }
+    link.href = img.src
+    link.download = `${id}.png`
+    link.click()
+  }
+
   const handleVerify = () => {
     if (code === billSecurity.phone || code === billSecurity.pin) {
       setAccess(true)
@@ -99,12 +112,13 @@ export default function BillPage({ params }: { params: { id: string } }) {
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center space-y-4">
         <h1 className="text-2xl font-bold">บิล {quickBill.id}</h1>
         <p>{quickBill.customerName}</p>
-        <img src="/placeholder.svg" alt="QR" className="w-40 h-40" />
-        <Button asChild>
-          <a href="/placeholder.svg" download>
-            ดาวน์โหลด QR
-          </a>
-        </Button>
+        <img
+          id="qr-img"
+          src="/placeholder.svg"
+          alt="QR"
+          className="mx-auto w-full max-w-[250px] h-auto"
+        />
+        <Button onClick={downloadQr}>ดาวน์โหลด QR</Button>
       </div>
     )
   }
@@ -138,8 +152,14 @@ export default function BillPage({ params }: { params: { id: string } }) {
         <Card className="max-w-4xl mx-auto print:shadow-none print:border-none">
           <CardContent className="p-8 print:p-6 space-y-6">
             <BillPreview order={order} />
-            <div className="flex justify-center">
-              <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
+            <div className="flex flex-col items-center space-y-2">
+              <img
+                id="qr-img"
+                src="/placeholder.svg"
+                alt="QR"
+                className="mx-auto w-full max-w-[250px] h-auto"
+              />
+              <Button variant="outline" onClick={downloadQr}>ดาวน์โหลด QR</Button>
             </div>
             <OrderTimeline timeline={order.timeline} />
             <div className="space-y-2">

@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { addQuickBill } from "@/lib/mock-quick-bills"
+import { toast } from "sonner"
 
 interface Item {
   name: string
@@ -28,6 +29,9 @@ export default function AdminOpenBillQuick() {
   const save = () => {
     const id = "ORDER-" + Math.random().toString(36).slice(2, 8).toUpperCase()
     addQuickBill({ id, customerName, phone, note, items })
+    const link = `https://elfnity.app/bill/${id}`
+    navigator.clipboard.writeText(link)
+    toast.success("คัดลอกลิงก์บิลแล้ว ส่งให้ลูกค้าได้เลย!")
     router.push(`/admin/orders/${id}`)
   }
 
