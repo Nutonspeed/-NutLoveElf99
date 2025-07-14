@@ -10,12 +10,14 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
+import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import { getMockNow } from "@/lib/mock-date"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
   const bill = getBill(id)
+  const quickBill = getQuickBill(id)
   const order = mockOrders.find((o) => o.id === bill?.orderId)
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
@@ -23,12 +25,19 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
 
-  const baseDate = new Date(bill?.dueDate || bill.createdAt)
+  const baseDate = new Date(bill?.dueDate || bill?.createdAt || '')
   const expired =
+    bill &&
     bill.status !== "paid" &&
     getMockNow().getTime() > baseDate.getTime() + 3 * 24 * 60 * 60 * 1000
 
-  if (!bill || !order) {
+  if (!bill && !quickBill) {
+    if (!getBillLink(id)) {
+      if (typeof window !== "undefined") {
+        window.location.replace("/bill/unknown")
+      }
+      return null
+    }
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -81,6 +90,21 @@ export default function BillPage({ params }: { params: { id: string } }) {
           </div>
           <Button onClick={handleVerify}>ยืนยัน</Button>
         </div>
+      </div>
+    )
+  }
+
+  if (quickBill && !bill) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center space-y-4">
+        <h1 className="text-2xl font-bold">บิล {quickBill.id}</h1>
+        <p>{quickBill.customerName}</p>
+        <img src="/placeholder.svg" alt="QR" className="w-40 h-40" />
+        <Button asChild>
+          <a href="/placeholder.svg" download>
+            ดาวน์โหลด QR
+          </a>
+        </Button>
       </div>
     )
   }

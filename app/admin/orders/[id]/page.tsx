@@ -18,6 +18,7 @@ import { shippingStatusOptions, packingStatusOptions } from "@/types/order"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { getBillLink } from "@/lib/mock-quick-bills"
 
 export default function AdminOrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -122,6 +123,20 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                   แก้ไขบิล
                 </Button>
               </Link>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  const link = getBillLink(id)
+                  if (link) {
+                    navigator.clipboard.writeText(link)
+                    toast.success("คัดลอกลิงก์แล้ว")
+                  }
+                }}
+                disabled={!getBillLink(id)}
+                title={getBillLink(id) ? undefined : "ไม่พบลิงก์บิลนี้"}
+              >
+                คัดลอกลิงก์
+              </Button>
               <Button variant="outline" onClick={handleReorder}>
                 สั่งซ้ำ
               </Button>
