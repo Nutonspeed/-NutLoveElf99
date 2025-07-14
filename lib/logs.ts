@@ -16,17 +16,19 @@ export function loadLogs() {
   }
 }
 
-export function logEvent(action: string, payload?: any) {
+export const logEvent = (event: string, detail?: any) => {
+  console.log(`[LOG] ${event}`, detail)
   const entry: LogEntry = {
     id: Date.now().toString(),
-    action,
-    payload,
+    action: event,
+    payload: detail,
     timestamp: new Date().toISOString(),
   }
   logs.push(entry)
   if (typeof window !== 'undefined') {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(logs))
   }
+  // in real: POST /api/logs
 }
 
 export function exportLogsTxt(entries: LogEntry[], filename: string) {
