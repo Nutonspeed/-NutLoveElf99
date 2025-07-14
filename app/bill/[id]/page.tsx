@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Download, PrinterIcon as Print } from "lucide-react"
+import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -12,6 +12,9 @@ import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
+import ErrorBoundary from "@/components/ErrorBoundary"
+import EmptyState from "@/components/EmptyState"
+import { Badge } from "@/components/ui/badge"
 import { getMockNow } from "@/lib/mock-date"
 
 export default function BillPage({ params }: { params: { id: string } }) {
@@ -38,16 +41,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
       }
       return null
     }
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">ไม่พบบิล</h1>
-          <Link href="/orders">
-            <Button>กลับไปหน้าคำสั่งซื้อ</Button>
-          </Link>
-        </div>
-      </div>
-    )
+    return <EmptyState title="ไม่พบบิล" subtitle="ตรวจสอบลิงก์อีกครั้ง" />
   }
 
   const handlePrint = () => {
@@ -58,6 +52,12 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   const handleDownload = () => {
     alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+  }
+
+  const handleCopy = () => {
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(window.location.href)
+    }
   }
 
   const handleVerify = () => {
@@ -110,6 +110,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
   }
 
   return (
+    <ErrorBoundary>
     <div className="min-h-screen bg-gray-50">
       <div className="print:hidden bg-white border-b px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
@@ -120,16 +121,24 @@ export default function BillPage({ params }: { params: { id: string } }) {
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">บิล {order.id}</h1>
+            <Badge variant="secondary">{bill.status}</Badge>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={handlePrint}>
               <Print className="mr-2 h-4 w-4" />
               พิมพ์
             </Button>
+            <Button variant="outline" onClick={handleCopy}>
+              <Copy className="mr-2 h-4 w-4" />
+              คัดลอกลิงก์
+            </Button>
             <Button onClick={handleDownload}>
               <Download className="mr-2 h-4 w-4" />
               ดาวน์โหลด PDF
             </Button>
+            <Link href="/admin/chat">
+              <Button variant="outline">เปิดแชท</Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -167,6 +176,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
         </Card>
       </div>
     </div>
+    </ErrorBoundary>
   )
 }
 
