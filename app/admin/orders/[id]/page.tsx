@@ -3,13 +3,15 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Share2, Edit, PrinterIcon as Print } from "lucide-react"
+import { ArrowLeft, PrinterIcon as Print, Edit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
+import { mockProducts } from "@/lib/mock-products"
+import { useCart } from "@/contexts/cart-context"
 import type { Order } from "@/types/order"
 import type { OrderStatus, ShippingStatus, PackingStatus } from "@/types/order"
 import { shippingStatusOptions, packingStatusOptions } from "@/types/order"
@@ -60,6 +62,31 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
     toast.success("อัปเดตสถานะแพ็กแล้ว")
   }
 
+  const { dispatch } = useCart()
+
+  const handleReorder = () => {
+    for (const item of order.items) {
+      const product = mockProducts.find((p) => p.id === item.productId)
+      if (!product || !product.inStock || product.status === "draft") {
+        toast.error(`สินค้า ${item.productName} ไม่สามารถสั่งซ้ำได้`)
+        return
+      }
+      dispatch({
+        type: "ADD_ITEM",
+        payload: {
+          id: item.productId,
+          name: item.productName,
+          price: item.price,
+          image: "/placeholder.svg",
+          quantity: item.quantity,
+          size: item.size,
+          color: item.color,
+        },
+      })
+    }
+    toast.success("เพิ่มสินค้าลงตะกร้าแล้ว")
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 space-y-6">
@@ -79,10 +106,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           <CardContent className="space-y-4">
             <OrderStatusDropdown status={status} onChange={setStatus} />
             <div className="flex space-x-2 mt-2">
-              <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
-                <Share2 className="mr-2 h-4 w-4" />
-                แชร์บิล
-              </Button>
+              {order.items.length > 0 && (
+                <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
+                  <Print className="mr-2 h-4 w-4" />
+                  ดู PDF
+                </Button>
+              )}
               <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/label`, "_blank") }>
                 <Print className="mr-2 h-4 w-4" />
                 พิมพ์ใบจ่าหน้า
@@ -93,6 +122,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                   แก้ไขบิล
                 </Button>
               </Link>
+              <Button variant="outline" onClick={handleReorder}>
+                สั่งซ้ำ
+              </Button>
             </div>
           </CardContent>
           </Card>

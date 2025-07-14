@@ -2,6 +2,7 @@ import type { OrderStatus, ShippingStatus, Order, PackingStatus } from "@/types/
 
 import { supabase } from "./supabase"
 import { addChatMessage } from "./mock-chat-messages"
+import { addAdminLog } from "./mock-admin-logs"
 
 const initialMockOrders: Order[] = [
   {
@@ -135,6 +136,7 @@ export function setOrderStatus(orderId: string, status: OrderStatus) {
       updatedBy: "admin@nutlove.co",
     })
     addChatMessage(orderId, 'status_' + status)
+    addAdminLog(`update order ${orderId} ${status}`, 'mockAdminId')
   }
 }
 
