@@ -35,3 +35,9 @@ export function getLatestChatMessage(conversationId: string): ChatMessageEntry |
   return msgs[msgs.length - 1]
 }
 
+
+export function resetChatMessages() {
+  for (const key in chatMessages) {
+    delete chatMessages[key]
+  }
+}
