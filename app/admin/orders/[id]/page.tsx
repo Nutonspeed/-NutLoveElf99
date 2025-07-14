@@ -317,6 +317,21 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             </Button>
           </CardContent>
         </Card>
+        <div className="flex justify-end">
+          <Button
+            onClick={async () => {
+              try {
+                setOrderStatus(order.id, "completed")
+                setStatus("completed")
+                toast.success("Order closed successfully")
+              } catch (err) {
+                toast.error("Failed to close order")
+              }
+            }}
+          >
+            Close Order
+          </Button>
+        </div>
       </div>
     </div>
   )
