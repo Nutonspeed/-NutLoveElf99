@@ -5,8 +5,10 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAuth } from '@/contexts/auth-context'
 import { mockClaims, updateClaim } from '@/lib/mock-claims'
+import { addAdminLog } from '@/lib/mock-admin-logs'
 import { downloadCSV, downloadPDF } from '@/lib/mock-export'
 
 export default function AdminClaimsPage() {
@@ -27,13 +29,19 @@ export default function AdminClaimsPage() {
   }
 
   const handleApprove = (id: string) => {
+    const c = mockClaims.find((cl) => cl.id === id)
+    if (!c || c.status !== 'pending') return
     updateClaim(id, { status: 'approved' })
+    addAdminLog(`approve claim ${id}`, user?.email || 'admin')
     setClaims([...mockClaims])
   }
 
   const handleReject = (id: string) => {
+    const c = mockClaims.find((cl) => cl.id === id)
+    if (!c || c.status !== 'pending') return
     const reason = window.prompt('เหตุผลการปฏิเสธ') || ''
     updateClaim(id, { status: 'rejected', reason })
+    addAdminLog(`reject claim ${id}`, user?.email || 'admin')
     setClaims([...mockClaims])
   }
 
@@ -50,50 +58,47 @@ export default function AdminClaimsPage() {
           <Button onClick={() => downloadCSV(claims, 'claims.csv')}>Export CSV</Button>
           <Button onClick={() => downloadPDF('claims report', 'claims.pdf')}>Export PDF</Button>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>รายการเคลม ({claims.length})</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ออเดอร์</TableHead>
-                  <TableHead>รูป</TableHead>
-                  <TableHead>เหตุผล</TableHead>
-                  <TableHead>สถานะ</TableHead>
-                  <TableHead className="text-right">การจัดการ</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {claims.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell>{c.orderId}</TableCell>
-                    <TableCell>
-                      <img src={c.image} alt="img" className="h-12 w-12" />
-                    </TableCell>
-                    <TableCell>{c.reason}</TableCell>
-                    <TableCell>
-                      <select
-                        className="border px-2 py-1 rounded"
-                        value={c.status}
-                        onChange={(e) => {
-                          updateClaim(c.id, { status: e.target.value as any })
-                          setClaims([...mockClaims])
-                        }}
-                      >
-                        <option value="pending">pending</option>
-                        <option value="approved">approved</option>
-                        <option value="rejected">rejected</option>
-                      </select>
-                    </TableCell>
-                    <TableCell className="text-right"></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <Tabs defaultValue="pending">
+          <TabsList>
+            <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
+          </TabsList>
+          <TabsContent value="pending">
+            <Card>
+              <CardHeader>
+                <CardTitle>รายการเคลม ({claims.filter(c => c.status === 'pending').length})</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ออเดอร์</TableHead>
+                      <TableHead>รูป</TableHead>
+                      <TableHead>เหตุผล</TableHead>
+                      <TableHead className="text-right">การจัดการ</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {claims.filter(c => c.status === 'pending').map((c) => (
+                      <TableRow key={c.id}>
+                        <TableCell>{c.orderId}</TableCell>
+                        <TableCell>
+                          <img src={c.image} alt="img" className="h-12 w-12" />
+                        </TableCell>
+                        <TableCell>{c.reason}</TableCell>
+                        <TableCell className="text-right space-x-2">
+                          <Button size="sm" onClick={() => handleApprove(c.id)}>อนุมัติ</Button>
+                          <Button size="sm" variant="destructive" onClick={() => handleReject(c.id)}>
+                            ไม่รับเคลม
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
