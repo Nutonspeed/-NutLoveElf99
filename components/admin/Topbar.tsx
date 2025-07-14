@@ -2,7 +2,7 @@
 
 import { LogOut, Menu } from "lucide-react"
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import { useAuth } from "@/contexts/auth-context"
 import GlobalBadge from "./GlobalBadge"
 import { getGlobalAlertCount } from "@/lib/mock-alerts"

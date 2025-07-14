@@ -1,8 +1,8 @@
 "use client"
 import Link from "next/link"
 import { ArrowLeft, PrinterIcon as Print } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/buttons/button"
+import { Card, CardContent } from "@/components/ui/cards/card"
 import { mockOrders } from "@/lib/mock-orders"
 
 export default function AdminOrderLabelPage({ params }: { params: { id: string } }) {

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
+import { Button } from "@/components/ui/buttons/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { loadFeedbacks, mockFeedbacks } from "@/lib/mock-feedback";

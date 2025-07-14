@@ -3,10 +3,10 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/buttons/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Label } from '@/components/ui/label'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/ui/inputs/input'
 import { createClaim, loadClaims } from '@/lib/mock-claims'
 
 export default function ClaimFormPage() {

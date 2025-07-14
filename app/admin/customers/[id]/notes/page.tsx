@@ -2,8 +2,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/buttons/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { useAuth } from '@/contexts/auth-context'
 import { loadCustomerNotes, listCustomerNotes, addCustomerNote } from '@/lib/mock-customer-notes'
 

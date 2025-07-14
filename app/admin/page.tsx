@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 
 export default function AdminIndex() {
   const chatwootUrl =

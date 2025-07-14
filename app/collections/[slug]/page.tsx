@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import Image from "next/image"
 import { notFound } from "next/navigation"
 import { supabase } from "@/lib/supabase"

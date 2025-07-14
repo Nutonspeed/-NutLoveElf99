@@ -2,7 +2,7 @@
 
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import Link from "next/link"

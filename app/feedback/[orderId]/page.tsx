@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/buttons/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
 import { addFeedback, loadFeedbacks, mockFeedbacks } from "@/lib/mock-feedback";
 import { Star } from "lucide-react";
 

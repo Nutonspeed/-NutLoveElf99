@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { supabase } from "@/lib/supabase"
 
 export default function OrderDetailPage() {

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import { Home, Search, ArrowLeft } from "lucide-react"
 import { addChatActivity, loadChatActivity } from "@/lib/mock-chat-activity"
 import { useAuth } from "@/contexts/auth-context"

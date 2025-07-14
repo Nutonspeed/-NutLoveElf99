@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import { getPromoByCode } from "@/lib/mock-promos"
 import { getMockNow } from "@/lib/mock-date"
 import { mockCustomers } from "@/lib/mock-customers"

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import { heroBanner, loadHeroBanner } from "@/lib/mock-hero-banner"
 
 export function HeroBannerSection() {

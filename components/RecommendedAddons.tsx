@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { mockProducts } from '@/lib/mock-products'
 import { mockRelatedProducts } from '@/lib/mock-related-products'
-import { Card, CardContent } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/cards/card'
 
 export function RecommendedAddons({ slug }: { slug: string }) {
   const related = mockRelatedProducts[slug] || []

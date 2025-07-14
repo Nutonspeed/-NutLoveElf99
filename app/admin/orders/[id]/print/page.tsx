@@ -2,8 +2,8 @@
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { ArrowLeft, PrinterIcon as Print } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/buttons/button"
+import { Card, CardContent } from "@/components/ui/cards/card"
 import BillPreview from "@/components/BillPreview"
 import { mockOrders } from "@/lib/mock-orders"
 

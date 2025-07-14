@@ -1,5 +1,5 @@
 import { mockTasks } from "@/lib/mock-tasks"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 
 export default function TeamRolePage({ params }: { params: { role: string } }) {

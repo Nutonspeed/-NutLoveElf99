@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import CreateChatBillDialog from '@/components/admin/chat/CreateChatBillDialog'
 import Link from 'next/link'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/buttons/button'
 
 export default function AdminChatPage() {
   const chatwootUrl = process.env.NEXT_PUBLIC_CHATWOOT_URL || 'http://localhost:3000'
