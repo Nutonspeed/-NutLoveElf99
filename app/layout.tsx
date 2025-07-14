@@ -30,7 +30,7 @@ export default function RootLayout({
   }
   return (
     <html lang="th">
-      <body className={inter.className}>
+      <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>

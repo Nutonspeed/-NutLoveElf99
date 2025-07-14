@@ -9,9 +9,9 @@ import { toast } from "sonner"
 import { addPayment } from "@/lib/mock/payment"
 import { mockOrders } from "@/lib/mock-orders"
 
-export default function PaymentPage({ params }: { params: { billId: string } }) {
-  const { billId } = params
-  const order = mockOrders.find(o => o.id === billId)
+export default function PaymentPage({ params }: { params: { id: string } }) {
+  const { id } = params
+  const order = mockOrders.find(o => o.id === id)
   const router = useRouter()
   const [date, setDate] = useState("")
   const [amount, setAmount] = useState("")
@@ -27,14 +27,14 @@ export default function PaymentPage({ params }: { params: { billId: string } }) 
   }
 
   const handleSubmit = () => {
-    const p = addPayment(billId, {
+    const p = addPayment(id, {
       date,
       amount: parseFloat(amount) || 0,
       slip: slip?.name,
     })
     if (p) {
       toast.success("บันทึกการแจ้งโอนแล้ว")
-      router.replace(`/b/${billId}`)
+      router.replace(`/b/${id}`)
     } else {
       toast.error("Unable to submit payment")
     }
