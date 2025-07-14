@@ -1,6 +1,11 @@
 import FallbackCenter from "@/components/FallbackCenter"
-import { BarChart3 } from "lucide-react"
 
 export default function AdminAnalyticsPage() {
-  return <FallbackCenter icon={BarChart3} subtitle="แดชบอร์ดสถิติ" />
+  return (
+    <FallbackCenter
+      icon="📊"
+      title="Analytics ยังไม่พร้อม"
+      subtitle="อยู่ระหว่างการพัฒนา เตรียมพบกันเร็ว ๆ นี้"
+    />
+  )
 }

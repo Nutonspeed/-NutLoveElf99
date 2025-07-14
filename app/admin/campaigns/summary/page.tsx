@@ -1,6 +1,11 @@
 import FallbackCenter from "@/components/FallbackCenter"
-import { Megaphone } from "lucide-react"
 
 export default function CampaignSummaryPage() {
-  return <FallbackCenter icon={Megaphone} subtitle="สรุปแคมเปญ" />
+  return (
+    <FallbackCenter
+      icon="📣"
+      title="Campaign Summary ยังไม่พร้อม"
+      subtitle="อยู่ระหว่างการพัฒนา เตรียมพบกันเร็ว ๆ นี้"
+    />
+  )
 }
