@@ -14,9 +14,11 @@ export function loadFeedbacks() {
   }
 }
 
-export function addFeedback(fb: Feedback) {
+export function addFeedback(fb: Feedback): boolean {
+  if (mockFeedbacks.some((f) => f.orderId === fb.orderId)) return false;
   mockFeedbacks.push(fb);
   if (typeof window !== "undefined") {
     localStorage.setItem("feedbacks", JSON.stringify(mockFeedbacks));
   }
+  return true;
 }

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { useRouter } from "next/navigation"
 import CustomerCard from "@/components/admin/customers/CustomerCard"
+import { useAuth } from "@/contexts/auth-context"
 import {
   Tabs,
   TabsContent,
@@ -53,6 +54,7 @@ export default function CustomerDetailPage({
   params: { id: string }
 }) {
   const { id } = params
+  const { user } = useAuth()
   const router = useRouter()
   const customer = mockCustomers.find((c) => c.id === id)
 
@@ -145,8 +147,8 @@ export default function CustomerDetailPage({
               <Button
                 variant="outline"
                 onClick={() => {
-                  if (noteInput) {
-                    addCustomerNote(customer.id, noteInput)
+                  if (noteInput && noteInput.length < 300) {
+                    addCustomerNote(customer.id, noteInput, user?.id || 'admin')
                     setNoteInput("")
                   }
                 }}

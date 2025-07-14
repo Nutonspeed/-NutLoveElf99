@@ -28,6 +28,7 @@ export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [behaviorFilter, setBehaviorFilter] = useState("all")
+  const [tagFilter, setTagFilter] = useState("all")
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState("")
@@ -93,8 +94,11 @@ export default function AdminCustomersPage() {
       (behaviorFilter === "noRepeat" && !isRepeat) ||
       (behaviorFilter === "frequent" && isFrequent) ||
       (behaviorFilter === "unpaid" && hasUnpaid)
+    const matchTag =
+      tagFilter === 'all' ||
+      listCustomerTags(customer.id).some((t) => t.tag === tagFilter)
 
-    return matchSearch && matchBehavior
+    return matchSearch && matchBehavior && matchTag
   })
 
 
@@ -226,6 +230,16 @@ export default function AdminCustomersPage() {
                   <option value="noRepeat">ไม่เคยสั่งซ้ำ</option>
                   <option value="frequent">ซื้อบ่อย</option>
                   <option value="unpaid">ค้างจ่าย</option>
+                </select>
+                <select
+                  className="border px-2 py-1 rounded"
+                  value={tagFilter}
+                  onChange={(e) => setTagFilter(e.target.value)}
+                >
+                  <option value="all">แท็กทั้งหมด</option>
+                  <option value="สายหวาน">สายหวาน</option>
+                  <option value="ขาประจำ">ขาประจำ</option>
+                  <option value="อารมณ์ร้อน">อารมณ์ร้อน</option>
                 </select>
                 <Button onClick={() => downloadCSV(customers, 'customers.csv')}>
                   Export CSV
