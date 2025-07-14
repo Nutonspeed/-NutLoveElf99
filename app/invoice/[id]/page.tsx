@@ -11,6 +11,7 @@ import { packingStatusOptions } from "@/types/order"
 import { mockBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
 import { createClaim } from "@/lib/mock-claims"
+import { downloadPDF, getReceiptFileName } from "@/lib/mock-export"
 import { toast } from "sonner"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
@@ -37,8 +38,7 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
   }
 
   const handleDownload = () => {
-    // In a real app, this would generate and download a PDF
-    alert("ดาวน์โหลดใบเสร็จ (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+    downloadPDF('receipt', getReceiptFileName(order.id))
   }
 
   const handleClaim = () => {

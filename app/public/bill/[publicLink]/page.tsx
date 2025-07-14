@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import BillPreview from "@/components/BillPreview"
 import { orderDb } from "@/lib/order-database"
 import type { ManualOrder, Order } from "@/types/order"
+import { downloadPDF, getReceiptFileName } from "@/lib/mock-export"
 
 interface PublicBillPageProps {
   params: {
@@ -97,7 +98,8 @@ export default function PublicBillPage({ params }: PublicBillPageProps) {
   }
 
   const handleDownload = () => {
-    alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+    const name = getReceiptFileName(mappedOrder.id)
+    downloadPDF('receipt', name)
   }
 
   return (

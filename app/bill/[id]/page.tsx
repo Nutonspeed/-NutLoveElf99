@@ -12,6 +12,7 @@ import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import { getMockNow } from "@/lib/mock-date"
+import { downloadPDF, getReceiptFileName } from "@/lib/mock-export"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -48,7 +49,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
   }
 
   const handleDownload = () => {
-    alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+    const name = getReceiptFileName(order?.id)
+    downloadPDF('receipt', name)
   }
 
   const handleVerify = () => {

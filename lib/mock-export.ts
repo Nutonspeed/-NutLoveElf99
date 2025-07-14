@@ -17,6 +17,18 @@ export function downloadCSV<T extends object>(rows: T[], filename: string) {
   URL.revokeObjectURL(url)
 }
 
+import { getMockNow } from './mock-date'
+
+export function sanitizeFilename(name: string) {
+  return name.replace(/[^a-zA-Z0-9_-]/g, '_')
+}
+
+export function getReceiptFileName(orderId?: string) {
+  const safeId = sanitizeFilename(orderId ?? 'unknown')
+  const date = getMockNow().toISOString().slice(0, 10)
+  return `receipt-${safeId}-${date}.pdf`
+}
+
 export function downloadPDF(content: string, filename: string) {
   if (!content) return
   const blob = new Blob([content], { type: 'application/pdf' })
