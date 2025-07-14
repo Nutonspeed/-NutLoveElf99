@@ -65,7 +65,7 @@ export default function AdminOrdersPage() {
     const bill = createBill(orderId)
     setBills([...mockBills])
     toast.success(`สร้างบิล ${bill.id}`)
-    window.open(`/bill/${bill.id}`, "_blank")
+    window.open(`/bills/${bill.id}`, "_blank")
   }
 
   const handlePrebookBill = (orderId: string) => {

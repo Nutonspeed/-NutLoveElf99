@@ -44,7 +44,7 @@ export default function AdminBillCreatePage() {
         paymentStatus: "unpaid",
       })
       const bill = createBill(order.id)
-      const link = `/bill/${bill.id}`
+      const link = `/bills/${bill.id}`
       setBillLink(link)
       toast.success("สร้างบิลแล้ว")
     } catch (e) {
@@ -57,7 +57,7 @@ export default function AdminBillCreatePage() {
   const copyLink = () => {
     if (billLink) {
       navigator.clipboard.writeText(window.location.origin + billLink)
-      toast.success("คัดลอกลิงก์แล้ว")
+      toast.success("ลิงก์ถูกคัดลอกแล้ว พร้อมส่งให้ลูกค้า")
     }
   }
 

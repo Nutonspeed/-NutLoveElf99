@@ -45,7 +45,7 @@ export default function InvoiceListPage() {
                 <div className="flex-1">{b.orderId}</div>
                 <div className="flex-1">{format(new Date(b.createdAt), "yyyy-MM-dd")}</div>
                 <div className="flex-1 text-right">
-                  <Link href={`/bill/${b.id}`}>
+                  <Link href={`/bills/${b.id}`}>
                     <Button variant="outline" size="sm">เปิด</Button>
                   </Link>
                 </div>
