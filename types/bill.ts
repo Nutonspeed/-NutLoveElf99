@@ -11,6 +11,8 @@ export interface BillPayment {
 export interface Bill {
   id: string
   orderId: string
+  /** Reference code displayed to customer */
+  referenceCode: string
   phone?: string
   pin?: string
   status: BillStatus

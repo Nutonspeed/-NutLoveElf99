@@ -8,7 +8,8 @@ import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import { orderDb } from "@/lib/order-database"
 import { createBill } from "@/lib/mock-bills"
-import type { OrderItem } from "@/types/order"
+import type { OrderItem, Order } from "@/types/order"
+import BillPreview from "@/components/BillPreview"
 import { toast } from "sonner"
 
 export default function AdminBillCreatePage() {
@@ -25,6 +26,33 @@ export default function AdminBillCreatePage() {
     0,
   )
   const total = subtotal - discount + shippingCost + tax
+  const previewOrder: Order = {
+    id: "PREVIEW",
+    customerId: "",
+    customerName: "",
+    customerEmail: "",
+    items: items.map((i) => ({
+      productId: i.id,
+      productName: i.productName,
+      quantity: i.quantity,
+      price: i.price,
+      size: i.size,
+      color: i.color,
+    })),
+    total,
+    status: "pending",
+    depositPercent: 100,
+    createdAt: new Date().toISOString(),
+    shippingAddress: { name: "", address: "", city: "", postalCode: "", phone: "" },
+    delivery_method: "",
+    tracking_number: "",
+    shipping_fee: shippingCost,
+    shipping_status: "pending",
+    packingStatus: "packing",
+    shipping_date: "",
+    delivery_note: "",
+    timeline: [],
+  }
 
   const create = async () => {
     if (items.length === 0) {
@@ -87,6 +115,16 @@ export default function AdminBillCreatePage() {
               onShippingCostChange={setShippingCost}
               onTaxChange={setTax}
             />
+            {items.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>พรีวิวบิล</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <BillPreview order={previewOrder} />
+                </CardContent>
+              </Card>
+            )}
             <Card>
               <CardHeader>
                 <CardTitle>สร้างบิล</CardTitle>
