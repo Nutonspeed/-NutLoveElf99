@@ -3,8 +3,9 @@ import { mockOrders } from "./mock-orders"
 import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
 import { addChatMessage } from "./mock-chat-messages"
+import { mockBills } from "./bills"
+export { mockBills } from "./bills"
 
-export let mockBills: Bill[] = []
 
 export function createBill(
   orderId: string,
