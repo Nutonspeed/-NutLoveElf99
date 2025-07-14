@@ -12,6 +12,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
 import { mockOrders } from "@/lib/mock-orders";
+import { mockProducts } from "@/lib/mock-products";
 import { mockFeedbacks } from "@/lib/mock-feedback";
 import { reviewReminder, loadReviewReminder } from "@/lib/mock-settings";
 import { toast } from "sonner";
@@ -85,7 +86,12 @@ export default function OrdersPage() {
   );
 
   const handleReorder = (order: Order) => {
-    order.items.forEach((item) => {
+    for (const item of order.items) {
+      const product = mockProducts.find((p) => p.id === item.productId)
+      if (!product || !product.inStock || product.status === "draft") {
+        toast.error(`สินค้า ${item.productName} ไม่สามารถสั่งซ้ำได้`)
+        return
+      }
       dispatch({
         type: "ADD_ITEM",
         payload: {
@@ -97,8 +103,8 @@ export default function OrdersPage() {
           size: item.size,
           color: item.color,
         },
-      });
-    });
+      })
+    }
     if (typeof window !== "undefined") {
       sessionStorage.setItem("reorderFromId", order.id);
     }
