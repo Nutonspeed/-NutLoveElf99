@@ -1,9 +1,18 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { chatWelcome, loadChatWelcome } from "@/lib/mock-chat";
+import { Button } from "@/components/ui/buttons/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/modals/dialog";
 import {
   addChatActivity,
   loadChatActivity,
@@ -15,11 +24,21 @@ export default function ChatPage() {
   const chatwootUrl =
     process.env.NEXT_PUBLIC_CHATWOOT_URL || "http://localhost:3000";
   const [message, setMessage] = useState(chatWelcome);
+  const [showError, setShowError] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const handleReload = () => {
+    if (iframeRef.current) {
+      iframeRef.current.src = chatwootUrl;
+    } else {
+      window.location.reload();
+    }
+    setShowError(false);
+  };
 
   useEffect(() => {
     loadChatWelcome();
     setMessage(chatWelcome);
-    window.open(chatwootUrl, "_blank");
     loadChatActivity();
     addChatActivity(user?.id || guestId!, "open_chat");
   }, [chatwootUrl]);
@@ -27,10 +46,34 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-1 flex items-center justify-center">
-        <p>{message}</p>
+      <div className="flex-1">
+        <iframe
+          ref={iframeRef}
+          src={chatwootUrl}
+          className="w-full h-full border-none"
+          onError={() => setShowError(true)}
+        />
       </div>
       <Footer />
+      <Dialog open={showError} onOpenChange={setShowError}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>เกิดข้อผิดพลาดในการโหลดแชท</DialogTitle>
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={handleReload}>reload</Button>
+            <Button asChild variant="secondary">
+              <Link
+                href="https://facebook.com/example"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Facebook page
+              </Link>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
