@@ -75,16 +75,18 @@ export default function AdminIndex() {
       <div className="flex flex-col gap-4 mb-4">
         <Button
           variant="default"
+          size="lg"
+          className="h-12"
           onClick={() => window.open(chatwootUrl, "_blank")}
         >
           แชทลูกค้า (Chatwoot)
         </Button>
         <Link href="/admin/dashboard">
-          <Button variant="outline">เข้าสู่แดชบอร์ด</Button>
+          <Button variant="outline" size="lg" className="h-12">เข้าสู่แดชบอร์ด</Button>
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="p-4 text-center">
             <p className="text-sm text-gray-600">ออเดอร์วันนี้</p>
