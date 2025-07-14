@@ -51,7 +51,7 @@ export default function SetDeliveryDatePage({ params }: { params: { id: string }
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 space-y-4">
         <div className="flex items-center space-x-4 mb-4">
-          <Link href={`/admin/orders/${id}`}>\
+          <Link href={`/admin/orders/${id}`}>
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>
