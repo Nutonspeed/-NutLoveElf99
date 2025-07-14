@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/inputs/input"
+import { Button } from "@/components/ui/buttons/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { heroBanner, loadHeroBanner, setHeroBanner } from "@/lib/mock-hero-banner"
 
 export default function AdminLandingPage() {

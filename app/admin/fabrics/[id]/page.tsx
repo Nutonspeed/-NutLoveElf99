@@ -7,8 +7,8 @@ import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/buttons/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 
 interface FabricDetailPageProps {
   params: { id: string }

@@ -7,10 +7,10 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+} from '@/components/ui/modals/dialog'
+import { Button } from '@/components/ui/buttons/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/ui/inputs/input'
 import { Label } from '@/components/ui/label'
 import { getProducts } from '@/lib/mock-products'
 import { createChatBill } from '@/lib/mock-chat-bills'

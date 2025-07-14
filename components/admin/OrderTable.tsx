@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import OrderStatusDropdown from "./orders/OrderStatusDropdown"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/modals/dialog"
 import { Eye, FileText } from "lucide-react"
 import Link from "next/link"
 import type { Order } from "@/types/order"

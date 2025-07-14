@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, Users, Award, Heart, Shield, Truck } from "lucide-react"
 import Image from "next/image"

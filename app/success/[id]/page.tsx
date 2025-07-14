@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/buttons/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
 import { mockOrders } from "@/lib/mock-orders";
 import { autoMessage, loadAutoMessage } from "@/lib/mock-settings";
 import { addFeedback } from "@/lib/mock-feedback";

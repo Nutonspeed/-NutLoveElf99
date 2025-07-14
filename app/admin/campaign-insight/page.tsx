@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/buttons/button";
 import { ArrowLeft } from "lucide-react";
 import { loadCampaignReports, mockCampaignReports } from "@/lib/mock-campaigns";
 import CampaignReportCard from "@/components/CampaignReportCard";

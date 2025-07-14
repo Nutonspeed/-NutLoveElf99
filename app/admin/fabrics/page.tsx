@@ -6,8 +6,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/buttons/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import {
   Table,
   TableBody,
@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
 

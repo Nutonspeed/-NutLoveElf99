@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/cards/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function ProductSkeleton() {

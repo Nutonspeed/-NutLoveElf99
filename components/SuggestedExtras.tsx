@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/buttons/button'
 import { mockOrders } from '@/lib/mock-orders'
 import { mockProducts } from '@/lib/mock-products'
 import { useCart } from '@/contexts/cart-context'

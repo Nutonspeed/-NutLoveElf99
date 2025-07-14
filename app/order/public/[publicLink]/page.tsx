@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/buttons/button"
 import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { CheckCircle, Clock, Package, Truck, MapPin, Phone, Mail, Calendar } from "lucide-react"

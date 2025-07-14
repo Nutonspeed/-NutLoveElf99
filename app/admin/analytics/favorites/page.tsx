@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/buttons/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { useLocalStorage } from '@/hooks/use-local-storage'
 import { mockFabrics } from '@/lib/mock-fabrics'
 

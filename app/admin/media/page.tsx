@@ -2,9 +2,9 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/buttons/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
+import { Input } from '@/components/ui/inputs/input'
 import { useAuth } from '@/contexts/auth-context'
 import { getMedia } from '@/lib/mock-media'
 

@@ -2,8 +2,8 @@
 
 import { useAuth } from "@/contexts/auth-context"
 import { isDevMock } from "@/lib/mock-settings"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
+import { Button } from "@/components/ui/buttons/button"
 import {
   mockOrders,
   regenerateMockOrders,
