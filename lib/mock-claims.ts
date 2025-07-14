@@ -9,13 +9,30 @@ export interface Claim {
 let initialClaims: Claim[] = []
 export let mockClaims: Claim[] = [...initialClaims]
 
+export function loadClaims() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('claims')
+    if (stored) mockClaims = JSON.parse(stored)
+  }
+}
+
+function save() {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('claims', JSON.stringify(mockClaims))
+  }
+}
+
 export function createClaim(data: Omit<Claim, 'id' | 'status'>) {
+  if (mockClaims.some(c => c.orderId === data.orderId)) {
+    return null
+  }
   const newClaim: Claim = {
     id: Date.now().toString(),
     status: 'pending',
     ...data,
   }
   mockClaims.push(newClaim)
+  save()
   return newClaim
 }
 

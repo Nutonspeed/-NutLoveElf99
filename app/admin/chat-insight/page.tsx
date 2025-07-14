@@ -16,11 +16,13 @@ import {
   listCustomerNotes,
   loadCustomerNotes,
 } from '@/lib/mock-customer-notes'
+import { useAuth } from '@/contexts/auth-context'
 import { format } from 'date-fns'
 
 export default function ChatInsightPage() {
   const [bills, setBills] = useState(listChatBills())
   const [, setRefresh] = useState(0)
+  const { user } = useAuth()
   useEffect(() => {
     loadChatBills()
     loadCustomerNotes()
@@ -59,8 +61,8 @@ export default function ChatInsightPage() {
                   size="sm"
                   onClick={() => {
                     const txt = window.prompt('เพิ่มโน้ต')
-                    if (txt) {
-                      addCustomerNote(b.sessionId, txt)
+                    if (txt && txt.length < 300) {
+                      addCustomerNote(b.sessionId, txt, user?.id || 'admin')
                       setRefresh((v) => v + 1)
                     }
                   }}

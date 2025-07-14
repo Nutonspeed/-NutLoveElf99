@@ -1,10 +1,10 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { addFeedback } from "@/lib/mock-feedback";
+import { addFeedback, loadFeedbacks, mockFeedbacks } from "@/lib/mock-feedback";
 import { Star } from "lucide-react";
 
 export default function FeedbackPage({
@@ -16,16 +16,29 @@ export default function FeedbackPage({
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    loadFeedbacks();
+    const c = Number(localStorage.getItem('fbCount') || '0');
+    setCount(c);
+    if (mockFeedbacks.some((f) => f.orderId === orderId)) {
+      setSubmitted(true);
+    }
+  }, [orderId]);
 
   const submit = () => {
-    if (rating === 0 || submitted) return;
-    addFeedback({
+    if (rating === 0 || submitted || count >= 5) return;
+    const ok = addFeedback({
       orderId,
       rating,
       comment,
       createdAt: new Date().toISOString(),
     });
-    setSubmitted(true);
+    if (ok) {
+      localStorage.setItem('fbCount', String(count + 1));
+      setSubmitted(true);
+    }
   };
 
   return (
@@ -57,11 +70,14 @@ export default function FeedbackPage({
                 />
                 <Button
                   onClick={submit}
-                  disabled={rating === 0}
+                  disabled={rating === 0 || count >= 5}
                   className="w-full"
                 >
                   ส่งความคิดเห็น
                 </Button>
+                {count >= 5 && (
+                  <p className="text-sm text-red-600">ส่งได้สูงสุด 5 ครั้ง</p>
+                )}
               </>
             ) : (
               <p className="text-green-600">บันทึกความคิดเห็นแล้ว</p>

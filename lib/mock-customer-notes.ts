@@ -1,6 +1,7 @@
 export interface CustomerNote {
   id: string
   customerId: string
+  adminId: string
   note: string
   createdAt: string
 }
@@ -20,10 +21,11 @@ function save() {
   }
 }
 
-export function addCustomerNote(customerId: string, note: string): CustomerNote {
+export function addCustomerNote(customerId: string, note: string, adminId: string = 'unknown'): CustomerNote {
   const entry: CustomerNote = {
     id: Date.now().toString(),
     customerId,
+    adminId,
     note,
     createdAt: new Date().toISOString(),
   }
@@ -32,6 +34,6 @@ export function addCustomerNote(customerId: string, note: string): CustomerNote 
   return entry
 }
 
-export function listCustomerNotes(customerId: string): CustomerNote[] {
-  return customerNotes.filter((n) => n.customerId === customerId)
+export function listCustomerNotes(customerId: string, adminId?: string): CustomerNote[] {
+  return customerNotes.filter((n) => n.customerId === customerId && (!adminId || n.adminId === adminId))
 }

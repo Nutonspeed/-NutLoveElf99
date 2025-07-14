@@ -5,6 +5,8 @@ export interface CustomerTag {
   createdAt: string
 }
 
+export const defaultTags = ['สายหวาน', 'ขาประจำ', 'อารมณ์ร้อน']
+
 export let customerTags: CustomerTag[] = []
 
 export function loadCustomerTags() {
@@ -21,6 +23,9 @@ function save() {
 }
 
 export function addCustomerTag(customerId: string, tag: string): CustomerTag {
+  if (customerTags.some((t) => t.customerId === customerId && t.tag === tag)) {
+    return customerTags.find((t) => t.customerId === customerId && t.tag === tag)!;
+  }
   const entry: CustomerTag = {
     id: Date.now().toString(),
     customerId,
@@ -37,6 +42,8 @@ export function listCustomerTags(customerId: string): CustomerTag[] {
 }
 
 export function removeCustomerTag(id: string) {
+  const tag = customerTags.find((t) => t.id === id)
+  if (tag && defaultTags.includes(tag.tag)) return
   customerTags = customerTags.filter((t) => t.id !== id)
   save()
 }
