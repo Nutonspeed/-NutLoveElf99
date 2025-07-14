@@ -14,6 +14,8 @@ import { Input } from '@/components/ui/inputs/input'
 import { Label } from '@/components/ui/label'
 import { getProducts } from '@/lib/mock-products'
 import { createChatBill } from '@/lib/mock-chat-bills'
+import { resetChatMessages } from '@/lib/mock-chat-messages'
+import { useToast } from '@/hooks/use-toast'
 
 export default function CreateChatBillDialog({
   onCreated,
@@ -27,6 +29,8 @@ export default function CreateChatBillDialog({
   const [fbName, setFbName] = useState('')
   const [fbLink, setFbLink] = useState('')
   const [sessionId, setSessionId] = useState('')
+  const [creating, setCreating] = useState(false)
+  const { toast } = useToast()
   const total = products.reduce((sum, p) => sum + (selected[p.id] ? p.price : 0), 0)
 
   useEffect(() => {
@@ -36,29 +40,40 @@ export default function CreateChatBillDialog({
   }, [])
 
   const handleCreate = () => {
+    if (creating) return
+    setCreating(true)
+    toast({ description: 'กำลังสร้างบิล...' })
     const items = products
       .filter((p) => selected[p.id])
       .map((p) => ({ productId: p.id, name: p.name, price: p.price, quantity: 1 }))
     if (items.length === 0) {
       alert('เลือกสินค้าอย่างน้อย 1 รายการ')
+      setCreating(false)
       return
     }
-    const bill = createChatBill({
-      fbName,
-      fbLink,
-      sessionId,
-      items,
-      discount,
-      total: items.reduce((s, i) => s + i.price, 0) - discount,
-    })
-    setOpen(false)
-    onCreated(bill.billId)
-    // reset
-    setSelected({})
-    setDiscount(0)
-    setFbName('')
-    setFbLink('')
-    setSessionId('')
+    try {
+      const bill = createChatBill({
+        fbName,
+        fbLink,
+        sessionId,
+        items,
+        discount,
+        total: items.reduce((s, i) => s + i.price, 0) - discount,
+      })
+      setOpen(false)
+      onCreated(bill.billId)
+      resetChatMessages()
+      // reset
+      setSelected({})
+      setDiscount(0)
+      setFbName('')
+      setFbLink('')
+      setSessionId('')
+    } catch (err) {
+      console.error(err)
+      toast({ title: 'เกิดข้อผิดพลาด', variant: 'destructive' })
+    }
+    setTimeout(() => setCreating(false), 2000)
   }
 
   return (
@@ -103,7 +118,9 @@ export default function CreateChatBillDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button onClick={handleCreate}>สร้างบิล</Button>
+          <Button onClick={handleCreate} disabled={creating}>
+            สร้างบิล
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

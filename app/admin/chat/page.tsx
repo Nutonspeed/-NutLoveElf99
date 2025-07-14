@@ -5,19 +5,26 @@ import CreateChatBillDialog from '@/components/admin/chat/CreateChatBillDialog'
 import ChatHotkey from './hotkey'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
+import { useToast } from '@/hooks/use-toast'
+import ChatwootFrame from '@/components/ChatwootFrame'
 
 export default function AdminChatPage() {
   const chatwootUrl = process.env.NEXT_PUBLIC_CHATWOOT_URL || 'http://localhost:3000'
   const [newBillId, setNewBillId] = useState<string | null>(null)
+  const { toast } = useToast()
   useEffect(() => {
-    window.open(chatwootUrl, '_blank')
-  }, [chatwootUrl])
+    const w = window.open(chatwootUrl, '_blank')
+    if (!w) {
+      toast({ title: 'ไม่สามารถเปิดหน้าต่างแชทได้', variant: 'destructive' })
+    }
+  }, [chatwootUrl, toast])
 
   const origin = typeof window !== 'undefined' ? window.location.origin : ''
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
+    <div className="flex min-h-screen flex-col items-center justify-center space-y-4 p-4 text-center">
       <p>กำลังเปิดหน้าต่างแชท...</p>
+      <ChatwootFrame url={chatwootUrl} />
       <CreateChatBillDialog onCreated={setNewBillId} />
       <ChatHotkey />
       {newBillId && (
