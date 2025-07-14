@@ -11,7 +11,11 @@ export default function FeedbackListPage() {
   const [items, setItems] = useState(mockFeedbacks);
   useEffect(() => {
     loadFeedbacks();
-    setItems([...mockFeedbacks]);
+    const filtered = mockFeedbacks.filter((fb) => {
+      if (typeof window === "undefined") return true;
+      return !localStorage.getItem("fb-" + fb.orderId);
+    });
+    setItems(filtered);
   }, []);
 
   return (

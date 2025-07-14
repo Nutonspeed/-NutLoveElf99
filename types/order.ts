@@ -97,6 +97,8 @@ export interface Order {
   packingStatus: PackingStatus
   shipping_date: string
   delivery_note: string
+  /** Base64 label image */
+  labelImage?: string
   /** Scheduled date and time for delivery */
   scheduledDelivery?: string
   reorderedFromId?: string
