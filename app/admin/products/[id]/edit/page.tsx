@@ -23,6 +23,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const router = useRouter()
 
   const [loading, setLoading] = useState(true)
+  const [notFound, setNotFound] = useState(false)
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
@@ -59,6 +60,8 @@ export default function EditProductPage({ params }: EditProductPageProps) {
       setImages(p.images.join(','))
       setStatus(p.status ?? 'active')
       setIsCurated(!!p.curated)
+    } else {
+      setNotFound(true)
     }
     setLoading(false)
   }, [params.id, products])
@@ -68,7 +71,24 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   }
 
   if (loading) {
-    return <div>Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        กำลังโหลดข้อมูล...
+      </div>
+    )
+  }
+
+  if (notFound) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="space-y-4 text-center">
+          <p>ไม่พบข้อมูล</p>
+          <Link href="/admin/dashboard">
+            <Button>กลับแดชบอร์ด</Button>
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {

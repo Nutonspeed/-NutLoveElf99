@@ -8,8 +8,15 @@ export function useAdminGuard() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [conflict, setConflict] = useState(false)
 
   useEffect(() => {
+    const cookies =
+      typeof document !== 'undefined' ? document.cookie : ''
+    if (cookies.includes('elf_admin_session') && cookies.includes('chatwoot_session')) {
+      setConflict(true)
+      return
+    }
     if (!isAuthenticated) {
       router.replace("/login")
       return
@@ -20,6 +27,5 @@ export function useAdminGuard() {
     }
     setLoading(false)
   }, [isAuthenticated, user, router])
-
-  return { isAdmin: isAuthenticated && user?.role === "admin", loading }
+  return { isAdmin: isAuthenticated && user?.role === "admin", loading, conflict }
 }

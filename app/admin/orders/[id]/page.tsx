@@ -53,14 +53,24 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
       if (process.env.NODE_ENV === 'development') {
         console.warn('Mock Error at orders/[id]')
       }
-      router.replace('/admin/orders')
     }
     setPayment(getPayment(id))
     loadChatStatus()
     setChatSent(mockChatStatus[id] || false)
   }, [order, router])
 
-  if (!order) return null
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="space-y-4 text-center">
+          <p>ไม่พบข้อมูล</p>
+          <Link href="/admin/dashboard">
+            <Button>กลับแดชบอร์ด</Button>
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   const handleAddEntry = (entry: TimelineEntry) => {
     mockOrders[orderIndex].timeline.push(entry)
