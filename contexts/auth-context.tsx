@@ -39,12 +39,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const foundUser = mockUsers.find((u) => u.email === email)
     if (foundUser && password === "password") {
       setUser(foundUser)
+      if (typeof document !== 'undefined') {
+        document.cookie = 'elf_admin_session=1; path=/'
+      }
       return true
     }
     return false
   }
 
   const logout = () => {
+    if (typeof document !== 'undefined') {
+      document.cookie =
+        'elf_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    }
     setUser(null)
   }
 

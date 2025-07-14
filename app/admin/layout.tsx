@@ -14,7 +14,7 @@ import QuickActionBar from "@/components/admin/QuickActionBar"
 import ErrorBoundary from "@/components/ErrorBoundary"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const { loading, isAdmin } = useAdminGuard()
+  const { loading, isAdmin, conflict } = useAdminGuard()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const isMobile = useIsMobile()
 
@@ -25,6 +25,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p>กำลังตรวจสอบสิทธิ์...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (conflict) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>session conflict detected</p>
       </div>
     )
   }
