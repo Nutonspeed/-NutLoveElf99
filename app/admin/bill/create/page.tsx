@@ -50,7 +50,7 @@ export default function AdminBillCreatePage() {
     } catch (e) {
       toast.error("เกิดข้อผิดพลาด")
     } finally {
-      setLoading(false)
+      setTimeout(() => setLoading(false), 3000)
     }
   }
 

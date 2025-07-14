@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import CreateChatBillDialog from '@/components/admin/chat/CreateChatBillDialog'
+import ChatHotkey from './hotkey'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 
@@ -18,6 +19,7 @@ export default function AdminChatPage() {
     <div className="flex min-h-screen flex-col items-center justify-center space-y-4">
       <p>กำลังเปิดหน้าต่างแชท...</p>
       <CreateChatBillDialog onCreated={setNewBillId} />
+      <ChatHotkey />
       {newBillId && (
         <div className="space-y-2 text-center">
           <p>บิลสร้างแล้ว:</p>

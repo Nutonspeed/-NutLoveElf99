@@ -44,6 +44,14 @@ export function confirmBill(id: string) {
   }
 }
 
+export function cancelBill(id: string) {
+  const b = getBill(id)
+  if (b) {
+    b.status = "cancelled"
+    addAdminLog(`cancel bill ${id}`, 'mockAdminId')
+  }
+}
+
 export function addBillPayment(id: string, payment: BillPayment) {
   const b = getBill(id)
   if (b) b.payments.push(payment)
