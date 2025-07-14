@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, PrinterIcon as Print, Edit } from "lucide-react"
+import { SendToChatModal } from "@/components/admin/SendToChatModal"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Separator } from "@/components/ui/separator"
@@ -47,6 +48,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
   const [payment, setPayment] = useState(() => getPayment(id))
   const [chatSent, setChatSent] = useState<boolean>(mockChatStatus[id] || false)
+  const [showSendModal, setShowSendModal] = useState(false)
 
   useEffect(() => {
     if (!order) {
@@ -177,6 +179,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               >
                 ส่งบิลให้ลูกค้าผ่านแชท
               </Button>
+              <button
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                onClick={() => setShowSendModal(true)}
+              >
+                ส่งบิลเข้าแชท
+              </button>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -384,6 +392,12 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           </Button>
         </div>
       </div>
+      {showSendModal && (
+        <SendToChatModal
+          orderId={order.id}
+          onClose={() => setShowSendModal(false)}
+        />
+      )}
     </div>
   )
 }
