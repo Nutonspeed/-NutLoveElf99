@@ -1,32 +1,21 @@
-import Link from "next/link"
-import { AlertCircle, type LucideIcon } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { type ReactNode } from "react"
 
 interface FallbackCenterProps {
-  icon?: LucideIcon
+  icon?: ReactNode
   title?: string
   subtitle?: string
-  href?: string
 }
 
 export default function FallbackCenter({
-  icon: Icon = AlertCircle,
-  title = "Coming soon",
-  subtitle,
-  href = "/",
+  icon = "🚧",
+  title = "หน้านี้ยังไม่พร้อมใช้งาน",
+  subtitle = "อยู่ระหว่างการพัฒนา เตรียมพบกันเร็ว ๆ นี้",
 }: FallbackCenterProps) {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="space-y-4 text-center">
-        <Icon className="mx-auto h-10 w-10 text-gray-400" />
-        <h1 className="text-2xl font-semibold">{title}</h1>
-        {subtitle && <p className="text-gray-500">{subtitle}</p>}
-        {href && (
-          <Link href={href}>
-            <Button>กลับหน้าแรก</Button>
-          </Link>
-        )}
-      </div>
+    <div className="flex flex-col items-center justify-center h-full text-center py-16 text-gray-500">
+      <div className="text-5xl mb-4">{icon}</div>
+      <h2 className="text-xl font-semibold mb-2">{title}</h2>
+      <p className="text-sm">{subtitle}</p>
     </div>
   )
 }

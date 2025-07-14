@@ -1,6 +1,11 @@
 import FallbackCenter from "@/components/FallbackCenter"
-import { List } from "lucide-react"
 
 export default function DevLogPage() {
-  return <FallbackCenter icon={List} subtitle="บันทึกสำหรับนักพัฒนา" />
+  return (
+    <FallbackCenter
+      icon="📝"
+      title="Dev Log ยังไม่พร้อม"
+      subtitle="อยู่ระหว่างการพัฒนา เตรียมพบกันเร็ว ๆ นี้"
+    />
+  )
 }
