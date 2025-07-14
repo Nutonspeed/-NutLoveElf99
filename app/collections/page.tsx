@@ -7,6 +7,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { getCollections } from "@/lib/mock-collections"
 import type { Collection } from "@/types/collection"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "คอลเลกชันลายผ้า | SofaCover Pro",
+  description: "สำรวจคอลเลกชันลายผ้าสำหรับผ้าคลุมโซฟาที่มีให้เลือก",
+  openGraph: { title: "คอลเลกชันลายผ้า | SofaCover Pro" },
+}
 
 
 export default function CollectionsPage() {
@@ -51,6 +58,9 @@ export default function CollectionsPage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex-1">
         <h1 className="text-3xl font-bold mb-6">คอลเลกชันลายผ้า</h1>
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-900">
+          กำลังมองหาผ้าคลุมโซฟาเข้ารูปใช่ไหม? <Link href="/sofa-covers" className="underline text-blue-600">ดูลายผ้าสำหรับผ้าคลุมโซฟา</Link>
+        </div>
         {collections.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {collections.map((collection: Collection) => (
