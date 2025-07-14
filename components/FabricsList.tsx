@@ -53,7 +53,7 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                     src={
                       fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
                     }
-                    alt={fabric.name}
+                    alt={`ผ้าคลุมโซฟา ลาย ${fabric.name}`}
                     fill
                     className="object-cover"
                   />

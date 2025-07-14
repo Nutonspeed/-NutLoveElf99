@@ -62,7 +62,7 @@ export default function CollectionsPage() {
                 <div className="grid grid-cols-2 gap-0 border-b">
                   {collection.images.slice(0, 4).map((img, idx) => (
                     <div key={idx} className="relative aspect-square">
-                      <Image src={img || "/placeholder.svg"} alt={collection.name} fill className="object-cover" />
+                      <Image src={img || "/placeholder.svg"} alt={`ผ้าคลุมโซฟา ลาย ${collection.name}`} fill className="object-cover" />
                     </div>
                   ))}
                 </div>
