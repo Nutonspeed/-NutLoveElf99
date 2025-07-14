@@ -10,7 +10,7 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
-import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
+import { getQuickBill } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
 import EmptyState from "@/components/EmptyState"
@@ -35,13 +35,14 @@ export default function BillPage({ params }: { params: { id: string } }) {
     getMockNow().getTime() > baseDate.getTime() + 3 * 24 * 60 * 60 * 1000
 
   if (!bill && !quickBill) {
-    if (!getBillLink(id)) {
-      if (typeof window !== "undefined") {
-        window.location.replace("/bill/unknown")
-      }
-      return null
-    }
-    return <EmptyState title="ไม่พบบิล" subtitle="ตรวจสอบลิงก์อีกครั้ง" />
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4">
+        <EmptyState title="ไม่พบบิล" subtitle="ตรวจสอบลิงก์อีกครั้ง" />
+        <Link href="/">
+          <Button>ย้อนกลับ</Button>
+        </Link>
+      </div>
+    )
   }
 
   const handlePrint = () => {
