@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import { orderDb } from "@/lib/order-database"
@@ -19,6 +20,7 @@ export default function AdminBillCreatePage() {
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
+  const [qrOpen, setQrOpen] = useState(false)
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
@@ -52,6 +54,17 @@ export default function AdminBillCreatePage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const downloadMockQr = () => {
+    const link = document.createElement("a")
+    if (typeof link.download === "undefined") {
+      alert("เบราว์เซอร์ไม่รองรับการดาวน์โหลด")
+      return
+    }
+    link.href = "/placeholder.svg"
+    link.download = "mock-qr.png"
+    link.click()
   }
 
   const copyLink = () => {
@@ -95,6 +108,29 @@ export default function AdminBillCreatePage() {
                 <Button className="w-full hidden sm:block" onClick={create} disabled={loading}>
                   บันทึกบิล
                 </Button>
+                {process.env.NODE_ENV === "development" && (
+                  <Dialog open={qrOpen} onOpenChange={setQrOpen}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" className="w-full">
+                        ดูตัวอย่าง QR
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="space-y-4 text-center">
+                      <DialogHeader>
+                        <DialogTitle>ตัวอย่าง QR</DialogTitle>
+                      </DialogHeader>
+                      <img
+                        src="/placeholder.svg"
+                        alt="QR"
+                        className="mx-auto w-full max-w-[250px] h-auto"
+                      />
+                      <Button onClick={downloadMockQr}>ดาวน์โหลด</Button>
+                      <Button variant="outline" onClick={() => setQrOpen(false)}>
+                        ปิดหน้าต่าง
+                      </Button>
+                    </DialogContent>
+                  </Dialog>
+                )}
                 {billLink && (
                   <div className="space-y-2 text-center">
                     <img

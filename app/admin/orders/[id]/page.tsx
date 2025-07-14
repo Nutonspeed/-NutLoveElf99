@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, PrinterIcon as Print, Edit } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -31,6 +32,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
+  const [platform, setPlatform] = useState("Facebook")
 
   useEffect(() => {
     if (!order) {
@@ -137,6 +139,44 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               >
                 คัดลอกลิงก์
               </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={!getBillLink(id)}
+                    title={getBillLink(id) ? undefined : "ไม่พบลิงก์บิลนี้"}
+                  >
+                    ส่งบิลผ่านแชท
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="space-y-4">
+                  <DialogHeader>
+                    <DialogTitle>ส่งบิลในแชท</DialogTitle>
+                  </DialogHeader>
+                  <Select value={platform} onValueChange={setPlatform}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Facebook">Facebook</SelectItem>
+                      <SelectItem value="LINE">LINE</SelectItem>
+                      <SelectItem value="IG">IG</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={() => {
+                      const link = getBillLink(id)
+                      if (link) {
+                        const msg = `สวัสดีค่ะ 🙏 นี่คือลิงก์บิลของคุณ:\n${link}\nแจ้งชำระแล้วทักกลับได้เลยนะคะ 💬`
+                        navigator.clipboard.writeText(msg)
+                        toast.success("คัดลอกข้อความแล้ว")
+                      }
+                    }}
+                  >
+                    คัดลอกข้อความ
+                  </Button>
+                </DialogContent>
+              </Dialog>
               <Button variant="outline" onClick={handleReorder}>
                 สั่งซ้ำ
               </Button>
