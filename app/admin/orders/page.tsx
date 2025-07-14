@@ -174,7 +174,39 @@ export default function AdminOrdersPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <Table>
+            <div className="md:hidden space-y-4 mb-4">
+              {filteredOrders.map((order) => (
+                <details key={order.id} className="rounded-lg border p-4">
+                  <summary className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className="font-medium">{order.customerName}</p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString("th-TH")}
+                      </p>
+                    </div>
+                    {statusTag(order)}
+                  </summary>
+                  <div className="mt-2 space-y-1 text-sm">
+                    <p>รหัส: {order.id}</p>
+                    <p>ยอดรวม: ฿{order.total.toLocaleString()}</p>
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    <Link href={`/admin/orders/${order.id}`}>
+                      <Button size="sm">ดู</Button>
+                    </Link>
+                    <Button
+                      size="sm"
+                      onClick={() => updateOrderStatus(order.id, "completed")}
+                    >
+                      ปิดยอด
+                    </Button>
+                  </div>
+                </details>
+              ))}
+            </div>
+
+            <div className="hidden md:block overflow-x-auto">
+            <Table className="min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>รหัสคำสั่งซื้อ</TableHead>
@@ -415,6 +447,7 @@ export default function AdminOrdersPage() {
                 ))}
               </TableBody>
             </Table>
+            </div>
 
             {filteredOrders.length === 0 && (
               <div className="text-center py-8">

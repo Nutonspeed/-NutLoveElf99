@@ -10,6 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import { AdminProductsProvider } from "@/contexts/admin-products-context"
 import { AdminCollectionsProvider } from "@/contexts/admin-collections-context"
 import { AdminToast } from "@/components/admin/AdminToast"
+import QuickActionBar from "@/components/admin/QuickActionBar"
 import ErrorBoundary from "@/components/ErrorBoundary"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -47,8 +48,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <div className="flex flex-1 flex-col">
               <Topbar onMenuClick={() => setSidebarOpen(true)} />
-              <main className="flex-1 p-4">{children}</main>
+              <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
               <AdminToast />
+              <QuickActionBar />
             </div>
           </div>
         </AdminProductsProvider>

@@ -32,25 +32,25 @@ export default function AdminOpenBillQuick() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20">
       <div className="container mx-auto px-4 py-8 space-y-6">
         <h1 className="text-3xl font-bold">เปิดบิลแบบรวดเร็ว</h1>
-        <Card>
+        <Card className="p-4 border">
           <CardHeader>
             <CardTitle>ข้อมูลลูกค้า</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Input placeholder="ชื่อลูกค้า" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
-            <Input placeholder="เบอร์ติดต่อ" value={phone} onChange={(e) => setPhone(e.target.value)} />
-            <Input placeholder="หมายเหตุ" value={note} onChange={(e) => setNote(e.target.value)} />
+            <Input className="w-full" placeholder="ชื่อลูกค้า" value={customerName} onChange={(e) => setCustomerName(e.target.value)} />
+            <Input className="w-full" placeholder="เบอร์ติดต่อ" value={phone} onChange={(e) => setPhone(e.target.value)} />
+            <Input className="w-full" placeholder="หมายเหตุ" value={note} onChange={(e) => setNote(e.target.value)} />
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-4 border">
           <CardHeader>
             <CardTitle>รายการสินค้า</CardTitle>
           </CardHeader>
-          <CardContent>
-            <Table>
+          <CardContent className="overflow-x-auto">
+            <Table className="min-w-full">
               <TableHeader>
                 <TableRow>
                   <TableHead>ชื่อสินค้า</TableHead>
@@ -62,13 +62,13 @@ export default function AdminOpenBillQuick() {
                 {items.map((item, idx) => (
                   <TableRow key={idx}>
                     <TableCell>
-                      <Input value={item.name} onChange={(e) => updateItem(idx, "name", e.target.value)} />
+                      <Input className="w-full" value={item.name} onChange={(e) => updateItem(idx, "name", e.target.value)} />
                     </TableCell>
                     <TableCell>
-                      <Input type="number" value={item.qty} onChange={(e) => updateItem(idx, "qty", e.target.value)} />
+                      <Input className="w-full" type="number" value={item.qty} onChange={(e) => updateItem(idx, "qty", e.target.value)} />
                     </TableCell>
                     <TableCell>
-                      <Input type="number" value={item.price} onChange={(e) => updateItem(idx, "price", e.target.value)} />
+                      <Input className="w-full" type="number" value={item.price} onChange={(e) => updateItem(idx, "price", e.target.value)} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -77,7 +77,7 @@ export default function AdminOpenBillQuick() {
             <Button variant="outline" className="mt-2" onClick={addItem}>เพิ่มสินค้าใหม่</Button>
           </CardContent>
         </Card>
-        <Button onClick={save}>บันทึกบิล</Button>
+        <Button className="fixed bottom-4 left-4 right-4" onClick={save}>บันทึกบิล</Button>
       </div>
     </div>
   )
