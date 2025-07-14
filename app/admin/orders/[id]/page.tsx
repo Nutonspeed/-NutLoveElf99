@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { getBillLink } from "@/lib/mock-quick-bills"
 import { getPayment, verifyPayment } from "@/lib/mock/payment"
+import { mockChatStatus, loadChatStatus, markChatSent } from "@/lib/mock/chat"
 
 const statusTag = (o: Order) => {
   if (o.status === "depositPaid")
@@ -45,6 +46,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
   const [payment, setPayment] = useState(() => getPayment(id))
+  const [chatSent, setChatSent] = useState<boolean>(mockChatStatus[id] || false)
 
   useEffect(() => {
     if (!order) {
@@ -54,6 +56,8 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
       router.replace('/admin/orders')
     }
     setPayment(getPayment(id))
+    loadChatStatus()
+    setChatSent(mockChatStatus[id] || false)
   }, [order, router])
 
   if (!order) return null
@@ -122,6 +126,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           <CardContent className="space-y-4">
             <OrderStatusDropdown status={status} onChange={setStatus} />
             {statusTag(order)}
+            <Badge variant="outline">
+              {chatSent ? '🟢 ส่งแล้วในแชท' : '⚪ ยังไม่ได้ส่ง'}
+            </Badge>
             <div className="flex space-x-2 mt-2">
               {order.items.length > 0 && (
                 <Button variant="outline" onClick={() => window.open(`/admin/orders/${id}/print`, "_blank") }>
@@ -142,6 +149,27 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               <Button
                 variant="outline"
                 onClick={() => {
+                  try {
+                    const url = `http://localhost:3001/inbox/123?msg=/b/${id}`
+                    const w = window.open(url, '_blank')
+                    if (!w) throw new Error('no-window')
+                    markChatSent(id)
+                    setChatSent(true)
+                  } catch (err) {
+                    toast.error('เปิดแชทไม่ได้ กรุณาตรวจสอบเซิร์ฟเวอร์')
+                    const link = getBillLink(id)
+                    if (link) {
+                      navigator.clipboard.writeText(link)
+                      toast.success('คัดลอกลิงก์บิลแทน')
+                    }
+                  }
+                }}
+              >
+                ส่งบิลให้ลูกค้าผ่านแชท
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
                   const link = getBillLink(id)
                   if (link) {
                     navigator.clipboard.writeText(link)
@@ -152,8 +180,8 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                 title={getBillLink(id) ? undefined : "ไม่พบลิงก์บิลนี้"}
               >
                 คัดลอกลิงก์
-          </Button>
-          <Button variant="outline" onClick={handleReorder}>
+              </Button>
+              <Button variant="outline" onClick={handleReorder}>
             สั่งซ้ำ
           </Button>
         </div>

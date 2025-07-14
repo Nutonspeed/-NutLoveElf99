@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Badge } from "@/components/ui/badge";
 import { mockOrders, updateOrderStatus } from "@/lib/mock/orders";
 import { mockNotifications } from "@/lib/mock-notifications";
+import { chatNotifications } from "@/lib/mock/chat-notify";
 import type { Order } from "@/types/order";
 import { toast } from "sonner";
 
@@ -126,6 +127,23 @@ export default function AdminIndex() {
             </ul>
           ) : (
             <p>ไม่มีแจ้งเตือนล่าสุด</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>การแจ้งเตือนจากแชท</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {chatNotifications.length ? (
+            <ul className="list-disc pl-5 space-y-1">
+              {chatNotifications.map((n) => (
+                <li key={n.id}>{n.message}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>ไม่มีการแจ้งเตือนจากแชท</p>
           )}
         </CardContent>
       </Card>
