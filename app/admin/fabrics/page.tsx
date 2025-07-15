@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
-import { supabase } from "@/lib/supabase"
+import { mockFabrics } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import {
@@ -42,29 +42,15 @@ export default function AdminFabricsPage() {
   const [collectionFilter, setCollectionFilter] = useState("all")
   const [collectionOptions, setCollectionOptions] = useState<{id: string; name: string}[]>([])
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (
       typeof window !== "undefined" &&
       !window.confirm("คุณต้องการลบลายผ้านี้ใช่หรือไม่?")
     )
       return
 
-    const previous = fabrics
-    setFabrics(fabrics.filter((f) => f.id !== id))
-
-    const { error } = await supabase?.from("fabrics").delete().eq("id", id)
-
-    if (error) {
-      console.error("Failed to delete fabric", error)
-      setFabrics(previous)
-      toast({
-        title: "เกิดข้อผิดพลาด",
-        description: "ไม่สามารถลบลายผ้าได้",
-        variant: "destructive",
-      })
-    } else {
-      toast({ title: "ลบลายผ้าแล้ว" })
-    }
+    setFabrics((prev) => prev.filter((f) => f.id !== id))
+    toast({ title: "ลบลายผ้าแล้ว" })
   }
 
   useEffect(() => {
@@ -79,32 +65,22 @@ export default function AdminFabricsPage() {
   }, [isAuthenticated, user, router])
 
   useEffect(() => {
-    const fetchFabrics = async () => {
-      if (!supabase) return
-      const { data: fabricsData, error } = await supabase
-        .from("fabrics")
-        .select("id, name, sku, collection_id, image_url, price_min, price_max")
-      if (error || !fabricsData) {
-        console.error("Failed to fetch fabrics", error)
-        return
-      }
-      const { data: collectionsData } = await supabase
-        .from("collections")
-        .select("id, name")
-      const collectionMap: Record<string, string> = {}
-      collectionsData?.forEach((c) => {
-        collectionMap[c.id] = c.name
-      })
-      if (collectionsData) {
-        setCollectionOptions(collectionsData)
-      }
-      const withCollectionName = fabricsData.map((f) => ({
-        ...f,
-        collection_name: collectionMap[f.collection_id] || null,
+    setFabrics(
+      mockFabrics.map((f) => ({
+        id: f.id,
+        name: f.name,
+        sku: f.sku,
+        collection_id: f.collectionSlug,
+        image_url: f.images[0],
+        price_min: f.price,
+        price_max: f.price,
+        collection_name: f.collectionSlug,
       }))
-      setFabrics(withCollectionName)
-    }
-    fetchFabrics()
+    )
+    const collections = Array.from(new Set(mockFabrics.map((f) => f.collectionSlug))).map(
+      (slug) => ({ id: slug, name: slug })
+    )
+    setCollectionOptions(collections)
   }, [])
 
   const filteredFabrics = fabrics.filter((f) => {

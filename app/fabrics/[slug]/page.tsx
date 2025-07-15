@@ -6,7 +6,6 @@ import Link from "next/link"
 import { WishlistButton } from "@/components/WishlistButton"
 import { FavoriteButton } from "@/components/FavoriteButton"
 import type { Metadata } from "next"
-import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
@@ -29,78 +28,34 @@ interface Fabric {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  if (!supabase) {
-    const fabric = mockFabrics.find((f) => f.slug === params.slug)
-    if (!fabric) return {}
-    const title = `${fabric.name} | SofaCover Pro`
-    const description = `รายละเอียดลายผ้า ${fabric.name}`
-    const image = fabric.images[0]
-    return {
-      title,
-      description,
-      openGraph: { title, description, images: [{ url: image }] },
-    }
-  }
-  const { data } = await supabase
-    .from("fabrics")
-    .select("name, description, sku, image_url, image_urls")
-    .eq("slug", params.slug)
-    .single()
-  if (!data) return {}
-  const title = `${data.name} | SofaCover Pro`
-  const description = data.description || `รายละเอียดลายผ้า ${data.name}`
-  const image = data.image_urls?.[0] || data.image_url || "/placeholder.svg"
+  const fabric = mockFabrics.find((f) => f.slug === params.slug)
+  if (!fabric) return {}
+  const title = `${fabric.name} | SofaCover Pro`
+  const description = `รายละเอียดลายผ้า ${fabric.name}`
+  const image = fabric.images[0]
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: [{ url: image }],
-    },
+    openGraph: { title, description, images: [{ url: image }] },
   }
 }
 
 export default async function FabricDetailPage({ params }: { params: { slug: string } }) {
-  let fabric: Fabric | null = null
-  let collection: { name: string; slug: string } | null = null
-
-  if (!supabase) {
-    const f = mockFabrics.find((fab) => fab.slug === params.slug)
-    if (!f) {
-      notFound()
-    }
-    fabric = {
-      id: f!.id,
-      slug: f!.slug,
-      name: f!.name,
-      sku: f!.sku,
-      description: '',
-      image_urls: f!.images,
-      price_min: f!.price,
-      price_max: f!.price,
-    }
-  } else {
-    const { data, error } = await supabase
-      .from("fabrics")
-      .select("id, slug, name, sku, description, size, collection_id, image_url, image_urls, price_min, price_max")
-      .eq("slug", params.slug)
-      .single()
-
-    if (error || !data) {
-      notFound()
-    }
-    fabric = data as Fabric
-
-    if (fabric.collection_id) {
-      const { data: col } = await supabase
-        .from("collections")
-        .select("name, slug")
-        .eq("id", fabric.collection_id)
-        .single()
-      if (col) collection = col
-    }
+  const f = mockFabrics.find((fab) => fab.slug === params.slug)
+  if (!f) {
+    notFound()
   }
+  const fabric: Fabric = {
+    id: f!.id,
+    slug: f!.slug,
+    name: f!.name,
+    sku: f!.sku,
+    description: '',
+    image_urls: f!.images,
+    price_min: f!.price,
+    price_max: f!.price,
+  }
+  const collection: { name: string; slug: string } | null = null
 
 
 

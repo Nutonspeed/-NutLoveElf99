@@ -6,7 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { supabase } from "@/lib/supabase"
+import { mockFabrics } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 
@@ -44,34 +44,21 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
   }, [isAuthenticated, user, router])
 
   useEffect(() => {
-    const fetchFabric = async () => {
-      if (!supabase || !params.id) {
-        setLoading(false)
-        return
-      }
-      const { data, error } = await supabase
-        .from("fabrics")
-        .select("id, name, sku, collection_id, image_urls, price_min, price_max")
-        .eq("id", params.id)
-        .single()
-      if (error || !data) {
-        console.error("Failed to fetch fabric", error)
-        router.push("/admin/fabrics")
-        return
-      }
-      setFabric(data)
-      const { data: collection } = await supabase
-        .from("collections")
-        .select("name")
-        .eq("id", data.collection_id)
-        .single()
-      if (collection) {
-        setCollectionName(collection.name)
-      }
-      setLoading(false)
+    const f = mockFabrics.find((fab) => fab.id === params.id)
+    if (f) {
+      setFabric({
+        id: f.id,
+        name: f.name,
+        sku: f.sku,
+        collection_id: f.collectionSlug,
+        image_urls: f.images,
+        price_min: f.price,
+        price_max: f.price,
+      })
+      setCollectionName(f.collectionSlug)
     }
-    fetchFabric()
-  }, [params.id, router])
+    setLoading(false)
+  }, [params.id])
 
   if (!isAuthenticated || user?.role !== "admin") {
     return null

@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
-import { supabase } from "@/lib/supabase"
-import { prepareFabricImage } from "@/lib/image-handler"
+import { mockFabrics } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -37,59 +36,9 @@ export default function CreateFabricPage() {
     return null
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!supabase) return
-
-    let uploadedUrl = imageUrl
-
-    if (imageFile) {
-      let slug = 'fabric'
-      if (collectionId) {
-        const { data } = await supabase
-          .from('collections')
-          .select('slug')
-          .eq('id', collectionId)
-          .single()
-        if (data?.slug) slug = data.slug
-      }
-      const processedFile = await prepareFabricImage(imageFile, slug, 1, 'image/webp')
-      const fileName = processedFile.name
-      const { error: uploadError } = await supabase.storage
-        .from("fabric-images")
-        .upload(fileName, processedFile)
-      if (uploadError) {
-        console.error("Failed to upload image", uploadError)
-        return
-      }
-      const { data } = supabase.storage
-        .from("fabric-images")
-        .getPublicUrl(fileName)
-      uploadedUrl = data.publicUrl
-      setImageUrl(uploadedUrl)
-    }
-
-    const { data: last } = await supabase
-      .from("fabrics")
-      .select("sku")
-      .order("sku", { ascending: false })
-      .limit(1)
-      .single()
-    const lastNum = last?.sku ? parseInt(last.sku.split("-")[1]) : 0
-    const sku = `FBC-${String(lastNum + 1).padStart(3, "0")}`
-
-    const { error } = await supabase.from("fabrics").insert({
-      name,
-      sku,
-      image_url: uploadedUrl,
-      collection_id: collectionId,
-    })
-
-    if (error) {
-      console.error("Failed to create fabric", error)
-      return
-    }
-
+    // mock create only
     router.push("/admin/fabrics")
   }
 

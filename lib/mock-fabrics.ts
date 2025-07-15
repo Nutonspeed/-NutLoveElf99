@@ -1,4 +1,3 @@
-import { supabase } from './supabase'
 
 export interface Fabric {
   id: string
@@ -64,14 +63,6 @@ export const mockFabrics: Fabric[] = [
   },
 ]
 
-export async function getFabrics() {
-  if (!supabase) {
-    return Promise.resolve(mockFabrics)
-  }
-  const { data, error } = await supabase.from('fabrics').select('*')
-  if (error || !data) {
-    console.error('Supabase fetch fabrics error', error)
-    return mockFabrics
-  }
-  return data as Fabric[]
+export function getFabrics(): Promise<Fabric[]> {
+  return Promise.resolve(mockFabrics)
 }
