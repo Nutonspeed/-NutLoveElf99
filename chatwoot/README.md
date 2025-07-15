@@ -109,6 +109,21 @@ Deploying Chatwoot to Heroku is a breeze. It's as simple as clicking this button
 
 Follow this [link](https://www.chatwoot.com/docs/environment-variables) to understand setting the correct environment variables for the app to work with all the features. There might be breakages if you do not set the relevant environment variables.
 
+### Required environment variables
+
+Add these variables in a `.env` file or export them before running the Rails server and tests:
+
+```
+SECRET_KEY_BASE=<generated secret>
+FRONTEND_URL=http://0.0.0.0:3000
+POSTGRES_HOST=localhost
+POSTGRES_USERNAME=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DATABASE=chatwoot_dev
+REDIS_URL=redis://localhost:6379
+```
+
+These variables match the defaults used in `config/database.yml` and `.env.example`.
 
 ### DigitalOcean 1-Click Kubernetes deployment
 
