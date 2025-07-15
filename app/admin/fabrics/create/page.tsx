@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/hooks/use-toast"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function CreateFabricPage() {
   const { user, isAuthenticated } = useAuth()
@@ -21,6 +23,8 @@ export default function CreateFabricPage() {
   const [collectionId, setCollectionId] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
+  const [previewLoaded, setPreviewLoaded] = useState(false)
+  const { toast } = useToast()
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -39,6 +43,13 @@ export default function CreateFabricPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!name.trim() || !imageFile) {
+      toast({
+        title: "กรุณากรอกข้อมูลให้ครบ",
+        variant: "destructive",
+      })
+      return
+    }
     if (!supabase) return
 
     let uploadedUrl = imageUrl
@@ -60,6 +71,11 @@ export default function CreateFabricPage() {
         .upload(fileName, processedFile)
       if (uploadError) {
         console.error("Failed to upload image", uploadError)
+        toast({
+          title: "เกิดข้อผิดพลาด",
+          description: "อัปโหลดรูปภาพไม่สำเร็จ",
+          variant: "destructive",
+        })
         return
       }
       const { data } = supabase.storage
@@ -87,9 +103,14 @@ export default function CreateFabricPage() {
 
     if (error) {
       console.error("Failed to create fabric", error)
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ไม่สามารถบันทึกข้อมูลได้",
+        variant: "destructive",
+      })
       return
     }
-
+    toast({ title: "เพิ่มลายผ้าแล้ว" })
     router.push("/admin/fabrics")
   }
 
@@ -135,11 +156,17 @@ export default function CreateFabricPage() {
                   }}
                 />
                 {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="preview"
-                    className="h-24 w-24 object-cover rounded-md mt-2"
-                  />
+                  <div className="relative h-24 w-24 mt-2">
+                    {!previewLoaded && (
+                      <Skeleton className="absolute inset-0 h-full w-full" />
+                    )}
+                    <img
+                      src={previewUrl}
+                      alt="preview"
+                      className="h-24 w-24 object-cover rounded-md"
+                      onLoad={() => setPreviewLoaded(true)}
+                    />
+                  </div>
                 )}
               </div>
               <div className="space-y-2">
@@ -152,7 +179,9 @@ export default function CreateFabricPage() {
                 />
               </div>
               <div className="pt-4 flex justify-end">
-                <Button type="submit">บันทึก</Button>
+                <Button type="submit" disabled={!name.trim() || !imageFile}>
+                  บันทึก
+                </Button>
               </div>
             </form>
           </CardContent>

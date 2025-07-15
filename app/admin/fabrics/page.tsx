@@ -20,6 +20,8 @@ import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
 import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { Skeleton } from "@/components/ui/skeleton"
+import { ConfirmationDialog } from "@/components/order/confirmation-dialog"
 
 interface Fabric {
   id: string
@@ -38,17 +40,14 @@ export default function AdminFabricsPage() {
   const { toast } = useToast()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
   const [imgError, setImgError] = useState<Record<string, boolean>>({})
+  const [imgLoaded, setImgLoaded] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState("")
   const [collectionFilter, setCollectionFilter] = useState("all")
   const [collectionOptions, setCollectionOptions] = useState<{id: string; name: string}[]>([])
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const handleDelete = async (id: string) => {
-    if (
-      typeof window !== "undefined" &&
-      !window.confirm("คุณต้องการลบลายผ้านี้ใช่หรือไม่?")
-    )
-      return
-
     const previous = fabrics
     setFabrics(fabrics.filter((f) => f.id !== id))
 
@@ -65,6 +64,8 @@ export default function AdminFabricsPage() {
     } else {
       toast({ title: "ลบลายผ้าแล้ว" })
     }
+    setShowDeleteDialog(false)
+    setDeleteId(null)
   }
 
   useEffect(() => {
@@ -189,7 +190,10 @@ export default function AdminFabricsPage() {
                   {filteredFabrics.map((fabric) => (
                     <TableRow key={fabric.id}>
                       <TableCell>
-                        <div className="h-20 w-20 flex items-center justify-center">
+                        <div className="h-20 w-20 flex items-center justify-center relative">
+                          {!imgLoaded[fabric.id] && (
+                            <Skeleton className="absolute inset-0 h-full w-full" />
+                          )}
                           {fabric.image_url && !imgError[fabric.id] ? (
                             <Image
                               src={fabric.image_url}
@@ -199,6 +203,9 @@ export default function AdminFabricsPage() {
                               className="rounded-md object-cover"
                               onError={() =>
                                 setImgError((prev) => ({ ...prev, [fabric.id]: true }))
+                              }
+                              onLoad={() =>
+                                setImgLoaded((prev) => ({ ...prev, [fabric.id]: true }))
                               }
                             />
                           ) : (
@@ -223,7 +230,10 @@ export default function AdminFabricsPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() => handleDelete(fabric.id)}
+                            onClick={() => {
+                              setDeleteId(fabric.id)
+                              setShowDeleteDialog(true)
+                            }}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -243,6 +253,16 @@ export default function AdminFabricsPage() {
             )}
           </CardContent>
         </Card>
+        <ConfirmationDialog
+          open={showDeleteDialog}
+          onOpenChange={setShowDeleteDialog}
+          title="ยืนยันการลบลายผ้า"
+          description="คุณต้องการลบลายผ้านี้ใช่หรือไม่?"
+          confirmText="ลบลายผ้า"
+          cancelText="ยกเลิก"
+          variant="destructive"
+          onConfirm={() => deleteId && handleDelete(deleteId)}
+        />
       </div>
     </div>
   )
