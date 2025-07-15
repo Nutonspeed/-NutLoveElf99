@@ -12,10 +12,9 @@ import DebugPanel from "@/components/admin/DebugPanel";
 import { logEvent } from "@/lib/logs";
 import type { Order } from "@/types/order";
 import { toast } from "sonner";
+import { chatwootUrl } from "@/lib/chatwoot";
 
 export default function AdminIndex() {
-  const chatwootUrl =
-    process.env.NEXT_PUBLIC_CHATWOOT_URL || "http://localhost:3000";
 
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [debugOpen, setDebugOpen] = useState(false);

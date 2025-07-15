@@ -18,11 +18,10 @@ import {
   loadChatActivity,
 } from "@/lib/mock-chat-activity";
 import { useAuth } from "@/contexts/auth-context";
+import { chatwootUrl } from "@/lib/chatwoot";
 
 export default function ChatPage() {
   const { user, guestId } = useAuth();
-  const chatwootUrl =
-    process.env.NEXT_PUBLIC_CHATWOOT_URL || "http://localhost:3000";
   const [message, setMessage] = useState(chatWelcome);
   const [showError, setShowError] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);

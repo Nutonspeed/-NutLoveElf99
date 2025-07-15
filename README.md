@@ -31,13 +31,16 @@ Continue building your app on:
 
 ## Environment Variables
 
+Vercel requires these environment variables even when you are using the built-in mock data.
+If they are missing the build may fail. A sample `.env.mock` file is provided with
+placeholder values so the build succeeds locally and on Vercel.
 Real data is fetched from Supabase when the following variables are provided:
 
 - `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` – the project's anon key
 - `NEXT_PUBLIC_CHATWOOT_URL` – URL of your Chatwoot instance (defaults to `http://localhost:3000`)
 
-If these variables are absent, the app falls back to built-in mock data.
+If these variables are absent or set to `"mock-mode"`, the app falls back to the mock data bundled in this repo.
 
 ## Chatwoot
 

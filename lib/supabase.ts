@@ -5,8 +5,18 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 let client: SupabaseClient | null = null
 
-if (supabaseUrl && supabaseAnonKey) {
-  client = createClient(supabaseUrl, supabaseAnonKey)
+try {
+  if (
+    supabaseUrl &&
+    supabaseAnonKey &&
+    supabaseUrl !== 'mock-mode' &&
+    supabaseAnonKey !== 'mock-mode'
+  ) {
+    client = createClient(supabaseUrl, supabaseAnonKey)
+  }
+} catch (err) {
+  console.warn('Supabase init failed, falling back to mock mode', err)
+  client = null
 }
 
 export const supabase = client
