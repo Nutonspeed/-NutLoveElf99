@@ -40,6 +40,7 @@ import {
   listConversations,
   loadConversations,
   searchByTag,
+  validateConversations,
 } from '@/lib/mock-conversations'
 import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
 import { toast } from 'sonner'
@@ -48,6 +49,7 @@ export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
+  const [tagCount, setTagCount] = useState(0)
 
   useEffect(() => {
     loadConversations()
@@ -66,6 +68,22 @@ export default function AdminChatPage() {
       setConvos([...listConversations()])
     }
     setSelected(null)
+  }
+
+  const testStore = () => {
+    const result = validateConversations()
+    setTagCount(result.tagCount)
+    console.log('Chat summary', {
+      chatCount: result.total,
+      flagged: result.flagged.length,
+      assigned: result.total - result.flagged.filter((c) => !c.agentId).length,
+    })
+    if (result.flagged.length > 0) {
+      toast.warning('Chat system may be broken')
+      alert('พบแชทที่ข้อมูลไม่ครบ')
+    } else {
+      toast.success('Chat system is ready (mock)')
+    }
   }
 
   const stats = (() => {
@@ -103,6 +121,7 @@ export default function AdminChatPage() {
             </Button>
           </Link>
           <h1 className="text-3xl font-bold">การสนทนาลูกค้า</h1>
+          <Button variant="outline" onClick={testStore}>Test chat store</Button>
         </div>
         <Card>
           <CardHeader>
@@ -112,6 +131,7 @@ export default function AdminChatPage() {
             <div>ลูกค้าใหม่: {stats.newCount}</div>
             <div>ลูกค้าซ้ำ: {stats.repeatCount}</div>
             <div>รอดำเนินการ: {stats.pending}</div>
+            <div>แท็กทั้งหมด: {tagCount}</div>
           </CardContent>
         </Card>
         <Card>
@@ -126,6 +146,7 @@ export default function AdminChatPage() {
                   <TableHead>แท็ก</TableHead>
                   <TableHead>เรตติ้ง</TableHead>
                   <TableHead>ตอบด่วน</TableHead>
+                  <TableHead>สถานะ</TableHead>
                   <TableHead className="w-40"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -159,6 +180,15 @@ export default function AdminChatPage() {
                           ))}
                         </SelectContent>
                       </Select>
+                    </TableCell>
+                    <TableCell>
+                      {(() => {
+                        const hasAgent = !!c.agentId
+                        const hasTime = !!c.updatedAt
+                        const status = hasAgent && hasTime ? 'Ready' : hasAgent || hasTime ? 'Partial' : 'Error'
+                        const variant = hasAgent && hasTime ? 'default' : hasAgent || hasTime ? 'secondary' : 'destructive'
+                        return <Badge variant={variant}>{status}</Badge>
+                      })()}
                     </TableCell>
                     <TableCell className="space-y-2">
                       <Button

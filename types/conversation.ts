@@ -6,4 +6,5 @@ export interface Conversation {
   tags: string[]
   rating?: number
   updatedAt: string
+  agentId?: string
 }
