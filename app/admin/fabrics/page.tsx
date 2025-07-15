@@ -16,7 +16,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
+import { ArrowLeft, Edit, Plus, Trash2, Search, Eye } from "lucide-react"
+import { FabricDetailModal } from "@/components/admin/FabricDetailModal"
 import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
@@ -30,6 +31,8 @@ interface Fabric {
   price_min: number
   price_max: number
   collection_name?: string | null
+  keywords?: string[]
+  popular?: boolean
 }
 
 export default function AdminFabricsPage() {
@@ -41,6 +44,7 @@ export default function AdminFabricsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [collectionFilter, setCollectionFilter] = useState("all")
   const [collectionOptions, setCollectionOptions] = useState<{id: string; name: string}[]>([])
+  const [selected, setSelected] = useState<Fabric | null>(null)
 
   const handleDelete = async (id: string) => {
     if (
@@ -216,6 +220,13 @@ export default function AdminFabricsPage() {
                           <Button
                             variant="outline"
                             size="icon"
+                            onClick={() => setSelected(fabric)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
                             onClick={() => router.push(`/admin/fabrics/${fabric.id}/edit`)}
                           >
                             <Edit className="h-4 w-4" />
@@ -243,6 +254,9 @@ export default function AdminFabricsPage() {
             )}
           </CardContent>
         </Card>
+        {selected && (
+          <FabricDetailModal fabric={selected} onClose={() => setSelected(null)} />
+        )}
       </div>
     </div>
   )
