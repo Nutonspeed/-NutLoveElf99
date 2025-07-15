@@ -11,6 +11,8 @@ import { ReviewImagesProvider } from "@/contexts/review-images-context"
 import { FavoritesProvider } from "@/contexts/favorites-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 import { validateMockData } from "@/lib/mock-validator"
+import { FallbackPreviewProvider } from "@/contexts/fallback-preview-context"
+import FallbackPreviewBanner from "@/components/FallbackPreviewBanner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -31,22 +33,25 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                <FavoritesProvider>
-                  <AdminProductGroupsProvider>
-                    <ReviewImagesProvider>
-                      {children}
-                      <Toaster />
-                    </ReviewImagesProvider>
-                  </AdminProductGroupsProvider>
-                </FavoritesProvider>
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+        <FallbackPreviewProvider>
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <CompareProvider>
+                  <FavoritesProvider>
+                    <AdminProductGroupsProvider>
+                      <ReviewImagesProvider>
+                        {children}
+                        <Toaster />
+                        <FallbackPreviewBanner />
+                      </ReviewImagesProvider>
+                    </AdminProductGroupsProvider>
+                  </FavoritesProvider>
+                </CompareProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </FallbackPreviewProvider>
       </body>
     </html>
   )
