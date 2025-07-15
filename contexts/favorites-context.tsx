@@ -12,8 +12,14 @@ interface FavoritesContextValue {
 const FavoritesContext = createContext<FavoritesContextValue | null>(null)
 
 export function FavoritesProvider({ children }: { children: ReactNode }) {
-  const [favorites, setFavorites] = useLocalStorage<string[]>('favorites', [])
-  const [counts, setCounts] = useLocalStorage<Record<string, number>>('favorite-counts', {})
+  const [favorites, setFavorites] = useLocalStorage<string[]>(
+    'favFabrics',
+    [],
+  )
+  const [counts, setCounts] = useLocalStorage<Record<string, number>>(
+    'favFabricCounts',
+    {},
+  )
 
   const toggleFavorite = (slug: string) => {
     setFavorites(prev => {

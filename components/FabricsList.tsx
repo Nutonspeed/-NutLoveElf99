@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
+import { FavoriteButton } from "@/components/FavoriteButton"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
@@ -42,6 +43,10 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                   ดูด้วยกันบ่อย
                 </span>
               )}
+              <FavoriteButton
+                slug={slug}
+                className="absolute bottom-2 right-2 z-10 bg-white/80 rounded-full p-1"
+              />
               <Checkbox
                 checked={checked}
                 onCheckedChange={() => toggleCompare(slug)}

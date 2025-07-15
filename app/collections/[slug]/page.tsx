@@ -12,6 +12,7 @@ import {
 import { supabase } from "@/lib/supabase"
 import { getCollections } from "@/lib/mock-collections"
 import { WishlistButton } from "@/components/WishlistButton"
+import { FavoriteFabricsDialog } from "@/components/FavoriteFabricsDialog"
 import { mockFabrics } from "@/lib/mock-fabrics"
 import { FabricsList } from "@/components/FabricsList"
 import { CopyPageLinkButton } from "@/components/CopyPageLinkButton"
@@ -78,6 +79,9 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
+        <div className="flex justify-end">
+          <FavoriteFabricsDialog />
+        </div>
         <div className="flex items-center space-x-2">
           <h1 className="text-3xl font-bold">{data.name}</h1>
           <WishlistButton slug={data.slug} />
