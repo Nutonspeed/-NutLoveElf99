@@ -10,9 +10,10 @@ import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
-import { MessageSquare, Share2, Receipt } from "lucide-react"
+import { MessageSquare, Receipt } from "lucide-react"
 import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { FabricSuggestions } from "@/components/FabricSuggestions"
+import { ShareFabricModal } from "@/components/ShareFabricModal"
 
 interface Fabric {
   id: string
@@ -165,9 +166,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
                 <Receipt className="h-5 w-5 mr-2" />เปิดบิล
               </Button>
               <CopyToClipboardButton text={fabric.slug || fabric.sku || fabric.id} />
-              <Button variant="outline" size="lg">
-                <Share2 className="h-5 w-5" />
-              </Button>
+              <ShareFabricModal fabric={fabric} />
             </div>
           </div>
         </div>
