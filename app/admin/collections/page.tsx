@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { getCollections } from "@/lib/mock-collections"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
@@ -13,17 +15,40 @@ import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import type { Collection } from "@/types/collection"
+import { useToast } from "@/hooks/use-toast"
+
+function slugify(str: string) {
+  return str
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/--+/g, "-")
+    .replace(/^-|-$/g, "")
+}
 
 interface CollectionWithFabrics extends Collection {
   fabrics: { id: string; name: string }[]
 }
 
+const collectionSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "กรุณากรอกชื่อ"),
+  slug: z.string().min(1, "กรุณากรอก slug"),
+  description: z.string().min(1, "กรุณากรอกคำอธิบาย"),
+  priceRange: z.string().optional(),
+  images: z.array(z.string()).optional(),
+})
+
 export default function AdminCollectionsPage() {
   const [collections, setCollections] = useState<CollectionWithFabrics[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingCollection, setEditingCollection] = useState<CollectionWithFabrics | null>(null)
+  const { toast } = useToast()
   const form = useForm<Collection>({
+    resolver: zodResolver(collectionSchema),
     defaultValues: {
       name: "",
       slug: "",
@@ -34,12 +59,27 @@ export default function AdminCollectionsPage() {
     },
   })
 
+  const nameValue = form.watch("name")
+  const slugValue = form.watch("slug")
+
+  useEffect(() => {
+    if (!nameValue) return
+    const auto = slugify(nameValue)
+    if (!slugValue || slugValue === slugify(slugValue)) {
+      form.setValue("slug", auto)
+    }
+  }, [nameValue])
+
   useEffect(() => {
     const fetchCollections = async () => {
-      const cols = await getCollections()
-      setCollections(
-        cols.map((c) => ({ ...c, fabrics: [] })) as CollectionWithFabrics[],
-      )
+      try {
+        const cols = await getCollections()
+        setCollections(
+          cols.map((c) => ({ ...c, fabrics: [] })) as CollectionWithFabrics[],
+        )
+      } finally {
+        setLoading(false)
+      }
     }
     fetchCollections()
   }, [])
@@ -66,6 +106,7 @@ export default function AdminCollectionsPage() {
     setIsDialogOpen(false)
     setEditingCollection(null)
     resetForm()
+    toast({ description: "บันทึกข้อมูลแล้ว" })
   }
 
   const openEditDialog = (collection: CollectionWithFabrics) => {
@@ -75,7 +116,14 @@ export default function AdminCollectionsPage() {
   }
 
   const handleDeleteCollection = (id: string) => {
+    if (
+      typeof window !== "undefined" &&
+      !window.confirm("คุณต้องการลบคอลเลกชันนี้ใช่หรือไม่?")
+    )
+      return
+
     setCollections((prev) => prev.filter((c) => c.id !== id))
+    toast({ description: "ลบคอลเลกชันแล้ว" })
   }
 
   const filteredCollections = collections.filter(
@@ -83,6 +131,14 @@ export default function AdminCollectionsPage() {
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.slug.toLowerCase().includes(searchTerm.toLowerCase()),
   )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -258,6 +314,11 @@ export default function AdminCollectionsPage() {
             {filteredCollections.length === 0 && (
               <div className="text-center py-8">
                 <p className="text-gray-500">ไม่พบคอลเลกชันที่ตรงกับเงื่อนไขการค้นหา</p>
+              </div>
+            )}
+            {collections.length === 0 && !loading && (
+              <div className="text-center py-8">
+                <p className="text-gray-500">ยังไม่มีคอลเลกชัน</p>
               </div>
             )}
           </CardContent>
