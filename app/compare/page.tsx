@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
@@ -23,14 +24,17 @@ interface Fabric {
 export default function ComparePage() {
   const { items, clear } = useCompare()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
+  const searchParams = useSearchParams()
 
   useEffect(() => {
+    const param = searchParams.get('ids')
+    const list = items.length ? items : param ? param.split(',') : []
     setFabrics(
       mockFabrics
-        .filter((f) => items.includes(f.slug))
+        .filter((f) => list.includes(f.slug))
         .map((f) => ({ ...f }))
     )
-  }, [items])
+  }, [items, searchParams])
 
   if (fabrics.length === 0) {
     return (

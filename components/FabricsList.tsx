@@ -22,7 +22,8 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
   const router = useRouter()
 
   const handleCompare = () => {
-    router.push(`/compare`)
+    const query = items.join(',')
+    router.push(`/compare?ids=${query}`)
   }
 
   return (
