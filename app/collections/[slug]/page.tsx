@@ -16,6 +16,8 @@ import { mockFabrics } from "@/lib/mock-fabrics"
 import { FabricsList } from "@/components/FabricsList"
 import { CopyPageLinkButton } from "@/components/CopyPageLinkButton"
 import { CollectionStickyBar } from "@/components/CollectionStickyBar"
+import { mockFabricReviews } from "@/lib/mock/fabricReviews"
+import { Star } from "lucide-react"
 
 export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
   let data: any
@@ -52,6 +54,9 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
   }
 
   const fabrics = mockFabrics.filter((f) => f.collectionSlug === data.slug)
+  const reviews = mockFabricReviews.filter((r) =>
+    fabrics.some((f) => f.id === r.fabricId),
+  )
   const subtitle = `มีทั้งหมด ${fabrics.length} ลายผ้าในกลุ่มนี้`
 
   return (
@@ -94,6 +99,36 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           <CopyPageLinkButton />
         </div>
         <FabricsList fabrics={fabrics} />
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">รีวิวจากลูกค้าที่สั่งลายนี้</h2>
+          {reviews.length === 0 ? (
+            <div className="text-center text-muted text-sm">
+              ยังไม่มีรีวิวสำหรับลายผ้านี้
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((rev) => (
+                <div key={rev.id} className="border rounded p-4 space-y-1">
+                  <div className="font-medium">{rev.customerName}</div>
+                  <p className="text-sm">{rev.content}</p>
+                  <div className="flex items-center text-sm">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${
+                          i < rev.rating
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
+                    <span className="ml-2">ให้คะแนน {rev.rating}/5</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
       <Footer />
       <CollectionStickyBar name={data.name} />
