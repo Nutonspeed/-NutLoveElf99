@@ -18,7 +18,11 @@ export function AdminCollectionsProvider({ children }: { children: ReactNode }) 
   const [collections, setCollections] = useLocalStorage<Collection[]>("admin-collections", mockCollections)
 
   const addCollection = (data: Omit<Collection, "id">) => {
-    const newCollection: Collection = { id: Date.now().toString(), ...data }
+    const newCollection: Collection = {
+      id: Date.now().toString(),
+      fabricIds: [],
+      ...data,
+    }
     setCollections((prev) => [...prev, newCollection])
   }
 
