@@ -15,6 +15,7 @@ import { AlertTriangle, Package, TrendingDown, TrendingUp, ArrowLeft, Plus, Edit
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { useMockNotification } from "@/hooks/use-mock-notification"
+import { mockStockLogs, addStockLog, type StockLog } from "@/lib/mock-stock-logs"
 
 interface StockItem {
   id: string
@@ -109,6 +110,9 @@ export default function InventoryPage() {
   const [adjustAmount, setAdjustAmount] = useState("")
   const [adjustReason, setAdjustReason] = useState("")
   const [filterStatus, setFilterStatus] = useState<string>("all")
+  const [logDialog, setLogDialog] = useState(false)
+  const [logs, setLogs] = useState<StockLog[]>(mockStockLogs)
+  const [sortAsc, setSortAsc] = useState(true)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -146,8 +150,16 @@ export default function InventoryPage() {
     }
 
     setStockData((prev) => prev.map((item) => (item.id === selectedItem.id ? updatedItem : item)))
+    addStockLog({
+      product: updatedItem.name,
+      quantity: Number.parseInt(adjustAmount),
+      location: updatedItem.location,
+      by: user?.name || "ผู้ดูแลระบบ",
+      type: Number.parseInt(adjustAmount) >= 0 ? "add" : "transfer",
+    })
+    setLogs([...mockStockLogs])
 
-    // ส่งการแจ้งเตือนหากสต็อกต่ำหรือหมด
+    // ส่งการแจ้งเตือนหากสต็อกต่ำหรือหมด หรือถึงจุดสั่งซื้อใหม่
     if (updatedItem.status === "low" || updatedItem.status === "out" || updatedItem.status === "critical") {
       const alertType =
         updatedItem.status === "out" ? "stock_out" : updatedItem.status === "critical" ? "stock_critical" : "stock_low"
@@ -162,6 +174,20 @@ export default function InventoryPage() {
           location: updatedItem.location,
         },
         [{ email: "admin@sofacover.com", name: "ผู้ดูแลระบบ" }],
+      )
+    }
+
+    if (updatedItem.currentStock === updatedItem.minStock) {
+      await sendStockAlert(
+        "stock_reorder",
+        {
+          id: updatedItem.id,
+          name: updatedItem.name,
+          currentStock: updatedItem.currentStock,
+          minStock: updatedItem.minStock,
+          location: updatedItem.location,
+        },
+        [{ email: "admin@sofacover.com" }],
       )
     }
 
@@ -213,16 +239,21 @@ export default function InventoryPage() {
     }
   }
 
-  const filteredData = stockData.filter((item) => {
-    if (filterStatus === "all") return true
-    return item.status === filterStatus
-  })
+  const filteredData = stockData
+    .filter((item) => {
+      if (filterStatus === "all") return true
+      return item.status === filterStatus
+    })
+    .sort((a, b) =>
+      sortAsc ? a.sku.localeCompare(b.sku) : b.sku.localeCompare(a.sku),
+    )
 
   const totalItems = stockData.length
   const lowStockItems = stockData.filter((item) => item.status === "low").length
   const outOfStockItems = stockData.filter((item) => item.status === "out").length
   const criticalStockItems = stockData.filter((item) => item.status === "critical").length
   const totalValue = stockData.reduce((sum, item) => sum + item.currentStock * item.price, 0)
+  const reorderItems = stockData.filter((item) => item.currentStock <= item.minStock)
 
   const sendTestAlert = async () => {
     const testItem = stockData.find((item) => item.status === "low" || item.status === "out")
@@ -282,6 +313,12 @@ export default function InventoryPage() {
                 เพิ่มสินค้า
               </Button>
             </Link>
+            <Button variant="outline" onClick={() => setLogDialog(true)}>
+              ดู log การเติมสต๊อก
+            </Button>
+            <Button onClick={() => toast({ title: 'ส่งคำสั่งซื้อไปยัง Supplier แล้ว' })}>
+              สั่งซื้อจาก Supplier
+            </Button>
           </div>
         </div>
 
@@ -348,6 +385,23 @@ export default function InventoryPage() {
           </Card>
         </div>
 
+        {reorderItems.length > 0 && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle>สินค้าที่ควรสั่งซื้อใหม่</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="list-disc pl-5 space-y-1">
+                {reorderItems.map((it) => (
+                  <li key={it.id}>
+                    {it.name} ({it.currentStock}/{it.minStock})
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Main Content */}
         <Card>
           <CardHeader>
@@ -374,7 +428,9 @@ export default function InventoryPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>รหัสสินค้า</TableHead>
+                  <TableHead className="cursor-pointer" onClick={() => setSortAsc(!sortAsc)}>
+                    รหัสสินค้า
+                  </TableHead>
                   <TableHead>ชื่อสินค้า</TableHead>
                   <TableHead>หมวดหมู่</TableHead>
                   <TableHead>สต็อกปัจจุบัน</TableHead>
@@ -474,6 +530,38 @@ export default function InventoryPage() {
                 </div>
               </div>
             )}
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={logDialog} onOpenChange={setLogDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Log การเติมสต็อก</DialogTitle>
+            </DialogHeader>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>สินค้า</TableHead>
+                  <TableHead>จำนวน</TableHead>
+                  <TableHead>คลัง</TableHead>
+                  <TableHead>โดย</TableHead>
+                  <TableHead>เวลา</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {logs.map((l) => (
+                  <TableRow key={l.id}>
+                    <TableCell>{l.product}</TableCell>
+                    <TableCell>{l.quantity}</TableCell>
+                    <TableCell>{l.location}</TableCell>
+                    <TableCell>{l.by}</TableCell>
+                    <TableCell>
+                      {new Date(l.timestamp).toLocaleString('th-TH')}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </DialogContent>
         </Dialog>
       </div>

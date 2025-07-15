@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     }
 
     const notificationData = {
-      type: type as "stock_low" | "stock_out" | "stock_critical",
+      type: type as "stock_low" | "stock_out" | "stock_critical" | "stock_reorder",
       recipient: {
         email: email || undefined,
         phone: phone || undefined,
