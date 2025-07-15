@@ -20,6 +20,7 @@ import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
 import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { useFabrics } from "@/contexts/fabrics-context"
 
 interface Fabric {
   id: string
@@ -30,16 +31,20 @@ interface Fabric {
   price_min: number
   price_max: number
   collection_name?: string | null
+  category?: string
+  tags?: string[]
 }
 
 export default function AdminFabricsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
+  const { fabrics: fabricState, updateFabric } = useFabrics()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
   const [imgError, setImgError] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState("")
   const [collectionFilter, setCollectionFilter] = useState("all")
+  const [categoryFilter, setCategoryFilter] = useState("all")
   const [collectionOptions, setCollectionOptions] = useState<{id: string; name: string}[]>([])
 
   const handleDelete = async (id: string) => {
@@ -80,7 +85,10 @@ export default function AdminFabricsPage() {
 
   useEffect(() => {
     const fetchFabrics = async () => {
-      if (!supabase) return
+      if (!supabase) {
+        setFabrics(fabricState)
+        return
+      }
       const { data: fabricsData, error } = await supabase
         .from("fabrics")
         .select("id, name, sku, collection_id, image_url, price_min, price_max")
@@ -110,10 +118,13 @@ export default function AdminFabricsPage() {
   const filteredFabrics = fabrics.filter((f) => {
     const matchesSearch =
       f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      f.collection_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      f.collection_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (f.tags && f.tags.some(t => t.toLowerCase().includes(searchTerm.toLowerCase())))
     const matchesCollection =
       collectionFilter === "all" || f.collection_id === collectionFilter
-    return matchesSearch && matchesCollection
+    const matchesCategory =
+      categoryFilter === "all" || f.category === categoryFilter
+    return matchesSearch && matchesCollection && matchesCategory
   })
 
   if (!isAuthenticated || user?.role !== "admin") {
@@ -170,9 +181,37 @@ export default function AdminFabricsPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="หมวดผ้า" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">ทุกหมวด</SelectItem>
+                    <SelectItem value="ผ้าพื้น">ผ้าพื้น</SelectItem>
+                    <SelectItem value="ผ้าลาย">ผ้าลาย</SelectItem>
+                    <SelectItem value="ผ้าเนื้อพิเศษ">ผ้าเนื้อพิเศษ</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </CardHeader>
+          <CardContent className="pb-4">
+            <div className="flex gap-2 mb-4">
+              {['ผ้าพื้น', 'ผ้าลาย', 'ผ้าเนื้อพิเศษ'].map(cat => (
+                <div
+                  key={cat}
+                  onDragOver={e => e.preventDefault()}
+                  onDrop={e => {
+                    const id = e.dataTransfer.getData('text/plain')
+                    if (id) updateFabric(id, { category: cat })
+                  }}
+                  className="flex-1 border-dashed border rounded p-2 text-center text-sm"
+                >
+                  ลากมาที่นี่เพื่อจัดเป็น {cat}
+                </div>
+              ))}
+            </div>
+          </CardContent>
           <CardContent className="overflow-x-auto">
             {filteredFabrics.length > 0 ? (
               <Table>
@@ -187,7 +226,11 @@ export default function AdminFabricsPage() {
                 </TableHeader>
                 <TableBody>
                   {filteredFabrics.map((fabric) => (
-                    <TableRow key={fabric.id}>
+                    <TableRow
+                      key={fabric.id}
+                      draggable
+                      onDragStart={e => e.dataTransfer.setData('text/plain', fabric.id)}
+                    >
                       <TableCell>
                         <div className="h-20 w-20 flex items-center justify-center">
                           {fabric.image_url && !imgError[fabric.id] ? (
@@ -213,6 +256,16 @@ export default function AdminFabricsPage() {
                       <TableCell>{fabric.collection_name || "-"}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => {
+                              const t = window.prompt('เพิ่มแท็กใหม่')
+                              if (t) updateFabric(fabric.id, { tags: [...(fabric.tags || []), t] })
+                            }}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
                           <Button
                             variant="outline"
                             size="icon"
