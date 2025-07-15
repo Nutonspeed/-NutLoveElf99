@@ -11,7 +11,7 @@ export interface Fabric {
   collectionSlug: string
 }
 
-export const mockFabrics: Fabric[] = [
+const initialMockFabrics: Fabric[] = [
   {
     id: 'f01',
     name: 'Soft Linen',
@@ -63,6 +63,27 @@ export const mockFabrics: Fabric[] = [
     collectionSlug: 'vintage-vibes',
   },
 ]
+
+export let mockFabrics: Fabric[] = initialMockFabrics.map((f) => ({ ...f }))
+
+export function resetMockFabrics() {
+  mockFabrics = initialMockFabrics.map((f) => ({ ...f }))
+}
+
+export function validateMockFabrics() {
+  const states: Record<string, boolean> = {}
+  const errors: string[] = []
+  if (!Array.isArray(mockFabrics) || mockFabrics.length === 0) {
+    errors.push('mock fabrics array is empty')
+  } else {
+    mockFabrics.forEach((f) => {
+      const ok = Boolean(f.id && f.name && f.slug && f.images?.length)
+      states[f.slug] = ok
+      if (!ok) errors.push(`missing fields for ${f.slug || f.id}`)
+    })
+  }
+  return { states, errors }
+}
 
 export async function getFabrics() {
   if (!supabase) {
