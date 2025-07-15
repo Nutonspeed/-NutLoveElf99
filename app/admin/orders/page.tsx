@@ -49,6 +49,9 @@ export default function AdminOrdersPage() {
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [bills, setBills] = useState(mockBills)
+  const [testResults, setTestResults] = useState<Record<string, boolean>>({})
+  const [validCount, setValidCount] = useState(0)
+  const [invalidCount, setInvalidCount] = useState(0)
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -94,6 +97,27 @@ export default function AdminOrdersPage() {
     toast.success("ยืนยันยอดแล้ว")
   }
 
+  const handleTestOrders = () => {
+    let valid = 0
+    let invalid = 0
+    const results: Record<string, boolean> = {}
+    orders.forEach((o) => {
+      const ok = o.total > 0 && o.items.length > 0
+      results[o.id] = ok
+      if (ok) valid += 1
+      else invalid += 1
+    })
+    console.log("Order mock test results", { valid, invalid, results })
+    setTestResults(results)
+    setValidCount(valid)
+    setInvalidCount(invalid)
+    if (invalid > 0) {
+      toast.error("พบออเดอร์ mock ไม่ถูกต้อง")
+    } else {
+      toast.success("Order system check complete: all good")
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -116,7 +140,12 @@ export default function AdminOrdersPage() {
         <Card>
           <CardHeader>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <CardTitle>รายการคำสั่งซื้อ ({filteredOrders.length})</CardTitle>
+              <CardTitle>
+                รายการคำสั่งซื้อ ({filteredOrders.length})
+                <span className="ml-2 text-sm text-gray-600">
+                  {validCount} valid / {invalidCount} invalid
+                </span>
+              </CardTitle>
               <div className="flex items-center space-x-2">
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -170,6 +199,9 @@ export default function AdminOrdersPage() {
                 <Button onClick={() => downloadPDF('orders', 'orders.pdf')}>
                   Export PDF
                 </Button>
+                <Button variant="outline" onClick={handleTestOrders}>
+                  Test Order System
+                </Button>
               </div>
             </div>
           </CardHeader>
@@ -184,7 +216,14 @@ export default function AdminOrdersPage() {
                         {new Date(order.createdAt).toLocaleDateString("th-TH")}
                       </p>
                     </div>
-                    {statusTag(order)}
+                    <div className="flex items-center gap-2">
+                      {statusTag(order)}
+                      {testResults[order.id] !== undefined && (
+                        <Badge variant={testResults[order.id] ? "secondary" : "destructive"}>
+                          {testResults[order.id] ? "Mock Valid" : "Broken Mock"}
+                        </Badge>
+                      )}
+                    </div>
                   </summary>
                   <div className="mt-2 space-y-1 text-sm">
                     <p>รหัส: {order.id}</p>
@@ -210,6 +249,7 @@ export default function AdminOrdersPage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>รหัสคำสั่งซื้อ</TableHead>
+                  <TableHead>Mock</TableHead>
                   <TableHead>ลูกค้า</TableHead>
                   <TableHead>วันที่สั่งซื้อ</TableHead>
                   <TableHead>ยอดรวม</TableHead>
@@ -225,6 +265,13 @@ export default function AdminOrdersPage() {
                   <TableRow key={order.id}>
                     <TableCell>
                       <p className="font-medium">{order.id}</p>
+                    </TableCell>
+                    <TableCell>
+                      {testResults[order.id] !== undefined && (
+                        <Badge variant={testResults[order.id] ? "secondary" : "destructive"}>
+                          {testResults[order.id] ? "Mock Valid" : "Broken Mock"}
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div>
