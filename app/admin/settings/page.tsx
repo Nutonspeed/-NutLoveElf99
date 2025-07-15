@@ -29,6 +29,9 @@ import {
   loadReviewReminder,
   reviewReminder,
   setReviewReminder,
+  loadNotifyTeams,
+  notifyTeams,
+  setNotifyTeams,
 } from "@/lib/mock-settings";
 
 export default function SettingsPage() {
@@ -40,6 +43,8 @@ export default function SettingsPage() {
   const [reminder, setReminder] = useState(autoReminder);
   const [reviewRemind, setReviewRemind] = useState(reviewReminder);
   const [archiveOld, setArchiveOld] = useState(autoArchive);
+  const [teamNotify, setTeamNotify] = useState(notifyTeams);
+  const [savingTeam, setSavingTeam] = useState(false);
 
   useEffect(() => {
     loadAutoMessage();
@@ -48,12 +53,14 @@ export default function SettingsPage() {
     loadAutoReminder();
     loadAutoArchive();
     loadReviewReminder();
+    loadNotifyTeams();
     setMessage(autoMessage);
     setLinks(socialLinks);
     setSecurity(billSecurity);
     setReminder(autoReminder);
     setArchiveOld(autoArchive);
     setReviewRemind(reviewReminder);
+    setTeamNotify({ ...notifyTeams });
     if (!isAuthenticated) {
       router.push("/login");
     } else if (user?.role !== "admin") {
@@ -71,6 +78,14 @@ export default function SettingsPage() {
     setAutoArchive(archiveOld);
     setReviewReminder(reviewRemind);
     alert("บันทึกข้อความแล้ว");
+  };
+
+  const handleTeamToggle = (team: 'packing' | 'finance', value: boolean) => {
+    setSavingTeam(true);
+    const next = { ...teamNotify, [team]: value };
+    setNotifyTeams(next);
+    setTeamNotify(next);
+    setTimeout(() => setSavingTeam(false), 500);
   };
 
   return (
@@ -142,6 +157,26 @@ export default function SettingsPage() {
               />
               <Label htmlFor="review-remind">เตือนให้รีวิวหลัง 3 วัน</Label>
             </div>
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>ทีมที่รับการแจ้งเตือน</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {(['packing', 'finance'] as const).map((t) => (
+              <div key={t} className="flex items-center justify-between">
+                <Label>{t === 'packing' ? 'ฝ่ายแพ็กของ' : 'ฝ่ายการเงิน'}</Label>
+                <div className="flex items-center space-x-2">
+                  {savingTeam && <span className="text-xs">กำลังบันทึก...</span>}
+                  <Checkbox
+                    id={`team-${t}`}
+                    checked={teamNotify[t]}
+                    onCheckedChange={(v) => handleTeamToggle(t, Boolean(v))}
+                  />
+                </div>
+              </div>
+            ))}
           </CardContent>
         </Card>
         <Card className="mt-6">

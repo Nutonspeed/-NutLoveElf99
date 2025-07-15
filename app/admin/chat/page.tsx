@@ -40,14 +40,19 @@ import {
   listConversations,
   loadConversations,
   searchByTag,
+  reassignConversation,
+  markRead,
 } from '@/lib/mock-conversations'
 import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
 import { toast } from 'sonner'
+import { Switch } from '@/components/ui/switch'
 
 export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
+  const [filterTag, setFilterTag] = useState<string | null>(null)
+  const [unreadOnly, setUnreadOnly] = useState(false)
 
   useEffect(() => {
     loadConversations()
@@ -58,6 +63,8 @@ export default function AdminChatPage() {
   const openDialog = (id: string) => {
     setSelected(id)
     setTag('')
+    markRead(id)
+    setConvos([...listConversations()])
   }
 
   const add = () => {
@@ -83,14 +90,33 @@ export default function AdminChatPage() {
     return { newCount, repeatCount, pending }
   })()
 
+  const filtered = convos.filter(
+    (c) => (!unreadOnly || c.unread) && (!filterTag || c.tags.includes(filterTag))
+  )
+
   const search = (tag: string) => {
     const result = searchByTag(tag)
-    alert(`พบ ${result.length} แชทที่มีแท็ก "${tag}"`)
+    setFilterTag(tag)
+    if (result.length === 0) {
+      toast.error('ไม่พบแชทในแท็กนี้')
+    }
   }
 
   const quickReply = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.success('คัดลอกข้อความแล้ว')
+  }
+
+  const handleReassign = (id: string) => {
+    if (confirm('ยืนยันมอบหมายแชทให้หัวหน้าทีม?')) {
+      const success = reassignConversation(id, 'team-lead')
+      if (success) {
+        toast.success('มอบหมายแล้ว')
+        setConvos([...listConversations()])
+      } else {
+        toast.error('ไม่สามารถมอบหมายได้')
+      }
+    }
   }
 
   return (
@@ -116,7 +142,18 @@ export default function AdminChatPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>บทสนทนา ({convos.length})</CardTitle>
+            <CardTitle>บทสนทนา ({filtered.length})</CardTitle>
+            <div className="flex items-center space-x-2 mt-2">
+              <label className="flex items-center space-x-2">
+                <Switch checked={unreadOnly} onCheckedChange={setUnreadOnly} />
+                <span className="text-sm">เฉพาะที่ยังไม่อ่าน</span>
+              </label>
+              {filterTag && (
+                <Button size="sm" variant="outline" onClick={() => setFilterTag(null)}>
+                  ล้างแท็ก "{filterTag}"
+                </Button>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -130,7 +167,7 @@ export default function AdminChatPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {convos.map((c) => (
+                {filtered.map((c) => (
                   <TableRow key={c.id} className="align-top">
                     <TableCell>
                       <p className="font-medium">{c.customerName}</p>
@@ -180,17 +217,17 @@ export default function AdminChatPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => alert('แจ้งหัวหน้าทีมแล้ว')}
+                        onClick={() => handleReassign(c.id)}
                       >
-                        แจ้งหัวหน้าทีม
+                        มอบหมายใหม่
                       </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            {convos.length === 0 && (
-              <p className="text-center py-8 text-gray-500">ไม่มีข้อมูล</p>
+            {filtered.length === 0 && (
+              <p className="text-center py-8 text-gray-500">ไม่พบแชทที่ตรงเงื่อนไข</p>
             )}
           </CardContent>
         </Card>
