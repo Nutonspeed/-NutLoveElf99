@@ -39,7 +39,7 @@ export function useMockNotification() {
 
   const sendStockAlert = useCallback(
     async (
-      type: "stock_low" | "stock_out" | "stock_critical",
+      type: "stock_low" | "stock_out" | "stock_critical" | "stock_reorder",
       productData: {
         id: string
         name: string

@@ -13,7 +13,7 @@ export interface NotificationTemplate {
 }
 
 export interface NotificationData {
-  type: "stock_low" | "stock_out" | "stock_critical" | "order_created" | "order_updated" | "system_alert"
+  type: "stock_low" | "stock_out" | "stock_critical" | "stock_reorder" | "order_created" | "order_updated" | "system_alert"
   recipient: {
     email?: string
     phone?: string
@@ -390,6 +390,7 @@ export class MockNotificationService {
       stock_low: 'packing',
       stock_out: 'packing',
       stock_critical: 'packing',
+      stock_reorder: 'packing',
       order_created: 'packing',
       order_updated: 'packing',
       system_alert: 'finance',

@@ -44,7 +44,12 @@ export default function OrderDetailPage() {
           <CardContent className="space-y-4">
             {order.items.map((item: any) => (
               <div key={item.id} className="flex justify-between">
-                <span>{item.productName} x {item.quantity}</span>
+                <span>
+                  {item.productName} x {item.quantity}
+                  {item.location && (
+                    <span className="text-sm text-gray-500"> (คลัง {item.location})</span>
+                  )}
+                </span>
                 <span>฿{(item.price * item.quantity).toLocaleString()}</span>
               </div>
             ))}
