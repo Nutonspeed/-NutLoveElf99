@@ -1,4 +1,5 @@
 export let chatWelcome = 'สวัสดีค่ะ มีอะไรให้ช่วยไหม?'
+export const quoteBlock = '📑 ใบเสนอราคา: https://example.com/quote.pdf'
 
 export function loadChatWelcome() {
   if (typeof window !== 'undefined') {
