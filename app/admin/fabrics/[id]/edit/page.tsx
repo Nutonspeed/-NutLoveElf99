@@ -7,6 +7,13 @@ import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { prepareFabricImage } from "@/lib/image-handler"
+import {
+  checkImageIssues,
+  getFabricQA,
+  updateFabricImage,
+  FabricHistoryEntry,
+} from "@/lib/mock-fabric-qa"
+import { ImageCompareModal } from "@/components/ImageCompareModal"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -22,10 +29,20 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
 
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState("")
+  const [fabricSlug, setFabricSlug] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [collectionId, setCollectionId] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
+  const [qualityScore, setQualityScore] = useState<number | null>(null)
+  const [usage, setUsage] = useState<string[]>([])
+  const [timeline, setTimeline] = useState<FabricHistoryEntry[]>([])
+  const [flagged, setFlagged] = useState(false)
+  const [imageIssues, setImageIssues] = useState<{
+    blurred: boolean
+    torn: boolean
+    edgeDamage: boolean
+  } | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -46,7 +63,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
       }
       const { data, error } = await supabase
         .from("fabrics")
-        .select("name, image_url, collection_id")
+        .select("name, slug, image_url, collection_id")
         .eq("id", params.id)
         .single()
       if (error || !data) {
@@ -58,6 +75,14 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
       setImageUrl(data.image_url || "")
       setPreviewUrl(data.image_url || "")
       setCollectionId(data.collection_id || "")
+      setFabricSlug(data.slug || "")
+      const qa = getFabricQA(data.slug)
+      if (qa) {
+        setQualityScore(qa.qualityScore)
+        setUsage(qa.usage)
+        setTimeline(qa.timeline)
+        setFlagged(qa.flagged)
+      }
       setLoading(false)
     }
     fetchFabric()
@@ -74,6 +99,18 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!supabase) return
+
+    if (
+      imageIssues &&
+      (imageIssues.blurred || imageIssues.torn || imageIssues.edgeDamage)
+    ) {
+      if (
+        typeof window !== 'undefined' &&
+        !window.confirm('ภาพอาจไม่สมบูรณ์ ต้องการบันทึกต่อหรือไม่?')
+      ) {
+        return
+      }
+    }
 
     let uploadedUrl = imageUrl
 
@@ -117,6 +154,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
       return
     }
 
+    updateFabricImage(fabricSlug || params.id, user?.email || "admin", uploadedUrl)
     router.push("/admin/fabrics")
   }
 
@@ -135,6 +173,31 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
         <Card>
           <CardHeader>
             <CardTitle>ข้อมูลผ้า</CardTitle>
+            {qualityScore !== null && (
+              <p className="text-sm text-gray-600">
+                คะแนนคุณภาพ: {qualityScore}
+                {flagged && <span className="text-red-600 ml-2">(ไม่ผ่านมาตรฐาน)</span>}
+              </p>
+            )}
+            {usage.length > 0 && (
+              <p className="text-sm text-gray-600">
+                ใช้งานใน: {usage.join(', ')}{' '}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => alert('แสดงการใช้งานทั้งหมด')}
+                  className="ml-2 h-6"
+                >
+                  แสดงการใช้งานทั้งหมดของผ้านี้
+                </Button>
+              </p>
+            )}
+            {timeline.length > 0 && (
+              <p className="text-sm text-gray-600">
+                แก้ไขล่าสุดโดย {timeline[0].admin}
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -158,6 +221,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
                     if (file) {
                       setImageFile(file)
                       setPreviewUrl(URL.createObjectURL(file))
+                      setImageIssues(checkImageIssues(file))
                     }
                   }}
                 />
@@ -167,6 +231,18 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
                     alt="preview"
                     className="h-24 w-24 object-cover rounded-md mt-2"
                   />
+                )}
+                {imageIssues &&
+                  (imageIssues.blurred || imageIssues.torn || imageIssues.edgeDamage) && (
+                    <p className="text-sm text-red-600">
+                      พบปัญหาภาพ:
+                      {imageIssues.blurred && " เบลอ"}
+                      {imageIssues.torn && " ภาพขาด"}
+                      {imageIssues.edgeDamage && " ขอบขาด"}
+                    </p>
+                  )}
+                {previewUrl && imageUrl && previewUrl !== imageUrl && (
+                  <ImageCompareModal oldUrl={imageUrl} newUrl={previewUrl} />
                 )}
               </div>
               <div className="space-y-2">
