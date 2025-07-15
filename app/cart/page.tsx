@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
@@ -11,9 +12,11 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "@/contexts/cart-context"
+import { addFastBill } from "@/lib/mock-fast-bills"
 
 export default function CartPage() {
   const { state, dispatch } = useCart()
+  const router = useRouter()
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
 
@@ -37,6 +40,20 @@ export default function CartPage() {
 
   const shipping = state.total >= 1500 ? 0 : 100
   const finalTotal = state.total - discount + shipping
+
+  const createBill = () => {
+    const bill = addFastBill({
+      customerName: "ลูกค้าตะกร้า",
+      phone: "",
+      items: state.items
+        .map((it) => `${it.name} × ${it.quantity}`)
+        .join("\n"),
+      total: finalTotal,
+      deposit: 0,
+      days: 10,
+    })
+    router.push(`/bill/${bill.id}`)
+  }
 
   if (state.items.length === 0) {
     return (
@@ -173,6 +190,15 @@ export default function CartPage() {
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={createBill}
+                  disabled={state.items.length === 0}
+                >
+                  เปิดบิลด่วน
+                </Button>
 
                 <Link href="/products">
                   <Button variant="outline" className="w-full bg-transparent">

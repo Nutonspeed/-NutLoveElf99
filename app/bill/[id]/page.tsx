@@ -11,7 +11,8 @@ import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { getBill as getAdminBill } from "@/mock/bills"
-import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
+import { getQuickBill } from "@/lib/mock-quick-bills"
+import { getFastBill } from "@/lib/mock-fast-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
 import EmptyState from "@/components/EmptyState"
@@ -23,6 +24,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const bill = getBill(id)
   const quickBill = getQuickBill(id)
   const simpleBill = getAdminBill(id)
+  const fastBill = getFastBill(id)
   const order = mockOrders.find((o) => o.id === bill?.orderId)
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
@@ -69,30 +71,39 @@ export default function BillPage({ params }: { params: { id: string } }) {
     )
   }
 
+  if (fastBill) {
+    return (
+      <div className="p-4 space-y-4">
+        <h1 className="text-xl font-bold text-center">บิล {fastBill.id}</h1>
+        <div className="max-w-md mx-auto border rounded-lg p-4 space-y-2">
+          {fastBill.items.split("\n").map((it, i) => (
+            <div key={i} className="flex justify-between">
+              <span>{it}</span>
+            </div>
+          ))}
+          <div className="flex justify-between font-bold border-t pt-2">
+            <span>ยอดรวม</span>
+            <span>฿{fastBill.total.toLocaleString()}</span>
+          </div>
+        </div>
+        <div className="text-center space-y-2">
+          <p>{fastBill.customerName}</p>
+          <img src="/placeholder.svg" alt="QR" className="w-40 h-40 mx-auto" />
+        </div>
+      </div>
+    )
+  }
+
   const baseDate = new Date(bill?.dueDate || bill?.createdAt || '')
   const expired =
     bill &&
     bill.status !== "paid" &&
     getMockNow().getTime() > baseDate.getTime() + 3 * 24 * 60 * 60 * 1000
 
-  if (!bill && !quickBill) {
-    if (!getBillLink(id)) {
-      if (typeof window !== "undefined") {
-        window.location.replace("/bill/unknown")
-      }
-      return null
-    }
-    if (typeof window !== "undefined") {
-      setTimeout(() => window.location.replace('/chat'), 3000)
-    }
+  if (!bill && !quickBill && !fastBill) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <p>ไม่พบข้อมูลบิล อาจถูกลบหรือหมดอายุ</p>
-          <Link href="/chat" className="text-primary underline">
-            ไปที่แชท
-          </Link>
-        </div>
+        <p>ไม่พบบิล</p>
       </div>
     )
   }
