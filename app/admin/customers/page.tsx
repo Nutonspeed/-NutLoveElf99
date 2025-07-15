@@ -19,7 +19,12 @@ import {
   loadCustomerNotes,
   listCustomerNotes,
 } from "@/lib/mock-customer-notes"
-import { loadCustomerTags, listCustomerTags } from "@/lib/mock-customer-tags"
+import {
+  loadCustomerTags,
+  listCustomerTags,
+  defaultTags,
+  customerTags,
+} from "@/lib/mock-customer-tags"
 import { loadFlaggedUsers, getFlagStatus } from "@/lib/mock-flagged-users"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 
@@ -29,6 +34,7 @@ export default function AdminCustomersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [behaviorFilter, setBehaviorFilter] = useState("all")
   const [tagFilter, setTagFilter] = useState("all")
+  const [tags, setTags] = useState<string[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState("")
@@ -38,6 +44,7 @@ export default function AdminCustomersPage() {
     loadCustomerNotes()
     loadCustomerTags()
     loadFlaggedUsers()
+    setTags(Array.from(new Set([...defaultTags, ...customerTags.map((t) => t.tag)])))
     loadData()
   }, [])
 
@@ -237,9 +244,11 @@ export default function AdminCustomersPage() {
                   onChange={(e) => setTagFilter(e.target.value)}
                 >
                   <option value="all">แท็กทั้งหมด</option>
-                  <option value="สายหวาน">สายหวาน</option>
-                  <option value="ขาประจำ">ขาประจำ</option>
-                  <option value="อารมณ์ร้อน">อารมณ์ร้อน</option>
+                  {tags.map((t) => (
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
+                  ))}
                 </select>
                 <Button onClick={() => downloadCSV(customers, 'customers.csv')}>
                   Export CSV

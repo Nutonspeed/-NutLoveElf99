@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
@@ -49,6 +50,12 @@ export default function AdminOrdersPage() {
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [bills, setBills] = useState(mockBills)
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const c = searchParams.get("customer")
+    if (c) setCustomerFilter(c)
+  }, [searchParams])
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -449,10 +456,16 @@ export default function AdminOrdersPage() {
             </Table>
             </div>
 
-            {filteredOrders.length === 0 && (
+            {orders.length === 0 ? (
               <div className="text-center py-8">
-                <p className="text-gray-500">ไม่พบคำสั่งซื้อที่ตรงกับเงื่อนไขการค้นหา</p>
+                <p className="text-gray-500">ยังไม่มีออเดอร์ในระบบ</p>
               </div>
+            ) : (
+              filteredOrders.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">ไม่พบคำสั่งซื้อที่ตรงกับเงื่อนไขการค้นหา</p>
+                </div>
+              )
             )}
           </CardContent>
         </Card>

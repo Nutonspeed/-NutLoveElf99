@@ -167,6 +167,9 @@ export default function CustomerDetailPage({
         <Link href="/chat">
           <Button variant="outline">เปิดใน Chatwoot</Button>
         </Link>
+        <Link href={`/admin/orders?customer=${customer.id}`}>
+          <Button variant="outline">ดูออเดอร์ทั้งหมดของลูกค้านี้</Button>
+        </Link>
 
         <Card>
           <CardHeader>
