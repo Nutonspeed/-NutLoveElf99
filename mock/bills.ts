@@ -28,3 +28,8 @@ export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): A
   mockBills.unshift(bill)
   return bill
 }
+
+export function updateBillStatus(id: string, status: AdminBill['status']) {
+  const bill = mockBills.find((b) => b.id === id)
+  if (bill) bill.status = status
+}
