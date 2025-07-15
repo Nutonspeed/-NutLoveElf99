@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { Plus, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Button } from '@/components/ui/buttons/button'
+import Link from 'next/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogFooter, DialogHeader as DHeader, DialogTitle, DialogTrigger } from '@/components/ui/modals/dialog'
 import { Input } from '@/components/ui/inputs/input'
@@ -10,36 +11,54 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { AdminBill } from '@/mock/bills'
-import { mockBills, addBill, updateBillStatus } from '@/mock/bills'
+import type { AdminBill, BillItem } from '@/mock/bills'
+import { mockBills, addBill, updateBillStatus, updateBill } from '@/mock/bills'
+import { toast } from 'sonner'
 
 export default function AdminBillsPage() {
   const [bills, setBills] = useState<AdminBill[]>([...mockBills])
   const [open, setOpen] = useState(false)
   const [customer, setCustomer] = useState('')
-  const [items, setItems] = useState('')
+  const [items, setItems] = useState<BillItem[]>([])
+  const [shipping, setShipping] = useState(50)
+  const subtotal = items.reduce((s, it) => s + it.price * it.quantity, 0)
+  const total = subtotal + shipping
   const [note, setNote] = useState('')
+  const [edit, setEdit] = useState<string | null>(null)
+  const [editData, setEditData] = useState<{
+    customer: string
+    items: BillItem[]
+    shipping: number
+    note: string
+  } | null>(null)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'unpaid' | 'paid' | 'cancelled'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
 
   const handleCreate = () => {
-    const bill = addBill({ customer, items, note })
+    if (items.length === 0) {
+      toast.error('ต้องมีสินค้าอย่างน้อย 1 รายการ')
+      return
+    }
+    const bill = addBill({ customer, items, shipping, note })
     setBills([bill, ...bills])
     setCustomer('')
-    setItems('')
+    setItems([])
     setNote('')
+    setShipping(50)
     setOpen(false)
   }
 
   const getStatusClass = (status: AdminBill['status']) => {
     if (status === 'paid') return 'bg-green-500 text-white'
     if (status === 'cancelled') return 'bg-red-500 text-white'
+    if (status === 'pending') return 'bg-blue-500 text-white'
     return 'bg-yellow-500 text-white'
   }
 
   const getStatusText = (status: AdminBill['status']) => {
     if (status === 'paid') return 'ชำระแล้ว'
     if (status === 'cancelled') return 'ยกเลิก'
+    if (status === 'pending') return 'รอตรวจสอบ'
     return 'รอชำระ'
   }
 
@@ -68,8 +87,86 @@ export default function AdminBillsPage() {
             </DHeader>
             <div className="space-y-4">
               <Input placeholder="ชื่อลูกค้า" value={customer} onChange={(e) => setCustomer(e.target.value)} />
-              <Textarea placeholder="รายการสินค้า" value={items} onChange={(e) => setItems(e.target.value)} />
               <Textarea placeholder="หมายเหตุ" value={note} onChange={(e) => setNote(e.target.value)} />
+              <div className="space-y-2">
+                {items.map((it, idx) => (
+                  <div key={idx} className="flex space-x-2 items-end">
+                    <Input
+                      placeholder="สินค้า"
+                      value={it.name}
+                      onChange={(e) =>
+                        setItems(
+                          items.map((item, i) =>
+                            i === idx ? { ...item, name: e.target.value } : item,
+                          ),
+                        )
+                      }
+                    />
+                    <Input
+                      type="number"
+                      className="w-20"
+                      value={it.quantity}
+                      onChange={(e) =>
+                        setItems(
+                          items.map((item, i) =>
+                            i === idx
+                              ? { ...item, quantity: parseInt(e.target.value) || 1 }
+                              : item,
+                          ),
+                        )
+                      }
+                    />
+                    <Input
+                      type="number"
+                      className="w-24"
+                      value={it.price}
+                      onChange={(e) =>
+                        setItems(
+                          items.map((item, i) =>
+                            i === idx
+                              ? { ...item, price: parseFloat(e.target.value) || 0 }
+                              : item,
+                          ),
+                        )
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setItems(items.filter((_, i) => i !== idx))}
+                    >
+                      ×
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setItems([...items, { name: '', quantity: 1, price: 0 }])}
+                >
+                  เพิ่มสินค้า
+                </Button>
+              </div>
+              <div className="space-y-2 pt-2 border-t">
+                <div className="flex justify-between">
+                  <span>ยอดสินค้า</span>
+                  <span>฿{subtotal.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>ค่าจัดส่ง</span>
+                  <Input
+                    type="number"
+                    className="w-24"
+                    value={shipping}
+                    onChange={(e) => setShipping(parseFloat(e.target.value) || 0)}
+                  />
+                </div>
+                <div className="flex justify-between font-semibold">
+                  <span>ยอดรวม</span>
+                  <span>฿{total.toLocaleString()}</span>
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={handleCreate}>บันทึกบิล (mock)</Button>
@@ -96,6 +193,7 @@ export default function AdminBillsPage() {
           <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
             <TabsList>
               <TabsTrigger value="all">ทั้งหมด</TabsTrigger>
+              <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
               <TabsTrigger value="unpaid">รอชำระ</TabsTrigger>
               <TabsTrigger value="paid">ชำระแล้ว</TabsTrigger>
               <TabsTrigger value="cancelled">ยกเลิก</TabsTrigger>
@@ -111,6 +209,7 @@ export default function AdminBillsPage() {
                   <TableHead>ชื่อลูกค้า</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>วันที่</TableHead>
+                  <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -139,6 +238,26 @@ export default function AdminBillsPage() {
                       </Select>
                     </TableCell>
                     <TableCell>{new Date(b.createdAt).toLocaleDateString()}</TableCell>
+                    <TableCell className="space-x-2">
+                      <Link href={`/bill/${b.id}`} className="underline text-sm">
+                        ดูบิล
+                      </Link>
+                      <Button
+                        variant="outline"
+                        size="xs"
+                        onClick={() => {
+                          setEdit(b.id)
+                          setEditData({
+                            customer: b.customer,
+                            items: b.items,
+                            shipping: b.shipping,
+                            note: b.note,
+                          })
+                        }}
+                      >
+                        แก้ไข
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -150,6 +269,135 @@ export default function AdminBillsPage() {
           )}
         </CardContent>
       </Card>
+      <Dialog open={!!edit} onOpenChange={() => setEdit(null)}>
+        <DialogContent className="max-w-lg">
+          <DHeader>
+            <DialogTitle>แก้ไขบิล</DialogTitle>
+          </DHeader>
+          {editData && (
+            <div className="space-y-4">
+              <Input
+                placeholder="ชื่อลูกค้า"
+                value={editData.customer}
+                onChange={(e) =>
+                  setEditData({ ...editData, customer: e.target.value })
+                }
+              />
+              <div className="space-y-2">
+                {editData.items.map((it, idx) => (
+                  <div key={idx} className="flex space-x-2 items-end">
+                    <Input
+                      placeholder="สินค้า"
+                      value={it.name}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          items: editData.items.map((item, i) =>
+                            i === idx ? { ...item, name: e.target.value } : item,
+                          ),
+                        })
+                      }
+                    />
+                    <Input
+                      type="number"
+                      className="w-20"
+                      value={it.quantity}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          items: editData.items.map((item, i) =>
+                            i === idx
+                              ? { ...item, quantity: parseInt(e.target.value) || 1 }
+                              : item,
+                          ),
+                        })
+                      }
+                    />
+                    <Input
+                      type="number"
+                      className="w-24"
+                      value={it.price}
+                      onChange={(e) =>
+                        setEditData({
+                          ...editData,
+                          items: editData.items.map((item, i) =>
+                            i === idx
+                              ? { ...item, price: parseFloat(e.target.value) || 0 }
+                              : item,
+                          ),
+                        })
+                      }
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() =>
+                        setEditData({
+                          ...editData,
+                          items: editData.items.filter((_, i) => i !== idx),
+                        })
+                      }
+                    >
+                      ×
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    setEditData({
+                      ...editData,
+                      items: [...editData.items, { name: '', quantity: 1, price: 0 }],
+                    })
+                  }
+                >
+                  เพิ่มสินค้า
+                </Button>
+              </div>
+              <div className="space-y-2 pt-2 border-t">
+                <div className="flex justify-between">
+                  <span>ยอดสินค้า</span>
+                  <span>
+                    ฿{editData.items.reduce((s, it) => s + it.price * it.quantity, 0).toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>ค่าจัดส่ง</span>
+                  <Input
+                    type="number"
+                    className="w-24"
+                    value={editData.shipping}
+                    onChange={(e) =>
+                      setEditData({ ...editData, shipping: parseFloat(e.target.value) || 0 })
+                    }
+                  />
+                </div>
+                <Textarea
+                  placeholder="หมายเหตุ"
+                  value={editData.note}
+                  onChange={(e) => setEditData({ ...editData, note: e.target.value })}
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button
+              onClick={() => {
+                if (edit && editData) {
+                  updateBill(edit, editData)
+                  setBills([...mockBills])
+                  toast.success('บันทึกแล้ว (mock)')
+                }
+                setEdit(null)
+              }}
+            >
+              บันทึก
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
