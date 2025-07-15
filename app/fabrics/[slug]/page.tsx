@@ -19,6 +19,8 @@ interface Fabric {
   slug: string | null
   name: string
   sku?: string | null
+  colors?: string[] | null
+  type?: 'Solid' | 'Pattern' | 'Print'
   description?: string | null
   size?: string | null
   collection_id?: string | null
@@ -120,6 +122,8 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
               alt={fabric.name}
               fill
               className="object-cover rounded-lg"
+              placeholder="blur"
+              blurDataURL="/placeholder.svg"
             />
           </div>
           <div className="space-y-4">

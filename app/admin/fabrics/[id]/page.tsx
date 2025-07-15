@@ -20,6 +20,8 @@ interface Fabric {
   sku: string
   collection_id: string
   image_urls: string[]
+  colors?: string[] | null
+  type?: 'Solid' | 'Pattern' | 'Print'
   price_min: number
   price_max: number
 }
