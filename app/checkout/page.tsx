@@ -56,8 +56,17 @@ export default function CheckoutPage() {
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [checklist, setChecklist] = useState({ confirmSize: false, confirmColor: false })
   const [isProcessing, setIsProcessing] = useState(false)
+  const [deliveryMethod, setDeliveryMethod] = useState("")
 
-  const shipping = state.total >= 1500 ? 0 : 100
+  const calcShipping = (method: string) => {
+    if (!method || state.total >= 1500) return 0
+    const base = shippingInfo.city === "กรุงเทพฯ" ? 40 : 60
+    if (method === "EMS") return base + 20
+    if (method === "COD") return base + 30
+    return base
+  }
+
+  const shipping = calcShipping(deliveryMethod)
   const tax = Math.round(state.total * 0.07)
   const discountAmount = appliedCoupon
     ? appliedCoupon.type === "percentage"
@@ -136,7 +145,7 @@ export default function CheckoutPage() {
           postalCode: shippingInfo.postalCode,
           phone: shippingInfo.phone,
         },
-        delivery_method: "",
+        delivery_method: deliveryMethod,
         tracking_number: "",
         shipping_fee: shipping,
         shipping_status: "pending" as ShippingStatus,
@@ -277,7 +286,7 @@ export default function CheckoutPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
+                  <div className="space-y-2">
                       <Label htmlFor="postalCode">รหัสไปรษณีย์ *</Label>
                       <Input
                         id="postalCode"
@@ -286,6 +295,20 @@ export default function CheckoutPage() {
                         required
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="deliveryMethod">วิธีจัดส่ง</Label>
+                    <Select value={deliveryMethod} onValueChange={setDeliveryMethod}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="เลือกวิธีจัดส่ง" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Flash">Flash</SelectItem>
+                        <SelectItem value="EMS">EMS</SelectItem>
+                        <SelectItem value="COD">COD</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2">
