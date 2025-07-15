@@ -12,6 +12,7 @@ import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockProducts } from "@/lib/mock-products"
+import { mockStock } from "@/lib/mock-stock"
 import { useCart } from "@/contexts/cart-context"
 import type { Order } from "@/types/order"
 import type { OrderStatus, ShippingStatus, PackingStatus } from "@/types/order"
@@ -256,6 +257,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                     <p className="font-medium">{item.productName}</p>
                     <p className="text-sm text-gray-600">
                       {item.size && `ขนาด: ${item.size}`} {item.color && `| สี: ${item.color}`}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      ตำแหน่ง: {mockStock.find((s) => s.id === item.productId)?.location || "-"}
                     </p>
                   </div>
                   <div className="text-right">
