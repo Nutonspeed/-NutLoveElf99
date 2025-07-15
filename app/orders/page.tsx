@@ -86,11 +86,11 @@ export default function OrdersPage() {
   );
 
   const handleReorder = (order: Order) => {
+    let added = false
     for (const item of order.items) {
       const product = mockProducts.find((p) => p.id === item.productId)
       if (!product || !product.inStock || product.status === "draft") {
-        toast.error(`สินค้า ${item.productName} ไม่สามารถสั่งซ้ำได้`)
-        return
+        continue
       }
       dispatch({
         type: "ADD_ITEM",
@@ -104,11 +104,17 @@ export default function OrdersPage() {
           color: item.color,
         },
       })
+      added = true
+    }
+    if (!added) {
+      toast.error("ไม่สามารถสั่งซ้ำได้")
+      return
     }
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("reorderFromId", order.id);
+      sessionStorage.setItem("reorderFromId", order.id)
     }
-  };
+    router.push("/cart")
+  }
 
   return (
     <div className="min-h-screen">

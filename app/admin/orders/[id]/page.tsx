@@ -46,6 +46,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
+  const [adminNote, setAdminNote] = useState(order?.adminNote || "")
   const [payment, setPayment] = useState(() => getPayment(id))
   const [chatSent, setChatSent] = useState<boolean>(mockChatStatus[id] || false)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -97,11 +98,11 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const { dispatch } = useCart()
 
   const handleReorder = () => {
+    let added = false
     for (const item of order.items) {
       const product = mockProducts.find((p) => p.id === item.productId)
       if (!product || !product.inStock || product.status === "draft") {
-        toast.error(`สินค้า ${item.productName} ไม่สามารถสั่งซ้ำได้`)
-        return
+        continue
       }
       dispatch({
         type: "ADD_ITEM",
@@ -115,8 +116,17 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
           color: item.color,
         },
       })
+      added = true
+    }
+    if (!added) {
+      toast.error("ไม่สามารถสั่งซ้ำได้")
+      return
+    }
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("reorderFromId", order.id)
     }
     toast.success("เพิ่มสินค้าลงตะกร้าแล้ว")
+    router.push("/cart")
   }
 
   return (
@@ -369,6 +379,28 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
               variant="outline"
               onClick={() => {
                 mockOrders[orderIndex].chatNote = chatNote
+                toast.success("บันทึกแล้ว")
+              }}
+            >
+              บันทึก
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>หมายเหตุแอดมิน</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <textarea
+              className="border rounded w-full p-2"
+              value={adminNote}
+              onChange={(e) => setAdminNote(e.target.value)}
+            />
+            <Button
+              variant="outline"
+              onClick={() => {
+                mockOrders[orderIndex].adminNote = adminNote
                 toast.success("บันทึกแล้ว")
               }}
             >
