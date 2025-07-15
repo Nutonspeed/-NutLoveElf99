@@ -9,6 +9,8 @@ export interface Fabric {
   price: number
   images: string[]
   collectionSlug: string
+  keywords?: string[]
+  popular?: boolean
 }
 
 export const mockFabrics: Fabric[] = [
@@ -21,6 +23,8 @@ export const mockFabrics: Fabric[] = [
     price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
     collectionSlug: 'cozy-earth',
+    keywords: ['ลินิน', 'สีครีม'],
+    popular: false,
   },
   {
     id: 'f02',
@@ -31,6 +35,8 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
     collectionSlug: 'cozy-earth',
+    keywords: ['คอตตอน', 'สีเทา'],
+    popular: false,
   },
   {
     id: 'f03',
@@ -41,6 +47,8 @@ export const mockFabrics: Fabric[] = [
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
     collectionSlug: 'modern-loft',
+    keywords: ['ผ้ากำมะหยี่', 'สีน้ำเงิน'],
+    popular: false,
   },
   {
     id: 'f04',
@@ -51,6 +59,8 @@ export const mockFabrics: Fabric[] = [
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
     collectionSlug: 'modern-loft',
+    keywords: ['ลายทาง', 'สีน้ำเงินเข้ม'],
+    popular: false,
   },
   {
     id: 'f05',
@@ -61,6 +71,8 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
     collectionSlug: 'vintage-vibes',
+    keywords: ['ลายดอกไม้', 'สีชมพู'],
+    popular: false,
   },
 ]
 
