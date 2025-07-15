@@ -31,6 +31,8 @@ import {
   updateCustomerPoints,
   setCustomerTier,
   setCustomerMuted,
+  toggleCustomerStar,
+  getFrequentProducts,
 } from "@/lib/mock-customers"
 import {
   loadCustomerNotes,
@@ -80,6 +82,7 @@ export default function CustomerDetailPage({
   const [pointDelta, setPointDelta] = useState(0)
   const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
+  const [favorites, setFavorites] = useState(() => getFrequentProducts(customer.id).slice(0,3))
   const [noteInput, setNoteInput] = useState("")
   const [tagInput, setTagInput] = useState("")
   const latestMessage = getLatestChatMessage(customer.id)
@@ -94,6 +97,15 @@ export default function CustomerDetailPage({
             </Button>
           </Link>
           <h1 className="text-3xl font-bold">ข้อมูลลูกค้า</h1>
+          <Button
+            variant="ghost"
+            onClick={() => {
+              toggleCustomerStar(customer.id)
+              setFavorites(getFrequentProducts(customer.id).slice(0,3))
+            }}
+          >
+            {customer.starred ? '⭐ เลิกติดดาว' : '⭐ ติดดาว'}
+          </Button>
         </div>
 
         <CustomerCard customer={customer} />
@@ -161,11 +173,17 @@ export default function CustomerDetailPage({
         <div className="text-lg font-semibold">
           ยอดซื้อรวม: ฿{stats.totalSpent.toLocaleString()}
         </div>
+        {favorites.length > 0 && (
+          <div className="text-sm">สินค้าโปรด: {favorites.map(f => f.name).join(', ')}</div>
+        )}
         {latestMessage && (
           <div className="text-sm text-gray-600">แชทล่าสุด: {latestMessage.text}</div>
         )}
         <Link href="/chat">
           <Button variant="outline">เปิดใน Chatwoot</Button>
+        </Link>
+        <Link href={`/admin/bills?search=${encodeURIComponent(customer.name)}`}>
+          <Button variant="outline">ดูบิลเก่าทั้งหมดของลูกค้านี้</Button>
         </Link>
 
         <Card>

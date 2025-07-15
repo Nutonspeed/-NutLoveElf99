@@ -12,6 +12,7 @@ export interface Bill {
   id: string
   orderId: string
   phone?: string
+  customerId?: string
   pin?: string
   status: BillStatus
   payments: BillPayment[]
