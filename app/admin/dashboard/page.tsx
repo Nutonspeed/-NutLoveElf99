@@ -24,6 +24,15 @@ import Link from "next/link"
 import DashboardCard from "@/components/admin/dashboard/DashboardCard"
 import { Skeleton } from "@/components/ui/skeleton"
 import OrderTable from "@/components/admin/OrderTable"
+import { Progress } from "@/components/ui/progress"
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table"
 import { mockOrders } from "@/lib/mock-orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
 import { mockCustomers, type Customer } from "@/lib/mock-customers"
@@ -55,6 +64,12 @@ export default function AdminDashboard() {
   const [newCustomers, setNewCustomers] = useState<Customer[]>([])
   const [topProducts, setTopProducts] = useState<Array<{ id: string; name: string; count: number; image?: string }>>([])
   const lowStockItems = getLowStockItems()
+  const [billStats, setBillStats] = useState({
+    total: 0,
+    paidPercent: 0,
+    topCustomers: [] as Array<{ name: string; count: number }>,
+    recent: [] as Array<{ id: string; customer: string; date: string }>,
+  })
 
   useEffect(() => {
     fetchDashboardStats().then(setStats)
@@ -127,6 +142,49 @@ export default function AdminDashboard() {
     setDailySales(daily)
     setNewCustomers(newCust)
     setTopProducts(top)
+  }, [])
+
+  useEffect(() => {
+    const now = new Date()
+    const startMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+
+    const billsThisMonth = mockBills.filter(
+      (b) => new Date(b.createdAt) >= startMonth,
+    )
+    const total = billsThisMonth.length
+    const paid = billsThisMonth.filter((b) => b.status === 'paid').length
+    const paidPercent = total ? (paid / total) * 100 : 0
+
+    const counts: Record<string, number> = {}
+    billsThisMonth.forEach((b) => {
+      const order = mockOrders.find((o) => o.id === b.orderId)
+      const cust = order && mockCustomers.find((c) => c.id === order.customerId)
+      const name = cust?.name || order?.customerName || 'Unknown'
+      counts[name] = (counts[name] || 0) + 1
+    })
+    const topCustomers = Object.entries(counts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 3)
+
+    const recent = [...billsThisMonth]
+      .sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      )
+      .slice(0, 5)
+      .map((b) => {
+        const order = mockOrders.find((o) => o.id === b.orderId)
+        const cust =
+          order && mockCustomers.find((c) => c.id === order.customerId)
+        return {
+          id: b.id,
+          customer: cust?.name || order?.customerName || 'Unknown',
+          date: new Date(b.createdAt).toLocaleDateString('th-TH'),
+        }
+      })
+
+    setBillStats({ total, paidPercent, topCustomers, recent })
   }, [])
 
   useEffect(() => {
@@ -219,6 +277,58 @@ export default function AdminDashboard() {
             </>
           )}
         </div>
+
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle>ภาพรวมบิลเดือนนี้</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {billStats.total === 0 ? (
+              <div className="text-center text-muted text-sm">ไม่มีข้อมูลบิลในเดือนนี้</div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-sm text-gray-600">บิลทั้งหมด</p>
+                    <p className="text-2xl font-bold">{billStats.total}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">บิลที่ชำระแล้ว: {billStats.paidPercent.toFixed(0)}%</p>
+                    <Progress value={billStats.paidPercent} className="h-2 mt-2" />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <p className="font-medium mb-2 text-sm">ลูกค้าซื้อบ่อย</p>
+                  <ul className="list-disc pl-5 space-y-1 text-sm">
+                    {billStats.topCustomers.map((c) => (
+                      <li key={c.name}>{c.name} – {c.count} บิล</li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="overflow-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>เลขบิล</TableHead>
+                        <TableHead>ลูกค้า</TableHead>
+                        <TableHead>วันที่</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {billStats.recent.map((b) => (
+                        <TableRow key={b.id}>
+                          <TableCell>{b.id}</TableCell>
+                          <TableCell>{b.customer}</TableCell>
+                          <TableCell>{b.date}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Alert Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
