@@ -2,13 +2,13 @@ import type { OrderStatus } from "@/types/order"
 import type { BadgeProps } from "@/components/ui/badge"
 import { orderStatusOptions } from "@/types/order"
 
-export function getOrderStatusText(status: OrderStatus): string {
+export function getOrderStatusText(status: string | OrderStatus): string {
   const opt = orderStatusOptions.find((o) => o.value === status)
-  return opt ? opt.label : status
+  return opt ? opt.label : "Unknown"
 }
 
 export function getOrderStatusBadgeVariant(
-  status: OrderStatus,
+  status: string | OrderStatus,
 ): BadgeProps["variant"] {
   switch (status) {
     case "paid":

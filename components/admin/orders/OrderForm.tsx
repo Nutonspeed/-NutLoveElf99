@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import type { OrderItem, ShippingStatus } from "@/types/order"
 import { shippingStatusOptions } from "@/types/order"
+import { orderFormSchema } from "@/lib/order/validation"
 
 interface OrderFormProps {
   onSave: (data: {
@@ -92,7 +93,7 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSave({
+    const result = orderFormSchema.safeParse({
       customerName,
       customerPhone,
       items,
@@ -108,6 +109,11 @@ export default function OrderForm({ onSave, initialValues, initialItems }: Order
       shipping_date: shippingDate,
       delivery_note: deliveryNote,
     })
+    if (!result.success) {
+      console.error(result.error)
+      return
+    }
+    onSave(result.data)
   }
 
   return (
