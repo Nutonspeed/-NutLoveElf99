@@ -4,6 +4,7 @@ export interface Customer {
   email: string
   phone?: string
   address?: string
+  facebook?: string
   city?: string
   postalCode?: string
   avatar?: string
@@ -35,6 +36,7 @@ const initialMockCustomers: Customer[] = [
     email: "john@example.com",
     phone: "081-234-5678",
     address: "123 ถนนสุขุมวิท",
+    facebook: "https://facebook.com/john.doe",
     city: "กรุงเทพฯ",
     postalCode: "10110",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -53,6 +55,7 @@ const initialMockCustomers: Customer[] = [
     email: "jane@example.com",
     phone: "082-345-6789",
     address: "456 ถนนพหลโยธิน",
+    facebook: "https://facebook.com/jane.smith",
     city: "กรุงเทพฯ",
     postalCode: "10400",
     avatar: "/placeholder.svg?height=40&width=40",
@@ -177,4 +180,16 @@ export function setCustomerMuted(id: string, muted: boolean) {
   const customer = mockCustomers.find((c) => c.id === id)
   if (!customer) return
   customer.muted = muted
+}
+
+export function setCustomerAddress(id: string, address: string) {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return
+  customer.address = address
+}
+
+export function setCustomerFacebook(id: string, facebook: string) {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return
+  customer.facebook = facebook
 }
