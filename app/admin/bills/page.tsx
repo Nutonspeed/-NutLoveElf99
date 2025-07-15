@@ -1,5 +1,6 @@
 "use client"
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Button } from '@/components/ui/buttons/button'
@@ -31,7 +32,8 @@ export default function AdminBillsPage() {
     shipping: number
     note: string
   } | null>(null)
-  const [search, setSearch] = useState('')
+  const params = useSearchParams()
+  const [search, setSearch] = useState(params.get('search') || '')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
 
   const handleCreate = () => {
