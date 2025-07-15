@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
@@ -10,7 +10,9 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
-import { getBill as getAdminBill } from "@/mock/bills"
+import { getBill as getAdminBill, updateBill, deleteBill } from "@/mock/bills"
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/modals/dialog"
+import { toPng } from "html-to-image"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
@@ -30,14 +32,33 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
 
+  const billRef = useRef<HTMLDivElement>(null)
+  const [editOpen, setEditOpen] = useState(false)
+  const [editItems, setEditItems] = useState(simpleBill ? [...simpleBill.items] : [])
+
+  const handleSaveImage = async () => {
+    if (billRef.current) {
+      const url = await toPng(billRef.current)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${id}.png`
+      a.click()
+    }
+  }
+
+  const handleDeleteBill = () => {
+    if (confirm('ยืนยันลบบิลนี้?')) {
+      deleteBill(simpleBill!.id)
+      alert('ลบแล้ว (mock)')
+      window.location.replace('/admin/bills')
+    }
+  }
+
   if (simpleBill) {
-    const sum = simpleBill.items.reduce(
-      (s, it) => s + it.price * it.quantity,
-      0,
-    )
+    const sum = simpleBill.items.reduce((s, it) => s + it.price * it.quantity, 0)
     const total = sum + simpleBill.shipping
     return (
-      <div className="p-4 space-y-4">
+      <div className="p-4 space-y-4" ref={billRef}>
         <h1 className="text-xl font-bold text-center">บิล {simpleBill.id}</h1>
         <div className="max-w-md mx-auto border rounded-lg p-4 space-y-2">
           {simpleBill.items.map((it, i) => (
@@ -60,11 +81,56 @@ export default function BillPage({ params }: { params: { id: string } }) {
         {simpleBill.note && (
           <p className="text-sm text-center">หมายเหตุ: {simpleBill.note}</p>
         )}
+        <div className="flex justify-center space-x-2">
+          <Button onClick={() => setEditOpen(true)}>แก้ไขบิล</Button>
+          <Button variant="destructive" onClick={handleDeleteBill}>ลบบิล</Button>
+          <Button variant="outline" onClick={handleSaveImage}>บันทึกบิลเป็นภาพ</Button>
+        </div>
         <div className="text-center">
           <Button onClick={() => alert('ส่งบิลใหม่แทนใบเดิม (mock)')}>
             ส่งบิลใหม่แทนใบเดิม
           </Button>
         </div>
+        <Dialog open={editOpen} onOpenChange={setEditOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>แก้ไขบิล</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2">
+              {editItems.map((it, idx) => (
+                <div key={idx} className="flex space-x-2 items-end">
+                  <Input
+                    value={it.name}
+                    onChange={e =>
+                      setEditItems(editItems.map((i, n) => n === idx ? { ...i, name: e.target.value } : i))
+                    }
+                  />
+                  <Input
+                    type="number"
+                    className="w-20"
+                    value={it.quantity}
+                    onChange={e =>
+                      setEditItems(editItems.map((i, n) => n === idx ? { ...i, quantity: parseInt(e.target.value) || 1 } : i))
+                    }
+                  />
+                </div>
+              ))}
+              <Button variant="outline" type="button" onClick={() => setEditItems([...editItems, { name: '', quantity: 1, price: 0 }])}>
+                เพิ่มสินค้า
+              </Button>
+            </div>
+            <DialogFooter>
+              <Button
+                onClick={() => {
+                  updateBill(simpleBill.id, { items: editItems })
+                  setEditOpen(false)
+                }}
+              >
+                บันทึก
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     )
   }
@@ -164,7 +230,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   return (
     <ErrorBoundary>
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" ref={billRef}>
       <div className="print:hidden bg-white border-b px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -188,6 +254,9 @@ export default function BillPage({ params }: { params: { id: string } }) {
             <Button onClick={handleDownload}>
               <Download className="mr-2 h-4 w-4" />
               ดาวน์โหลด PDF
+            </Button>
+            <Button variant="outline" onClick={handleSaveImage}>
+              บันทึกบิลเป็นภาพ
             </Button>
             <Link href="/admin/chat">
               <Button variant="outline">เปิดแชท</Button>
