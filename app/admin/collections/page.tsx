@@ -1,8 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { getCollections } from "@/lib/mock-collections"
+import { mockFabrics } from "@/lib/mock-fabrics"
+import { useAdminCollections } from "@/contexts/admin-collections-context"
+import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -14,15 +16,14 @@ import Link from "next/link"
 import Image from "next/image"
 import type { Collection } from "@/types/collection"
 
-interface CollectionWithFabrics extends Collection {
-  fabrics: { id: string; name: string }[]
-}
-
 export default function AdminCollectionsPage() {
-  const [collections, setCollections] = useState<CollectionWithFabrics[]>([])
+  const { collections, addCollection, updateCollection, deleteCollection } =
+    useAdminCollections()
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingCollection, setEditingCollection] = useState<CollectionWithFabrics | null>(null)
+  const [editingCollection, setEditingCollection] = useState<Collection | null>(null)
+  const [selected, setSelected] = useState<string[]>([])
+  const { toast } = useToast()
   const form = useForm<Collection>({
     defaultValues: {
       name: "",
@@ -31,51 +32,40 @@ export default function AdminCollectionsPage() {
       priceRange: "",
       images: [],
       id: "",
+      fabricIds: [],
     },
   })
 
-  useEffect(() => {
-    const fetchCollections = async () => {
-      const cols = await getCollections()
-      setCollections(
-        cols.map((c) => ({ ...c, fabrics: [] })) as CollectionWithFabrics[],
-      )
-    }
-    fetchCollections()
-  }, [])
-
   const resetForm = () => {
     form.reset({ id: "", name: "", slug: "", description: "", priceRange: "", images: [] })
+    setSelected([])
   }
 
   const handleSubmit = (values: Collection) => {
     if (editingCollection) {
-      setCollections((prev) =>
-        prev.map((c) =>
-          c.id === editingCollection.id ? { ...c, ...values } : c,
-        ),
-      )
+      updateCollection(editingCollection.id, { ...values, fabricIds: selected })
+      toast({ title: "บันทึกการแก้ไขแล้ว" })
     } else {
-      const newCollection: CollectionWithFabrics = {
-        ...values,
-        id: Date.now().toString(),
-        fabrics: [],
-      }
-      setCollections((prev) => [...prev, newCollection])
+      addCollection({ ...values, fabricIds: selected })
+      toast({ title: "เพิ่มคอลเลกชันแล้ว" })
     }
     setIsDialogOpen(false)
     setEditingCollection(null)
     resetForm()
   }
 
-  const openEditDialog = (collection: CollectionWithFabrics) => {
+  const openEditDialog = (collection: Collection) => {
     setEditingCollection(collection)
     form.reset(collection)
+    setSelected(collection.fabricIds ?? [])
     setIsDialogOpen(true)
   }
 
   const handleDeleteCollection = (id: string) => {
-    setCollections((prev) => prev.filter((c) => c.id !== id))
+    if (window.confirm("ยืนยันการลบคอลเลกชันนี้")) {
+      deleteCollection(id)
+      toast({ title: "ลบคอลเลกชันแล้ว" })
+    }
   }
 
   const filteredCollections = collections.filter(
@@ -105,6 +95,7 @@ export default function AdminCollectionsPage() {
                 onClick={() => {
                   resetForm()
                   setEditingCollection(null)
+                  setSelected([])
                   setIsDialogOpen(true)
                 }}
               >
@@ -179,6 +170,28 @@ export default function AdminCollectionsPage() {
                       </FormItem>
                     )}
                   />
+                  <div className="space-y-2">
+                    <FormLabel>เลือกผ้าในคอลเลกชัน</FormLabel>
+                    <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border p-2 rounded">
+                      {mockFabrics.map((f) => (
+                        <label key={f.id} className="flex items-center space-x-2 text-sm">
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4"
+                            checked={selected.includes(f.id)}
+                            onChange={() =>
+                              setSelected((prev) =>
+                                prev.includes(f.id)
+                                  ? prev.filter((s) => s !== f.id)
+                                  : [...prev, f.id],
+                              )
+                            }
+                          />
+                          <span>{f.name}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                   <div className="flex justify-end space-x-2 pt-4">
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)} type="button">
                       ยกเลิก
@@ -234,7 +247,7 @@ export default function AdminCollectionsPage() {
                     <TableCell>{collection.slug}</TableCell>
                     <TableCell className="line-clamp-2 max-w-xs">{collection.description}</TableCell>
                     <TableCell className="max-w-xs truncate">
-                      {collection.fabrics.map((f) => f.name).join(', ') || '-'}
+                      {collection.fabricIds.length} ผ้า
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
@@ -255,6 +268,11 @@ export default function AdminCollectionsPage() {
                 ))}
               </TableBody>
             </Table>
+            {collections.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-500">ยังไม่มีคอลเลกชัน</p>
+              </div>
+            )}
             {filteredCollections.length === 0 && (
               <div className="text-center py-8">
                 <p className="text-gray-500">ไม่พบคอลเลกชันที่ตรงกับเงื่อนไขการค้นหา</p>
