@@ -27,6 +27,7 @@ export const mockProducts: Product[] = [
     status: "active",
     tags: ["premium", "velvet", "curated"],
     curated: true,
+    stock: 8,
   },
   {
     id: "2",
@@ -53,6 +54,7 @@ export const mockProducts: Product[] = [
     status: "active",
     tags: ["cotton", "standard"],
     curated: false,
+    stock: 12,
   },
   {
     id: "3",
@@ -78,6 +80,7 @@ export const mockProducts: Product[] = [
     status: "active",
     tags: ["waterproof", "pro", "curated"],
     curated: true,
+    stock: 5,
   },
   {
     id: "4",
@@ -103,6 +106,7 @@ export const mockProducts: Product[] = [
     status: "active",
     tags: ["luxury", "leather"],
     curated: false,
+    stock: 3,
   },
 ]
 

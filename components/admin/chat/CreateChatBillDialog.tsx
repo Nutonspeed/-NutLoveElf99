@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/buttons/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/inputs/input'
 import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import { getProducts } from '@/lib/mock-products'
 import { createChatBill } from '@/lib/mock-chat-bills'
 
@@ -21,7 +22,7 @@ export default function CreateChatBillDialog({
   onCreated: (id: string) => void
 }) {
   const [open, setOpen] = useState(false)
-  const [products, setProducts] = useState<Array<{id:string,name:string,price:number}>>([])
+  const [products, setProducts] = useState<Array<{id:string,name:string,price:number,stock:number}>>([])
   const [selected, setSelected] = useState<Record<string, boolean>>({})
   const [discount, setDiscount] = useState(0)
   const [fbName, setFbName] = useState('')
@@ -31,7 +32,9 @@ export default function CreateChatBillDialog({
 
   useEffect(() => {
     getProducts().then((prods) =>
-      setProducts(prods.map((p) => ({ id: p.id, name: p.name, price: p.price })))
+      setProducts(
+        prods.map((p) => ({ id: p.id, name: p.name, price: p.price, stock: p.stock ?? 0 }))
+      )
     )
   }, [])
 
@@ -89,8 +92,18 @@ export default function CreateChatBillDialog({
             <p className="font-medium">เลือกสินค้า</p>
             {products.map((p) => (
               <label key={p.id} className="flex items-center space-x-2">
-                <Checkbox checked={!!selected[p.id]} onCheckedChange={(v)=>setSelected({ ...selected, [p.id]: Boolean(v) })} />
-                <span>{p.name} (฿{p.price.toLocaleString()})</span>
+                <Checkbox
+                  checked={!!selected[p.id]}
+                  onCheckedChange={(v) =>
+                    setSelected({ ...selected, [p.id]: Boolean(v) })
+                  }
+                />
+                <span>
+                  {p.name} (฿{p.price.toLocaleString()})
+                  <Badge variant="secondary" className="ml-2">
+                    เหลือ {p.stock} ชิ้น
+                  </Badge>
+                </span>
               </label>
             ))}
           </div>
