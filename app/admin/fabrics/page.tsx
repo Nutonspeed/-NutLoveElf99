@@ -6,6 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
+import { mockFabrics } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import {
@@ -80,7 +81,28 @@ export default function AdminFabricsPage() {
 
   useEffect(() => {
     const fetchFabrics = async () => {
-      if (!supabase) return
+      if (!supabase) {
+        const colMap: Record<string, string> = {}
+        mockFabrics.forEach((f) => {
+          colMap[f.collectionSlug] = f.collectionSlug
+        })
+        setCollectionOptions(
+          Object.keys(colMap).map((id) => ({ id, name: id }))
+        )
+        setFabrics(
+          mockFabrics.map((f) => ({
+            id: f.id,
+            name: f.name,
+            sku: f.sku,
+            collection_id: f.collectionSlug,
+            image_url: f.images[0] || null,
+            price_min: f.price,
+            price_max: f.price,
+            collection_name: f.collectionSlug,
+          }))
+        )
+        return
+      }
       const { data: fabricsData, error } = await supabase
         .from("fabrics")
         .select("id, name, sku, collection_id, image_url, price_min, price_max")
