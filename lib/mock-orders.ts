@@ -120,6 +120,10 @@ export function regenerateMockOrders() {
   }))
 }
 
+export function addMockOrder(order: Order) {
+  mockOrders.unshift(order)
+}
+
 export function setPackingStatus(orderId: string, status: PackingStatus) {
   const order = mockOrders.find((o) => o.id === orderId)
   if (order) order.packingStatus = status
