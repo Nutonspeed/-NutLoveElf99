@@ -1,6 +1,6 @@
 "use client"
-import { useState } from "react"
-import { isDevMock } from "@/lib/mock-settings"
+import { useState, useEffect } from "react"
+import { isDevMock, loadDevMode } from "@/lib/mock-settings"
 import { mockBills, confirmBill } from "@/lib/mock-bills"
 import { Button } from "@/components/ui/buttons/button"
 import EmptyState from "@/components/EmptyState"
@@ -8,8 +8,13 @@ import { cancelBill } from "@/lib/mock-bills"
 
 export default function DevBillHistory() {
   const [bills, setBills] = useState([...mockBills])
+  const [devMode, setDevMode] = useState(isDevMock)
+  useEffect(() => {
+    loadDevMode()
+    setDevMode(isDevMock)
+  }, [])
 
-  if (!isDevMock) return <EmptyState title="ไม่อนุญาต" />
+  if (!devMode) return <EmptyState title="ไม่อนุญาต" />
 
   const handleConfirm = (id: string) => {
     confirmBill(id)
