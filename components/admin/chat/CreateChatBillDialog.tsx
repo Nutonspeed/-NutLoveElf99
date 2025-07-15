@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/inputs/input'
 import { Label } from '@/components/ui/label'
 import { getProducts } from '@/lib/mock-products'
 import { createChatBill } from '@/lib/mock-chat-bills'
+import { addConversationBill } from '@/lib/mock-conversations'
 
 export default function CreateChatBillDialog({
   onCreated,
@@ -51,6 +52,9 @@ export default function CreateChatBillDialog({
       discount,
       total: items.reduce((s, i) => s + i.price, 0) - discount,
     })
+    if (sessionId) {
+      addConversationBill(sessionId, bill.billId)
+    }
     setOpen(false)
     onCreated(bill.billId)
     // reset
