@@ -1,4 +1,18 @@
-export const isDevMock = true;
+export let isDevMock = true;
+
+export function loadDevMode() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('devMode')
+    if (stored) isDevMock = JSON.parse(stored)
+  }
+}
+
+export function setDevMode(val: boolean) {
+  isDevMock = val
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('devMode', JSON.stringify(val))
+  }
+}
 export let autoMessage = "ขอบคุณที่สั่งซื้อกับเรา";
 export let socialLinks = { facebook: "", line: "" };
 

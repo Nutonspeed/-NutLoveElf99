@@ -1,7 +1,8 @@
 "use client"
 
 import { useAuth } from "@/contexts/auth-context"
-import { isDevMock } from "@/lib/mock-settings"
+import { isDevMock, loadDevMode } from "@/lib/mock-settings"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Button } from "@/components/ui/buttons/button"
 import {
@@ -17,7 +18,12 @@ import {
 
 export default function AdminDevPage() {
   const { user, isAuthenticated } = useAuth()
-  if (!isDevMock) {
+  const [devMode, setDevMode] = useState(isDevMock)
+  useEffect(() => {
+    loadDevMode()
+    setDevMode(isDevMock)
+  }, [])
+  if (!devMode) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>ไม่อนุญาต</p>
