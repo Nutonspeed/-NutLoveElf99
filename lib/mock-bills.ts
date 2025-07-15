@@ -18,6 +18,8 @@ export function createBill(
   const bill: Bill = {
     id,
     orderId,
+    phone: order?.shippingAddress.phone,
+    customerId: customer?.id,
     status,
     payments: [],
     createdAt: new Date().toISOString(),
@@ -64,4 +66,25 @@ export function cleanupOldBills(days: number) {
       new Date(b.createdAt).getTime() >= cutoff ||
       (b.status !== "cancelled" && b.status !== "paid"),
   )
+}
+
+export function getBillsByCustomer(customerId: string) {
+  return mockBills.filter((b) => b.customerId === customerId)
+}
+
+export function groupBillsByCustomer() {
+  const groups: Record<string, Bill[]> = {}
+  mockBills.forEach((b) => {
+    if (!b.customerId) return
+    if (!groups[b.customerId]) groups[b.customerId] = []
+    groups[b.customerId].push(b)
+  })
+  return groups
+}
+
+export function sumCustomerBills(customerId: string) {
+  return getBillsByCustomer(customerId).reduce((s, b) => {
+    const order = mockOrders.find((o) => o.id === b.orderId)
+    return s + (order?.total || 0)
+  }, 0)
 }

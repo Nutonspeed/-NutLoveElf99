@@ -7,12 +7,14 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import Link from "next/link"
 import {
   fetchCustomers,
   getCustomerStats,
   getCustomerOrders,
   addCustomer,
+  getNewVsReturning,
   type Customer,
 } from "@/lib/mock-customers"
 import {
@@ -33,6 +35,7 @@ export default function AdminCustomersPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState("")
   const [newEmail, setNewEmail] = useState("")
+  const [ratio, setRatio] = useState({ new: 0, returning: 0 })
 
   useEffect(() => {
     loadCustomerNotes()
@@ -60,6 +63,8 @@ export default function AdminCustomersPage() {
       )
 
       setCustomers(customersData)
+      const r = getNewVsReturning()
+      setRatio(r)
     } catch (error) {
       console.error("Error loading data:", error)
     } finally {
@@ -273,7 +278,9 @@ export default function AdminCustomersPage() {
                           <span className="text-sm font-medium">{customer.name.charAt(0).toUpperCase()}</span>
                         </div>
                         <div>
-                          <p className="font-medium">{customer.name}</p>
+                          <p className="font-medium">
+                            {customer.starred && '⭐ '} {customer.name}
+                          </p>
                           <p className="text-sm text-gray-500">ID: {customer.id}</p>
                         </div>
                       </div>
@@ -342,6 +349,22 @@ export default function AdminCustomersPage() {
                 <p className="text-gray-500">ไม่พบลูกค้าที่ตรงกับเงื่อนไขการค้นหา</p>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="h-32">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie dataKey="value" data={[{name:'ใหม่', value: ratio.new},{name:'ขาประจำ', value: ratio.returning}]} fill="#8884d8" label>
+                    <Cell fill="#38bdf8" />
+                    <Cell fill="#6366f1" />
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>

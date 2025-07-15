@@ -49,6 +49,12 @@ export default function AdminOrdersPage() {
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [bills, setBills] = useState(mockBills)
+  const customerTotal =
+    customerFilter === 'all'
+      ? 0
+      : orders
+          .filter((o) => o.customerId === customerFilter)
+          .reduce((s, o) => s + o.total, 0)
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -152,6 +158,11 @@ export default function AdminOrdersPage() {
                     ))}
                   </SelectContent>
                 </Select>
+                {customerFilter !== 'all' && (
+                  <span className="text-sm text-gray-600">
+                    ยอดรวมลูกค้า: ฿{customerTotal.toLocaleString()}
+                  </span>
+                )}
                 <Button variant="outline" onClick={() => {
                   const id = window.prompt("สแกน QR เพื่อค้นหาออเดอร์")
                   if (!id) return
