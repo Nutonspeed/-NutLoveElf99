@@ -9,20 +9,24 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
-import { Plus, Search, Edit, Trash2, ArrowLeft, Eye } from "lucide-react"
+import { Plus, Search, Edit, Trash2, ArrowLeft, Eye, Download } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { type Product } from "@/types/product"
 import { useAdminProducts } from "@/contexts/admin-products-context"
 import { useAdminCollections } from "@/contexts/admin-collections-context"
+import { exportStockCSV } from "@/lib/mock-products"
 
 export default function AdminProductsPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
-  const { products, deleteProduct, updateProduct } = useAdminProducts()
+  const { products, deleteProduct, updateProduct, restock } = useAdminProducts()
   const { collections } = useAdminCollections()
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const [restockId, setRestockId] = useState<string | null>(null)
+  const [restockAmount, setRestockAmount] = useState("")
+  const [stockFilter, setStockFilter] = useState("all")
 
   if (!isAuthenticated) {
     return (
@@ -50,11 +54,17 @@ export default function AdminProductsPage() {
     )
   }
 
-  const filteredProducts = products.filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredProducts = products
+    .filter((p) => {
+      if (stockFilter === 'low') return p.stock > 0 && p.stock < 5
+      if (stockFilter === 'out') return p.stock === 0
+      return true
+    })
+    .filter(
+      (product) =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
 
   const handleDeleteProduct = (productId: string) => {
     deleteProduct(productId)
@@ -99,6 +109,19 @@ export default function AdminProductsPage() {
                     className="pl-8 w-64"
                   />
                 </div>
+                <Select value={stockFilter} onValueChange={setStockFilter}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="สต็อก" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">ทั้งหมด</SelectItem>
+                    <SelectItem value="low">เหลือน้อย</SelectItem>
+                    <SelectItem value="out">หมด</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button variant="outline" onClick={exportStockCSV}>
+                  <Download className="h-4 w-4 mr-2" />CSV
+                </Button>
               </div>
             </div>
           </CardHeader>
@@ -152,8 +175,8 @@ export default function AdminProductsPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={product.inStock ? "default" : "destructive"}>
-                        {product.inStock ? "มีสินค้า" : "หมด"}
+                      <Badge variant={product.stock > 0 ? "default" : "destructive"}>
+                        {product.stock > 0 ? `เหลือ ${product.stock}` : "หมด"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -241,6 +264,17 @@ export default function AdminProductsPage() {
                         <Button
                           variant="outline"
                           size="icon"
+                          onClick={() => {
+                            setRestockId(product.id)
+                            setRestockAmount("")
+                          }}
+                        >
+                          เติมสต๊อก
+                        </Button>
+
+                        <Button
+                          variant="outline"
+                          size="icon"
                           onClick={() => router.push(`/admin/products/${product.id}/edit`)}
                         >
                           <Edit className="h-4 w-4" />
@@ -266,6 +300,28 @@ export default function AdminProductsPage() {
                 <p className="text-gray-500">ไม่พบสินค้าที่ตรงกับเงื่อนไขการค้นหา</p>
               </div>
             )}
+
+            <Dialog open={!!restockId} onOpenChange={() => setRestockId(null)}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>เติมสต๊อก</DialogTitle>
+                </DialogHeader>
+                <Input
+                  type="number"
+                  value={restockAmount}
+                  onChange={(e) => setRestockAmount(e.target.value)}
+                  placeholder="จำนวน"
+                />
+                <Button
+                  onClick={() => {
+                    if (restockId) restock(restockId, Number(restockAmount) || 0)
+                    setRestockId(null)
+                  }}
+                >
+                  บันทึก
+                </Button>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
       </div>

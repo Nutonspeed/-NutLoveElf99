@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
+import { checkStock, deductStock, mockProducts } from "@/lib/mock-products"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
 import { packingStatusOptions } from "@/types/order"
@@ -74,6 +75,22 @@ export default function AdminOrdersPage() {
   }
 
   const handleCreateBill = (orderId: string) => {
+    const order = orders.find((o) => o.id === orderId)
+    if (order) {
+      for (const it of order.items) {
+        if (!checkStock(it.productId, it.quantity)) {
+          toast.error(`${it.productName} คงเหลือไม่พอ`)
+          return
+        }
+      }
+      order.items.forEach((it) => {
+        deductStock(it.productId, it.quantity)
+        const p = mockProducts.find((m) => m.id === it.productId)
+        if (p && p.stock < 5) {
+          toast.warning(`${p.name} เหลือ ${p.stock} ชิ้น`)
+        }
+      })
+    }
     const bill = createBill(orderId)
     setBills([...mockBills])
     toast.success(`สร้างบิล ${bill.id}`)

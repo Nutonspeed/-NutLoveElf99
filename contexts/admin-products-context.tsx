@@ -11,6 +11,7 @@ interface AdminProductsContextValue {
   addProduct: (data: Omit<Product, "id">) => void
   updateProduct: (id: string, data: Partial<Product>) => void
   deleteProduct: (id: string) => void
+  restock: (id: string, qty: number) => void
 }
 
 const AdminProductsContext = createContext<AdminProductsContextValue | null>(null)
@@ -22,6 +23,8 @@ export function AdminProductsProvider({ children }: { children: ReactNode }) {
     const newProduct: Product = {
       id: Date.now().toString(),
       status: "active",
+      stock: 0,
+      inStock: false,
       ...data,
     }
     setProducts((prev) => [...prev, newProduct])
@@ -38,9 +41,16 @@ export function AdminProductsProvider({ children }: { children: ReactNode }) {
     addAdminLog(`delete product ${id}`, 'mockAdminId')
   }
 
+  const restock = (id: string, qty: number) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, stock: (p.stock || 0) + qty, inStock: (p.stock || 0) + qty > 0 } : p)),
+    )
+    addAdminLog(`restock ${id} +${qty}`, 'mockAdminId')
+  }
+
   return (
     <AdminProductsContext.Provider
-      value={{ products, addProduct, updateProduct, deleteProduct }}
+      value={{ products, addProduct, updateProduct, deleteProduct, restock }}
     >
       {children}
     </AdminProductsContext.Provider>

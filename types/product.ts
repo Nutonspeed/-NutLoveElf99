@@ -11,6 +11,8 @@ export interface Product {
   sizes: string[]
   colors: string[]
   inStock: boolean
+  /** จำนวนคงเหลือ */
+  stock: number
   rating: number
   reviews: number
   features: string[]

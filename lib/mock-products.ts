@@ -1,5 +1,7 @@
 import type { Product } from "@/types/product"
 import { supabase } from "./supabase"
+import { downloadCSV } from "./mock-export"
+import { addAdminLog } from "./mock-admin-logs"
 
 export const mockProducts: Product[] = [
   {
@@ -18,6 +20,7 @@ export const mockProducts: Product[] = [
     collectionId: "1",
     sizes: ["1 ที่นั่ง", "2 ที่นั่ง", "3 ที่นั่ง", "L-Shape"],
     colors: ["Navy Blue", "Charcoal Gray", "Burgundy", "Forest Green"],
+    stock: 10,
     inStock: true,
     rating: 4.8,
     reviews: 156,
@@ -44,6 +47,7 @@ export const mockProducts: Product[] = [
     collectionId: "2",
     sizes: ["1 ที่นั่ง", "2 ที่นั่ง", "3 ที่นั่ง"],
     colors: ["Cream", "Light Gray", "Beige", "White"],
+    stock: 8,
     inStock: true,
     rating: 4.5,
     reviews: 89,
@@ -69,6 +73,7 @@ export const mockProducts: Product[] = [
     collectionId: "3",
     sizes: ["2 ที่นั่ง", "3 ที่นั่ง", "L-Shape", "Sectional"],
     colors: ["Black", "Brown", "Dark Gray", "Navy"],
+    stock: 3,
     inStock: true,
     rating: 4.9,
     reviews: 203,
@@ -94,7 +99,8 @@ export const mockProducts: Product[] = [
     collectionId: "1",
     sizes: ["2 ที่นั่ง", "3 ที่นั่ง", "L-Shape"],
     colors: ["Rich Brown", "Black", "Tan", "Burgundy"],
-    inStock: true,
+    stock: 0,
+    inStock: false,
     rating: 4.7,
     reviews: 67,
     features: ["ลุคหนังแท้", "ทนทาน", "ง่ายต่อการดูแล", "ดูหรูหรา"],
@@ -119,4 +125,56 @@ export async function getProducts(): Promise<Product[]> {
   }
 
   return data as Product[]
+}
+
+export interface StockLog {
+  id: string
+  productId: string
+  quantity: number
+  admin: string
+  timestamp: string
+}
+
+export const stockLogs: StockLog[] = []
+
+export function restockProduct(productId: string, qty: number, admin = 'admin') {
+  const p = mockProducts.find((m) => m.id === productId)
+  if (!p || qty <= 0) return
+  p.stock += qty
+  p.inStock = p.stock > 0
+  stockLogs.unshift({
+    id: Date.now().toString(),
+    productId,
+    quantity: qty,
+    admin,
+    timestamp: new Date().toISOString(),
+  })
+  addAdminLog(`restock ${productId} +${qty}`, admin)
+}
+
+export function deductStock(productId: string, qty: number, admin = 'system') {
+  const p = mockProducts.find((m) => m.id === productId)
+  if (!p || qty <= 0) return
+  p.stock = Math.max(0, p.stock - qty)
+  p.inStock = p.stock > 0
+  stockLogs.unshift({
+    id: Date.now().toString(),
+    productId,
+    quantity: -qty,
+    admin,
+    timestamp: new Date().toISOString(),
+  })
+}
+
+export function checkStock(productId: string, qty: number): boolean {
+  const p = mockProducts.find((m) => m.id === productId)
+  if (!p) return true
+  return p.stock >= qty
+}
+
+export function exportStockCSV() {
+  downloadCSV(
+    mockProducts.map((p) => ({ id: p.id, name: p.name, stock: p.stock })),
+    'stock.csv',
+  )
 }
