@@ -35,6 +35,8 @@ export interface Collection {
   slug: string
   priceRange: string
   description: string
+  banner?: string
+  tags?: string[]
   images: string[]
 }
 
@@ -44,6 +46,8 @@ export const mockCollections: Collection[] = Array.from({ length: 40 }, (_, i) =
   name: `คอลเลกชัน #${i + 1}`,
   priceRange: '',
   description: `ลายผ้าในชุด ${i + 1}`,
+  banner: '/placeholder.jpg',
+  tags: ['tag-a', 'tag-b'],
   images: [
     '/placeholder.jpg',
     '/placeholder.jpg',
@@ -58,7 +62,7 @@ export async function getCollections(): Promise<Collection[]> {
   }
   const { data, error } = await supabase
     .from('collections')
-    .select('id, name, slug, price_range, description, all_images')
+    .select('id, name, slug, price_range, description, banner, tags, all_images')
     .order('created_at', { ascending: false })
 
   if (error || !data) {
@@ -72,6 +76,8 @@ export async function getCollections(): Promise<Collection[]> {
     slug: c.slug,
     priceRange: c.price_range,
     description: c.description,
+    banner: c.banner,
+    tags: c.tags || [],
     images: c.all_images || [],
   })) as Collection[]
 }

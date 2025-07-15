@@ -13,11 +13,23 @@ import { supabase } from "@/lib/supabase"
 import { getCollections } from "@/lib/mock-collections"
 import { WishlistButton } from "@/components/WishlistButton"
 import { mockFabrics } from "@/lib/mock-fabrics"
-import { FabricsList } from "@/components/FabricsList"
 import { CopyPageLinkButton } from "@/components/CopyPageLinkButton"
 import { CollectionStickyBar } from "@/components/CollectionStickyBar"
 import { mockFabricReviews } from "@/lib/mock/fabricReviews"
 import { Star } from "lucide-react"
+import Image from "next/image"
+import type { Metadata } from "next"
+import { CollectionFabricFilter } from "@/components/CollectionFabricFilter"
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const collections = await getCollections()
+  const data = collections.find((c) => c.slug === params.slug)
+  if (!data) return {}
+  const title = `${data.name} | SofaCover Pro`
+  const description = data.description
+  const image = data.banner || data.images[0] || "/placeholder.jpg"
+  return { title, description, openGraph: { title, description, images: [{ url: image }] } }
+}
 
 export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
   let data: any
@@ -33,7 +45,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
   } else {
     const { data: dbData, error } = await supabase
       .from("collections")
-      .select("id, name, slug, price_range, description, all_images")
+      .select("id, name, slug, price_range, description, banner, tags, all_images")
       .eq("slug", params.slug)
       .single()
 
@@ -49,6 +61,8 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
       slug: dbData.slug,
       priceRange: dbData.price_range,
       description: dbData.description,
+      banner: dbData.banner,
+      tags: dbData.tags || [],
       images: dbData.all_images || [],
     }
   }
@@ -82,6 +96,11 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           <h1 className="text-3xl font-bold">{data.name}</h1>
           <WishlistButton slug={data.slug} />
         </div>
+        {data.banner && (
+          <div className="relative w-full h-48 md:h-64">
+            <Image src={data.banner} alt={data.name} fill className="object-cover rounded" />
+          </div>
+        )}
         <p className="text-gray-700">{subtitle}</p>
         {data.description && (
           <p className="text-gray-600 whitespace-pre-line">{data.description}</p>
@@ -98,7 +117,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           </a>
           <CopyPageLinkButton />
         </div>
-        <FabricsList fabrics={fabrics} />
+        <CollectionFabricFilter fabrics={fabrics} tags={data.tags || []} />
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">รีวิวจากลูกค้าที่สั่งลายนี้</h2>
           {reviews.length === 0 ? (

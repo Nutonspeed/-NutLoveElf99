@@ -1,50 +1,19 @@
-"use client"
-
-import { useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import Image from "next/image"
 import Link from "next/link"
 import { getCollections } from "@/lib/mock-collections"
+import { mockFabrics } from "@/lib/mock-fabrics"
+import type { Metadata } from "next"
 import type { Collection } from "@/types/collection"
 
+export const metadata: Metadata = {
+  title: "คอลเลกชันลายผ้า | SofaCover Pro",
+  description: "เลือกชมกลุ่มลายผ้าทั้งหมด",
+}
 
-export default function CollectionsPage() {
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const data = await getCollections()
-        setCollections(data.slice(0))
-      } catch (err) {
-        setError("ไม่สามารถโหลดข้อมูลคอลเลกชันได้")
-      }
-      setLoading(false)
-    }
-
-    fetchCollections()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">{error}</div>
-        <Footer />
-      </div>
-    )
-  }
+export default async function CollectionsPage() {
+  const collections = await getCollections()
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -66,11 +35,14 @@ export default function CollectionsPage() {
                     </div>
                   ))}
                 </div>
-                <div className="p-3 md:p-4">
+                <div className="p-3 md:p-4 space-y-1">
                   <h3 className="font-semibold text-sm md:text-base truncate">
                     {collection.name}
                   </h3>
-                  <p className="text-xs text-gray-600 mt-1">{collection.priceRange}</p>
+                  <p className="text-xs text-gray-600">
+                    {mockFabrics.filter((f) => f.collectionSlug === collection.slug).length} ลายผ้า
+                  </p>
+                  <p className="text-xs text-primary underline">ดูรายละเอียด</p>
                 </div>
               </Link>
             ))}
