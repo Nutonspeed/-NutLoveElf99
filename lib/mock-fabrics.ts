@@ -9,6 +9,8 @@ export interface Fabric {
   price: number
   images: string[]
   collectionSlug: string
+  tags: string[]
+  category: 'ผ้าพื้น' | 'ผ้าลาย' | 'ผ้าเนื้อพิเศษ'
 }
 
 export const mockFabrics: Fabric[] = [
@@ -18,9 +20,11 @@ export const mockFabrics: Fabric[] = [
     slug: 'soft-linen',
     sku: 'FBC-001',
     color: 'ครีม',
-    price: 990,
+  price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['linen', 'soft'],
+    category: 'ผ้าพื้น',
   },
   {
     id: 'f02',
@@ -31,6 +35,8 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['cotton', 'soft'],
+    category: 'ผ้าพื้น',
   },
   {
     id: 'f03',
@@ -41,6 +47,8 @@ export const mockFabrics: Fabric[] = [
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['velvet', 'luxury'],
+    category: 'ผ้าเนื้อพิเศษ',
   },
   {
     id: 'f04',
@@ -51,6 +59,8 @@ export const mockFabrics: Fabric[] = [
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['stripe', 'pattern'],
+    category: 'ผ้าลาย',
   },
   {
     id: 'f05',
@@ -61,6 +71,8 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
     collectionSlug: 'vintage-vibes',
+    tags: ['floral', 'pattern'],
+    category: 'ผ้าลาย',
   },
 ]
 

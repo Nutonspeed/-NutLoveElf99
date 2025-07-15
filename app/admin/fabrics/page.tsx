@@ -30,6 +30,8 @@ interface Fabric {
   price_min: number
   price_max: number
   collection_name?: string | null
+  tags?: string[]
+  category?: string
 }
 
 export default function AdminFabricsPage() {
@@ -110,7 +112,8 @@ export default function AdminFabricsPage() {
   const filteredFabrics = fabrics.filter((f) => {
     const matchesSearch =
       f.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      f.collection_name?.toLowerCase().includes(searchTerm.toLowerCase())
+      f.collection_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      f.tags?.some((t) => t.toLowerCase().includes(searchTerm.toLowerCase()))
     const matchesCollection =
       collectionFilter === "all" || f.collection_id === collectionFilter
     return matchesSearch && matchesCollection
@@ -135,12 +138,15 @@ export default function AdminFabricsPage() {
               <p className="text-gray-600">เพิ่ม แก้ไข และลบผ้าในระบบ</p>
             </div>
           </div>
-          <Link href="/admin/fabrics/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              เพิ่มผ้าใหม่
-            </Button>
-          </Link>
+          <div className="flex space-x-2">
+            <Link href="/admin/fabrics/create">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                เพิ่มผ้าใหม่
+              </Button>
+            </Link>
+            <Button variant="outline">เพิ่มแท็กใหม่</Button>
+          </div>
         </div>
 
         <Card>
