@@ -9,10 +9,11 @@ export interface Fabric {
   price: number
   images: string[]
   collectionSlug: string
+  tags?: string[]
 }
 
 export const mockFabrics: Fabric[] = [
-  {
+  { 
     id: 'f01',
     name: 'Soft Linen',
     slug: 'soft-linen',
@@ -21,6 +22,7 @@ export const mockFabrics: Fabric[] = [
     price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['linen', 'basic'],
   },
   {
     id: 'f02',
@@ -31,6 +33,7 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['cotton'],
   },
   {
     id: 'f03',
@@ -41,6 +44,7 @@ export const mockFabrics: Fabric[] = [
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['velvet', 'premium'],
   },
   {
     id: 'f04',
@@ -51,6 +55,7 @@ export const mockFabrics: Fabric[] = [
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['pattern'],
   },
   {
     id: 'f05',
@@ -61,6 +66,7 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
     collectionSlug: 'vintage-vibes',
+    tags: ['floral'],
   },
 ]
 
