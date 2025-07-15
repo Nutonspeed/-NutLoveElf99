@@ -260,6 +260,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
                   </div>
                   <div className="text-right">
                     <p>จำนวน: {item.quantity}</p>
+                    <Badge variant="outline" className="my-1">
+                      เหลือ {mockProducts.find(p => p.id === item.productId)?.stock ?? 0} ชิ้น
+                    </Badge>
                     <p className="font-semibold">฿{(item.price * item.quantity).toLocaleString()}</p>
                   </div>
                 </div>
