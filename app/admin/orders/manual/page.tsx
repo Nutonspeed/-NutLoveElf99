@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { Search, ArrowLeft, Plus, Eye, Edit, Trash2, Copy, ExternalLink } from "lucide-react"
+import { ConfirmationDialog } from "@/components/order/confirmation-dialog"
 import Link from "next/link"
 import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderStatusOptions } from "@/types/order"
@@ -29,6 +30,7 @@ export default function ManualOrdersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<ManualOrder | null>(null)
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
@@ -100,15 +102,20 @@ export default function ManualOrdersPage() {
     }
   }
 
-  const deleteOrder = async (id: string) => {
-    if (confirm("คุณแน่ใจหรือไม่ที่จะลบออเดอร์นี้?")) {
-      try {
-        await orderDb.deleteManualOrder(id)
-        await loadOrders()
-        toast.success("ลบออเดอร์แล้ว")
-      } catch (error) {
-        toast.error("ไม่สามารถลบออเดอร์ได้")
-      }
+  const deleteOrder = (id: string) => {
+    setOrderToDelete(id)
+  }
+
+  const confirmDelete = async () => {
+    if (!orderToDelete) return
+    try {
+      await orderDb.deleteManualOrder(orderToDelete)
+      await loadOrders()
+      toast.success("ลบออเดอร์แล้ว")
+    } catch (error) {
+      toast.error("ไม่สามารถลบออเดอร์ได้")
+    } finally {
+      setOrderToDelete(null)
     }
   }
 
@@ -375,9 +382,18 @@ export default function ManualOrdersPage() {
                 </Link>
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
+        </CardContent>
+      </Card>
+      <ConfirmationDialog
+        open={Boolean(orderToDelete)}
+        onOpenChange={(open) => !open && setOrderToDelete(null)}
+        title="ยืนยันการลบออเดอร์"
+        description="การดำเนินการนี้ไม่สามารถย้อนกลับได้"
+        confirmText="ลบออเดอร์"
+        variant="destructive"
+        onConfirm={confirmDelete}
+      />
     </div>
-  )
+  </div>
+)
 }
