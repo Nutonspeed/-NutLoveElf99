@@ -7,6 +7,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
+import { useState } from "react"
+import { FabricGalleryModal } from "./FabricGalleryModal"
 
 interface Fabric {
   id: string
@@ -20,6 +22,7 @@ interface Fabric {
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
+  const [viewer, setViewer] = useState<string[] | null>(null)
 
   const handleCompare = () => {
     router.push(`/compare`)
@@ -61,6 +64,21 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                 <div className="p-2 text-center">
                   <p className="font-medium line-clamp-2">{fabric.name}</p>
                 </div>
+                <Button
+                  size="sm"
+                  className="absolute bottom-2 right-2"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setViewer(
+                      fabric.image_urls || fabric.image_url
+                        ? fabric.image_urls || [fabric.image_url!]
+                        : []
+                    )
+                  }}
+                >
+                  ดูภาพเต็ม
+                </Button>
               </Link>
             </div>
           )
@@ -70,6 +88,13 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
         <div className="mt-4 text-center">
           <Button onClick={handleCompare}>เปรียบเทียบตอนนี้</Button>
         </div>
+      )}
+      {viewer && (
+        <FabricGalleryModal
+          images={viewer}
+          open={true}
+          onOpenChange={(o) => !o && setViewer(null)}
+        />
       )}
     </>
   )

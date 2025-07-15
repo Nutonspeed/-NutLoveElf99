@@ -6,6 +6,7 @@ import { getCollections } from "@/lib/mock-collections"
 import { WishlistButton } from "@/components/WishlistButton"
 import { mockFabrics } from "@/lib/mock-fabrics"
 import { FabricsList } from "@/components/FabricsList"
+import { SharePageButton } from "@/components/SharePageButton"
 
 export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
   let data: any
@@ -37,7 +38,18 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
     }
   }
 
-  const fabrics = mockFabrics.filter((f) => f.collectionSlug === data.slug)
+  const fabrics = mockFabrics
+    .filter((f) => f.collectionSlug === data.slug)
+    .map((f) => ({
+      id: f.id,
+      slug: f.slug,
+      name: f.name,
+      image_urls: f.images,
+    }))
+
+  const suggestions = fabrics.length
+    ? [...fabrics].sort(() => 0.5 - Math.random()).slice(0, 4)
+    : []
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -65,6 +77,17 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           </a>
         </div>
         <FabricsList fabrics={fabrics} />
+        <div className="mt-10">
+          <h2 className="text-xl font-bold mb-4">ลายผ้าอื่น ๆ ที่คุณอาจชอบ</h2>
+          {suggestions.length > 0 ? (
+            <FabricsList fabrics={suggestions} />
+          ) : (
+            <div className="text-center text-muted text-sm">ไม่มีลายผ้าอื่นในกลุ่มนี้</div>
+          )}
+          <div className="mt-4 text-center">
+            <SharePageButton />
+          </div>
+        </div>
       </div>
       <Footer />
     </div>
