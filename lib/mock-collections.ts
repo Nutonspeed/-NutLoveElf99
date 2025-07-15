@@ -16,7 +16,8 @@ function loadCollections(): Collection[] {
   if (typeof window === 'undefined') return mockCollections
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
-    return raw ? (JSON.parse(raw) as Collection[]) : mockCollections
+    const parsed = raw ? (JSON.parse(raw) as Collection[]) : mockCollections
+    return parsed.map((c) => ({ ...c, tags: c.tags || [] }))
   } catch {
     return mockCollections
   }
@@ -36,6 +37,7 @@ export interface Collection {
   priceRange: string
   description: string
   images: string[]
+  tags?: string[]
 }
 
 export const mockCollections: Collection[] = Array.from({ length: 40 }, (_, i) => ({
@@ -50,6 +52,7 @@ export const mockCollections: Collection[] = Array.from({ length: 40 }, (_, i) =
     '/placeholder.jpg',
     '/placeholder.jpg',
   ],
+  tags: [],
 }))
 
 export async function getCollections(): Promise<Collection[]> {
@@ -88,8 +91,25 @@ export function addCollection(data: Omit<Collection, 'id'>): Collection {
     ...data,
     slug,
     id: Date.now().toString(),
+    tags: data.tags || [],
   }
   list.push(newCollection)
   saveCollections(list)
   return newCollection
+}
+
+export function addCollectionTag(slug: string, tag: string) {
+  const list = loadCollections()
+  const col = list.find((c) => c.slug === slug)
+  if (!col) return
+  col.tags = Array.from(new Set([...(col.tags || []), tag]))
+  saveCollections(list)
+}
+
+export function removeCollectionTag(slug: string, tag: string) {
+  const list = loadCollections()
+  const col = list.find((c) => c.slug === slug)
+  if (!col || !col.tags) return
+  col.tags = col.tags.filter((t) => t !== tag)
+  saveCollections(list)
 }
