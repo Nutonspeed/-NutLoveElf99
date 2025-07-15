@@ -81,6 +81,7 @@ export interface Order {
   depositPercent?: number
   note?: string
   chatNote?: string
+  conversationId?: string
   createdAt: string
   shippingAddress: {
     name: string
@@ -142,6 +143,7 @@ export interface ManualOrder {
   }>
   notes?: string
   attachments: string[]
+  conversationId?: string
   publicLink: string
   createdAt: string
   updatedAt: string

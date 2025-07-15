@@ -140,6 +140,22 @@ export function setOrderStatus(orderId: string, status: OrderStatus) {
   }
 }
 
+export function setConversationId(orderId: string, conversationId: string) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return
+  if (order.conversationId !== conversationId) {
+    order.conversationId = conversationId || undefined
+    order.timeline.push({
+      timestamp: new Date().toISOString(),
+      status: order.status,
+      updatedBy: 'admin@nutlove.co',
+      note: conversationId
+        ? `linked to conversation ${conversationId}`
+        : 'conversation unlinked',
+    })
+  }
+}
+
 export async function fetchOrders(): Promise<Order[]> {
   if (!supabase) {
     return Promise.resolve(mockOrders)
