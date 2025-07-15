@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { getCollections } from "@/lib/mock-collections"
+import { getCollections, updateCollection, revertCollection } from "@/lib/mock-collections"
+import { CollectionHistory } from "@/components/collection/CollectionHistory"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -31,6 +32,8 @@ export default function AdminCollectionsPage() {
       priceRange: "",
       images: [],
       id: "",
+      version: 1,
+      guide: [],
     },
   })
 
@@ -45,16 +48,13 @@ export default function AdminCollectionsPage() {
   }, [])
 
   const resetForm = () => {
-    form.reset({ id: "", name: "", slug: "", description: "", priceRange: "", images: [] })
+    form.reset({ id: "", name: "", slug: "", description: "", priceRange: "", images: [], version: 1, guide: [] })
   }
 
   const handleSubmit = (values: Collection) => {
     if (editingCollection) {
-      setCollections((prev) =>
-        prev.map((c) =>
-          c.id === editingCollection.id ? { ...c, ...values } : c,
-        ),
-      )
+      updateCollection(editingCollection.id, values)
+      setCollections((prev) => prev.map((c) => (c.id === editingCollection.id ? { ...c, ...values, version: c.version + 1 } : c)))
     } else {
       const newCollection: CollectionWithFabrics = {
         ...values,
@@ -179,6 +179,21 @@ export default function AdminCollectionsPage() {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    name="guide"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>คำแนะนำ (คั่นด้วยบรรทัด)</FormLabel>
+                        <FormControl>
+                          <textarea
+                            className="w-full border rounded p-2"
+                            value={field.value.join('\n')}
+                            onChange={(e) => field.onChange(e.target.value.split(/\n+/))}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                   <div className="flex justify-end space-x-2 pt-4">
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)} type="button">
                       ยกเลิก
@@ -213,6 +228,7 @@ export default function AdminCollectionsPage() {
                   <TableHead>รูปปก</TableHead>
                   <TableHead>ชื่อ</TableHead>
                   <TableHead>Slug</TableHead>
+                  <TableHead>เวอร์ชัน</TableHead>
                   <TableHead>คำอธิบาย</TableHead>
                   <TableHead>ลายผ้า</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
@@ -232,6 +248,7 @@ export default function AdminCollectionsPage() {
                     </TableCell>
                     <TableCell>{collection.name}</TableCell>
                     <TableCell>{collection.slug}</TableCell>
+                    <TableCell>v{collection.version}</TableCell>
                     <TableCell className="line-clamp-2 max-w-xs">{collection.description}</TableCell>
                     <TableCell className="max-w-xs truncate">
                       {collection.fabrics.map((f) => f.name).join(', ') || '-'}
@@ -241,6 +258,38 @@ export default function AdminCollectionsPage() {
                         <Button variant="outline" size="icon" onClick={() => openEditDialog(collection)}>
                           <Edit className="h-4 w-4" />
                         </Button>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="icon">ดูประวัติ</Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>ประวัติการแก้ไข</DialogTitle>
+                            </DialogHeader>
+                            <CollectionHistory
+                              history={collection.history}
+                              onRevert={() => {
+                                revertCollection(collection.id)
+                                setCollections([...collections])
+                              }}
+                            />
+                          </DialogContent>
+                        </Dialog>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="icon">อ่านคำแนะนำ</Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>คำแนะนำ</DialogTitle>
+                            </DialogHeader>
+                            <div className="prose max-w-none">
+                              {collection.guide.map((g, i) => (
+                                <p key={i}>{g}</p>
+                              ))}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
                         <Button
                           variant="outline"
                           size="icon"
