@@ -2,7 +2,6 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { FabricsList } from "@/components/FabricsList"
 import type { Metadata } from "next"
-import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 
@@ -21,31 +20,13 @@ interface Fabric {
 }
 
 export default async function FabricsPage() {
-  let fabrics: Fabric[] = []
-  if (!supabase) {
-    fabrics = mockFabrics.map((f) => ({
-      id: f.id,
-      slug: f.slug,
-      name: f.name,
-      sku: f.sku,
-      image_urls: f.images,
-    }))
-  } else {
-    const { data, error } = await supabase
-      .from("fabrics")
-      .select("id, slug, name, sku, image_url, image_urls")
-
-    if (error || !data) {
-      return (
-        <div className="min-h-screen">
-          <Navbar />
-          <div className="container mx-auto px-4 py-8 text-red-500">ไม่สามารถโหลดข้อมูลผ้าได้</div>
-          <Footer />
-        </div>
-      )
-    }
-    fabrics = data as Fabric[]
-  }
+  const fabrics: Fabric[] = mockFabrics.map((f) => ({
+    id: f.id,
+    slug: f.slug,
+    name: f.name,
+    sku: f.sku,
+    image_urls: f.images,
+  }))
 
   return (
     <div className="min-h-screen">
