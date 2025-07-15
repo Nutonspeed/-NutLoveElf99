@@ -19,4 +19,5 @@ export interface Product {
   status?: "active" | "draft"
   tags?: string[]
   curated?: boolean
+  stock?: number
 }

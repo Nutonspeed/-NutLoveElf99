@@ -10,9 +10,11 @@ import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem } from "@/types/order"
 import { supabase } from "@/lib/supabase"
 import { mockProducts } from "@/lib/mock-products"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NewOrderPage() {
   const router = useRouter()
+  const { toast } = useToast()
   const searchParams = useSearchParams()
   const defaultProduct = searchParams.get("product")
   const [items, setItems] = useState<OrderItem[]>([])
@@ -45,6 +47,18 @@ export default function NewOrderPage() {
   const total = subtotal - discount + shippingCost + tax
 
   const createOrder = async () => {
+    for (const item of items) {
+      const product = mockProducts.find((p) => p.name === item.productName)
+      if (product && product.stock !== undefined && item.quantity > product.stock) {
+        toast({
+          title: "สต็อกไม่พอ",
+          description: `${product.name} เหลือ ${product.stock} ชิ้น`,
+          variant: "destructive",
+        })
+        return
+      }
+    }
+
     const order = {
       id: `o-${Date.now()}`,
       items,
