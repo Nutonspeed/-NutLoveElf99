@@ -9,7 +9,10 @@ export default function CustomerCard({ customer, className = "" }: { customer: C
   return (
     <Card className={className}>
       <CardHeader>
-        <CardTitle>{customer.name}</CardTitle>
+        <CardTitle>
+          {customer.starred && <span className="mr-1">⭐</span>}
+          {customer.name}
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex items-center space-x-2">

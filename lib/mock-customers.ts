@@ -15,6 +15,8 @@ export interface Customer {
   tier?: "Silver" | "Gold" | "VIP"
   /** mute notifications */
   muted?: boolean
+  /** mark VIP */
+  starred?: boolean
   /** point change history */
   pointHistory?: PointLog[]
   createdAt: string
@@ -42,6 +44,7 @@ const initialMockCustomers: Customer[] = [
     note: "ชอบผ้ากำมะหยี่",
     points: 120,
     tier: "Gold",
+    starred: true,
     pointHistory: [
       { timestamp: new Date().toISOString(), change: 120, reason: "สมัครสมาชิก" },
     ],
@@ -177,4 +180,35 @@ export function setCustomerMuted(id: string, muted: boolean) {
   const customer = mockCustomers.find((c) => c.id === id)
   if (!customer) return
   customer.muted = muted
+}
+
+export function toggleCustomerStar(id: string) {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return
+  customer.starred = !customer.starred
+}
+
+export function getFrequentProducts(customerId: string) {
+  const counts: Record<string, number> = {}
+  mockOrders
+    .filter((o) => o.customerId === customerId)
+    .forEach((o) => {
+      o.items.forEach((it) => {
+        counts[it.productName] = (counts[it.productName] || 0) + it.quantity
+      })
+    })
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([name, count]) => ({ name, count }))
+}
+
+export function getNewVsReturning() {
+  let newCount = 0
+  let returning = 0
+  mockCustomers.forEach((c) => {
+    const orders = mockOrders.filter((o) => o.customerId === c.id)
+    if (orders.length > 1) returning += 1
+    else if (orders.length === 1) newCount += 1
+  })
+  return { new: newCount, returning }
 }
