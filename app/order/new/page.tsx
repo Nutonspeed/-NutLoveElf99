@@ -10,15 +10,19 @@ import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem } from "@/types/order"
 import { supabase } from "@/lib/supabase"
 import { mockProducts } from "@/lib/mock-products"
+import { useToast } from "@/hooks/use-toast"
+import { Loader2 } from "lucide-react"
 
 export default function NewOrderPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const defaultProduct = searchParams.get("product")
+  const { toast } = useToast()
   const [items, setItems] = useState<OrderItem[]>([])
   const [discount, setDiscount] = useState(0)
   const [shippingCost, setShippingCost] = useState(0)
   const [tax, setTax] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   // Preload item if product query provided
   React.useEffect(() => {
@@ -45,6 +49,15 @@ export default function NewOrderPage() {
   const total = subtotal - discount + shippingCost + tax
 
   const createOrder = async () => {
+    if (items.length === 0) {
+      toast({
+        title: "กรุณาเพิ่มสินค้าอย่างน้อย 1 รายการ",
+        variant: "destructive",
+      })
+      return
+    }
+
+    setLoading(true)
     const order = {
       id: `o-${Date.now()}`,
       items,
@@ -63,9 +76,12 @@ export default function NewOrderPage() {
         existing.push(order)
         localStorage.setItem("orders", JSON.stringify(existing))
       }
+      toast({ title: "สร้างบิลสำเร็จ" })
       router.push(`/order/${order.id}`)
     } catch (err) {
       console.error(err)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -84,7 +100,10 @@ export default function NewOrderPage() {
           onShippingCostChange={setShippingCost}
           onTaxChange={setTax}
         />
-        <Button className="w-full" onClick={createOrder}>สร้างบิล</Button>
+        <Button className="w-full" onClick={createOrder} disabled={loading}>
+          {loading && <Loader2 className="animate-spin" />}
+          สร้างบิล
+        </Button>
       </div>
       <Footer />
     </div>
