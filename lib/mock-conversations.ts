@@ -8,6 +8,9 @@ export let conversations: Conversation[] = [
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
     updatedAt: new Date().toISOString(),
+    status: 'open',
+    answered: false,
+    archived: false,
   },
   {
     id: 'conv-002',
@@ -16,6 +19,9 @@ export let conversations: Conversation[] = [
     lastMessage: 'จะโอนพรุ่งนี้',
     tags: ['รอโอน'],
     updatedAt: new Date().toISOString(),
+    status: 'closed',
+    answered: true,
+    archived: false,
   },
 ]
 
@@ -62,6 +68,30 @@ export function setRating(id: string, rating: number) {
   const convo = conversations.find((c) => c.id === id)
   if (convo) {
     convo.rating = rating
+    save()
+  }
+}
+
+export function toggleArchive(id: string) {
+  const convo = conversations.find((c) => c.id === id)
+  if (convo) {
+    convo.archived = !convo.archived
+    save()
+  }
+}
+
+export function setStatus(id: string, status: Conversation['status']) {
+  const convo = conversations.find((c) => c.id === id)
+  if (convo) {
+    convo.status = status
+    save()
+  }
+}
+
+export function setAnswered(id: string, answered: boolean) {
+  const convo = conversations.find((c) => c.id === id)
+  if (convo) {
+    convo.answered = answered
     save()
   }
 }
