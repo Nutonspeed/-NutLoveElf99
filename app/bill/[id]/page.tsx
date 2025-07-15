@@ -10,6 +10,7 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
+import { addRef, isDuplicateRef } from "@/lib/mock-ref-check"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
@@ -81,12 +82,18 @@ export default function BillPage({ params }: { params: { id: string } }) {
   }
 
   const handleSendSlip = () => {
+    const ref = slip?.name || `pay-${Date.now()}`
+    if (isDuplicateRef(ref)) {
+      alert("เราได้รับข้อมูลแล้ว ไม่ต้องกดซ้ำครับพี่")
+      return
+    }
     addBillPayment(bill.id, {
-      id: `pay-${Date.now()}`,
+      id: ref,
       date: new Date().toISOString(),
       amount: parseFloat(amount) || 0,
       slip: slip?.name,
     })
+    addRef(ref)
     setAmount("")
     setSlip(null)
     alert("ส่งข้อมูลแล้ว")
