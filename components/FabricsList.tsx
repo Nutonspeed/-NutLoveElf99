@@ -15,6 +15,8 @@ interface Fabric {
   sku?: string | null
   image_url?: string | null
   image_urls?: string[] | null
+  category?: string
+  tags?: string[]
 }
 
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
@@ -57,9 +59,23 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                     fill
                     className="object-cover"
                   />
+                  {fabric.category && (
+                    <span className="absolute bottom-2 left-2 bg-black/60 text-white text-xs px-1 rounded">
+                      {fabric.category}
+                    </span>
+                  )}
                 </div>
-                <div className="p-2 text-center">
+                <div className="p-2 text-center space-y-1">
                   <p className="font-medium line-clamp-2">{fabric.name}</p>
+                  {fabric.tags && (
+                    <div className="flex flex-wrap justify-center gap-1">
+                      {fabric.tags.map(tag => (
+                        <span key={tag} className="text-xs bg-muted px-1 rounded">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Link>
             </div>

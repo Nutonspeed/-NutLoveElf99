@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { CartProvider } from "@/contexts/cart-context"
+import { FabricsProvider } from "@/contexts/fabrics-context"
 import { AuthProvider } from "@/contexts/auth-context"
 import { WishlistProvider } from "@/contexts/wishlist-context"
 import { CompareProvider } from "@/contexts/compare-context"
@@ -32,20 +33,22 @@ export default function RootLayout({
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
         <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                <FavoritesProvider>
-                  <AdminProductGroupsProvider>
-                    <ReviewImagesProvider>
-                      {children}
-                      <Toaster />
-                    </ReviewImagesProvider>
-                  </AdminProductGroupsProvider>
-                </FavoritesProvider>
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
+          <FabricsProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <CompareProvider>
+                  <FavoritesProvider>
+                    <AdminProductGroupsProvider>
+                      <ReviewImagesProvider>
+                        {children}
+                        <Toaster />
+                      </ReviewImagesProvider>
+                    </AdminProductGroupsProvider>
+                  </FavoritesProvider>
+                </CompareProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </FabricsProvider>
         </AuthProvider>
       </body>
     </html>
