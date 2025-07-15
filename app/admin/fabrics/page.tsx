@@ -27,6 +27,8 @@ interface Fabric {
   sku: string
   collection_id: string
   image_url: string | null
+  colors?: string[] | null
+  type?: 'Solid' | 'Pattern' | 'Print'
   price_min: number
   price_max: number
   collection_name?: string | null
@@ -135,12 +137,20 @@ export default function AdminFabricsPage() {
               <p className="text-gray-600">เพิ่ม แก้ไข และลบผ้าในระบบ</p>
             </div>
           </div>
-          <Link href="/admin/fabrics/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              เพิ่มผ้าใหม่
+          <div className="flex space-x-2">
+            <Link href="/admin/fabrics/create">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                เพิ่มผ้าใหม่
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              onClick={() => alert("เพิ่มชื่อสีใหม่ (mock)")}
+            >
+              เพิ่มชื่อสีใหม่
             </Button>
-          </Link>
+          </div>
         </div>
 
         <Card>

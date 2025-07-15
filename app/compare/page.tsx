@@ -15,7 +15,8 @@ interface Fabric {
   slug: string
   name: string
   sku: string
-  color: string
+  colors: string[]
+  type: 'Solid' | 'Pattern' | 'Print'
   price: number
   images: string[]
 }
