@@ -184,6 +184,11 @@ export default function AdminChatPage() {
                       >
                         แจ้งหัวหน้าทีม
                       </Button>
+                      <Link href={`/admin/chat/${c.id}`}>
+                        <Button variant="outline" size="sm">
+                          ดูข้อความ
+                        </Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
