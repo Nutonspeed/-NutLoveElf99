@@ -6,6 +6,7 @@ export interface Fabric {
   slug: string
   sku: string
   color: string
+  tags?: string[]
   price: number
   images: string[]
   collectionSlug: string
@@ -18,6 +19,7 @@ export const mockFabrics: Fabric[] = [
     slug: 'soft-linen',
     sku: 'FBC-001',
     color: 'ครีม',
+    tags: ['soft', 'linen', 'ครีม'],
     price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
     collectionSlug: 'cozy-earth',
@@ -28,6 +30,7 @@ export const mockFabrics: Fabric[] = [
     slug: 'cozy-cotton',
     sku: 'FBC-002',
     color: 'เทา',
+    tags: ['cozy', 'cotton', 'เทา'],
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
     collectionSlug: 'cozy-earth',
@@ -38,6 +41,7 @@ export const mockFabrics: Fabric[] = [
     slug: 'velvet-dream',
     sku: 'FBC-003',
     color: 'น้ำเงิน',
+    tags: ['velvet', 'dream', 'น้ำเงิน'],
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
     collectionSlug: 'modern-loft',
@@ -48,6 +52,7 @@ export const mockFabrics: Fabric[] = [
     slug: 'classic-stripe',
     sku: 'FBC-004',
     color: 'กรม',
+    tags: ['classic', 'stripe', 'กรม'],
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
     collectionSlug: 'modern-loft',
@@ -58,6 +63,7 @@ export const mockFabrics: Fabric[] = [
     slug: 'floral-muse',
     sku: 'FBC-005',
     color: 'ชมพู',
+    tags: ['floral', 'muse', 'ชมพู'],
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
     collectionSlug: 'vintage-vibes',
