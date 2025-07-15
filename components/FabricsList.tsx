@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
+import { Badge } from "@/components/ui/badge"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
@@ -15,6 +16,8 @@ interface Fabric {
   sku?: string | null
   image_url?: string | null
   image_urls?: string[] | null
+  tags?: string[]
+  category?: string
 }
 
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
@@ -42,6 +45,11 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                   ดูด้วยกันบ่อย
                 </span>
               )}
+              {fabric.category && (
+                <Badge variant="secondary" className="absolute bottom-2 left-2 text-[10px]">
+                  {fabric.category}
+                </Badge>
+              )}
               <Checkbox
                 checked={checked}
                 onCheckedChange={() => toggleCompare(slug)}
@@ -58,8 +66,17 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-2 text-center">
+                <div className="p-2 text-center space-y-1">
                   <p className="font-medium line-clamp-2">{fabric.name}</p>
+                  {fabric.tags && (
+                    <div className="flex flex-wrap justify-center gap-1">
+                      {fabric.tags.map((t) => (
+                        <Badge key={t} variant="outline" className="text-[10px]">
+                          {t}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Link>
             </div>

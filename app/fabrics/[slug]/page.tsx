@@ -11,6 +11,7 @@ import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { FabricSuggestions } from "@/components/FabricSuggestions"
 
@@ -26,6 +27,8 @@ interface Fabric {
   image_urls?: string[] | null
   price_min?: number | null
   price_max?: number | null
+  tags?: string[]
+  category?: string
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -79,6 +82,8 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
       image_urls: f!.images,
       price_min: f!.price,
       price_max: f!.price,
+      tags: f!.tags,
+      category: f!.category,
     }
   } else {
     const { data, error } = await supabase
@@ -123,8 +128,11 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             />
           </div>
           <div className="space-y-4">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-2 flex-wrap">
               <h1 className="text-3xl font-bold">{fabric.name}</h1>
+              {fabric.category && (
+                <Badge variant="secondary" className="text-xs">{fabric.category}</Badge>
+              )}
               <WishlistButton slug={fabric.slug || fabric.id} />
               <FavoriteButton slug={fabric.slug || fabric.id} />
             </div>
@@ -147,7 +155,18 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
                 </Link>
               </p>
             )}
-            {fabric.description && <p className="text-gray-700 whitespace-pre-line">{fabric.description}</p>}
+            {fabric.description && (
+              <p className="text-gray-700 whitespace-pre-line">{fabric.description}</p>
+            )}
+            {fabric.tags && (
+              <div className="flex flex-wrap gap-2 pt-2">
+                {fabric.tags.map((t) => (
+                  <Badge key={t} variant="outline" className="text-xs">
+                    {t}
+                  </Badge>
+                ))}
+              </div>
+            )}
             <div className="flex space-x-4 pt-2">
               <a
                 href={`https://m.me/elfsofacover?text=${encodeURIComponent(
