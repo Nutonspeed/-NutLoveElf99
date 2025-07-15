@@ -194,3 +194,34 @@ export function getTopSellingItems(start: Date, end: Date, top = 5) {
     .slice(0, top)
     .map(([name, count]) => ({ name, count }))
 }
+
+function calcTotal(items: Order["items"]) {
+  return items.reduce((sum, i) => sum + i.price * i.quantity, 0)
+}
+
+export function setOrderItems(orderId: string, items: Order["items"]) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return
+  order.items = items
+  order.total = calcTotal(items)
+}
+
+export function updateItemQuantity(
+  orderId: string,
+  productId: string,
+  quantity: number,
+) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return
+  const item = order.items.find((i) => i.productId === productId)
+  if (!item) return
+  item.quantity = quantity
+  order.total = calcTotal(order.items)
+}
+
+export function removeItemFromOrder(orderId: string, productId: string) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return
+  order.items = order.items.filter((i) => i.productId !== productId)
+  order.total = calcTotal(order.items)
+}
