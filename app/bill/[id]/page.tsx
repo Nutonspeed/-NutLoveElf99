@@ -10,6 +10,7 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
+import { getBill as getAdminBill } from "@/mock/bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
@@ -21,12 +22,52 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
   const bill = getBill(id)
   const quickBill = getQuickBill(id)
+  const simpleBill = getAdminBill(id)
   const order = mockOrders.find((o) => o.id === bill?.orderId)
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+
+  if (simpleBill) {
+    const sum = simpleBill.items.reduce(
+      (s, it) => s + it.price * it.quantity,
+      0,
+    )
+    const total = sum + simpleBill.shipping
+    return (
+      <div className="p-4 space-y-4">
+        <h1 className="text-xl font-bold text-center">บิล {simpleBill.id}</h1>
+        <div className="max-w-md mx-auto border rounded-lg p-4 space-y-2">
+          {simpleBill.items.map((it, i) => (
+            <div key={i} className="flex justify-between">
+              <span>
+                {it.name} × {it.quantity}
+              </span>
+              <span>฿{(it.price * it.quantity).toLocaleString()}</span>
+            </div>
+          ))}
+          <div className="flex justify-between border-t pt-2">
+            <span>ค่าจัดส่ง</span>
+            <span>฿{simpleBill.shipping.toLocaleString()}</span>
+          </div>
+          <div className="flex justify-between font-bold">
+            <span>ยอดรวม</span>
+            <span>฿{total.toLocaleString()}</span>
+          </div>
+        </div>
+        {simpleBill.note && (
+          <p className="text-sm text-center">หมายเหตุ: {simpleBill.note}</p>
+        )}
+        <div className="text-center">
+          <Button onClick={() => alert('ส่งบิลใหม่แทนใบเดิม (mock)')}>
+            ส่งบิลใหม่แทนใบเดิม
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   const baseDate = new Date(bill?.dueDate || bill?.createdAt || '')
   const expired =

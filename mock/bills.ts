@@ -1,9 +1,16 @@
+export interface BillItem {
+  name: string
+  quantity: number
+  price: number
+}
+
 export interface AdminBill {
   id: string
   customer: string
-  items: string
+  items: BillItem[]
+  shipping: number
   note: string
-  status: 'unpaid' | 'paid' | 'cancelled'
+  status: 'pending' | 'unpaid' | 'paid' | 'cancelled'
   createdAt: string
 }
 
@@ -11,9 +18,13 @@ export const mockBills: AdminBill[] = [
   {
     id: 'BILL-001',
     customer: 'สมชาย ใจดี',
-    items: 'ผ้าคลุมโซฟา 1 ชิ้น',
+    items: [
+      { name: 'ผ้าคลุมโซฟา', quantity: 1, price: 299 },
+      { name: 'ปลอกหมอน', quantity: 2, price: 59 },
+    ],
+    shipping: 50,
     note: '',
-    status: 'unpaid',
+    status: 'pending',
     createdAt: new Date().toISOString(),
   },
 ]
@@ -32,4 +43,17 @@ export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): A
 export function updateBillStatus(id: string, status: AdminBill['status']) {
   const bill = mockBills.find((b) => b.id === id)
   if (bill) bill.status = status
+}
+
+export function getBill(id: string): AdminBill | undefined {
+  return mockBills.find((b) => b.id === id)
+}
+
+export function updateBill(
+  id: string,
+  data: Partial<Omit<AdminBill, 'id' | 'createdAt'>>,
+): AdminBill | undefined {
+  const bill = mockBills.find((b) => b.id === id)
+  if (bill) Object.assign(bill, data)
+  return bill
 }
