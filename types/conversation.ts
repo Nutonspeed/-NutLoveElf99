@@ -5,5 +5,7 @@ export interface Conversation {
   lastMessage: string
   tags: string[]
   rating?: number
+  assignee?: string
+  unread?: boolean
   updatedAt: string
 }

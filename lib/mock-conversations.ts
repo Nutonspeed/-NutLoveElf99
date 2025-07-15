@@ -7,6 +7,8 @@ export let conversations: Conversation[] = [
     customerName: 'John Doe',
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
+    assignee: 'agent-1',
+    unread: true,
     updatedAt: new Date().toISOString(),
   },
   {
@@ -15,6 +17,8 @@ export let conversations: Conversation[] = [
     customerName: 'Jane Smith',
     lastMessage: 'จะโอนพรุ่งนี้',
     tags: ['รอโอน'],
+    assignee: 'agent-2',
+    unread: false,
     updatedAt: new Date().toISOString(),
   },
 ]
@@ -62,6 +66,25 @@ export function setRating(id: string, rating: number) {
   const convo = conversations.find((c) => c.id === id)
   if (convo) {
     convo.rating = rating
+    save()
+  }
+}
+
+export function reassignConversation(id: string, assignee: string): boolean {
+  const convo = conversations.find((c) => c.id === id)
+  if (!convo) return false
+  // simulate failure 20% of the time
+  if (Math.random() < 0.2) return false
+  convo.assignee = assignee
+  convo.updatedAt = new Date().toISOString()
+  save()
+  return true
+}
+
+export function markRead(id: string) {
+  const convo = conversations.find((c) => c.id === id)
+  if (convo) {
+    convo.unread = false
     save()
   }
 }
