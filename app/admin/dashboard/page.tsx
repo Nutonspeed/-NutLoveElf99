@@ -55,6 +55,10 @@ import {
   ResponsiveContainer,
 } from "recharts"
 import { toast } from "sonner"
+import {
+  shouldRemindAdmin,
+  recordAdminActivity,
+} from "@/lib/admin-reminder"
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null)
@@ -83,6 +87,10 @@ export default function AdminDashboard() {
       )
       if (overdue) toast.warning("มีบิลค้างชำระเกิน 3 วัน")
     }
+    if (shouldRemindAdmin()) {
+      toast.warning("ไม่มีการอัปเดตข้อมูลเกิน 5 วัน")
+    }
+    recordAdminActivity()
   }, [])
 
   useEffect(() => {
