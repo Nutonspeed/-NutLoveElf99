@@ -1,5 +1,7 @@
 "use client"
 import { useState } from "react"
+import type { BillStatus } from "@/types/bill"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
@@ -29,6 +31,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [status, setStatus] = useState<BillStatus>(bill?.status || "unpaid")
+  const [qrError, setQrError] = useState(false)
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -174,7 +178,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
               </Button>
             </Link>
             <h1 className="text-xl font-semibold">บิล {order.id}</h1>
-            <Badge variant="secondary">{bill.status}</Badge>
+            <Badge variant="secondary">{status}</Badge>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={handlePrint}>
@@ -200,8 +204,37 @@ export default function BillPage({ params }: { params: { id: string } }) {
         <Card className="max-w-4xl mx-auto print:shadow-none print:border-none">
           <CardContent className="p-8 print:p-6 space-y-6">
             <BillPreview order={order} />
-            <div className="flex justify-center">
-              <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
+            <div className="flex flex-col items-center space-y-2">
+              {!qrError ? (
+                <img
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${bill.id}`}
+                  alt="QR"
+                  className="w-40 h-40"
+                  onError={() => setQrError(true)}
+                />
+              ) : (
+                <div className="w-40 h-40 flex items-center justify-center text-sm text-gray-500 border">
+                  ไม่สามารถโหลด QR ได้
+                </div>
+              )}
+              <div className="w-40">
+                <Label htmlFor="status">สถานะการชำระ</Label>
+                <Select
+                  value={status}
+                  onValueChange={(v) => {
+                    setStatus(v as BillStatus)
+                    if (bill) bill.status = v as BillStatus
+                  }}
+                >
+                  <SelectTrigger id="status" className="w-full mt-1">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unpaid">ยังไม่ชำระ</SelectItem>
+                    <SelectItem value="paid">ชำระแล้ว</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             <OrderTimeline timeline={order.timeline} />
             <div className="space-y-2">
