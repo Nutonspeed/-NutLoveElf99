@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useAuth } from '@/contexts/auth-context'
 import { mockClaims, updateClaim } from '@/lib/mock-claims'
 import { addAdminLog } from '@/lib/mock-admin-logs'
@@ -29,20 +30,9 @@ export default function AdminClaimsPage() {
     )
   }
 
-  const handleApprove = (id: string) => {
-    const c = mockClaims.find((cl) => cl.id === id)
-    if (!c || c.status !== 'pending') return
-    updateClaim(id, { status: 'approved' })
-    addAdminLog(`approve claim ${id}`, user?.email || 'admin')
-    setClaims([...mockClaims])
-  }
-
-  const handleReject = (id: string) => {
-    const c = mockClaims.find((cl) => cl.id === id)
-    if (!c || c.status !== 'pending') return
-    const reason = window.prompt('เหตุผลการปฏิเสธ') || ''
-    updateClaim(id, { status: 'rejected', reason })
-    addAdminLog(`reject claim ${id}`, user?.email || 'admin')
+  const handleStatusChange = (id: string, status: string) => {
+    updateClaim(id, { status: status as any })
+    addAdminLog(`update claim ${id} ${status}`, user?.email || 'admin')
     setClaims([...mockClaims])
   }
 
@@ -62,6 +52,8 @@ export default function AdminClaimsPage() {
         <Tabs defaultValue="pending">
           <TabsList>
             <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
+            <TabsTrigger value="approved">อนุมัติแล้ว</TabsTrigger>
+            <TabsTrigger value="rejected">ไม่รับเคลม</TabsTrigger>
           </TabsList>
           <TabsContent value="pending">
             <Card>
@@ -86,11 +78,97 @@ export default function AdminClaimsPage() {
                           <img src={c.image} alt="img" className="h-12 w-12" />
                         </TableCell>
                         <TableCell>{c.reason}</TableCell>
-                        <TableCell className="text-right space-x-2">
-                          <Button size="sm" onClick={() => handleApprove(c.id)}>อนุมัติ</Button>
-                          <Button size="sm" variant="destructive" onClick={() => handleReject(c.id)}>
-                            ไม่รับเคลม
-                          </Button>
+                      <TableCell className="text-right">
+                        <Select value={c.status} onValueChange={(v)=>handleStatusChange(c.id,v)}>
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">รอตรวจสอบ</SelectItem>
+                            <SelectItem value="approved">อนุมัติแล้ว</SelectItem>
+                            <SelectItem value="rejected">ไม่รับเคลม</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="approved">
+            <Card>
+              <CardHeader>
+                <CardTitle>อนุมัติแล้ว</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ออเดอร์</TableHead>
+                      <TableHead>รูป</TableHead>
+                      <TableHead>เหตุผล</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {claims.filter(c => c.status === 'approved').map((c) => (
+                      <TableRow key={c.id}>
+                        <TableCell>{c.orderId}</TableCell>
+                        <TableCell>
+                          <img src={c.image} alt="img" className="h-12 w-12" />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Select value={c.status} onValueChange={(v)=>handleStatusChange(c.id,v)}>
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">รอตรวจสอบ</SelectItem>
+                              <SelectItem value="approved">อนุมัติแล้ว</SelectItem>
+                              <SelectItem value="rejected">ไม่รับเคลม</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="rejected">
+            <Card>
+              <CardHeader>
+                <CardTitle>ไม่รับเคลม</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ออเดอร์</TableHead>
+                      <TableHead>รูป</TableHead>
+                      <TableHead>เหตุผล</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {claims.filter(c => c.status === 'rejected').map((c) => (
+                      <TableRow key={c.id}>
+                        <TableCell>{c.orderId}</TableCell>
+                        <TableCell>
+                          <img src={c.image} alt="img" className="h-12 w-12" />
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <Select value={c.status} onValueChange={(v)=>handleStatusChange(c.id,v)}>
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">รอตรวจสอบ</SelectItem>
+                              <SelectItem value="approved">อนุมัติแล้ว</SelectItem>
+                              <SelectItem value="rejected">ไม่รับเคลม</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                       </TableRow>
                     ))}
