@@ -1,181 +1,145 @@
-"use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
-import { useAuth } from "@/contexts/auth-context";
-import { Button } from "@/components/ui/buttons/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/cards/card";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/inputs/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
+"use client"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import { ArrowLeft } from "lucide-react"
+import { useAuth } from "@/contexts/auth-context"
+import { Button } from "@/components/ui/buttons/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Switch } from "@/components/ui/switch"
 import {
-  loadAutoMessage,
-  autoMessage,
-  setAutoMessage,
-  loadSocialLinks,
-  socialLinks,
-  setSocialLinks,
-  loadBillSecurity,
-  billSecurity,
-  setBillSecurity,
-  loadAutoReminder,
-  autoReminder,
-  setAutoReminder,
-  loadAutoArchive,
-  autoArchive,
-  setAutoArchive,
-  loadReviewReminder,
-  reviewReminder,
-  setReviewReminder,
-} from "@/lib/mock-settings";
+  defaultDeliveryMethod,
+  loadDefaultDeliveryMethod,
+  setDefaultDeliveryMethod,
+  autoOpenBill,
+  loadAutoOpenBill,
+  setAutoOpenBill,
+} from "@/lib/mock-settings"
+import { logs } from "@/lib/logs"
 
 export default function SettingsPage() {
-  const { user, isAuthenticated } = useAuth();
-  const router = useRouter();
-  const [message, setMessage] = useState(autoMessage);
-  const [links, setLinks] = useState(socialLinks);
-  const [security, setSecurity] = useState(billSecurity);
-  const [reminder, setReminder] = useState(autoReminder);
-  const [reviewRemind, setReviewRemind] = useState(reviewReminder);
-  const [archiveOld, setArchiveOld] = useState(autoArchive);
+  const { user } = useAuth()
+  const [method, setMethod] = useState(defaultDeliveryMethod)
+  const [autoBill, setAutoBillState] = useState(autoOpenBill)
+  const [tab, setTab] = useState("display")
+  const [error, setError] = useState(false)
 
   useEffect(() => {
-    loadAutoMessage();
-    loadSocialLinks();
-    loadBillSecurity();
-    loadAutoReminder();
-    loadAutoArchive();
-    loadReviewReminder();
-    setMessage(autoMessage);
-    setLinks(socialLinks);
-    setSecurity(billSecurity);
-    setReminder(autoReminder);
-    setArchiveOld(autoArchive);
-    setReviewRemind(reviewReminder);
-    if (!isAuthenticated) {
-      router.push("/login");
-    } else if (user?.role !== "admin") {
-      router.push("/");
+    try {
+      loadDefaultDeliveryMethod()
+      loadAutoOpenBill()
+      setMethod(defaultDeliveryMethod)
+      setAutoBillState(autoOpenBill)
+    } catch (e) {
+      setError(true)
     }
-  }, [isAuthenticated, user, router]);
+  }, [])
 
-  if (!isAuthenticated || user?.role !== "admin") return null;
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>ไม่สามารถโหลดหน้าตั้งค่า ลองใหม่ภายหลัง</p>
+      </div>
+    )
+  }
 
-  const handleSave = () => {
-    setAutoMessage(message);
-    setSocialLinks(links);
-    setBillSecurity(security);
-    setAutoReminder(reminder);
-    setAutoArchive(archiveOld);
-    setReviewReminder(reviewRemind);
-    alert("บันทึกข้อความแล้ว");
-  };
+  const saveBillOptions = () => {
+    setDefaultDeliveryMethod(method)
+    setAutoOpenBill(autoBill)
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center space-x-4 mb-4">
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <div className="flex items-center space-x-4">
           <Link href="/admin/dashboard">
             <Button variant="outline" size="icon">
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold">ตั้งค่าข้อความหลังชำระเงิน</h1>
+          <h1 className="text-3xl font-bold">ตั้งค่า</h1>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>ข้อความขอบคุณ</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-            />
-            <Button onClick={handleSave}>บันทึก</Button>
-          </CardContent>
-        </Card>
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>ลิงก์ Social</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Input
-              value={links.facebook}
-              onChange={(e) => setLinks({ ...links, facebook: e.target.value })}
-              placeholder="Facebook Page URL"
-            />
-            <Input
-              value={links.line}
-              onChange={(e) => setLinks({ ...links, line: e.target.value })}
-              placeholder="Line URL"
-            />
-          </CardContent>
-        </Card>
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>เตือนอัตโนมัติ</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="auto-remind"
-                checked={reminder}
-                onCheckedChange={(v) => setReminder(Boolean(v))}
-              />
-              <Label htmlFor="auto-remind">แจ้งเตือนบิลค้างชำระ</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="auto-archive"
-                checked={archiveOld}
-                onCheckedChange={(v) => setArchiveOld(Boolean(v))}
-              />
-              <Label htmlFor="auto-archive">ซ่อนบิลเกิน 14 วัน</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="review-remind"
-                checked={reviewRemind}
-                onCheckedChange={(v) => setReviewRemind(Boolean(v))}
-              />
-              <Label htmlFor="review-remind">เตือนให้รีวิวหลัง 3 วัน</Label>
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>ความปลอดภัยหน้าบิล</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sec-enabled"
-                checked={security.enabled}
-                onCheckedChange={(v) =>
-                  setSecurity({ ...security, enabled: Boolean(v) })
-                }
-              />
-              <Label htmlFor="sec-enabled">ต้องยืนยันก่อนเข้าบิล</Label>
-            </div>
-            <Input
-              placeholder="เบอร์โทร"
-              value={security.phone}
-              onChange={(e) =>
-                setSecurity({ ...security, phone: e.target.value })
-              }
-            />
-            <Input
-              placeholder="PIN"
-              value={security.pin}
-              onChange={(e) =>
-                setSecurity({ ...security, pin: e.target.value })
-              }
-            />
-          </CardContent>
-        </Card>
+        <Tabs value={tab} onValueChange={setTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="display">การแสดงผล</TabsTrigger>
+            <TabsTrigger value="bill">ตัวเลือกบิล</TabsTrigger>
+            <TabsTrigger value="lab">โหมดทดลอง</TabsTrigger>
+            {user?.role === "owner" && (
+              <TabsTrigger value="debug">Debug</TabsTrigger>
+            )}
+          </TabsList>
+          <TabsContent value="display">
+            <Card>
+              <CardHeader>
+                <CardTitle>การแสดงผล</CardTitle>
+              </CardHeader>
+              <CardContent>ตั้งค่าที่เกี่ยวกับ UI (mock)</CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="bill">
+            <Card>
+              <CardHeader>
+                <CardTitle>ตัวเลือกบิล</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <label className="block text-sm">วิธีจัดส่งเริ่มต้น</label>
+                  <select
+                    className="w-full border rounded px-2 py-1"
+                    value={method}
+                    onChange={(e) => setMethod(e.target.value)}
+                  >
+                    <option value="เก็บปลายทาง">เก็บปลายทาง</option>
+                    <option value="โอนก่อนส่ง">โอนก่อนส่ง</option>
+                    <option value="รับเอง">รับเอง</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>เปิดบิลอัตโนมัติเมื่อมีการสั่งซื้อ</span>
+                  <Switch
+                    checked={autoBill}
+                    onCheckedChange={(v) => setAutoBillState(v)}
+                  />
+                </div>
+                <Button onClick={saveBillOptions}>บันทึก</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="lab">
+            <Card>
+              <CardHeader>
+                <CardTitle>โหมดทดลอง</CardTitle>
+              </CardHeader>
+              <CardContent>สำหรับเปิดใช้คุณสมบัติทดสอบต่างๆ</CardContent>
+            </Card>
+          </TabsContent>
+          {user?.role === "owner" && (
+            <TabsContent value="debug">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Debug Tools</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <pre className="text-xs bg-gray-100 p-2 rounded">
+                    {JSON.stringify(logs.slice(-5), null, 2)}
+                  </pre>
+                  <Button variant="outline" onClick={() => setError(true)}>
+                    ทดสอบ Fallback
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      throw new Error("simulate error")
+                    }}
+                  >
+                    Simulate Error
+                  </Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+        </Tabs>
       </div>
     </div>
-  );
+  )
 }

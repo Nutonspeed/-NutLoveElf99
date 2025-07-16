@@ -124,6 +124,9 @@ export default function LoginPage() {
             <p className="text-sm font-medium mb-2">ทดสอบระบบ:</p>
             <div className="space-y-1 text-xs text-gray-600">
               <p>
+                <strong>Owner:</strong> owner@sofacover.com / password
+              </p>
+              <p>
                 <strong>Admin:</strong> admin@sofacover.com / password
               </p>
               <p>
