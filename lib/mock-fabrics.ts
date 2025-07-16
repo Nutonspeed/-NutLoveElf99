@@ -9,6 +9,12 @@ export interface Fabric {
   price: number
   images: string[]
   collectionSlug: string
+  /** optional tags describing the fabric */
+  tags?: string[]
+  /** mock rating from 1-5 */
+  rating?: number
+  /** mark as recommended */
+  recommended?: boolean
 }
 
 export const mockFabrics: Fabric[] = [
@@ -21,6 +27,9 @@ export const mockFabrics: Fabric[] = [
     price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['กันน้ำ', 'ลายเรียบ'],
+    rating: 5,
+    recommended: true,
   },
   {
     id: 'f02',
@@ -31,6 +40,8 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['ลายเรียบ'],
+    rating: 4,
   },
   {
     id: 'f03',
@@ -41,6 +52,8 @@ export const mockFabrics: Fabric[] = [
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['กันน้ำ'],
+    rating: 5,
   },
   {
     id: 'f04',
@@ -51,6 +64,8 @@ export const mockFabrics: Fabric[] = [
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['ลายเส้น'],
+    rating: 3,
   },
   {
     id: 'f05',
@@ -61,6 +76,8 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
     collectionSlug: 'vintage-vibes',
+    tags: ['ลายดอก'],
+    rating: 4,
   },
 ]
 
