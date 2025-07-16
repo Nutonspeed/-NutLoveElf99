@@ -1,5 +1,6 @@
 "use client"
 
+import type React from "react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { ArrowLeft } from "lucide-react"
@@ -47,6 +48,12 @@ import {
   getFlagStatus,
 } from "@/lib/mock-flagged-users"
 import { getLatestChatMessage } from "@/lib/mock-chat-messages"
+import {
+  loadCustomerMedia,
+  listCustomerMedia,
+  addCustomerMedia,
+  type CustomerMediaItem,
+} from "@/lib/mock-customer-media"
 
 export default function CustomerDetailPage({
   params,
@@ -62,6 +69,7 @@ export default function CustomerDetailPage({
     loadCustomerNotes()
     loadCustomerTags()
     loadFlaggedUsers()
+    loadCustomerMedia()
   }, [])
 
   useEffect(() => {
@@ -82,7 +90,18 @@ export default function CustomerDetailPage({
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
   const [noteInput, setNoteInput] = useState("")
   const [tagInput, setTagInput] = useState("")
+  const [files, setFiles] = useState<CustomerMediaItem[]>([])
   const latestMessage = getLatestChatMessage(customer.id)
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFiles = Array.from(e.target.files || [])
+    newFiles.forEach((file) => addCustomerMedia(customer.id, file))
+    setFiles(listCustomerMedia(customer.id))
+  }
+
+  useEffect(() => {
+    setFiles(listCustomerMedia(customer.id))
+  }, [customer])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,12 +174,41 @@ export default function CustomerDetailPage({
               >
                 เพิ่มโน้ต
               </Button>
-            </div>
           </div>
         </div>
-        <div className="text-lg font-semibold">
-          ยอดซื้อรวม: ฿{stats.totalSpent.toLocaleString()}
-        </div>
+      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>ไฟล์แนบ</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {files.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {files.map((f) => (
+                <img
+                  key={f.id}
+                  src={f.url}
+                  alt={f.name}
+                  className="w-full h-24 object-cover rounded"
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">
+              ยังไม่มีไฟล์แนบสำหรับลูกค้ารายนี้
+            </p>
+          )}
+          <div className="pt-2">
+            <label htmlFor="file-upload" className="block border-2 border-dashed rounded-md p-4 text-center cursor-pointer">
+              เลือกหรือลากไฟล์มาที่นี่
+            </label>
+            <input id="file-upload" type="file" multiple onChange={handleFileChange} className="hidden" />
+          </div>
+        </CardContent>
+      </Card>
+      <div className="text-lg font-semibold">
+        ยอดซื้อรวม: ฿{stats.totalSpent.toLocaleString()}
+      </div>
         {latestMessage && (
           <div className="text-sm text-gray-600">แชทล่าสุด: {latestMessage.text}</div>
         )}
