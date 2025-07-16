@@ -230,13 +230,17 @@ export default function AdminCouponsPage() {
               <p className="text-gray-600">สร้างและจัดการคูปองส่วนลดสำหรับลูกค้า</p>
             </div>
           </div>
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={resetForm}>
-                <Plus className="mr-2 h-4 w-4" />
-                สร้างคูปองใหม่
-              </Button>
-            </DialogTrigger>
+          <div className="flex space-x-2">
+            <Link href="/admin/coupons/generator">
+              <Button variant="outline">สร้างคูปองหลายใบ</Button>
+            </Link>
+            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button onClick={resetForm}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  สร้างคูปองใหม่
+                </Button>
+              </DialogTrigger>
             <DialogContent className="max-w-2xl">
               <DialogHeader>
                 <DialogTitle>สร้างคูปองส่วนลดใหม่</DialogTitle>
