@@ -47,6 +47,8 @@ import {
   getFlagStatus,
 } from "@/lib/mock-flagged-users"
 import { getLatestChatMessage } from "@/lib/mock-chat-messages"
+import { mockUsers } from "@/lib/mock-users"
+import { setCustomerAdmin } from "@/lib/mock-customers"
 
 export default function CustomerDetailPage({
   params,
@@ -80,6 +82,7 @@ export default function CustomerDetailPage({
   const [pointDelta, setPointDelta] = useState(0)
   const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
+  const [adminValue, setAdminValue] = useState<string>(customer.admin || "")
   const [noteInput, setNoteInput] = useState("")
   const [tagInput, setTagInput] = useState("")
   const latestMessage = getLatestChatMessage(customer.id)
@@ -97,6 +100,23 @@ export default function CustomerDetailPage({
         </div>
 
         <CustomerCard customer={customer} />
+        <select
+          className="border px-2 py-1 rounded"
+          value={adminValue}
+          onChange={(e) => {
+            setAdminValue(e.target.value)
+            setCustomerAdmin(customer.id, e.target.value)
+          }}
+        >
+          <option value="">เลือกแอดมินดูแลลูกค้ารายนี้</option>
+          {mockUsers
+            .filter((u) => u.role === "admin")
+            .map((u) => (
+              <option key={u.id} value={u.name}>
+                {u.name}
+              </option>
+            ))}
+        </select>
         {getFlagStatus(customer.id) && (
           <Badge variant="destructive">ต้องตรวจสอบก่อนตอบ</Badge>
         )}

@@ -32,6 +32,9 @@ export default function CustomerCard({ customer, className = "" }: { customer: C
           </div>
         )}
         {customer.note && <p className="text-sm text-gray-500">{customer.note}</p>}
+        <p className="text-sm text-gray-500">
+          ผู้ดูแล: {customer.admin || "ยังไม่มีผู้ดูแล"}
+        </p>
       </CardContent>
     </Card>
   )
