@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
+import { Checkbox } from "@/components/ui/checkbox"
 import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
@@ -27,8 +28,16 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
   const [amount, setAmount] = useState("")
+  const [amount1, setAmount1] = useState("")
+  const [amount2, setAmount2] = useState("")
+  const [splitPay, setSplitPay] = useState(false)
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+
+  const depositPercent = order?.depositPercent ?? 100
+  const depositAmount = Math.round((order?.total || 0) * depositPercent / 100)
+  const remainingAmount = (order?.total || 0) - depositAmount
+  const canSplit = depositPercent < 100
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -122,13 +131,30 @@ export default function BillPage({ params }: { params: { id: string } }) {
   }
 
   const handleSendSlip = () => {
-    addBillPayment(bill.id, {
-      id: `pay-${Date.now()}`,
-      date: new Date().toISOString(),
-      amount: parseFloat(amount) || 0,
-      slip: slip?.name,
-    })
-    setAmount("")
+    if (splitPay) {
+      const now = Date.now()
+      addBillPayment(bill.id, {
+        id: `pay-${now}-1`,
+        date: new Date().toISOString(),
+        amount: parseFloat(amount1) || 0,
+        slip: slip?.name,
+      })
+      addBillPayment(bill.id, {
+        id: `pay-${now}-2`,
+        date: new Date().toISOString(),
+        amount: parseFloat(amount2) || 0,
+      })
+      setAmount1("")
+      setAmount2("")
+    } else {
+      addBillPayment(bill.id, {
+        id: `pay-${Date.now()}`,
+        date: new Date().toISOString(),
+        amount: parseFloat(amount) || 0,
+        slip: slip?.name,
+      })
+      setAmount("")
+    }
     setSlip(null)
     alert("ส่งข้อมูลแล้ว")
   }
@@ -205,8 +231,44 @@ export default function BillPage({ params }: { params: { id: string } }) {
             </div>
             <OrderTimeline timeline={order.timeline} />
             <div className="space-y-2">
-              <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
-              <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="split"
+                  checked={splitPay}
+                  disabled={!canSplit}
+                  onCheckedChange={(c) => setSplitPay(!!c)}
+                />
+                <Label htmlFor="split">แยกชำระ</Label>
+                {!canSplit && (
+                  <span className="text-sm text-gray-500">ไม่สามารถแยกชำระได้ในบิลนี้</span>
+                )}
+              </div>
+              {splitPay ? (
+                <>
+                  <Label htmlFor="amt1">ยอดชำระงวดที่ 1</Label>
+                  <Input id="amt1" value={amount1} onChange={(e) => setAmount1(e.target.value)} />
+                  <Label htmlFor="amt2">ยอดชำระงวดที่ 2</Label>
+                  <Input id="amt2" value={amount2} onChange={(e) => setAmount2(e.target.value)} />
+                </>
+              ) : (
+                <>
+                  <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
+                  <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
+                </>
+              )}
+              <div>
+                <Label htmlFor="change">เงินทอน</Label>
+                <Input
+                  id="change"
+                  readOnly
+                  value={Math.max(
+                    (splitPay
+                      ? (parseFloat(amount1) || 0) + (parseFloat(amount2) || 0)
+                      : parseFloat(amount) || 0) - (order?.total || 0),
+                    0,
+                  ).toLocaleString()}
+                />
+              </div>
               <Input type="file" onChange={(e) => setSlip(e.target.files?.[0] ?? null)} />
               <Button onClick={handleSendSlip}>ส่งหลักฐานโอน</Button>
               {expired && !reason && (
