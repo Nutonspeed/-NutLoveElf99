@@ -81,6 +81,8 @@ export interface Order {
   depositPercent?: number
   note?: string
   chatNote?: string
+  /** Custom tag for quick classification */
+  tag?: string
   createdAt: string
   shippingAddress: {
     name: string

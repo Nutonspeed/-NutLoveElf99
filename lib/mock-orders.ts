@@ -25,6 +25,7 @@ const initialMockOrders: Order[] = [
     depositPercent: 50,
     note: "Deposit received",
     chatNote: "",
+    tag: "ด่วน",
     createdAt: "2024-01-15T10:30:00Z",
     shippingAddress: {
       name: "John Doe",
@@ -77,6 +78,7 @@ const initialMockOrders: Order[] = [
     status: "paid",
     depositPercent: 100,
     chatNote: "",
+    tag: "ติดตาม",
     createdAt: "2024-01-14T14:20:00Z",
     shippingAddress: {
       name: "Jane Smith",
@@ -116,6 +118,7 @@ export function regenerateMockOrders() {
     ...o,
     items: o.items.map((i) => ({ ...i })),
     packingStatus: o.packingStatus,
+    tag: o.tag,
     timeline: o.timeline.map((t) => ({ ...t })),
   }))
 }
@@ -123,6 +126,11 @@ export function regenerateMockOrders() {
 export function setPackingStatus(orderId: string, status: PackingStatus) {
   const order = mockOrders.find((o) => o.id === orderId)
   if (order) order.packingStatus = status
+}
+
+export function setOrderTag(orderId: string, tag: string) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (order) order.tag = tag
 }
 
 export function setOrderStatus(orderId: string, status: OrderStatus) {
