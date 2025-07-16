@@ -28,6 +28,27 @@ export function downloadPDF(content: string, filename: string) {
   URL.revokeObjectURL(url)
 }
 
+import type { Order } from '@/types/order'
+
+export function orderSummaryByStatus(orders: Order[]): Record<string, number> {
+  return orders.reduce<Record<string, number>>((acc, o) => {
+    acc[o.status] = (acc[o.status] || 0) + 1
+    return acc
+  }, {})
+}
+
+export function orderSummaryText(orders: Order[]): string {
+  const summary = orderSummaryByStatus(orders)
+  return Object.entries(summary)
+    .map(([status, count]) => `${status}: ${count}`)
+    .join('\n')
+}
+
+export function downloadOrderSummaryPDF(orders: Order[], filename: string) {
+  const text = orderSummaryText(orders)
+  downloadPDF(text, filename)
+}
+
 export async function downloadExcel<T extends object>(
   rows: T[],
   filename: string,

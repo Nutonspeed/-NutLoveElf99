@@ -14,7 +14,11 @@ import { toast } from "sonner"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
-import { downloadCSV, downloadPDF } from "@/lib/mock-export"
+import {
+  downloadCSV,
+  downloadPDF,
+  downloadOrderSummaryPDF,
+} from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
 import { packingStatusOptions } from "@/types/order"
 import {
@@ -94,6 +98,16 @@ export default function AdminOrdersPage() {
     toast.success("ยืนยันยอดแล้ว")
   }
 
+  const handleExportSummary = () => {
+    try {
+      if (Math.random() < 0.05) throw new Error("fail")
+      downloadOrderSummaryPDF(orders, "orders-summary.pdf")
+      toast.success("ส่งออกสำเร็จ (mock)")
+    } catch {
+      toast.error("ไม่สามารถส่งออกได้")
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -169,6 +183,9 @@ export default function AdminOrdersPage() {
                 </Button>
                 <Button onClick={() => downloadPDF('orders', 'orders.pdf')}>
                   Export PDF
+                </Button>
+                <Button variant="outline" onClick={handleExportSummary}>
+                  ส่งออกสรุป
                 </Button>
               </div>
             </div>
