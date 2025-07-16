@@ -11,6 +11,7 @@ import { ReviewImagesProvider } from "@/contexts/review-images-context"
 import { FavoritesProvider } from "@/contexts/favorites-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 import { validateMockData } from "@/lib/mock-validator"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,24 +30,26 @@ export default function RootLayout({
     validateMockData()
   }
   return (
-    <html lang="th">
+    <html lang="th" suppressHydrationWarning>
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                <FavoritesProvider>
-                  <AdminProductGroupsProvider>
-                    <ReviewImagesProvider>
-                      {children}
-                      <Toaster />
-                    </ReviewImagesProvider>
-                  </AdminProductGroupsProvider>
-                </FavoritesProvider>
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <AuthProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <CompareProvider>
+                  <FavoritesProvider>
+                    <AdminProductGroupsProvider>
+                      <ReviewImagesProvider>
+                        {children}
+                        <Toaster />
+                      </ReviewImagesProvider>
+                    </AdminProductGroupsProvider>
+                  </FavoritesProvider>
+                </CompareProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

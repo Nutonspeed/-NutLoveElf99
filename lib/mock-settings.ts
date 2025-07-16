@@ -38,6 +38,8 @@ export let autoArchive = false
 
 export let notifyTeams = { packing: true, finance: true }
 
+export let darkMode = false
+
 export function loadBillSecurity() {
   if (typeof window !== 'undefined') {
     const stored = localStorage.getItem('billSecurity')
@@ -105,5 +107,19 @@ export function setNotifyTeams(val: { packing: boolean; finance: boolean }) {
   notifyTeams = val
   if (typeof window !== 'undefined') {
     localStorage.setItem('notifyTeams', JSON.stringify(val))
+  }
+}
+
+export function loadDarkMode() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('darkMode')
+    if (stored) darkMode = JSON.parse(stored)
+  }
+}
+
+export function setDarkMode(val: boolean) {
+  darkMode = val
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('darkMode', JSON.stringify(val))
   }
 }
