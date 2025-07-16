@@ -48,3 +48,15 @@ export async function downloadExcel<T extends object>(
   a.click()
   URL.revokeObjectURL(url)
 }
+
+export function downloadJSON<T extends object>(data: T, filename: string) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: 'application/json',
+  })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}

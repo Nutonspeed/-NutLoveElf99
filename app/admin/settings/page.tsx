@@ -11,6 +11,12 @@ import { Input } from "@/components/ui/inputs/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
+  loadMockPreferences,
+  mockPreferences,
+  setShowIds,
+} from "@/lib/mock-preferences";
+import { clearMockData, downloadMockMappingPlan } from "@/lib/mock-tools";
+import {
   loadAutoMessage,
   autoMessage,
   setAutoMessage,
@@ -40,6 +46,7 @@ export default function SettingsPage() {
   const [reminder, setReminder] = useState(autoReminder);
   const [reviewRemind, setReviewRemind] = useState(reviewReminder);
   const [archiveOld, setArchiveOld] = useState(autoArchive);
+  const [showIds, setShowIdsState] = useState(mockPreferences.showIds);
 
   useEffect(() => {
     loadAutoMessage();
@@ -48,12 +55,14 @@ export default function SettingsPage() {
     loadAutoReminder();
     loadAutoArchive();
     loadReviewReminder();
+    loadMockPreferences();
     setMessage(autoMessage);
     setLinks(socialLinks);
     setSecurity(billSecurity);
     setReminder(autoReminder);
     setArchiveOld(autoArchive);
     setReviewRemind(reviewReminder);
+    setShowIdsState(mockPreferences.showIds);
     if (!isAuthenticated) {
       router.push("/login");
     } else if (user?.role !== "admin") {
@@ -70,6 +79,7 @@ export default function SettingsPage() {
     setAutoReminder(reminder);
     setAutoArchive(archiveOld);
     setReviewReminder(reviewRemind);
+    setShowIds(showIds);
     alert("บันทึกข้อความแล้ว");
   };
 
@@ -173,6 +183,27 @@ export default function SettingsPage() {
                 setSecurity({ ...security, pin: e.target.value })
               }
             />
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>ทดลอง</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-ids"
+                checked={showIds}
+                onCheckedChange={(v) => setShowIdsState(Boolean(v))}
+              />
+              <Label htmlFor="show-ids">แสดง mock ID</Label>
+            </div>
+            <Button variant="destructive" onClick={clearMockData}>
+              ล้างข้อมูล Mock
+            </Button>
+            <Button variant="outline" onClick={downloadMockMappingPlan}>
+              Export Mapping
+            </Button>
           </CardContent>
         </Card>
       </div>

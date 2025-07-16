@@ -1,4 +1,5 @@
 import type { QuoteRequest, QuoteStatus } from '@/types/quote'
+import { generateMockId } from './mock-uid'
 
 export let quotes: QuoteRequest[] = []
 
@@ -18,7 +19,7 @@ function save() {
 export function addQuote(data: Omit<QuoteRequest, 'id' | 'status' | 'createdAt'>): QuoteRequest {
   const entry: QuoteRequest = {
     ...data,
-    id: Date.now().toString(),
+    id: generateMockId('quote'),
     status: 'new',
     createdAt: new Date().toISOString(),
   }
