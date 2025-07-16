@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders, setOrderStatus } from "@/lib/mock-orders"
+import { confirmBill } from "@/lib/mock-bills"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
+import ConfirmPaymentDialog from "@/components/order/ConfirmPaymentDialog"
 import type { OrderStatus } from "@/types/order"
 import {
   getOrderStatusBadgeVariant,
@@ -18,6 +20,7 @@ import {
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
   const order = mockOrders.find((o) => o.id === id)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   if (!order) {
     return (
@@ -182,6 +185,21 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <CardTitle>การดำเนินการ</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
+                {order.status !== "paid" && (
+                  <Button
+                    className="w-full"
+                    onClick={() => setShowConfirm(true)}
+                  >
+                    ยืนยันการชำระเงิน
+                  </Button>
+                )}
+
+                <Link href={`/bill/${order.id}`}>
+                  <Button className="w-full bg-transparent" variant="outline">
+                    ดูบิล
+                  </Button>
+                </Link>
+
                 {order.status === "paid" && (
                   <Link href={`/invoice/${order.id}`}>
                     <Button className="w-full bg-transparent" variant="outline">
@@ -240,6 +258,16 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
       </div>
 
       <Footer />
+      <ConfirmPaymentDialog
+        open={showConfirm}
+        onOpenChange={setShowConfirm}
+        order={order}
+        onConfirm={() => {
+          setOrderStatus(order.id, 'paid')
+          confirmBill(order.id)
+          setShowConfirm(false)
+        }}
+      />
     </div>
   )
 }
