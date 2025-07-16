@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/modals/dialog"
 import {
   Table,
   TableBody,
@@ -41,6 +42,9 @@ export default function AdminFabricsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [collectionFilter, setCollectionFilter] = useState("all")
   const [collectionOptions, setCollectionOptions] = useState<{id: string; name: string}[]>([])
+  const [optImage, setOptImage] = useState<string | null>(null)
+  const [optName, setOptName] = useState("")
+  const [optDialog, setOptDialog] = useState(false)
 
   const handleDelete = async (id: string) => {
     if (
@@ -60,12 +64,24 @@ export default function AdminFabricsPage() {
       toast({
         title: "เกิดข้อผิดพลาด",
         description: "ไม่สามารถลบลายผ้าได้",
+
         variant: "destructive",
       })
     } else {
       toast({ title: "ลบลายผ้าแล้ว" })
     }
   }
+
+  const handleOptimize = (fabric: Fabric) => {
+    if (!fabric.image_url) {
+      toast({ title: "เกิดข้อผิดพลาด", description: "ไม่สามารถปรับขนาดได้", variant: "destructive" })
+      return
+    }
+    setOptImage(fabric.image_url)
+    setOptName(fabric.name)
+    setOptDialog(true)
+  }
+
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -223,6 +239,13 @@ export default function AdminFabricsPage() {
                           <Button
                             variant="outline"
                             size="icon"
+                            onClick={() => handleOptimize(fabric)}
+                          >
+                            ลดขนาดภาพ
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="icon"
                             onClick={() => handleDelete(fabric.id)}
                             className="text-red-600 hover:text-red-700"
                           >
@@ -242,6 +265,19 @@ export default function AdminFabricsPage() {
               </div>
             )}
           </CardContent>
+        <Dialog open={optDialog} onOpenChange={setOptDialog}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>ลดขนาดภาพ (จำลอง)</DialogTitle>
+            </DialogHeader>
+            {optImage && (
+              <div className="flex flex-col items-center space-y-2">
+                <Image src={optImage} alt={optName} width={200} height={200} className="rounded-md object-cover" />
+                <p className="text-sm">ความละเอียดใหม่: 300x300</p>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
         </Card>
       </div>
     </div>
