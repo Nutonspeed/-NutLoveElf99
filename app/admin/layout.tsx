@@ -5,18 +5,26 @@ import { useAdminGuard } from "@/contexts/use-admin-guard"
 import Sidebar from "@/components/admin/Sidebar"
 import Topbar from "@/components/admin/Topbar"
 import { Sheet, SheetContent } from "@/components/ui/modals/sheet"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { AdminProductsProvider } from "@/contexts/admin-products-context"
 import { AdminCollectionsProvider } from "@/contexts/admin-collections-context"
 import { AdminToast } from "@/components/admin/AdminToast"
 import QuickActionBar from "@/components/admin/QuickActionBar"
 import ErrorBoundary from "@/components/ErrorBoundary"
+import EmotionBanner from "@/components/admin/EmotionBanner"
+import { loadMockPreferences, mockPreferences } from "@/lib/mock-preferences"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin, conflict } = useAdminGuard()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const isMobile = useIsMobile()
+  const [showEmotion, setShowEmotion] = useState(mockPreferences.showEmotion)
+
+  useEffect(() => {
+    loadMockPreferences()
+    setShowEmotion(mockPreferences.showEmotion)
+  }, [])
 
   if (loading) {
     return (
@@ -56,6 +64,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <div className="flex flex-1 flex-col">
               <Topbar onMenuClick={() => setSidebarOpen(true)} />
+              {isMobile && showEmotion && <EmotionBanner />}
               <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
               <AdminToast />
               <QuickActionBar />
