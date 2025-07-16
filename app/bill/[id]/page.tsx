@@ -10,7 +10,11 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
-import { getBill as getAdminBill } from "@/mock/bills"
+import {
+  getBill as getAdminBill,
+  generateInvoiceLink,
+  getInvoiceLink,
+} from "@/mock/bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
@@ -29,6 +33,22 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [invoiceLink, setInvoiceLink] = useState<string | null>(
+    getInvoiceLink(id) || null,
+  )
+
+  const handleCreateInvoice = () => {
+    try {
+      const link = generateInvoiceLink(id)
+      setInvoiceLink(link)
+    } catch (e) {
+      alert("ไม่สามารถสร้างใบแจ้งหนี้ได้")
+    }
+  }
+
+  const handleCopyInvoice = () => {
+    if (invoiceLink) navigator.clipboard.writeText(invoiceLink)
+  }
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -60,10 +80,18 @@ export default function BillPage({ params }: { params: { id: string } }) {
         {simpleBill.note && (
           <p className="text-sm text-center">หมายเหตุ: {simpleBill.note}</p>
         )}
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <Button onClick={() => alert('ส่งบิลใหม่แทนใบเดิม (mock)')}>
             ส่งบิลใหม่แทนใบเดิม
           </Button>
+          <div className="space-x-2">
+            <Button onClick={handleCreateInvoice}>ส่งบิลเป็นใบแจ้งหนี้</Button>
+            {invoiceLink && (
+              <Button variant="outline" onClick={handleCopyInvoice}>
+                คัดลอกลิงก์ใบแจ้งหนี้
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     )
