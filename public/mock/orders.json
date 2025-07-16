@@ -1,0 +1,7 @@
+[
+  {"id":"A1","status":"pendingPayment","total":1000,"createdAt":"2024-06-08T08:00:00Z"},
+  {"id":"A2","status":"paid","total":2000,"createdAt":"2024-06-08T10:00:00Z"},
+  {"id":"A3","status":"pendingPayment","total":1500,"createdAt":"2024-06-07T09:00:00Z"},
+  {"id":"A4","status":"depositPaid","total":2500,"createdAt":"2024-06-06T13:00:00Z"},
+  {"id":"A5","status":"completed","total":3000,"createdAt":"2024-06-05T08:00:00Z"}
+]
