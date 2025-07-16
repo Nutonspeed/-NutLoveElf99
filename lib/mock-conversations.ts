@@ -7,14 +7,14 @@ export let conversations: Conversation[] = [
     customerName: 'John Doe',
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
-    updatedAt: new Date().toISOString(),
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
     id: 'conv-002',
     customerId: '3',
     customerName: 'Jane Smith',
     lastMessage: 'จะโอนพรุ่งนี้',
-    tags: ['รอโอน'],
+    tags: ['รอโอน', 'สำคัญ'],
     updatedAt: new Date().toISOString(),
   },
 ]

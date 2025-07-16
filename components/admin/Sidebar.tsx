@@ -13,6 +13,7 @@ import {
   MessageCircle,
   FileText,
   List,
+  AlertCircle,
 } from "lucide-react"
 import clsx from "clsx"
 import { mockNotifications } from "@/lib/mock-notifications"
@@ -32,6 +33,7 @@ const navItems = [
   { href: "/admin/quotes", label: "ใบเสนอราคา", icon: FileText },
   { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell },
   { href: "/admin/chat", label: "แชท", icon: MessageCircle },
+  { href: "/admin/chat-priority", label: "คิวแชท", icon: AlertCircle },
   { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText },
   { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List },
   { href: "/admin/logs", label: "Log", icon: FileText },
