@@ -11,16 +11,23 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
-import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
+import {
+  mockOrders,
+  setPackingStatus,
+  setOrderStatus,
+  mergeOrders,
+  bulkUpdateStatus,
+} from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
-import { packingStatusOptions } from "@/types/order"
+import { packingStatusOptions, orderStatusOptions } from "@/types/order"
 import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
 } from "@/lib/order-status"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const statusTag = (o: Order) => {
   if (o.status === "depositPaid")
@@ -49,6 +56,9 @@ export default function AdminOrdersPage() {
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [bills, setBills] = useState(mockBills)
+  const [selectMode, setSelectMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<string[]>([])
+  const [groupStatus, setGroupStatus] = useState<OrderStatus | "">("")
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -92,6 +102,26 @@ export default function AdminOrdersPage() {
     setBills([...mockBills])
     updateOrderStatus(orderId, "paid")
     toast.success("ยืนยันยอดแล้ว")
+  }
+
+  const handleMergeOrders = () => {
+    const merged = mergeOrders(selectedIds)
+    if (merged) {
+      setOrders([...mockOrders])
+      toast.success(`รวมออเดอร์เป็น ${merged.id}`)
+    }
+    setSelectedIds([])
+    setSelectMode(false)
+  }
+
+  const handleGroupStatusUpdate = () => {
+    if (!groupStatus) return
+    bulkUpdateStatus(selectedIds, groupStatus as OrderStatus)
+    setOrders([...mockOrders])
+    toast.success("อัปเดตสถานะแล้ว")
+    setSelectedIds([])
+    setGroupStatus("")
+    setSelectMode(false)
   }
 
 
@@ -170,6 +200,35 @@ export default function AdminOrdersPage() {
                 <Button onClick={() => downloadPDF('orders', 'orders.pdf')}>
                   Export PDF
                 </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setSelectMode(!selectMode)
+                    setSelectedIds([])
+                  }}
+                >
+                  {selectMode ? 'ยกเลิกเลือก' : 'เลือกหลายรายการ'}
+                </Button>
+                {selectMode && selectedIds.length > 0 && (
+                  <>
+                    <Button onClick={handleMergeOrders}>รวมออเดอร์</Button>
+                    <Select value={groupStatus} onValueChange={(v) => setGroupStatus(v as OrderStatus)}>
+                      <SelectTrigger className="w-40">
+                        <SelectValue placeholder="เปลี่ยนสถานะ" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {orderStatusOptions.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button onClick={handleGroupStatusUpdate} disabled={!groupStatus}>
+                      อัปเดต
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </CardHeader>
@@ -178,6 +237,19 @@ export default function AdminOrdersPage() {
               {filteredOrders.map((order) => (
                 <details key={order.id} className="rounded-lg border p-4">
                   <summary className="flex items-center justify-between gap-2">
+                    {selectMode && (
+                      <Checkbox
+                        checked={selectedIds.includes(order.id)}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedIds([...selectedIds, order.id])
+                          } else {
+                            setSelectedIds(selectedIds.filter((id) => id !== order.id))
+                          }
+                        }}
+                        className="mr-2"
+                      />
+                    )}
                     <div>
                       <p className="font-medium">{order.customerName}</p>
                       <p className="text-sm text-gray-500">
@@ -209,6 +281,26 @@ export default function AdminOrdersPage() {
             <Table className="min-w-full">
               <TableHeader>
                 <TableRow>
+                  {selectMode && (
+                    <TableHead className="w-4">
+                      <Checkbox
+                        checked={selectedIds.length === filteredOrders.length && filteredOrders.length > 0}
+                        ref={(ref) => {
+                          if (ref) {
+                            ref.indeterminate =
+                              selectedIds.length > 0 && selectedIds.length < filteredOrders.length
+                          }
+                        }}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedIds(filteredOrders.map((o) => o.id))
+                          } else {
+                            setSelectedIds([])
+                          }
+                        }}
+                      />
+                    </TableHead>
+                  )}
                   <TableHead>รหัสคำสั่งซื้อ</TableHead>
                   <TableHead>ลูกค้า</TableHead>
                   <TableHead>วันที่สั่งซื้อ</TableHead>
@@ -223,6 +315,20 @@ export default function AdminOrdersPage() {
               <TableBody>
                 {filteredOrders.map((order) => (
                   <TableRow key={order.id}>
+                    {selectMode && (
+                      <TableCell className="w-4">
+                        <Checkbox
+                          checked={selectedIds.includes(order.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedIds([...selectedIds, order.id])
+                            } else {
+                              setSelectedIds(selectedIds.filter((id) => id !== order.id))
+                            }
+                          }}
+                        />
+                      </TableCell>
+                    )}
                     <TableCell>
                       <p className="font-medium">{order.id}</p>
                     </TableCell>
