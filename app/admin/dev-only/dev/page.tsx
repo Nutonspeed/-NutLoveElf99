@@ -1,9 +1,11 @@
 "use client"
 
 import { useAuth } from "@/contexts/auth-context"
-import { isDevMock } from "@/lib/mock-settings"
+import { isDevMock, supabaseDown, loadSupabaseDown, setSupabaseDown } from "@/lib/mock-settings"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Button } from "@/components/ui/buttons/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   mockOrders,
   regenerateMockOrders,
@@ -17,6 +19,12 @@ import {
 
 export default function AdminDevPage() {
   const { user, isAuthenticated } = useAuth()
+  const [isOffline, setIsOffline] = useState(supabaseDown)
+
+  useEffect(() => {
+    loadSupabaseDown()
+    setIsOffline(supabaseDown)
+  }, [])
   if (!isDevMock) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -38,6 +46,11 @@ export default function AdminDevPage() {
     console.log("mockCustomers", mockCustomers)
   }
 
+  const toggleOffline = (val: boolean) => {
+    setIsOffline(val)
+    setSupabaseDown(val)
+  }
+
   const handleGenerate = () => {
     regenerateMockOrders()
     regenerateMockCustomers()
@@ -51,6 +64,19 @@ export default function AdminDevPage() {
           ล้างข้อมูล
         </Button>
         <Button onClick={handleGenerate}>สร้างข้อมูลตัวอย่าง</Button>
+      </div>
+      <div className="flex items-center space-x-2">
+        <Checkbox
+          id="offline"
+          checked={isOffline}
+          onCheckedChange={(v) => toggleOffline(Boolean(v))}
+        />
+        <label htmlFor="offline">จำลองกรณี Supabase ล่ม</label>
+        {isOffline && (
+          <Button variant="outline" size="sm" onClick={() => toggleOffline(false)}>
+            รีเซตโหมด
+          </Button>
+        )}
       </div>
       <Card>
         <CardHeader>
