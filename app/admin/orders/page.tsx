@@ -12,7 +12,7 @@ import { Search, ArrowLeft, Eye, FileText, Edit, Copy, ExternalLink } from "luci
 import Link from "next/link"
 import { toast } from "sonner"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers, checkCustomerInfo } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
@@ -74,6 +74,12 @@ export default function AdminOrdersPage() {
   }
 
   const handleCreateBill = (orderId: string) => {
+    const order = orders.find((o) => o.id === orderId)
+    const warning = order ? checkCustomerInfo(order.customerId) : "ยังไม่สามารถตรวจสอบข้อมูลได้"
+    if (warning) {
+      toast.warning(warning)
+      return
+    }
     const bill = createBill(orderId)
     setBills([...mockBills])
     toast.success(`สร้างบิล ${bill.id}`)
@@ -81,6 +87,12 @@ export default function AdminOrdersPage() {
   }
 
   const handlePrebookBill = (orderId: string) => {
+    const order = orders.find((o) => o.id === orderId)
+    const warning = order ? checkCustomerInfo(order.customerId) : "ยังไม่สามารถตรวจสอบข้อมูลได้"
+    if (warning) {
+      toast.warning(warning)
+      return
+    }
     const due = window.prompt("กำหนดวันครบชำระ YYYY-MM-DD") || undefined
     const bill = createBill(orderId, "pending", due)
     setBills([...mockBills])

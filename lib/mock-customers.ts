@@ -178,3 +178,13 @@ export function setCustomerMuted(id: string, muted: boolean) {
   if (!customer) return
   customer.muted = muted
 }
+
+export function checkCustomerInfo(id: string): string | null {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (!customer) return "ยังไม่สามารถตรวจสอบข้อมูลได้"
+  const missing: string[] = []
+  if (!customer.name) missing.push("ชื่อ")
+  if (!customer.address) missing.push("ที่อยู่")
+  if (!customer.phone) missing.push("เบอร์โทร")
+  return missing.length > 0 ? `ข้อมูลลูกค้าไม่ครบ (${missing.join(", ")})` : null
+}
