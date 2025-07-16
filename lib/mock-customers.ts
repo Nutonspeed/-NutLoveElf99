@@ -188,3 +188,8 @@ export function checkCustomerInfo(id: string): string | null {
   if (!customer.phone) missing.push("เบอร์โทร")
   return missing.length > 0 ? `ข้อมูลลูกค้าไม่ครบ (${missing.join(", ")})` : null
 }
+
+export function getLastCustomerName(): string | null {
+  const last = mockCustomers[mockCustomers.length - 1]
+  return last ? last.name : null
+}
