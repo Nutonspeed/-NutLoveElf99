@@ -9,7 +9,7 @@ import { mockFabrics } from '@/lib/mock-fabrics'
 
 export default function AdminFavoritesAnalytics() {
   const [counts] = useLocalStorage<Record<string, number>>('favorite-counts', {})
-  const ranking = [...mockFabrics].map((f) => ({
+  const ranking = mockFabrics.filter(f => !f.hidden).map((f) => ({
     ...f,
     count: counts[f.slug] || 0,
   })).sort((a, b) => b.count - a.count)

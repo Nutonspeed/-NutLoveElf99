@@ -12,7 +12,9 @@ export function getFabricRanking(): FabricRanking[] {
       if (fab) counts[fab.slug] = (counts[fab.slug] || 0) + it.quantity
     })
   })
-  const list = mockFabrics.map(f => ({ slug: f.slug, name: f.name, image: f.images[0], count: counts[f.slug] || 0 }))
+  const list = mockFabrics
+    .filter(f => !f.hidden)
+    .map(f => ({ slug: f.slug, name: f.name, image: f.images[0], count: counts[f.slug] || 0 }))
   list.sort((a, b) => b.count - a.count)
   return list.slice(0, 10)
 }

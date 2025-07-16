@@ -13,7 +13,7 @@ export default function WishlistPage() {
 
   const items = wishlist
     .map((slug) =>
-      mockFabrics.find((f) => f.slug === slug) ||
+      mockFabrics.find((f) => f.slug === slug && !f.hidden) ||
       mockCollections.find((c) => c.slug === slug),
     )
     .filter(Boolean) as (typeof mockFabrics[number] | typeof mockCollections[number])[]

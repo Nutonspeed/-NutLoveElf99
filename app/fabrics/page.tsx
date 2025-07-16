@@ -23,7 +23,7 @@ interface Fabric {
 export default async function FabricsPage() {
   let fabrics: Fabric[] = []
   if (!supabase) {
-    fabrics = mockFabrics.map((f) => ({
+    fabrics = mockFabrics.filter((f) => !f.hidden).map((f) => ({
       id: f.id,
       slug: f.slug,
       name: f.name,
