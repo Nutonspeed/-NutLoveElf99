@@ -32,6 +32,11 @@ export default function CustomerCard({ customer, className = "" }: { customer: C
           </div>
         )}
         {customer.note && <p className="text-sm text-gray-500">{customer.note}</p>}
+        <p className="text-sm text-gray-500">
+          {customer.lastSeen
+            ? `ใช้งานล่าสุด ${new Date(customer.lastSeen).toLocaleString('th-TH')}`
+            : 'ไม่มีข้อมูลการเข้าใช้งานของลูกค้า'}
+        </p>
       </CardContent>
     </Card>
   )

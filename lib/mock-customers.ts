@@ -18,6 +18,8 @@ export interface Customer {
   /** point change history */
   pointHistory?: PointLog[]
   createdAt: string
+  /** last login timestamp */
+  lastSeen?: string
 }
 
 export interface PointLog {
@@ -45,6 +47,7 @@ const initialMockCustomers: Customer[] = [
     pointHistory: [
       { timestamp: new Date().toISOString(), change: 120, reason: "สมัครสมาชิก" },
     ],
+    lastSeen: new Date().toISOString(),
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -60,6 +63,7 @@ const initialMockCustomers: Customer[] = [
     note: "เก็บเงินปลายทาง",
     points: 60,
     tier: "Silver",
+    lastSeen: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -69,6 +73,7 @@ const initialMockCustomers: Customer[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     points: 200,
     tier: "VIP",
+    lastSeen: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -78,6 +83,7 @@ const initialMockCustomers: Customer[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     points: 10,
     tier: "Silver",
+    lastSeen: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -87,6 +93,7 @@ const initialMockCustomers: Customer[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     points: 40,
     tier: "Gold",
+    lastSeen: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
     createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -96,6 +103,7 @@ const initialMockCustomers: Customer[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     points: 80,
     tier: "Gold",
+    lastSeen: undefined,
     createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ]
