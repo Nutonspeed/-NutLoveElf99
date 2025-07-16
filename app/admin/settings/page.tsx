@@ -30,6 +30,7 @@ import {
   reviewReminder,
   setReviewReminder,
 } from "@/lib/mock-settings";
+import { loadSiteLock, siteLock, setSiteLock } from "@/lib/mock-site-lock";
 
 export default function SettingsPage() {
   const { user, isAuthenticated } = useAuth();
@@ -40,6 +41,7 @@ export default function SettingsPage() {
   const [reminder, setReminder] = useState(autoReminder);
   const [reviewRemind, setReviewRemind] = useState(reviewReminder);
   const [archiveOld, setArchiveOld] = useState(autoArchive);
+  const [lock, setLock] = useState(siteLock);
 
   useEffect(() => {
     loadAutoMessage();
@@ -48,12 +50,14 @@ export default function SettingsPage() {
     loadAutoReminder();
     loadAutoArchive();
     loadReviewReminder();
+    loadSiteLock();
     setMessage(autoMessage);
     setLinks(socialLinks);
     setSecurity(billSecurity);
     setReminder(autoReminder);
     setArchiveOld(autoArchive);
     setReviewRemind(reviewReminder);
+    setLock(siteLock);
     if (!isAuthenticated) {
       router.push("/login");
     } else if (user?.role !== "admin") {
@@ -70,6 +74,7 @@ export default function SettingsPage() {
     setAutoReminder(reminder);
     setAutoArchive(archiveOld);
     setReviewReminder(reviewRemind);
+    setSiteLock(lock);
     alert("บันทึกข้อความแล้ว");
   };
 
@@ -172,6 +177,28 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setSecurity({ ...security, pin: e.target.value })
               }
+            />
+          </CardContent>
+        </Card>
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>ล็อกหน้าเว็บ</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="lock-enabled"
+                checked={lock.enabled}
+                onCheckedChange={(v) =>
+                  setLock({ ...lock, enabled: Boolean(v) })
+                }
+              />
+              <Label htmlFor="lock-enabled">เปิดใช้งาน</Label>
+            </div>
+            <Input
+              placeholder="รหัสผู้ดูแล"
+              value={lock.code}
+              onChange={(e) => setLock({ ...lock, code: e.target.value })}
             />
           </CardContent>
         </Card>
