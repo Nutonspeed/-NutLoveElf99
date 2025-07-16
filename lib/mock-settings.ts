@@ -1,6 +1,7 @@
 export const isDevMock = true;
 export let autoMessage = "ขอบคุณที่สั่งซื้อกับเรา";
 export let socialLinks = { facebook: "", line: "" };
+export let supabaseDown = false
 
 export function loadAutoMessage() {
   if (typeof window !== 'undefined') {
@@ -27,6 +28,20 @@ export function setSocialLinks(links: { facebook: string; line: string }) {
   socialLinks = links;
   if (typeof window !== 'undefined') {
     localStorage.setItem('socialLinks', JSON.stringify(links));
+  }
+}
+
+export function loadSupabaseDown() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('supabaseDown')
+    if (stored) supabaseDown = JSON.parse(stored)
+  }
+}
+
+export function setSupabaseDown(val: boolean) {
+  supabaseDown = val
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('supabaseDown', JSON.stringify(val))
   }
 }
 
