@@ -27,7 +27,7 @@ export default function ComparePage() {
   useEffect(() => {
     setFabrics(
       mockFabrics
-        .filter((f) => items.includes(f.slug))
+        .filter((f) => items.includes(f.slug) && !f.hidden)
         .map((f) => ({ ...f }))
     )
   }, [items])

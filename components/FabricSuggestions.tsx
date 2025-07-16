@@ -18,7 +18,9 @@ export function FabricSuggestions({ slug }: Props) {
     recordFabricClick(slug)
     const prefs = getFabricPreference()
     const similar = mockFabricSimilarity[slug] || []
-    const fabrics = mockFabrics.filter((f) => similar.includes(f.slug))
+    const fabrics = mockFabrics.filter(
+      (f) => similar.includes(f.slug) && !f.hidden,
+    )
     fabrics.sort((a, b) => (prefs[b.slug] || 0) - (prefs[a.slug] || 0))
     setItems(fabrics.slice(0, 4))
   }, [slug])

@@ -9,7 +9,7 @@ import { mockFabrics } from '@/lib/mock-fabrics'
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites()
-  const items = mockFabrics.filter(f => favorites.includes(f.slug))
+  const items = mockFabrics.filter(f => favorites.includes(f.slug) && !f.hidden)
 
   return (
     <div className="min-h-screen">

@@ -5,6 +5,10 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
+import { useToast } from "@/hooks/use-toast"
+import { setFabricHidden, mockFabrics } from "@/lib/mock-fabrics"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/buttons/button"
@@ -31,6 +35,8 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
   const [fabric, setFabric] = useState<Fabric | null>(null)
   const [collectionName, setCollectionName] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [draft, setDraft] = useState(false)
+  const { toast } = useToast()
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -45,7 +51,24 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
 
   useEffect(() => {
     const fetchFabric = async () => {
-      if (!supabase || !params.id) {
+      if (!params.id) {
+        setLoading(false)
+        return
+      }
+      if (!supabase) {
+        const f = mockFabrics.find((m) => m.id === params.id)
+        if (f) {
+          setFabric({
+            id: f.id,
+            name: f.name,
+            sku: f.sku,
+            collection_id: f.collectionSlug,
+            image_urls: f.images,
+            price_min: f.price,
+            price_max: f.price,
+          })
+          setDraft(!!f.hidden)
+        }
         setLoading(false)
         return
       }
@@ -87,6 +110,19 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
     )
   }
 
+  const handleToggle = (v: boolean) => {
+    if (!supabase) {
+      setFabricHidden(params.id, v)
+      setDraft(v)
+    } else {
+      toast({
+        title: "เกิดข้อผิดพลาด",
+        description: "ผ้านี้ไม่สามารถซ่อนได้",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -100,8 +136,15 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle>{fabric.name}</CardTitle>
+          <CardHeader className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="flex items-center gap-2">
+              {fabric.name}
+              {draft && <Badge variant="secondary">Draft</Badge>}
+            </CardTitle>
+            <div className="flex items-center gap-2 text-sm">
+              <span>ซ่อนผ้านี้จากหน้าเว็บลูกค้า</span>
+              <Switch checked={draft} onCheckedChange={handleToggle} />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 gap-6">

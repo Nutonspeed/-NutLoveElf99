@@ -20,6 +20,7 @@ import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
 import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { Badge } from "@/components/ui/badge"
 
 interface Fabric {
   id: string
@@ -30,6 +31,7 @@ interface Fabric {
   price_min: number
   price_max: number
   collection_name?: string | null
+  hidden?: boolean
 }
 
 export default function AdminFabricsPage() {
@@ -206,7 +208,14 @@ export default function AdminFabricsPage() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>{fabric.name}</TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {fabric.name}
+                          {fabric.hidden && (
+                            <Badge variant="secondary">Draft</Badge>
+                          )}
+                        </div>
+                      </TableCell>
                       <TableCell>
                         ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
                       </TableCell>
