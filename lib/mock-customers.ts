@@ -6,6 +6,8 @@ export interface Customer {
   address?: string
   city?: string
   postalCode?: string
+  province?: string
+  region?: string
   avatar?: string
   tags?: string[]
   note?: string
@@ -37,8 +39,10 @@ const initialMockCustomers: Customer[] = [
     address: "123 ถนนสุขุมวิท",
     city: "กรุงเทพฯ",
     postalCode: "10110",
+    province: "กรุงเทพมหานคร",
+    region: "ภาคกลาง",
     avatar: "/placeholder.svg?height=40&width=40",
-    tags: ["ลูกค้าประจำ"],
+    tags: ["ลูกค้าประจำ", "กรุงเทพมหานคร", "ภาคกลาง"],
     note: "ชอบผ้ากำมะหยี่",
     points: 120,
     tier: "Gold",
@@ -55,8 +59,10 @@ const initialMockCustomers: Customer[] = [
     address: "456 ถนนพหลโยธิน",
     city: "กรุงเทพฯ",
     postalCode: "10400",
+    province: "กรุงเทพมหานคร",
+    region: "ภาคกลาง",
     avatar: "/placeholder.svg?height=40&width=40",
-    tags: ["COD"],
+    tags: ["COD", "กรุงเทพมหานคร", "ภาคกลาง"],
     note: "เก็บเงินปลายทาง",
     points: 60,
     tier: "Silver",
@@ -66,7 +72,10 @@ const initialMockCustomers: Customer[] = [
     id: "4",
     name: "Mike Johnson",
     email: "mike@example.com",
+    province: "เชียงใหม่",
+    region: "ภาคเหนือ",
     avatar: "/placeholder.svg?height=40&width=40",
+    tags: ["เชียงใหม่", "ภาคเหนือ"],
     points: 200,
     tier: "VIP",
     createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
@@ -75,7 +84,10 @@ const initialMockCustomers: Customer[] = [
     id: "5",
     name: "Sarah Wilson",
     email: "sarah@example.com",
+    province: "ขอนแก่น",
+    region: "ภาคตะวันออกเฉียงเหนือ",
     avatar: "/placeholder.svg?height=40&width=40",
+    tags: ["ขอนแก่น", "ภาคตะวันออกเฉียงเหนือ"],
     points: 10,
     tier: "Silver",
     createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
@@ -84,7 +96,10 @@ const initialMockCustomers: Customer[] = [
     id: "6",
     name: "David Brown",
     email: "david@example.com",
+    province: "ภูเก็ต",
+    region: "ภาคใต้",
     avatar: "/placeholder.svg?height=40&width=40",
+    tags: ["ภูเก็ต", "ภาคใต้"],
     points: 40,
     tier: "Gold",
     createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
@@ -93,7 +108,10 @@ const initialMockCustomers: Customer[] = [
     id: "7",
     name: "Lisa Anderson",
     email: "lisa@example.com",
+    province: "ชลบุรี",
+    region: "ภาคตะวันออก",
     avatar: "/placeholder.svg?height=40&width=40",
+    tags: ["ชลบุรี", "ภาคตะวันออก"],
     points: 80,
     tier: "Gold",
     createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
@@ -115,6 +133,12 @@ export function addCustomer(data: Omit<Customer, 'id' | 'createdAt'>): Customer 
     id: Date.now().toString(),
     createdAt: new Date().toISOString(),
     ...data,
+  }
+  if (customer.province) {
+    customer.tags = [...(customer.tags || []), customer.province]
+  }
+  if (customer.region) {
+    customer.tags = [...(customer.tags || []), customer.region]
   }
   mockCustomers.push(customer)
   return customer
@@ -151,6 +175,15 @@ export async function fetchCustomerById(id: string): Promise<Customer | undefine
   return Promise.resolve(mockCustomers.find((c) => c.id === id))
 }
 
+export function getCustomerLocation(id: string): string {
+  const c = mockCustomers.find((cust) => cust.id === id)
+  if (!c) return "ยังไม่มีข้อมูลตำแหน่ง"
+  if (c.province && c.region) return `${c.province} (${c.region})`
+  if (c.province) return c.province
+  if (c.region) return c.region
+  return "ยังไม่มีข้อมูลตำแหน่ง"
+}
+
 export function updateCustomerPoints(
   id: string,
   change: number,
@@ -185,6 +218,8 @@ export function checkCustomerInfo(id: string): string | null {
   const missing: string[] = []
   if (!customer.name) missing.push("ชื่อ")
   if (!customer.address) missing.push("ที่อยู่")
+  if (!customer.province) missing.push("จังหวัด")
+  if (!customer.region) missing.push("ภูมิภาค")
   if (!customer.phone) missing.push("เบอร์โทร")
   return missing.length > 0 ? `ข้อมูลลูกค้าไม่ครบ (${missing.join(", ")})` : null
 }
