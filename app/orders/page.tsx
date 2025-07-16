@@ -39,6 +39,106 @@ function getProgress(status: OrderStatus) {
   }
 }
 
+function OrderCard({ order, onReorder }: { order: Order; onReorder: (o: Order) => void }) {
+  const [tracking, setTracking] = useState(order.tracking_number || "")
+
+  const saveTracking = () => {
+    const m = mockOrders.find((o) => o.id === order.id)
+    if (m) {
+      m.tracking_number = tracking
+      toast.success("บันทึกเลขติดตามแล้ว")
+    }
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="text-lg">คำสั่งซื้อ {order.id}</CardTitle>
+            <p className="text-sm text-gray-600">
+              สั่งซื้อเมื่อ {new Date(order.createdAt).toLocaleDateString("th-TH")}
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+              {getOrderStatusText(order.status)}
+            </Badge>
+            {order.cod && <Badge variant="secondary">เก็บเงินปลายทาง</Badge>}
+            <Progress className="w-24" value={getProgress(order.status)} />
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            {order.items.map((item, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center py-2 border-b last:border-b-0"
+              >
+                <div>
+                  <p className="font-medium">{item.productName}</p>
+                  <p className="text-sm text-gray-600">
+                    {item.size && `ขนาด: ${item.size}`}
+                    {item.color && ` | สี: ${item.color}`}
+                    {` | จำนวน: ${item.quantity}`}
+                  </p>
+                </div>
+                <p className="font-semibold">฿{(item.price * item.quantity).toLocaleString()}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between items-center pt-4 border-t">
+            <span className="font-semibold">ยอดรวมทั้งสิ้น:</span>
+            <span className="text-xl font-bold text-primary">
+              ฿{order.total.toLocaleString()}
+            </span>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2">
+              <input
+                value={tracking}
+                onChange={(e) => setTracking(e.target.value)}
+                className="border rounded px-2 py-1 flex-1"
+                placeholder="Tracking Code"
+              />
+              <Button variant="outline" size="sm" onClick={saveTracking}>
+                บันทึก
+              </Button>
+            </div>
+            {!(order.tracking_number) && (
+              <p className="text-sm text-gray-600">ยังไม่มีรหัสติดตามจัดส่ง</p>
+            )}
+          </div>
+          <div className="flex space-x-2 pt-4">
+            <Link href={`/orders/${order.id}`}>
+              <Button variant="outline" size="sm">
+                <Eye className="mr-2 h-4 w-4" />ดูรายละเอียด
+              </Button>
+            </Link>
+            {order.status === "paid" && (
+              <Link href={`/invoice/${order.id}`}>
+                <Button variant="outline" size="sm">
+                  <Download className="mr-2 h-4 w-4" />ดาวน์โหลดใบเสร็จ
+                </Button>
+              </Link>
+            )}
+            <Button variant="outline" size="sm" onClick={() => onReorder(order)}>
+              สั่งซ้ำ
+            </Button>
+            <Link href="/chat">
+              <Button variant="outline" size="sm">
+                <MessageCircle className="mr-2 h-4 w-4" />ติดต่อเรา
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 export default function OrdersPage() {
   const { user, isAuthenticated } = useAuth();
   const { dispatch } = useCart();
@@ -150,97 +250,7 @@ export default function OrdersPage() {
         ) : (
           <div className="space-y-6">
             {userOrders.map((order) => (
-              <Card key={order.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-lg">
-                        คำสั่งซื้อ {order.id}
-                      </CardTitle>
-                      <p className="text-sm text-gray-600">
-                        สั่งซื้อเมื่อ{" "}
-                        {new Date(order.createdAt).toLocaleDateString("th-TH")}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                        {getOrderStatusText(order.status)}
-                      </Badge>
-                      <Progress
-                        className="w-24"
-                        value={getProgress(order.status)}
-                      />
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {/* Order Items */}
-                    <div className="space-y-2">
-                      {order.items.map((item, index) => (
-                        <div
-                          key={index}
-                          className="flex justify-between items-center py-2 border-b last:border-b-0"
-                        >
-                          <div>
-                            <p className="font-medium">{item.productName}</p>
-                            <p className="text-sm text-gray-600">
-                              {item.size && `ขนาด: ${item.size}`}
-                              {item.color && ` | สี: ${item.color}`}
-                              {` | จำนวน: ${item.quantity}`}
-                            </p>
-                          </div>
-                          <p className="font-semibold">
-                            ฿{(item.price * item.quantity).toLocaleString()}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Order Total */}
-                    <div className="flex justify-between items-center pt-4 border-t">
-                      <span className="font-semibold">ยอดรวมทั้งสิ้น:</span>
-                      <span className="text-xl font-bold text-primary">
-                        ฿{order.total.toLocaleString()}
-                      </span>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex space-x-2 pt-4">
-                      <Link href={`/orders/${order.id}`}>
-                        <Button variant="outline" size="sm">
-                          <Eye className="mr-2 h-4 w-4" />
-                          ดูรายละเอียด
-                        </Button>
-                      </Link>
-
-                      {order.status === "paid" && (
-                        <Link href={`/invoice/${order.id}`}>
-                          <Button variant="outline" size="sm">
-                            <Download className="mr-2 h-4 w-4" />
-                            ดาวน์โหลดใบเสร็จ
-                          </Button>
-                        </Link>
-                      )}
-
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleReorder(order)}
-                      >
-                        สั่งซ้ำ
-                      </Button>
-
-                      <Link href="/chat">
-                        <Button variant="outline" size="sm">
-                          <MessageCircle className="mr-2 h-4 w-4" />
-                          ติดต่อเรา
-                        </Button>
-                      </Link>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+              <OrderCard key={order.id} order={order} onReorder={handleReorder} />
             ))}
           </div>
         )}
