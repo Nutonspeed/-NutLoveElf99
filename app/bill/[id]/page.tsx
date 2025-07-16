@@ -11,6 +11,14 @@ import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { getBill as getAdminBill } from "@/mock/bills"
+import QRCode from "react-qr-code"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/modals/dialog"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
@@ -29,6 +37,10 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [showQR, setShowQR] = useState(false)
+  const billLink = typeof window !== 'undefined'
+    ? window.location.origin + `/b/${id}`
+    : ''
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -60,10 +72,34 @@ export default function BillPage({ params }: { params: { id: string } }) {
         {simpleBill.note && (
           <p className="text-sm text-center">หมายเหตุ: {simpleBill.note}</p>
         )}
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <Button onClick={() => alert('ส่งบิลใหม่แทนใบเดิม (mock)')}>
             ส่งบิลใหม่แทนใบเดิม
           </Button>
+          <Dialog open={showQR} onOpenChange={setShowQR}>
+            <DialogTrigger asChild>
+              <Button variant="outline">สร้าง QR ส่งใน Inbox</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>ส่งลิงก์บิลใน Inbox</DialogTitle>
+              </DialogHeader>
+              {billLink ? (
+                <div className="space-y-4 text-center">
+                  <QRCode value={billLink} className="mx-auto" />
+                  <p className="break-all text-sm">{billLink}</p>
+                  <Button
+                    variant="outline"
+                    onClick={() => navigator.clipboard.writeText(billLink)}
+                  >
+                    คัดลอกลิงก์
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-center">ไม่สามารถสร้าง QR ได้ในขณะนี้</p>
+              )}
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     )
