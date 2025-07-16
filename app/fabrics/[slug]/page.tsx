@@ -11,8 +11,10 @@ import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
-import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { FabricSuggestions } from "@/components/FabricSuggestions"
+import SharePanel from "@/components/SharePanel"
+import RefNotice from "@/components/RefNotice"
+import ShareLinkButton from "@/components/ShareLinkButton"
 
 interface Fabric {
   id: string
@@ -113,6 +115,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             ← กลับไปหน้าลายผ้า
           </Link>
         </div>
+        <RefNotice />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div className="relative w-full aspect-square">
             <Image
@@ -122,6 +125,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
               className="object-cover rounded-lg"
             />
           </div>
+          <SharePanel />
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <h1 className="text-3xl font-bold">{fabric.name}</h1>
@@ -164,10 +168,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
               <Button variant="outline" size="lg">
                 <Receipt className="h-5 w-5 mr-2" />เปิดบิล
               </Button>
-              <CopyToClipboardButton text={fabric.slug || fabric.sku || fabric.id} />
-              <Button variant="outline" size="lg">
-                <Share2 className="h-5 w-5" />
-              </Button>
+              <ShareLinkButton />
             </div>
           </div>
         </div>
