@@ -31,9 +31,9 @@ export default function LoginPage() {
     try {
       const success = await login(email, password)
       if (success) {
-        // Check if user is admin and redirect accordingly
+        // Redirect based on user role
         const userData = mockUsers.find((u) => u.email === email)
-        if (userData?.role === "admin") {
+        if (userData?.role === "admin" || userData?.role === "staff") {
           router.push("/admin/dashboard")
         } else {
           router.push("/")
@@ -125,6 +125,12 @@ export default function LoginPage() {
             <div className="space-y-1 text-xs text-gray-600">
               <p>
                 <strong>Admin:</strong> admin@sofacover.com / password
+              </p>
+              <p>
+                <strong>Staff:</strong> staff@sofacover.com / password
+              </p>
+              <p>
+                <strong>Limited:</strong> limited@sofacover.com / password
               </p>
               <p>
                 <strong>Customer:</strong> john@example.com / password

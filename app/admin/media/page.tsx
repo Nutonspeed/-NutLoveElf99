@@ -7,13 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/
 import { Input } from '@/components/ui/inputs/input'
 import { useAuth } from '@/contexts/auth-context'
 import { getMedia } from '@/lib/mock-media'
+import { canAccess } from '@/lib/mock-roles'
 
 export default function AdminMediaPage() {
   const { user, isAuthenticated } = useAuth()
   const [search, setSearch] = useState('')
   const media = getMedia().filter(m => m.url.includes(search))
 
-  if (!isAuthenticated || user?.role !== 'admin') {
+  if (!isAuthenticated || !canAccess(user?.role, 'media')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

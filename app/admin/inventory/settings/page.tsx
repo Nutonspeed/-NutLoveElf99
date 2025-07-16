@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
+import { canAccess } from "@/lib/mock-roles"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -54,13 +55,13 @@ export default function InventorySettingsPage() {
       router.push("/login")
       return
     }
-    if (user?.role !== "admin") {
+    if (!canAccess(user?.role, 'inventorySettings')) {
       router.push("/")
       return
     }
   }, [isAuthenticated, user, router])
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || !canAccess(user?.role, 'inventorySettings')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

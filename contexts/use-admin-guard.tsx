@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "./auth-context"
+import { canAccess } from "@/lib/mock-roles"
 
 export function useAdminGuard() {
   const { user, isAuthenticated } = useAuth()
@@ -21,11 +22,11 @@ export function useAdminGuard() {
       router.replace("/login")
       return
     }
-    if (user?.role !== "admin") {
+    if (!canAccess(user?.role, 'dashboard')) {
       router.replace("/")
       return
     }
     setLoading(false)
   }, [isAuthenticated, user, router])
-  return { isAdmin: isAuthenticated && user?.role === "admin", loading, conflict }
+  return { isAdmin: isAuthenticated && canAccess(user?.role, 'dashboard'), loading, conflict }
 }

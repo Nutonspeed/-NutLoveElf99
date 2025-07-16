@@ -15,6 +15,7 @@ import { AlertTriangle, Package, TrendingDown, TrendingUp, ArrowLeft, Plus, Edit
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { useMockNotification } from "@/hooks/use-mock-notification"
+import { canAccess } from "@/lib/mock-roles"
 
 interface StockItem {
   id: string
@@ -115,13 +116,13 @@ export default function InventoryPage() {
       router.push("/login")
       return
     }
-    if (user?.role !== "admin") {
+    if (!canAccess(user?.role, 'inventory')) {
       router.push("/")
       return
     }
   }, [isAuthenticated, user, router])
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || !canAccess(user?.role, 'inventory')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

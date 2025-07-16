@@ -10,12 +10,13 @@ import { useAuth } from '@/contexts/auth-context'
 import { mockClaims, updateClaim } from '@/lib/mock-claims'
 import { addAdminLog } from '@/lib/mock-admin-logs'
 import { downloadCSV, downloadPDF } from '@/lib/mock-export'
+import { canAccess } from '@/lib/mock-roles'
 
 export default function AdminClaimsPage() {
   const { user, isAuthenticated } = useAuth()
   const [claims, setClaims] = useState([...mockClaims])
 
-  if (!isAuthenticated || user?.role !== 'admin') {
+  if (!isAuthenticated || !canAccess(user?.role, 'claims')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

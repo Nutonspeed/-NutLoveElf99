@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/contexts/auth-context"
 import { isDevMock } from "@/lib/mock-settings"
+import { canAccess } from "@/lib/mock-roles"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Button } from "@/components/ui/buttons/button"
 import {
@@ -24,7 +25,7 @@ export default function AdminDevPage() {
       </div>
     )
   }
-  if (!isAuthenticated || user?.role !== 'admin') {
+  if (!isAuthenticated || !canAccess(user?.role, 'dev')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>ไม่มีสิทธิ์เข้าถึง</p>
