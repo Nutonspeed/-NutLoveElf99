@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { prepareFabricImage } from "@/lib/image-handler"
+import { suggestFabricTags } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -26,6 +27,9 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
   const [collectionId, setCollectionId] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
+  const [imageInfo, setImageInfo] = useState<{ width: number; height: number; size: number } | null>(null)
+  const [tags, setTags] = useState("")
+  const [tagError, setTagError] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -46,7 +50,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
       }
       const { data, error } = await supabase
         .from("fabrics")
-        .select("name, image_url, collection_id")
+        .select("name, image_url, collection_id, tags")
         .eq("id", params.id)
         .single()
       if (error || !data) {
@@ -58,6 +62,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
       setImageUrl(data.image_url || "")
       setPreviewUrl(data.image_url || "")
       setCollectionId(data.collection_id || "")
+      setTags(data.tags?.join(', ') || '')
       setLoading(false)
     }
     fetchFabric()
@@ -109,6 +114,10 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
         name,
         image_url: uploadedUrl,
         collection_id: collectionId,
+        tags: tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => t),
       })
       .eq("id", params.id)
 
@@ -158,6 +167,19 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
                     if (file) {
                       setImageFile(file)
                       setPreviewUrl(URL.createObjectURL(file))
+                      const img = new Image()
+                      img.onload = () => {
+                        setImageInfo({ width: img.width, height: img.height, size: file.size })
+                      }
+                      img.src = URL.createObjectURL(file)
+                      const suggested = suggestFabricTags(file.name)
+                      if (suggested.length) {
+                        setTags(suggested.join(', '))
+                        setTagError(false)
+                      } else {
+                        setTags('')
+                        setTagError(true)
+                      }
                     }
                   }}
                 />
@@ -165,8 +187,14 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
                   <img
                     src={previewUrl}
                     alt="preview"
-                    className="h-24 w-24 object-cover rounded-md mt-2"
-                  />
+                  className="h-24 w-24 object-cover rounded-md mt-2"
+                />
+                )}
+                {imageInfo && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    {imageInfo.width}x{imageInfo.height}px •{' '}
+                    {(imageInfo.size / 1024).toFixed(1)} KB
+                  </p>
                 )}
               </div>
               <div className="space-y-2">
@@ -177,6 +205,20 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
                   onChange={(e) => setCollectionId(e.target.value)}
                   placeholder="เช่น 1"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tags">แท็ก</Label>
+                <Input
+                  id="tags"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="เช่น cozy, cotton"
+                />
+                {tagError && (
+                  <p className="text-sm text-muted-foreground">
+                    ไม่สามารถสร้าง tag ได้อัตโนมัติ
+                  </p>
+                )}
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
