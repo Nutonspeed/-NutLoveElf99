@@ -7,6 +7,7 @@ import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { prepareFabricImage } from "@/lib/image-handler"
+import { suggestFabricTags } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -21,6 +22,9 @@ export default function CreateFabricPage() {
   const [collectionId, setCollectionId] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
+  const [imageInfo, setImageInfo] = useState<{ width: number; height: number; size: number } | null>(null)
+  const [tags, setTags] = useState("")
+  const [tagError, setTagError] = useState(false)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -83,6 +87,10 @@ export default function CreateFabricPage() {
       sku,
       image_url: uploadedUrl,
       collection_id: collectionId,
+      tags: tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter((t) => t),
     })
 
     if (error) {
@@ -131,6 +139,19 @@ export default function CreateFabricPage() {
                     if (file) {
                       setImageFile(file)
                       setPreviewUrl(URL.createObjectURL(file))
+                      const img = new Image()
+                      img.onload = () => {
+                        setImageInfo({ width: img.width, height: img.height, size: file.size })
+                      }
+                      img.src = URL.createObjectURL(file)
+                      const suggested = suggestFabricTags(file.name)
+                      if (suggested.length) {
+                        setTags(suggested.join(', '))
+                        setTagError(false)
+                      } else {
+                        setTags('')
+                        setTagError(true)
+                      }
                     }
                   }}
                 />
@@ -141,6 +162,12 @@ export default function CreateFabricPage() {
                     className="h-24 w-24 object-cover rounded-md mt-2"
                   />
                 )}
+                {imageInfo && (
+                  <p className="text-sm text-gray-500 mt-1">
+                    {imageInfo.width}x{imageInfo.height}px •{' '}
+                    {(imageInfo.size / 1024).toFixed(1)} KB
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="collection_id">รหัสคอลเลกชัน</Label>
@@ -150,6 +177,20 @@ export default function CreateFabricPage() {
                   onChange={(e) => setCollectionId(e.target.value)}
                   placeholder="เช่น 1"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tags">แท็ก</Label>
+                <Input
+                  id="tags"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="เช่น cozy, cotton"
+                />
+                {tagError && (
+                  <p className="text-sm text-muted-foreground">
+                    ไม่สามารถสร้าง tag ได้อัตโนมัติ
+                  </p>
+                )}
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
