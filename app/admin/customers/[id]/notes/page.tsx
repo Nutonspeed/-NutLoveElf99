@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { useAuth } from '@/contexts/auth-context'
 import { loadCustomerNotes, listCustomerNotes, addCustomerNote } from '@/lib/mock-customer-notes'
+import { canAccess } from '@/lib/mock-roles'
 
 export default function CustomerNotesPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -18,7 +19,7 @@ export default function CustomerNotesPage({ params }: { params: { id: string } }
     setNotes(listCustomerNotes(id, user?.id))
   }, [id, user?.id])
 
-  if (!isAuthenticated || user?.role !== 'admin') {
+  if (!isAuthenticated || !canAccess(user?.role, 'inventory')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>ไม่มีสิทธิ์เข้าถึง</p>

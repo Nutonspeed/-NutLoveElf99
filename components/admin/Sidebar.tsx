@@ -21,25 +21,28 @@ import {
   unreadCount,
 } from "@/lib/mock-read-status"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/contexts/auth-context"
+import { canAccess } from "@/lib/mock-roles"
 
 const navItems = [
-  { href: "/admin/dashboard", label: "แดชบอร์ด", icon: Home },
-  { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart },
-  { href: "/admin/products", label: "สินค้า", icon: Package },
-  { href: "/admin/inventory", label: "สต็อก", icon: Layers },
-  { href: "/admin/customers", label: "ลูกค้า", icon: Users },
-  { href: "/admin/coupons", label: "คูปอง", icon: Percent },
-  { href: "/admin/quotes", label: "ใบเสนอราคา", icon: FileText },
-  { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell },
-  { href: "/admin/chat", label: "แชท", icon: MessageCircle },
-  { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText },
-  { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List },
-  { href: "/admin/logs", label: "Log", icon: FileText },
+  { href: "/admin/dashboard", label: "แดชบอร์ด", icon: Home, feature: "dashboard" },
+  { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart, feature: "inventory" },
+  { href: "/admin/products", label: "สินค้า", icon: Package, feature: "inventory" },
+  { href: "/admin/inventory", label: "สต็อก", icon: Layers, feature: "inventory" },
+  { href: "/admin/customers", label: "ลูกค้า", icon: Users, feature: "inventory" },
+  { href: "/admin/coupons", label: "คูปอง", icon: Percent, feature: "inventory" },
+  { href: "/admin/quotes", label: "ใบเสนอราคา", icon: FileText, feature: "inventory" },
+  { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell, feature: "inventory" },
+  { href: "/admin/chat", label: "แชท", icon: MessageCircle, feature: "chat" },
+  { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText, feature: "logs" },
+  { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List, feature: "logs" },
+  { href: "/admin/logs", label: "Log", icon: FileText, feature: "logs" },
 ]
 
 export default function Sidebar({ className = "" }: { className?: string }) {
   const pathname = usePathname()
   const [count, setCount] = useState(0)
+  const { user } = useAuth()
 
   useEffect(() => {
     loadNotificationStatus()
@@ -52,7 +55,7 @@ export default function Sidebar({ className = "" }: { className?: string }) {
         Admin
       </div>
       <nav className="flex-1 space-y-1 px-2 py-4">
-        {navItems.map(({ href, label, icon: Icon }) => {
+        {navItems.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`)
           const badge = href === "/admin/notifications" ? count : 0
           return (

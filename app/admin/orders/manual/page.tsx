@@ -18,6 +18,7 @@ import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
 } from "@/lib/order-status"
+import { canAccess } from "@/lib/mock-roles"
 import { orderDb } from "@/lib/order-database"
 import { toast } from "sonner"
 
@@ -31,7 +32,7 @@ export default function ManualOrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState<ManualOrder | null>(null)
 
   useEffect(() => {
-    if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
+    if (!isLoading && (!isAuthenticated || !canAccess(user?.role, 'inventory'))) {
       router.push("/login")
     }
   }, [isAuthenticated, user, router, isLoading])
@@ -63,7 +64,7 @@ export default function ManualOrdersPage() {
     )
   }
 
-  if (!isAuthenticated || user?.role !== "admin") {
+  if (!isAuthenticated || !canAccess(user?.role, 'inventory')) {
     return null
   }
 

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { useAuth } from '@/contexts/auth-context'
+import { canAccess } from '@/lib/mock-roles'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -20,7 +21,7 @@ export default function AdminLogsPage() {
     return true
   })
 
-  if (!isAuthenticated || user?.role !== 'admin') {
+  if (!isAuthenticated || !canAccess(user?.role, 'logs')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">

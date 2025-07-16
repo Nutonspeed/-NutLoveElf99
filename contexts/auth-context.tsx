@@ -3,11 +3,13 @@
 import { createContext, useContext, useState, type ReactNode } from "react"
 import { mockUsers } from "@/lib/mock-users"
 
+import type { Role } from "@/lib/mock-roles"
+
 interface User {
   id: string
   name: string
   email: string
-  role: "admin" | "customer"
+  role: Role
   avatar?: string
 }
 

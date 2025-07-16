@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
+import { canAccess } from "@/lib/mock-roles"
 import { Input } from "@/components/ui/inputs/input"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
@@ -19,12 +20,12 @@ export default function AdminLandingPage() {
     setData(heroBanner)
     if (!isAuthenticated) {
       router.push("/login")
-    } else if (user?.role !== "admin") {
+    } else if (!canAccess(user?.role, 'dev')) {
       router.push("/")
     }
   }, [isAuthenticated, user, router])
 
-  if (!isAuthenticated || user?.role !== "admin") return null
+  if (!isAuthenticated || !canAccess(user?.role, 'dev')) return null
 
   const handleSave = () => {
     setHeroBanner(data)

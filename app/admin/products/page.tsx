@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { Plus, Search, Edit, Trash2, ArrowLeft, Eye } from "lucide-react"
+import { canAccess } from "@/lib/mock-roles"
 import Link from "next/link"
 import Image from "next/image"
 import { type Product } from "@/types/product"
@@ -37,7 +38,7 @@ export default function AdminProductsPage() {
     )
   }
 
-  if (user?.role !== "admin") {
+  if (!canAccess(user?.role, 'inventory')) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
