@@ -9,10 +9,16 @@ export let chatTemplates: ChatTemplate[] = [
   { id: 'status_paid', name: 'ยืนยันการชำระ', text: 'ออเดอร์ของคุณชำระเรียบร้อยแล้วค่ะ' },
 ]
 
-export function loadChatTemplates() {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('chatTemplates')
-    if (stored) chatTemplates = JSON.parse(stored)
+export function loadChatTemplates(): boolean {
+  try {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('chatTemplates')
+      if (stored) chatTemplates = JSON.parse(stored)
+    }
+    return true
+  } catch (err) {
+    console.error('loadChatTemplates failed', err)
+    return false
   }
 }
 
