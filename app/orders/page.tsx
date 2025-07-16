@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/buttons/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/cards/card";
 import { Badge } from "@/components/ui/badge";
 import { Package, Eye, Download, MessageCircle } from "lucide-react";
 import Link from "next/link";
