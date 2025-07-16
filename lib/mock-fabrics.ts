@@ -9,6 +9,22 @@ export interface Fabric {
   price: number
   images: string[]
   collectionSlug: string
+  tags?: string[]
+}
+
+export function suggestFabricTags(fileName: string): string[] {
+  const keywords = [
+    'cotton',
+    'linen',
+    'velvet',
+    'stripe',
+    'floral',
+    'classic',
+    'cozy',
+    'soft',
+  ]
+  const lower = fileName.toLowerCase()
+  return keywords.filter((k) => lower.includes(k))
 }
 
 export const mockFabrics: Fabric[] = [
@@ -21,6 +37,7 @@ export const mockFabrics: Fabric[] = [
     price: 990,
     images: ['/images/039.jpg', '/images/040.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['soft', 'linen'],
   },
   {
     id: 'f02',
@@ -31,6 +48,7 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/041.jpg', '/images/042.jpg'],
     collectionSlug: 'cozy-earth',
+    tags: ['cozy', 'cotton'],
   },
   {
     id: 'f03',
@@ -41,6 +59,7 @@ export const mockFabrics: Fabric[] = [
     price: 1290,
     images: ['/images/043.jpg', '/images/044.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['velvet'],
   },
   {
     id: 'f04',
@@ -51,6 +70,7 @@ export const mockFabrics: Fabric[] = [
     price: 1190,
     images: ['/images/045.jpg', '/images/046.jpg'],
     collectionSlug: 'modern-loft',
+    tags: ['classic', 'stripe'],
   },
   {
     id: 'f05',
@@ -61,6 +81,7 @@ export const mockFabrics: Fabric[] = [
     price: 1090,
     images: ['/images/047.jpg', '/images/035.jpg'],
     collectionSlug: 'vintage-vibes',
+    tags: ['floral'],
   },
 ]
 
