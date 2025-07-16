@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Input } from "@/components/ui/inputs/input"
+import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
+import { buildOrderTrackLink } from "@/lib/order-link"
 import { mockOrders } from "@/lib/mock-orders"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
@@ -43,6 +47,19 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   ]
 
   const currentStepIndex = orderSteps.findIndex((step) => step.status === order.status)
+
+  const [trackingLink, setTrackingLink] = useState<string | null>(null)
+  const [linkError, setLinkError] = useState(false)
+
+  const handleBuildLink = () => {
+    const url = buildOrderTrackLink(order.id)
+    if (!url) {
+      setLinkError(true)
+      return
+    }
+    setLinkError(false)
+    setTrackingLink(url)
+  }
 
   return (
     <div className="min-h-screen">
@@ -201,6 +218,29 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <Link href="/products">
                   <Button className="w-full">ช้อปปิ้งต่อ</Button>
                 </Link>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>ลิงก์ติดตามสถานะ</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {trackingLink ? (
+                  <div className="flex items-center space-x-2">
+                    <Input value={trackingLink} readOnly className="flex-1" />
+                    <CopyToClipboardButton text={trackingLink} />
+                  </div>
+                ) : (
+                  <>
+                    <Button className="w-full bg-transparent" variant="outline" onClick={handleBuildLink}>
+                      สร้างลิงก์เช็คสถานะ
+                    </Button>
+                    {linkError && (
+                      <p className="text-sm text-red-500 text-center">ไม่สามารถสร้างลิงก์ได้</p>
+                    )}
+                  </>
+                )}
               </CardContent>
             </Card>
 
