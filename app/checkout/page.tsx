@@ -42,6 +42,7 @@ export default function CheckoutPage() {
     notes: "",
   })
   const [deliveryDate, setDeliveryDate] = useState("")
+  const [deliveryMethod, setDeliveryMethod] = useState("normal")
 
   const [paymentMethod, setPaymentMethod] = useState("credit-card")
   const [cardInfo, setCardInfo] = useState({
@@ -57,14 +58,15 @@ export default function CheckoutPage() {
   const [checklist, setChecklist] = useState({ confirmSize: false, confirmColor: false })
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const shipping = state.total >= 1500 ? 0 : 100
+  const deliveryFee =
+    deliveryMethod === "express" ? 150 : deliveryMethod === "pickup" ? 0 : 50
   const tax = Math.round(state.total * 0.07)
   const discountAmount = appliedCoupon
     ? appliedCoupon.type === "percentage"
       ? Math.round(state.total * (appliedCoupon.discount / 100))
       : appliedCoupon.discount
     : 0
-  const finalTotal = state.total - discountAmount + shipping + tax
+  const finalTotal = state.total - discountAmount + deliveryFee + tax
 
   const handleApplyCoupon = async () => {
     const coupons = await db.getCoupons()
@@ -88,7 +90,7 @@ export default function CheckoutPage() {
     e.preventDefault()
 
     if (!shippingInfo.firstName || !shippingInfo.phone || !shippingInfo.address) {
-      toast({ title: "กรุณากรอกข้อมูลให้ครบ", variant: "destructive" })
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน")
       return
     }
 
@@ -136,9 +138,14 @@ export default function CheckoutPage() {
           postalCode: shippingInfo.postalCode,
           phone: shippingInfo.phone,
         },
-        delivery_method: "",
+        delivery_method:
+          deliveryMethod === "express"
+            ? "ส่งด่วน"
+            : deliveryMethod === "pickup"
+              ? "รับเองหน้าร้าน"
+              : "ส่งแบบธรรมดา",
         tracking_number: "",
-        shipping_fee: shipping,
+        shipping_fee: deliveryFee,
         shipping_status: "pending" as ShippingStatus,
         shipping_date: "",
         delivery_note: "",
@@ -169,7 +176,7 @@ export default function CheckoutPage() {
       })
 
       dispatch({ type: "CLEAR_CART" })
-      router.push(`/success/${orderId}`)
+      router.push("/checkout/success")
     }, 3000)
   }
 
@@ -306,6 +313,25 @@ export default function CheckoutPage() {
                     onChange={(e) => setDeliveryDate(e.target.value)}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="deliveryMethod">วิธีจัดส่ง</Label>
+                  <Select
+                    value={deliveryMethod}
+                    onValueChange={setDeliveryMethod}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="normal">ส่งแบบธรรมดา</SelectItem>
+                      <SelectItem value="express">ส่งด่วน</SelectItem>
+                      <SelectItem value="pickup">รับเองหน้าร้าน</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-gray-600">
+                    ค่าจัดส่งประมาณ {deliveryFee === 0 ? "ฟรี" : `฿${deliveryFee}`}
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
@@ -438,7 +464,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex justify-between">
                       <span>ค่าจัดส่ง</span>
-                      <span>{shipping === 0 ? "ฟรี" : `฿${shipping}`}</span>
+                      <span>{deliveryFee === 0 ? "ฟรี" : `฿${deliveryFee}`}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>ภาษี (7%)</span>
@@ -507,7 +533,7 @@ export default function CheckoutPage() {
                       !checklist.confirmColor
                     }
                   >
-                    {isProcessing ? "กำลังดำเนินการ..." : `ชำระเงิน ฿${finalTotal.toLocaleString()}`}
+                    {isProcessing ? "กำลังดำเนินการ..." : "ยืนยันการสั่งซื้อ"}
                   </Button>
 
                   <div className="text-center">
