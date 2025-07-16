@@ -38,6 +38,11 @@ import {
   addCustomerNote,
 } from "@/lib/mock-customer-notes"
 import {
+  loadCustomerComments,
+  listCustomerComments,
+  addCustomerComment,
+} from "@/lib/mock-customer-comments"
+import {
   loadCustomerTags,
   listCustomerTags,
   addCustomerTag,
@@ -62,6 +67,8 @@ export default function CustomerDetailPage({
     loadCustomerNotes()
     loadCustomerTags()
     loadFlaggedUsers()
+    loadCustomerComments()
+    setComments(listCustomerComments(id))
   }, [])
 
   useEffect(() => {
@@ -82,6 +89,10 @@ export default function CustomerDetailPage({
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
   const [noteInput, setNoteInput] = useState("")
   const [tagInput, setTagInput] = useState("")
+  const [commentInput, setCommentInput] = useState("")
+  const [comments, setComments] = useState(() =>
+    listCustomerComments(customer.id),
+  )
   const latestMessage = getLatestChatMessage(customer.id)
 
   return (
@@ -154,6 +165,43 @@ export default function CustomerDetailPage({
                 }}
               >
                 เพิ่มโน้ต
+              </Button>
+            </div>
+          </div>
+          <div>
+            <p className="font-semibold">บันทึกภายใน</p>
+            <div className="space-y-1 py-1">
+              {comments.map((c) => (
+                <p key={c.id} className="text-sm text-gray-600">
+                  [{new Date(c.createdAt).toLocaleDateString('th-TH')}] {c.adminId}: {c.comment}
+                </p>
+              ))}
+              {comments.length === 0 && (
+                <p className="text-gray-500">ยังไม่มีความคิดเห็นในโปรไฟล์นี้</p>
+              )}
+            </div>
+            <div className="flex space-x-2 pt-1">
+              <textarea
+                value={commentInput}
+                onChange={(e) => setCommentInput(e.target.value)}
+                className="border px-2 py-1 rounded flex-1"
+                rows={2}
+              />
+              <Button
+                variant="outline"
+                onClick={() => {
+                  if (commentInput && commentInput.length < 300) {
+                    addCustomerComment(
+                      customer.id,
+                      commentInput,
+                      user?.name || user?.id || 'admin',
+                    )
+                    setCommentInput('')
+                    setComments(listCustomerComments(customer.id))
+                  }
+                }}
+              >
+                เพิ่ม
               </Button>
             </div>
           </div>
