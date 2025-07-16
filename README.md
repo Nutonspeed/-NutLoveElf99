@@ -57,7 +57,13 @@ includes a button to open Chatwoot in a new browser tab.
 
 ## Testing
 
-Run unit tests with:
+Before running tests, make sure dependencies are installed:
+
+```bash
+pnpm install
+```
+
+Then run unit tests with:
 
 ```bash
 pnpm test
