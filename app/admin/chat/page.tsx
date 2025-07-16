@@ -40,6 +40,8 @@ import {
   listConversations,
   loadConversations,
   searchByTag,
+  toggleLocked,
+  setAdminMemo,
 } from '@/lib/mock-conversations'
 import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
 import { toast } from 'sonner'
@@ -91,6 +93,17 @@ export default function AdminChatPage() {
   const quickReply = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.success('คัดลอกข้อความแล้ว')
+  }
+
+  const lockChat = (id: string) => {
+    const ok = toggleLocked(id)
+    if (!ok) toast.error('ไม่สามารถล็อกแชทนี้ได้')
+    setConvos([...listConversations()])
+  }
+
+  const updateMemo = (id: string, memo: string) => {
+    setAdminMemo(id, memo)
+    setConvos([...listConversations()])
   }
 
   return (
@@ -147,7 +160,7 @@ export default function AdminChatPage() {
                     </TableCell>
                     <TableCell>{c.rating ? `${c.rating}/5` : '-'}</TableCell>
                     <TableCell>
-                      <Select onValueChange={quickReply}>
+                      <Select onValueChange={quickReply} disabled={c.locked}>
                         <SelectTrigger className="w-32">
                           <SelectValue placeholder="เลือก" />
                         </SelectTrigger>
@@ -177,12 +190,25 @@ export default function AdminChatPage() {
                           ค้นหาแชทเก่าในหัวข้อเดียวกัน
                         </Button>
                       )}
+                      <input
+                        className="border px-2 py-1 rounded w-full"
+                        value={c.adminMemo || ''}
+                        onChange={(e) => updateMemo(c.id, e.target.value)}
+                        placeholder="บันทึก"
+                      />
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => alert('แจ้งหัวหน้าทีมแล้ว')}
                       >
                         แจ้งหัวหน้าทีม
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => lockChat(c.id)}
+                      >
+                        {c.locked ? 'ปลดล็อกห้อง' : 'ล็อกห้องสนทนา'}
                       </Button>
                     </TableCell>
                   </TableRow>

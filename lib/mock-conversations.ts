@@ -7,6 +7,8 @@ export let conversations: Conversation[] = [
     customerName: 'John Doe',
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
+    locked: false,
+    adminMemo: '',
     updatedAt: new Date().toISOString(),
   },
   {
@@ -15,6 +17,8 @@ export let conversations: Conversation[] = [
     customerName: 'Jane Smith',
     lastMessage: 'จะโอนพรุ่งนี้',
     tags: ['รอโอน'],
+    locked: false,
+    adminMemo: '',
     updatedAt: new Date().toISOString(),
   },
 ]
@@ -64,4 +68,20 @@ export function setRating(id: string, rating: number) {
     convo.rating = rating
     save()
   }
+}
+
+export function toggleLocked(id: string): boolean {
+  const convo = conversations.find((c) => c.id === id)
+  if (!convo) return false
+  convo.locked = !convo.locked
+  convo.updatedAt = new Date().toISOString()
+  save()
+  return true
+}
+
+export function setAdminMemo(id: string, memo: string) {
+  const convo = conversations.find((c) => c.id === id)
+  if (!convo) return
+  convo.adminMemo = memo
+  save()
 }
