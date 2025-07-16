@@ -11,6 +11,7 @@ import { ReviewImagesProvider } from "@/contexts/review-images-context"
 import { FavoritesProvider } from "@/contexts/favorites-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 import { validateMockData } from "@/lib/mock-validator"
+import ForceErrorBanner from "@/components/ForceErrorBanner"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -31,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
+        <ForceErrorBanner />
         <AuthProvider>
           <CartProvider>
             <WishlistProvider>
