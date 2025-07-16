@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter
 } from '@/components/ui/modals/dialog'
 import { Button } from '@/components/ui/buttons/button'
@@ -14,12 +13,15 @@ import { Input } from '@/components/ui/inputs/input'
 import { Label } from '@/components/ui/label'
 import { getProducts } from '@/lib/mock-products'
 import { createChatBill } from '@/lib/mock-chat-bills'
+import { useRouter } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 
 export default function CreateChatBillDialog({
   onCreated,
 }: {
   onCreated: (id: string) => void
 }) {
+  const router = useRouter()
   const [open, setOpen] = useState(false)
   const [products, setProducts] = useState<Array<{id:string,name:string,price:number}>>([])
   const [selected, setSelected] = useState<Record<string, boolean>>({})
@@ -27,7 +29,12 @@ export default function CreateChatBillDialog({
   const [fbName, setFbName] = useState('')
   const [fbLink, setFbLink] = useState('')
   const [sessionId, setSessionId] = useState('')
-  const total = products.reduce((sum, p) => sum + (selected[p.id] ? p.price : 0), 0)
+  const extras = [
+    { id: 'pillow', name: 'หมอน', price: 100 },
+    { id: 'shipping', name: 'ค่าส่ง', price: 50 },
+  ]
+  const allItems = [...products, ...extras]
+  const total = allItems.reduce((sum, p) => sum + (selected[p.id] ? p.price : 0), 0)
 
   useEffect(() => {
     getProducts().then((prods) =>
@@ -36,7 +43,7 @@ export default function CreateChatBillDialog({
   }, [])
 
   const handleCreate = () => {
-    const items = products
+    const items = allItems
       .filter((p) => selected[p.id])
       .map((p) => ({ productId: p.id, name: p.name, price: p.price, quantity: 1 }))
     if (items.length === 0) {
@@ -52,6 +59,21 @@ export default function CreateChatBillDialog({
       total: items.reduce((s, i) => s + i.price, 0) - discount,
     })
     setOpen(false)
+    toast({
+      title: 'ส่งบิลแล้ว',
+      action: (
+        <button
+          onClick={() => router.push(`/bill/${bill.billId}`)}
+          className="underline"
+        >
+          คลิกดู
+        </button>
+      ),
+    })
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(`${window.location.origin}/bill/${bill.billId}`)
+    }
+    router.push(`/bill/${bill.billId}`)
     onCreated(bill.billId)
     // reset
     setSelected({})
@@ -61,11 +83,21 @@ export default function CreateChatBillDialog({
     setSessionId('')
   }
 
+  const openDialog = () => {
+    if (products.length === 0) {
+      alert('ยังไม่มีสินค้า')
+      return
+    }
+    const latest = products[products.length - 1]
+    setSelected({ [latest.id]: true, pillow: true, shipping: true })
+    setOpen(true)
+  }
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">สร้างบิลใหม่</Button>
-      </DialogTrigger>
+      <Button variant="outline" onClick={openDialog}>
+        สร้างบิลใหม่
+      </Button>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>สร้างบิลจากแชท</DialogTitle>
@@ -87,10 +119,17 @@ export default function CreateChatBillDialog({
           </div>
           <div className="space-y-2">
             <p className="font-medium">เลือกสินค้า</p>
-            {products.map((p) => (
+            {allItems.map((p) => (
               <label key={p.id} className="flex items-center space-x-2">
-                <Checkbox checked={!!selected[p.id]} onCheckedChange={(v)=>setSelected({ ...selected, [p.id]: Boolean(v) })} />
-                <span>{p.name} (฿{p.price.toLocaleString()})</span>
+                <Checkbox
+                  checked={!!selected[p.id]}
+                  onCheckedChange={(v) =>
+                    setSelected({ ...selected, [p.id]: Boolean(v) })
+                  }
+                />
+                <span>
+                  {p.name} (฿{p.price.toLocaleString()})
+                </span>
               </label>
             ))}
           </div>
