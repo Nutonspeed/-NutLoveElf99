@@ -6,6 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
+    "pretest": "pnpm install",
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx,.vue --no-error-on-unmatched-pattern",
