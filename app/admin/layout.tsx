@@ -4,6 +4,7 @@ import type React from "react"
 import { useAdminGuard } from "@/contexts/use-admin-guard"
 import Sidebar from "@/components/admin/Sidebar"
 import Topbar from "@/components/admin/Topbar"
+import AiMessageCard from "@/components/admin/AiMessageCard"
 import { Sheet, SheetContent } from "@/components/ui/modals/sheet"
 import { useState } from "react"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -56,6 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <div className="flex flex-1 flex-col">
               <Topbar onMenuClick={() => setSidebarOpen(true)} />
+              <AiMessageCard />
               <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
               <AdminToast />
               <QuickActionBar />
