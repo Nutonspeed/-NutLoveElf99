@@ -194,3 +194,38 @@ export function getTopSellingItems(start: Date, end: Date, top = 5) {
     .slice(0, top)
     .map(([name, count]) => ({ name, count }))
 }
+
+export function mergeOrders(orderIds: string[]): Order | undefined {
+  const ordersToMerge = mockOrders.filter((o) => orderIds.includes(o.id))
+  if (ordersToMerge.length < 2) return undefined
+
+  const base = ordersToMerge[0]
+  const merged: Order = {
+    ...base,
+    id: `ORD-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+    items: ordersToMerge.flatMap((o) => o.items.map((i) => ({ ...i }))),
+    total: ordersToMerge.reduce((sum, o) => sum + o.total, 0),
+    timeline: [
+      ...base.timeline,
+      {
+        timestamp: new Date().toISOString(),
+        status: base.status,
+        updatedBy: "admin@nutlove.co",
+        note: `merge ${orderIds.join(',')}`,
+      },
+    ],
+  }
+
+  // remove merged orders
+  for (const id of orderIds) {
+    const idx = mockOrders.findIndex((o) => o.id === id)
+    if (idx !== -1) mockOrders.splice(idx, 1)
+  }
+
+  mockOrders.unshift(merged)
+  return merged
+}
+
+export function bulkUpdateStatus(orderIds: string[], status: OrderStatus) {
+  orderIds.forEach((id) => setOrderStatus(id, status))
+}
