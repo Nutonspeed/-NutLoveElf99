@@ -7,6 +7,17 @@ export interface ChatTemplate {
 export let chatTemplates: ChatTemplate[] = [
   { id: 'bill_created', name: 'สร้างบิล', text: 'เราได้ออกบิลใหม่ให้คุณแล้วค่ะ' },
   { id: 'status_paid', name: 'ยืนยันการชำระ', text: 'ออเดอร์ของคุณชำระเรียบร้อยแล้วค่ะ' },
+  {
+    id: 'tracking',
+    name: 'ติดตามพัสดุ',
+    text: 'พัสดุของคุณกำลังจัดส่ง สามารถติดตามได้ที่ลิงก์นี้ค่ะ',
+  },
+  {
+    id: 'shipping_no',
+    name: 'แจ้งเลขพัสดุ',
+    text: 'เลขพัสดุของคุณคือ XXXX ค่ะ',
+  },
+  { id: 'thank_you', name: 'ขอบคุณ', text: 'ขอบคุณที่ใช้บริการนะคะ' },
 ]
 
 export function loadChatTemplates() {

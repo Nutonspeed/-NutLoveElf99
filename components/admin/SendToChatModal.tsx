@@ -1,9 +1,14 @@
-import { useState } from "react"
-import { logEvent } from "@/lib/logs"
+import { useEffect, useState } from 'react'
+import { logEvent } from '@/lib/logs'
+import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
+import { EmojiPicker } from '@/components/EmojiPicker'
 
 export function SendToChatModal({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const [message, setMessage] = useState(`📦 รายการคำสั่งซื้อ #${orderId}\nยอดรวม: 999 บาท`)
   const [customer, setCustomer] = useState("ลูกค้า A (Facebook)")
+  useEffect(() => {
+    loadChatTemplates()
+  }, [])
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -23,6 +28,19 @@ export function SendToChatModal({ orderId, onClose }: { orderId: string; onClose
           onChange={(e) => setMessage(e.target.value)}
           className="w-full h-32 border p-2 rounded"
         />
+        <EmojiPicker onSelect={(e) => setMessage((m) => m + e)} />
+        <div className="flex flex-wrap gap-2">
+          {chatTemplates.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setMessage(t.text)}
+              className="px-2 py-1 text-sm border rounded hover:bg-gray-100"
+            >
+              {t.name}
+            </button>
+          ))}
+        </div>
         <div className="flex justify-end gap-2">
           <button className="text-gray-500" onClick={onClose}>ยกเลิก</button>
           <button
