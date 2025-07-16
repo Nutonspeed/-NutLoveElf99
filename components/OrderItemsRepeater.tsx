@@ -210,7 +210,13 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
                       )}
                     </div>
                   </div>
+                  {/*
+                   * Without an explicit type, this button submits the parent
+                   * form when clicked, preventing the item remove handler from
+                   * working as expected.
+                   */}
                   <Button
+                    type="button"
                     variant="outline"
                     size="icon"
                     onClick={() => removeItem(item.id)}
@@ -376,7 +382,11 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
             )}
           </div>
 
-          <Button onClick={addItem} className="w-full">
+          {/*
+           * Specify type="button" to avoid submitting the form when adding
+           * new items. This ensures only the addItem handler runs.
+           */}
+          <Button type="button" onClick={addItem} className="w-full">
             <Plus className="h-4 w-4 mr-2" />
             เพิ่มสินค้า
           </Button>
