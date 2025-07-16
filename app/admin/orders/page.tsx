@@ -14,7 +14,7 @@ import { toast } from "sonner"
 import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
 import { mockCustomers } from "@/lib/mock-customers"
 import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
-import { downloadCSV, downloadPDF } from "@/lib/mock-export"
+import { downloadCSV, downloadPDF, downloadExcel } from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
 import { packingStatusOptions } from "@/types/order"
 import {
@@ -94,6 +94,20 @@ export default function AdminOrdersPage() {
     toast.success("ยืนยันยอดแล้ว")
   }
 
+  const handleExportExcel = async () => {
+    try {
+      const data = mockOrders.map((o) => ({
+        รหัส: o.id,
+        ลูกค้า: o.customerName,
+        ยอดรวม: o.total,
+        สถานะ: getOrderStatusText(o.status),
+      }))
+      await downloadExcel(data, "orders.xlsx")
+    } catch (err) {
+      toast.error("ไม่สามารถส่งออกได้ในตอนนี้")
+    }
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -170,6 +184,7 @@ export default function AdminOrdersPage() {
                 <Button onClick={() => downloadPDF('orders', 'orders.pdf')}>
                   Export PDF
                 </Button>
+                <Button onClick={handleExportExcel}>Export Excel</Button>
               </div>
             </div>
           </CardHeader>
