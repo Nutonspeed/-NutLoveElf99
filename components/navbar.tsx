@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/buttons/button"
 import { Input } from "@/components/ui/inputs/input"
 import { Badge } from "@/components/ui/badge"
@@ -38,10 +39,14 @@ import { addChatActivity, loadChatActivity } from "@/lib/mock-chat-activity"
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuLoading, setMenuLoading] = useState(false)
+  const [dashboardLoading, setDashboardLoading] = useState(false)
   const { state } = useCart()
   const { user, guestId, isAuthenticated, logout } = useAuth()
   const router = useRouter()
   const { showDevelopmentNotice } = useDevelopmentNotice()
+  const { toast } = useToast()
 
   const totalItems = state.items.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -80,6 +85,36 @@ export function Navbar() {
     { name: "รีวิว", href: "/reviews", icon: Star },
     { name: "แชท", href: "/chat", icon: MessageCircle },
   ]
+
+  const handleMenuClick = () => {
+    setMenuLoading(true)
+    setTimeout(() => {
+      const ok = Math.random() > 0.5
+      setMenuLoading(false)
+      if (ok) {
+        setMenuOpen(true)
+        toast({ description: "เปิดเมนูสำเร็จ" })
+      } else {
+        toast({ description: "เปิดเมนูไม่สำเร็จ", variant: "destructive" })
+      }
+    }, 1000)
+  }
+
+  const handleDashboardClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    setDashboardLoading(true)
+    setTimeout(() => {
+      const ok = Math.random() > 0.5
+      setDashboardLoading(false)
+      if (ok) {
+        toast({ description: "เข้าสู่แดชบอร์ดสำเร็จ" })
+        router.push("/admin/dashboard")
+        setMenuOpen(false)
+      } else {
+        toast({ description: "เปิดแดชบอร์ดล้มเหลว", variant: "destructive" })
+      }
+    }, 1000)
+  }
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -189,9 +224,13 @@ export function Navbar() {
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href="/admin/dashboard" className="flex items-center">
+                        <Link
+                          href="/admin/dashboard"
+                          onClick={handleDashboardClick}
+                          className="flex items-center"
+                        >
                           <Settings className="mr-2 h-4 w-4" />
-                          ระบบจัดการ
+                          {dashboardLoading ? "กำลังโหลด..." : "ระบบจัดการ"}
                         </Link>
                       </DropdownMenuItem>
                     </>
@@ -218,10 +257,20 @@ export function Navbar() {
             )}
 
             {/* Mobile Menu */}
-            <Sheet>
+            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-5 w-5" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                  onClick={handleMenuClick}
+                  disabled={menuLoading}
+                >
+                  {menuLoading ? (
+                    <span className="text-xs">กำลังโหลด...</span>
+                  ) : (
+                    <Menu className="h-5 w-5" />
+                  )}
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
@@ -275,10 +324,11 @@ export function Navbar() {
                         <div className="border-t pt-4">
                           <Link
                             href="/admin/dashboard"
+                            onClick={handleDashboardClick}
                             className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
                           >
                             <Settings className="mr-2 h-4 w-4" />
-                            ระบบจัดการ
+                            {dashboardLoading ? "กำลังโหลด..." : "ระบบจัดการ"}
                           </Link>
                         </div>
                       )}
