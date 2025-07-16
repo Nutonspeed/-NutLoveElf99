@@ -9,7 +9,7 @@ export default function RedirectMobileHome() {
   const router = useRouter()
 
   useEffect(() => {
-    if (isMobile && pathname === "/") {
+    if ((isMobile === true || isMobile === undefined) && pathname === "/") {
       router.replace("/mobile-home")
     }
   }, [isMobile, pathname, router])
