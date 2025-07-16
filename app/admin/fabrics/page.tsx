@@ -21,6 +21,7 @@ import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
 import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
+import { generatePrivateSlug } from "@/lib/private-view-link"
 
 interface Fabric {
   id: string
@@ -45,6 +46,11 @@ export default function AdminFabricsPage() {
   const [optImage, setOptImage] = useState<string | null>(null)
   const [optName, setOptName] = useState("")
   const [optDialog, setOptDialog] = useState(false)
+  const handleGenerateLink = () => {
+    const slug = generatePrivateSlug()
+    const url = `${window.location.origin}/private/fabrics/${slug}`
+    window.prompt('ลิงก์เฉพาะกลุ่ม', url)
+  }
 
   const handleDelete = async (id: string) => {
     if (
@@ -157,6 +163,9 @@ export default function AdminFabricsPage() {
               เพิ่มผ้าใหม่
             </Button>
           </Link>
+          <Button onClick={handleGenerateLink} variant="outline">
+            สร้างลิงก์ดูเฉพาะกลุ่ม
+          </Button>
         </div>
 
         <Card>
