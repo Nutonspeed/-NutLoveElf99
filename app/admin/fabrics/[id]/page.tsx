@@ -7,6 +7,8 @@ import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
+import { mockFabrics } from "@/lib/mock-fabrics"
+import { mockCollections } from "@/lib/mock-collections"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 
@@ -22,6 +24,9 @@ interface Fabric {
   image_urls: string[]
   price_min: number
   price_max: number
+  manufacturer?: string
+  purchaseSource?: string
+  productionNote?: string
 }
 
 export default function FabricDetailPage({ params }: FabricDetailPageProps) {
@@ -45,13 +50,36 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
 
   useEffect(() => {
     const fetchFabric = async () => {
-      if (!supabase || !params.id) {
+      if (!params.id) {
+        setLoading(false)
+        return
+      }
+      if (!supabase) {
+        const f = mockFabrics.find((m) => m.id === params.id)
+        if (f) {
+          setFabric({
+            id: f.id,
+            name: f.name,
+            sku: f.sku,
+            collection_id: f.collectionSlug,
+            image_urls: f.images,
+            price_min: f.price,
+            price_max: f.price,
+            manufacturer: f.manufacturer,
+            purchaseSource: f.purchaseSource,
+            productionNote: f.productionNote,
+          })
+          const col = mockCollections.find((c) => c.slug === f.collectionSlug)
+          if (col) setCollectionName(col.name)
+        }
         setLoading(false)
         return
       }
       const { data, error } = await supabase
         .from("fabrics")
-        .select("id, name, sku, collection_id, image_urls, price_min, price_max")
+        .select(
+          "id, name, sku, collection_id, image_urls, price_min, price_max, manufacturer, purchase_source, production_note"
+        )
         .eq("id", params.id)
         .single()
       if (error || !data) {
@@ -59,7 +87,12 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
         router.push("/admin/fabrics")
         return
       }
-      setFabric(data)
+      setFabric({
+        ...data,
+        manufacturer: (data as any).manufacturer || undefined,
+        purchaseSource: (data as any).purchase_source || undefined,
+        productionNote: (data as any).production_note || undefined,
+      })
       const { data: collection } = await supabase
         .from("collections")
         .select("name")
@@ -124,6 +157,15 @@ export default function FabricDetailPage({ params }: FabricDetailPageProps) {
                 <p>
                   ราคา: ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
                 </p>
+                {fabric.manufacturer || fabric.purchaseSource || fabric.productionNote ? (
+                  <>
+                    {fabric.manufacturer && <p>ผู้ผลิต: {fabric.manufacturer}</p>}
+                    {fabric.purchaseSource && <p>แหล่งซื้อ: {fabric.purchaseSource}</p>}
+                    {fabric.productionNote && <p>หมายเหตุ: {fabric.productionNote}</p>}
+                  </>
+                ) : (
+                  <p className="text-gray-500">ข้อมูลผู้ผลิตว่างเปล่า</p>
+                )}
               </div>
             </div>
           </CardContent>
