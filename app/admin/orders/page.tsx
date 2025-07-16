@@ -17,6 +17,7 @@ import { createBill, confirmBill, mockBills } from "@/lib/mock-bills"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 import type { Order, OrderStatus, PackingStatus } from "@/types/order"
 import { packingStatusOptions } from "@/types/order"
+import { loadMockPreferences, mockPreferences } from "@/lib/mock-preferences"
 import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,
@@ -49,6 +50,12 @@ export default function AdminOrdersPage() {
   const [customerFilter, setCustomerFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [bills, setBills] = useState(mockBills)
+  const [showIds, setShowIds] = useState(mockPreferences.showIds)
+
+  useEffect(() => {
+    loadMockPreferences()
+    setShowIds(mockPreferences.showIds)
+  }, [])
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
@@ -199,7 +206,7 @@ export default function AdminOrdersPage() {
                     {statusTag(order)}
                   </summary>
                   <div className="mt-2 space-y-1 text-sm">
-                    <p>รหัส: {order.id}</p>
+                    {showIds && <p>รหัส: {order.id}</p>}
                     <p>ยอดรวม: ฿{order.total.toLocaleString()}</p>
                   </div>
                   <div className="mt-2 flex gap-2">
@@ -236,7 +243,9 @@ export default function AdminOrdersPage() {
                 {filteredOrders.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell>
-                      <p className="font-medium">{order.id}</p>
+                      {showIds && (
+                        <p className="font-medium">{order.id}</p>
+                      )}
                     </TableCell>
                     <TableCell>
                       <div>

@@ -1,3 +1,5 @@
+import { generateMockId } from '../lib/mock-uid'
+
 export interface BillItem {
   name: string
   quantity: number
@@ -31,7 +33,7 @@ export const mockBills: AdminBill[] = [
 
 export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): AdminBill {
   const bill: AdminBill = {
-    id: `BILL-${Math.random().toString(36).slice(2, 8)}`,
+    id: generateMockId('bill'),
     status: 'unpaid',
     createdAt: new Date().toISOString(),
     ...data,

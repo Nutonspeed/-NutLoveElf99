@@ -4,6 +4,7 @@ import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
 import { addChatMessage } from "./mock-chat-messages"
 import { mockBills } from "./bills"
+import { generateMockId } from "./mock-uid"
 export { mockBills } from "./bills"
 
 
@@ -14,7 +15,7 @@ export function createBill(
 ): Bill {
   const order = mockOrders.find((o) => o.id === orderId)
   const customer = order && mockCustomers.find((c) => c.id === order.customerId)
-  const id = `bill-${Math.random().toString(36).slice(2, 8)}`
+  const id = generateMockId('bill')
   const bill: Bill = {
     id,
     orderId,
