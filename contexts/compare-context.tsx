@@ -17,7 +17,7 @@ export function CompareProvider({ children }: { children: ReactNode }) {
   const toggleCompare = (slug: string) => {
     setItems((prev) => {
       if (prev.includes(slug)) return prev.filter((s) => s !== slug)
-      if (prev.length >= 3) return prev
+      if (prev.length >= 2) return prev
       return [...prev, slug]
     })
   }
