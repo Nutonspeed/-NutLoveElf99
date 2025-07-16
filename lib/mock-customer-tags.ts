@@ -47,3 +47,44 @@ export function removeCustomerTag(id: string) {
   customerTags = customerTags.filter((t) => t.id !== id)
   save()
 }
+
+export let tagNames: string[] = [...defaultTags]
+
+export function loadTagNames() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('customerTagNames')
+    if (stored) tagNames = JSON.parse(stored)
+  }
+}
+
+function saveTagNames() {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('customerTagNames', JSON.stringify(tagNames))
+  }
+}
+
+export function listTagNames(): string[] {
+  return tagNames
+}
+
+export function addTagName(name: string) {
+  if (tagNames.includes(name)) return
+  tagNames = [...tagNames, name]
+  saveTagNames()
+}
+
+export function updateTagName(oldName: string, newName: string) {
+  tagNames = tagNames.map((t) => (t === oldName ? newName : t))
+  customerTags = customerTags.map((ct) =>
+    ct.tag === oldName ? { ...ct, tag: newName } : ct,
+  )
+  saveTagNames()
+  save()
+}
+
+export function removeTagName(name: string) {
+  tagNames = tagNames.filter((t) => t !== name)
+  customerTags = customerTags.filter((ct) => ct.tag !== name)
+  saveTagNames()
+  save()
+}
