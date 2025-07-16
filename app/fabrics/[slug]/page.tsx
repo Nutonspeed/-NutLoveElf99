@@ -13,6 +13,7 @@ import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
 import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { FabricSuggestions } from "@/components/FabricSuggestions"
+import { ColorGroupButton } from "@/components/ColorGroupButton"
 
 interface Fabric {
   id: string
@@ -128,6 +129,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
               <WishlistButton slug={fabric.slug || fabric.id} />
               <FavoriteButton slug={fabric.slug || fabric.id} />
             </div>
+            <ColorGroupButton slug={fabric.slug || fabric.id} />
             {fabric.price_min && fabric.price_max && (
               <p className="text-lg text-gray-700">
                 ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
