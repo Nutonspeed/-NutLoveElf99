@@ -14,6 +14,11 @@ import { useCart } from "@/contexts/cart-context";
 import { mockOrders } from "@/lib/mock-orders";
 import { mockProducts } from "@/lib/mock-products";
 import { mockFeedbacks } from "@/lib/mock-feedback";
+import { mockClaims, loadClaims } from "@/lib/mock-claims";
+import {
+  getClaimStatusBadgeVariant,
+  getClaimStatusText,
+} from "@/lib/claim-status";
 import { reviewReminder, loadReviewReminder } from "@/lib/mock-settings";
 import { toast } from "sonner";
 import type { OrderStatus, Order } from "@/types/order";
@@ -50,6 +55,12 @@ export default function OrdersPage() {
       router.push("/login");
     }
   }, [isAuthenticated, router]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadClaims()
+    }
+  }, [isAuthenticated])
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -149,7 +160,9 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {userOrders.map((order) => (
+            {userOrders.map((order) => {
+              const claim = mockClaims.find((c) => c.orderId === order.id)
+              return (
               <Card key={order.id}>
                 <CardHeader>
                   <div className="flex items-center justify-between">
@@ -166,6 +179,11 @@ export default function OrdersPage() {
                       <Badge variant={getOrderStatusBadgeVariant(order.status)}>
                         {getOrderStatusText(order.status)}
                       </Badge>
+                      {claim && (
+                        <Badge variant={getClaimStatusBadgeVariant(claim.status)}>
+                          {getClaimStatusText(claim.status)}
+                        </Badge>
+                      )}
                       <Progress
                         className="w-24"
                         value={getProgress(order.status)}

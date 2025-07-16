@@ -8,6 +8,8 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
+import { mockClaims, loadClaims } from "@/lib/mock-claims"
+import { RefundTimeline } from "@/components/order/RefundTimeline"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -18,6 +20,8 @@ import {
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
   const order = mockOrders.find((o) => o.id === id)
+  loadClaims()
+  const claim = mockClaims.find((c) => c.orderId === id)
 
   if (!order) {
     return (
@@ -170,6 +174,18 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               </CardHeader>
               <CardContent>
                 <OrderTimeline timeline={order.timeline} />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>ไทม์ไลน์การคืนเงิน</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {claim ? (
+                  <RefundTimeline claim={claim} />
+                ) : (
+                  <p>ไม่มีข้อมูลขอคืนเงิน</p>
+                )}
               </CardContent>
             </Card>
           </div>
