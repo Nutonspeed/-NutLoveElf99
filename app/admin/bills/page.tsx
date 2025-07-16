@@ -13,6 +13,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { mockBills, addBill, updateBillStatus, updateBill } from '@/mock/bills'
+import {
+  defaultDeliveryMethod,
+  loadDefaultDeliveryMethod,
+} from '@/lib/mock-settings'
 import { toast } from 'sonner'
 
 export default function AdminBillsPage() {
@@ -21,6 +25,7 @@ export default function AdminBillsPage() {
   const [customer, setCustomer] = useState('')
   const [items, setItems] = useState<BillItem[]>([])
   const [shipping, setShipping] = useState(50)
+  const [method, setMethod] = useState(defaultDeliveryMethod)
   const subtotal = items.reduce((s, it) => s + it.price * it.quantity, 0)
   const total = subtotal + shipping
   const [note, setNote] = useState('')
@@ -29,17 +34,23 @@ export default function AdminBillsPage() {
     customer: string
     items: BillItem[]
     shipping: number
+    deliveryMethod: string
     note: string
   } | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
+
+  useEffect(() => {
+    loadDefaultDeliveryMethod()
+    setMethod(defaultDeliveryMethod)
+  }, [])
 
   const handleCreate = () => {
     if (items.length === 0) {
       toast.error('ต้องมีสินค้าอย่างน้อย 1 รายการ')
       return
     }
-    const bill = addBill({ customer, items, shipping, note })
+    const bill = addBill({ customer, items, shipping, note, deliveryMethod: method })
     setBills([bill, ...bills])
     setCustomer('')
     setItems([])
@@ -88,6 +99,16 @@ export default function AdminBillsPage() {
             <div className="space-y-4">
               <Input placeholder="ชื่อลูกค้า" value={customer} onChange={(e) => setCustomer(e.target.value)} />
               <Textarea placeholder="หมายเหตุ" value={note} onChange={(e) => setNote(e.target.value)} />
+              <Select value={method} onValueChange={setMethod}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="วิธีจัดส่ง" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="เก็บปลายทาง">เก็บปลายทาง</SelectItem>
+                  <SelectItem value="โอนก่อนส่ง">โอนก่อนส่ง</SelectItem>
+                  <SelectItem value="รับเอง">รับเอง</SelectItem>
+                </SelectContent>
+              </Select>
               <div className="space-y-2">
                 {items.map((it, idx) => (
                   <div key={idx} className="flex space-x-2 items-end">
@@ -251,6 +272,7 @@ export default function AdminBillsPage() {
                             customer: b.customer,
                             items: b.items,
                             shipping: b.shipping,
+                            deliveryMethod: b.deliveryMethod,
                             note: b.note,
                           })
                         }}
@@ -374,6 +396,19 @@ export default function AdminBillsPage() {
                     }
                   />
                 </div>
+                <Select
+                  value={editData.deliveryMethod}
+                  onValueChange={(v) => setEditData({ ...editData, deliveryMethod: v })}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="วิธีจัดส่ง" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="เก็บปลายทาง">เก็บปลายทาง</SelectItem>
+                    <SelectItem value="โอนก่อนส่ง">โอนก่อนส่ง</SelectItem>
+                    <SelectItem value="รับเอง">รับเอง</SelectItem>
+                  </SelectContent>
+                </Select>
                 <Textarea
                   placeholder="หมายเหตุ"
                   value={editData.note}

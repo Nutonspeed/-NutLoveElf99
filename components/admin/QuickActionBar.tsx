@@ -18,10 +18,6 @@ export default function QuickActionBar() {
         <MessageCircle className="h-5 w-5" />
         <span>แชท</span>
       </Link>
-      <Link href="/admin/settings" className="flex flex-col items-center text-xs">
-        <Settings className="h-5 w-5" />
-        <span>ตั้งค่า</span>
-      </Link>
     </nav>
   )
 }

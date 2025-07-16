@@ -1,3 +1,5 @@
+import { defaultDeliveryMethod } from '@/lib/mock-settings'
+
 export interface BillItem {
   name: string
   quantity: number
@@ -8,6 +10,7 @@ export interface AdminBill {
   id: string
   customer: string
   items: BillItem[]
+  deliveryMethod: string
   shipping: number
   note: string
   status: 'pending' | 'unpaid' | 'paid' | 'cancelled'
@@ -22,6 +25,7 @@ export const mockBills: AdminBill[] = [
       { name: 'ผ้าคลุมโซฟา', quantity: 1, price: 299 },
       { name: 'ปลอกหมอน', quantity: 2, price: 59 },
     ],
+    deliveryMethod: 'เก็บปลายทาง',
     shipping: 50,
     note: '',
     status: 'pending',
@@ -29,12 +33,18 @@ export const mockBills: AdminBill[] = [
   },
 ]
 
-export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): AdminBill {
+export function addBill(
+  data: Omit<AdminBill, 'id' | 'status' | 'createdAt' | 'deliveryMethod'> & {
+    deliveryMethod?: string
+  },
+): AdminBill {
+  const { deliveryMethod = defaultDeliveryMethod, ...rest } = data
   const bill: AdminBill = {
     id: `BILL-${Math.random().toString(36).slice(2, 8)}`,
     status: 'unpaid',
     createdAt: new Date().toISOString(),
-    ...data,
+    deliveryMethod,
+    ...rest,
   }
   mockBills.unshift(bill)
   return bill

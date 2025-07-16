@@ -1,6 +1,8 @@
 export const isDevMock = true;
 export let autoMessage = "ขอบคุณที่สั่งซื้อกับเรา";
 export let socialLinks = { facebook: "", line: "" };
+export let defaultDeliveryMethod = "เก็บปลายทาง";
+export let autoOpenBill = false;
 
 export function loadAutoMessage() {
   if (typeof window !== 'undefined') {
@@ -27,6 +29,34 @@ export function setSocialLinks(links: { facebook: string; line: string }) {
   socialLinks = links;
   if (typeof window !== 'undefined') {
     localStorage.setItem('socialLinks', JSON.stringify(links));
+  }
+}
+
+export function loadDefaultDeliveryMethod() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('defaultDeliveryMethod');
+    if (stored) defaultDeliveryMethod = stored;
+  }
+}
+
+export function setDefaultDeliveryMethod(value: string) {
+  defaultDeliveryMethod = value;
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('defaultDeliveryMethod', value);
+  }
+}
+
+export function loadAutoOpenBill() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('autoOpenBill');
+    if (stored) autoOpenBill = JSON.parse(stored);
+  }
+}
+
+export function setAutoOpenBill(value: boolean) {
+  autoOpenBill = value;
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('autoOpenBill', JSON.stringify(value));
   }
 }
 
