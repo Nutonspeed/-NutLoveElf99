@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
+import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle, FileText } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
+import { addQuote } from "@/lib/mock-quotes"
+import { toast } from "sonner"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -43,6 +45,31 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   ]
 
   const currentStepIndex = orderSteps.findIndex((step) => step.status === order.status)
+
+  const requestQuote = () => {
+    if (!order) {
+      toast.error("ไม่สามารถออกใบเสนอราคาได้")
+      return
+    }
+    try {
+      addQuote({
+        customerName: order.customerName,
+        customerEmail: order.customerEmail,
+        customerPhone: order.shippingAddress.phone,
+        items: order.items.map((i) => ({
+          productId: i.productId,
+          productName: i.productName,
+          quantity: i.quantity,
+          price: i.price,
+          size: i.size,
+          color: i.color,
+        })),
+      })
+      toast.success("บันทึกคำขอใบเสนอราคาแล้ว")
+    } catch (e) {
+      toast.error("ไม่สามารถออกใบเสนอราคาได้")
+    }
+  }
 
   return (
     <div className="min-h-screen">
@@ -190,6 +217,11 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     </Button>
                   </Link>
                 )}
+
+                <Button className="w-full bg-transparent" variant="outline" onClick={requestQuote}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  ขอใบเสนอราคา
+                </Button>
 
                 <Link href="/chat">
                   <Button className="w-full bg-transparent" variant="outline">
