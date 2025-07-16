@@ -6,11 +6,11 @@ import { useAuth } from '@/contexts/auth-context'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { mockAdminLogs, addAdminLog } from '@/lib/mock-admin-logs'
+import { mockLogs, addMockLog } from '@/lib/mock-logs'
 
 export default function AdminLogsPage() {
   const { user, isAuthenticated } = useAuth()
-  const [logs, setLogs] = useState([...mockAdminLogs])
+  const [logs, setLogs] = useState([...mockLogs])
   const [filter, setFilter] = useState('all')
 
   const filtered = logs.filter((l) => {
@@ -48,7 +48,7 @@ export default function AdminLogsPage() {
           <CardHeader className="flex justify-between items-center">
             <CardTitle>Admin Logs ({filtered.length})</CardTitle>
             {process.env.NODE_ENV !== 'production' && (
-              <Button onClick={() => { addAdminLog('dev mock', 'admin'); setLogs([...mockAdminLogs]) }}>สร้าง log ใหม่ (dev only)</Button>
+            <Button onClick={() => { addMockLog('dev mock', 'admin'); setLogs([...mockLogs]) }}>สร้าง log ใหม่ (dev only)</Button>
             )}
             <select
               className="border rounded p-2 ml-2"

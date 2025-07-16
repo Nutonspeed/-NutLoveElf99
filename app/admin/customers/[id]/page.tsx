@@ -47,6 +47,7 @@ import {
   getFlagStatus,
 } from "@/lib/mock-flagged-users"
 import { getLatestChatMessage } from "@/lib/mock-chat-messages"
+import { addMockLog } from "@/lib/mock-logs"
 
 export default function CustomerDetailPage({
   params,
@@ -94,6 +95,14 @@ export default function CustomerDetailPage({
             </Button>
           </Link>
           <h1 className="text-3xl font-bold">ข้อมูลลูกค้า</h1>
+          <Button
+            variant="outline"
+            onClick={() => {
+              addMockLog(`admin note for ${customer.id}`, user?.email || 'admin')
+            }}
+          >
+            บันทึกเหตุการณ์
+          </Button>
         </div>
 
         <CustomerCard customer={customer} />
