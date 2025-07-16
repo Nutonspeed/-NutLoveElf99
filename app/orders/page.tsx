@@ -212,7 +212,7 @@ export default function OrdersPage() {
                             ฿{(item.price * item.quantity).toLocaleString()}
                           </p>
                         </div>
-                      ))}
+                      ))
                     </div>
 
                     {/* Order Total */}
@@ -259,7 +259,8 @@ export default function OrdersPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+              );
+            })
           </div>
         )}
       </div>
