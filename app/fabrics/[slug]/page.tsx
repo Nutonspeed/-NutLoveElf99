@@ -19,6 +19,8 @@ interface Fabric {
   slug: string | null
   name: string
   sku?: string | null
+  color_label?: string | null
+  extra_category?: string | null
   description?: string | null
   size?: string | null
   collection_id?: string | null
@@ -43,7 +45,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
   const { data } = await supabase
     .from("fabrics")
-    .select("name, description, sku, image_url, image_urls")
+    .select("name, description, sku, color_label, extra_category, image_url, image_urls")
     .eq("slug", params.slug)
     .single()
   if (!data) return {}
@@ -75,6 +77,8 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
       slug: f!.slug,
       name: f!.name,
       sku: f!.sku,
+      color_label: f!.colorLabel,
+      extra_category: f!.extraCategory,
       description: '',
       image_urls: f!.images,
       price_min: f!.price,
@@ -83,7 +87,9 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
   } else {
     const { data, error } = await supabase
       .from("fabrics")
-      .select("id, slug, name, sku, description, size, collection_id, image_url, image_urls, price_min, price_max")
+      .select(
+        "id, slug, name, sku, color_label, extra_category, description, size, collection_id, image_url, image_urls, price_min, price_max"
+      )
       .eq("slug", params.slug)
       .single()
 
@@ -139,6 +145,12 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
             {fabric.sku && (
               <p className="text-gray-600">SKU: {fabric.sku}</p>
             )}
+            {fabric.color_label && (
+              <p className="text-gray-600">สี: {fabric.color_label}</p>
+            )}
+            <p className="text-gray-600">
+              หมวดเสริม: {fabric.extra_category || 'ยังไม่มีหมวดเสริม'}
+            </p>
             {collection && (
               <p className="text-gray-600">
                 คอลเลกชัน:{" "}
