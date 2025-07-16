@@ -101,8 +101,8 @@ export default function AdminOrdersPage() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-          <Link href="/admin/dashboard">
-            <Button variant="outline" size="icon">
+            <Link href="/admin/dashboard">
+              <Button variant="outline" size="icon">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
@@ -111,6 +111,9 @@ export default function AdminOrdersPage() {
               <p className="text-gray-600">ตรวจสอบและอัพเดทสถานะคำสั่งซื้อ</p>
             </div>
           </div>
+          <Link href="/admin/orders/archive">
+            <Button variant="outline">ย้ายไปคลังเก็บ</Button>
+          </Link>
         </div>
 
         <Card>
@@ -199,6 +202,13 @@ export default function AdminOrdersPage() {
                       onClick={() => updateOrderStatus(order.id, "completed")}
                     >
                       ปิดยอด
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      onClick={() => updateOrderStatus(order.id, "archived")}
+                    >
+                      ย้ายไปคลังเก็บ
                     </Button>
                   </div>
                 </details>
@@ -431,19 +441,26 @@ export default function AdminOrdersPage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            onClick={() =>
-                              handleConfirmBill(
-                                bills.find((b) => b.orderId === order.id)!.id,
-                                order.id,
-                              )
-                            }
-                          >
-                            ยืนยันยอด
-                          </Button>
-                        )}
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                          onClick={() =>
+                            handleConfirmBill(
+                              bills.find((b) => b.orderId === order.id)!.id,
+                              order.id,
+                            )
+                          }
+                        >
+                          ยืนยันยอด
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          onClick={() => updateOrderStatus(order.id, "archived")}
+                        >
+                          ย้ายไปคลังเก็บ
+                        </Button>
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
                 ))}
               </TableBody>
             </Table>
