@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/inputs/input'
 import {
   Dialog,
@@ -42,17 +43,23 @@ import {
   searchByTag,
 } from '@/lib/mock-conversations'
 import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
+import { listChatBills, loadChatBills } from '@/lib/mock-chat-bills'
+import { listChatMessages } from '@/lib/mock-chat-messages'
 import { toast } from 'sonner'
 
 export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
+  const [withBillOnly, setWithBillOnly] = useState(false)
+  const [bills, setBills] = useState(listChatBills())
 
   useEffect(() => {
     loadConversations()
     loadChatTemplates()
+    loadChatBills()
     setConvos([...listConversations()])
+    setBills(listChatBills())
   }, [])
 
   const openDialog = (id: string) => {
@@ -83,6 +90,10 @@ export default function AdminChatPage() {
     return { newCount, repeatCount, pending }
   })()
 
+  const filteredConvos = withBillOnly
+    ? convos.filter((c) => bills.some((b) => b.sessionId === c.id))
+    : convos
+
   const search = (tag: string) => {
     const result = searchByTag(tag)
     alert(`พบ ${result.length} แชทที่มีแท็ก "${tag}"`)
@@ -91,6 +102,22 @@ export default function AdminChatPage() {
   const quickReply = (text: string) => {
     navigator.clipboard.writeText(text)
     toast.success('คัดลอกข้อความแล้ว')
+  }
+
+  const exportSummary = (id: string) => {
+    const bill = bills.find((b) => b.sessionId === id)
+    if (!bill) {
+      alert('ไม่มีการแนบบิลในห้องนี้')
+      return
+    }
+    const msgs = listChatMessages(id)
+    if (msgs.length === 0) {
+      alert('ไม่มีข้อความ')
+      return
+    }
+    const text = msgs.map((m) => m.text).join('\n')
+    navigator.clipboard.writeText(text)
+    toast.success('คัดลอกสรุปแชทแล้ว')
   }
 
   return (
@@ -115,8 +142,16 @@ export default function AdminChatPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle>บทสนทนา ({convos.length})</CardTitle>
+          <CardHeader className="flex flex-col gap-2">
+            <CardTitle>บทสนทนา ({filteredConvos.length})</CardTitle>
+            <label className="flex items-center gap-2 text-sm">
+              <Checkbox
+                checked={withBillOnly}
+                onCheckedChange={(v) => setWithBillOnly(Boolean(v))}
+                id="billOnly"
+              />
+              <span>แชทที่มีการแนบบิล</span>
+            </label>
           </CardHeader>
           <CardContent>
             <Table>
@@ -130,7 +165,7 @@ export default function AdminChatPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {convos.map((c) => (
+                {filteredConvos.map((c) => (
                   <TableRow key={c.id} className="align-top">
                     <TableCell>
                       <p className="font-medium">{c.customerName}</p>
@@ -184,12 +219,19 @@ export default function AdminChatPage() {
                       >
                         แจ้งหัวหน้าทีม
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => exportSummary(c.id)}
+                      >
+                        ส่งสรุปแชท
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            {convos.length === 0 && (
+            {filteredConvos.length === 0 && (
               <p className="text-center py-8 text-gray-500">ไม่มีข้อมูล</p>
             )}
           </CardContent>
