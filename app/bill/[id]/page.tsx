@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
+import { mockCustomers } from "@/lib/mock-customers"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { getBill as getAdminBill } from "@/mock/bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
@@ -24,6 +25,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const quickBill = getQuickBill(id)
   const simpleBill = getAdminBill(id)
   const order = mockOrders.find((o) => o.id === bill?.orderId)
+  const customer = mockCustomers.find((c) => c.id === order?.customerId)
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
   const [amount, setAmount] = useState("")
@@ -204,6 +206,17 @@ export default function BillPage({ params }: { params: { id: string } }) {
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
             </div>
             <OrderTimeline timeline={order.timeline} />
+            {customer && (
+              <div className="space-y-2">
+                <h3 className="font-semibold">หมายเหตุจากลูกค้า</h3>
+                <p className="text-sm text-gray-600">
+                  {customer.note || "ไม่มีหมายเหตุ"}
+                </p>
+                <Link href={`/profile/${customer.id}`}>
+                  <Button variant="outline">ดูโปรไฟล์ลูกค้า</Button>
+                </Link>
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
               <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
