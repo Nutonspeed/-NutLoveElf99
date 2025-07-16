@@ -13,7 +13,7 @@ import { supabase } from "@/lib/supabase"
 import { getCollections } from "@/lib/mock-collections"
 import { WishlistButton } from "@/components/WishlistButton"
 import { mockFabrics } from "@/lib/mock-fabrics"
-import { FabricsList } from "@/components/FabricsList"
+import { FabricsFilter } from "@/components/FabricsFilter"
 import { CopyPageLinkButton } from "@/components/CopyPageLinkButton"
 import { CollectionStickyBar } from "@/components/CollectionStickyBar"
 import { mockFabricReviews } from "@/lib/mock/fabricReviews"
@@ -98,7 +98,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           </a>
           <CopyPageLinkButton />
         </div>
-        <FabricsList fabrics={fabrics} />
+        <FabricsFilter fabrics={fabrics} />
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">รีวิวจากลูกค้าที่สั่งลายนี้</h2>
           {reviews.length === 0 ? (

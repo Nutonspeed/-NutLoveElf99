@@ -10,7 +10,7 @@ import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
-import { MessageSquare, Share2, Receipt } from "lucide-react"
+import { MessageSquare, Share2, Receipt, Star } from "lucide-react"
 import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { FabricSuggestions } from "@/components/FabricSuggestions"
 
@@ -26,6 +26,9 @@ interface Fabric {
   image_urls?: string[] | null
   price_min?: number | null
   price_max?: number | null
+  tags?: string[]
+  rating?: number
+  recommended?: boolean
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -79,6 +82,9 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
       image_urls: f!.images,
       price_min: f!.price,
       price_max: f!.price,
+      tags: f!.tags,
+      rating: f!.rating,
+      recommended: f!.recommended,
     }
   } else {
     const { data, error } = await supabase
@@ -128,10 +134,32 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
               <WishlistButton slug={fabric.slug || fabric.id} />
               <FavoriteButton slug={fabric.slug || fabric.id} />
             </div>
+            {fabric.rating && (
+              <div className="flex items-center pt-1 text-yellow-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${i < (fabric.rating || 0) ? 'fill-current' : 'text-gray-300'}`}
+                  />
+                ))}
+              </div>
+            )}
             {fabric.price_min && fabric.price_max && (
               <p className="text-lg text-gray-700">
                 ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
               </p>
+            )}
+            {fabric.tags && (
+              <div className="flex flex-wrap gap-2 text-sm">
+                {fabric.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2 py-1 bg-gray-100 rounded border text-gray-600"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             )}
             {fabric.size && (
               <p className="text-gray-600">ขนาด: {fabric.size}</p>

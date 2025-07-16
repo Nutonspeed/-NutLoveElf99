@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
+import { Star } from "lucide-react"
 
 interface Fabric {
   id: string
@@ -15,6 +16,8 @@ interface Fabric {
   sku?: string | null
   image_url?: string | null
   image_urls?: string[] | null
+  rating?: number
+  recommended?: boolean
 }
 
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
@@ -37,6 +40,11 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
               key={slug}
               className="border rounded-lg overflow-hidden bg-white hover:shadow transition relative"
             >
+              {fabric.recommended && (
+                <span className="absolute top-2 right-2 bg-yellow-400 text-white text-xs px-2 py-1 rounded">
+                  ⭐ แนะนำ
+                </span>
+              )}
               {coViewed && (
                 <span className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded">
                   ดูด้วยกันบ่อย
@@ -58,8 +66,18 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                     className="object-cover"
                   />
                 </div>
-                <div className="p-2 text-center">
+                <div className="p-2 text-center space-y-1">
                   <p className="font-medium line-clamp-2">{fabric.name}</p>
+                  {fabric.rating && (
+                    <div className="flex items-center justify-center text-yellow-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${i < (fabric.rating || 0) ? 'fill-current' : 'text-gray-300'}`}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               </Link>
             </div>
