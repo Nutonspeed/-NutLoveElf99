@@ -18,6 +18,8 @@ import type { OrderStatus, ShippingStatus, PackingStatus } from "@/types/order"
 import { shippingStatusOptions, packingStatusOptions } from "@/types/order"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/inputs/input"
+import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
 import { getBillLink } from "@/lib/mock-quick-bills"
 import { getPayment, verifyPayment } from "@/lib/mock/payment"
@@ -49,6 +51,9 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [payment, setPayment] = useState(() => getPayment(id))
   const [chatSent, setChatSent] = useState<boolean>(mockChatStatus[id] || false)
   const [showSendModal, setShowSendModal] = useState(false)
+  const [itemEdits, setItemEdits] = useState(
+    order.items.map((i) => ({ ...i, note: i.note || "" }))
+  )
 
   useEffect(() => {
     if (!order) {
@@ -117,6 +122,30 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
       })
     }
     toast.success("เพิ่มสินค้าลงตะกร้าแล้ว")
+  }
+
+  const handleItemChange = (
+    idx: number,
+    updates: Partial<(typeof itemEdits)[number]>,
+  ) => {
+    setItemEdits((eds) => {
+      const copy = [...eds]
+      copy[idx] = { ...copy[idx], ...updates }
+      return copy
+    })
+  }
+
+  const handleSaveItem = (idx: number) => {
+    try {
+      mockOrders[orderIndex].items[idx] = { ...itemEdits[idx] }
+      mockOrders[orderIndex].total = mockOrders[orderIndex].items.reduce(
+        (sum, it) => sum + it.price * it.quantity,
+        0,
+      )
+      toast.success("บันทึกแล้ว")
+    } catch (err) {
+      toast.error("ไม่สามารถแก้ไขได้ในตอนนี้")
+    }
   }
 
   return (
@@ -250,17 +279,55 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {order.items.map((item, idx) => (
-                <div key={idx} className="flex justify-between items-center border-b pb-2 last:border-b-0">
-                  <div>
-                    <p className="font-medium">{item.productName}</p>
-                    <p className="text-sm text-gray-600">
-                      {item.size && `ขนาด: ${item.size}`} {item.color && `| สี: ${item.color}`}
-                    </p>
+              {itemEdits.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="space-y-2 border-b pb-2 last:border-b-0"
+                >
+                  <Input
+                    value={item.productName}
+                    onChange={(e) =>
+                      handleItemChange(idx, { productName: e.target.value })
+                    }
+                  />
+                  <div className="flex items-center space-x-2">
+                    <Input
+                      type="number"
+                      className="w-20"
+                      value={item.quantity}
+                      onChange={(e) =>
+                        handleItemChange(idx, {
+                          quantity: Number.parseInt(e.target.value) || 1,
+                        })
+                      }
+                    />
+                    <Input
+                      type="number"
+                      className="w-24"
+                      value={item.price}
+                      onChange={(e) =>
+                        handleItemChange(idx, {
+                          price: Number.parseFloat(e.target.value) || 0,
+                        })
+                      }
+                    />
                   </div>
+                  <Textarea
+                    rows={2}
+                    value={item.note || ""}
+                    onChange={(e) =>
+                      handleItemChange(idx, { note: e.target.value })
+                    }
+                    placeholder="หมายเหตุ"
+                  />
                   <div className="text-right">
-                    <p>จำนวน: {item.quantity}</p>
-                    <p className="font-semibold">฿{(item.price * item.quantity).toLocaleString()}</p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleSaveItem(idx)}
+                    >
+                      บันทึก
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -268,7 +335,13 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             <Separator className="my-4" />
             <div className="flex justify-between font-bold">
               <span>ยอดรวมทั้งสิ้น:</span>
-              <span>฿{order.total.toLocaleString()}</span>
+              <span>
+                ฿{
+                  itemEdits
+                    .reduce((s, it) => s + it.price * it.quantity, 0)
+                    .toLocaleString()
+                }
+              </span>
             </div>
           </CardContent>
         </Card>
