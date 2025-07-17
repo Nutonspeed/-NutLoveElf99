@@ -12,6 +12,8 @@ import { AdminCollectionsProvider } from "@/contexts/admin-collections-context"
 import { AdminToast } from "@/components/admin/AdminToast"
 import QuickActionBar from "@/components/admin/QuickActionBar"
 import ErrorBoundary from "@/components/ErrorBoundary"
+import { ThemeProvider } from "@/contexts/theme-context"
+import ThemeWrapper from "@/components/ThemeWrapper"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin, conflict } = useAdminGuard()
@@ -42,27 +44,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <ErrorBoundary>
-      <AdminCollectionsProvider>
-        <AdminProductsProvider>
-          <div className="flex min-h-screen">
-            <Sidebar className="hidden md:flex" />
-            {isMobile && (
-              <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-                <SheetContent side="left" className="p-0 w-60">
-                  <Sidebar />
-                </SheetContent>
-              </Sheet>
-            )}
-            <div className="flex flex-1 flex-col">
-              <Topbar onMenuClick={() => setSidebarOpen(true)} />
-              <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
-              <AdminToast />
-              <QuickActionBar />
-            </div>
-          </div>
-        </AdminProductsProvider>
-      </AdminCollectionsProvider>
-    </ErrorBoundary>
+    <ThemeProvider>
+      <ThemeWrapper>
+        <ErrorBoundary>
+          <AdminCollectionsProvider>
+            <AdminProductsProvider>
+              <div className="flex min-h-screen">
+                <Sidebar className="hidden md:flex" />
+                {isMobile && (
+                  <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
+                    <SheetContent side="left" className="p-0 w-60">
+                      <Sidebar />
+                    </SheetContent>
+                  </Sheet>
+                )}
+                <div className="flex flex-1 flex-col">
+                  <Topbar onMenuClick={() => setSidebarOpen(true)} />
+                  <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
+                  <AdminToast />
+                  <QuickActionBar />
+                </div>
+              </div>
+            </AdminProductsProvider>
+          </AdminCollectionsProvider>
+        </ErrorBoundary>
+      </ThemeWrapper>
+    </ThemeProvider>
   )
 }

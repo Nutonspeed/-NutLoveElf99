@@ -12,6 +12,8 @@ import { FavoritesProvider } from "@/contexts/favorites-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 import { validateMockData } from "@/lib/mock-validator"
 import RedirectMobileHome from "@/components/RedirectMobileHome"
+import { ThemeProvider } from "@/contexts/theme-context"
+import ThemeWrapper from "@/components/ThemeWrapper"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,23 +34,27 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                <FavoritesProvider>
-                  <AdminProductGroupsProvider>
-                    <ReviewImagesProvider>
-                      <RedirectMobileHome />
-                      {children}
-                      <Toaster />
-                    </ReviewImagesProvider>
-                  </AdminProductGroupsProvider>
-                </FavoritesProvider>
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <ThemeWrapper>
+            <AuthProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <CompareProvider>
+                    <FavoritesProvider>
+                      <AdminProductGroupsProvider>
+                        <ReviewImagesProvider>
+                          <RedirectMobileHome />
+                          {children}
+                          <Toaster />
+                        </ReviewImagesProvider>
+                      </AdminProductGroupsProvider>
+                    </FavoritesProvider>
+                  </CompareProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </AuthProvider>
+          </ThemeWrapper>
+        </ThemeProvider>
       </body>
     </html>
   )
