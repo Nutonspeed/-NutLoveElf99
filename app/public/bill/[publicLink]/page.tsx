@@ -131,6 +131,14 @@ export default function PublicBillPage({ params }: PublicBillPageProps) {
             <BillPreview order={mappedOrder} />
           </CardContent>
         </Card>
+        <p className="text-center mt-4">
+          <Link
+            href={`/bill/${mappedOrder.id}`}
+            className="text-primary underline"
+          >
+            เปิดบิลแบบเต็ม
+          </Link>
+        </p>
       </div>
     </div>
   )

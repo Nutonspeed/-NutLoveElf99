@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
@@ -17,6 +17,10 @@ import ErrorBoundary from "@/components/ErrorBoundary"
 import EmptyState from "@/components/EmptyState"
 import { Badge } from "@/components/ui/badge"
 import { getMockNow } from "@/lib/mock-date"
+import { Navbar } from "@/components/navbar"
+import { Footer } from "@/components/footer"
+import QRCode from "react-qr-code"
+import { getChatBill, loadChatBills } from "@/lib/mock-chat-bills"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -29,6 +33,62 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [chatBill, setChatBill] = useState(() => getChatBill(id))
+  const simpleOrder = mockOrders.find((o) => o.id === id)
+
+  useEffect(() => {
+    loadChatBills()
+    setChatBill(getChatBill(id))
+  }, [id])
+
+  if (!bill && !quickBill && !simpleBill && chatBill) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <Navbar />
+        <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
+          <h1 className="text-2xl font-bold text-center">
+            บิลสำหรับคุณ {chatBill.fbName} จากแชทเพจ
+          </h1>
+          <div className="border rounded-lg p-4 space-y-2 max-w-xl mx-auto">
+            {chatBill.items.map((it) => (
+              <div key={it.productId} className="flex justify-between">
+                <span>{it.name}</span>
+                <span>฿{it.price.toLocaleString()}</span>
+              </div>
+            ))}
+            <div className="flex justify-between border-t pt-2 font-semibold">
+              <span>ส่วนลด</span>
+              <span>-฿{chatBill.discount.toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between font-bold">
+              <span>ยอดรวม</span>
+              <span>฿{chatBill.total.toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (!bill && !quickBill && !simpleBill && simpleOrder) {
+    const billUrl = `https://elfcover.vercel.app/bill/${simpleOrder.id}`
+    return (
+      <div className="p-4 space-y-4">
+        <h1 className="text-xl font-bold">บิลคำสั่งซื้อ #{simpleOrder.id}</h1>
+        <p>
+          ยอดรวม: <strong>{simpleOrder.total} บาท</strong>
+        </p>
+        <QRCode value={billUrl} />
+        <p className="text-sm text-gray-400">
+          ลูกค้าสามารถสแกน QR หรือกดลิงก์ด้านล่าง
+        </p>
+        <a href={billUrl} className="underline text-blue-600">
+          {billUrl}
+        </a>
+      </div>
+    )
+  }
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
