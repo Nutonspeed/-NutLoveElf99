@@ -2,6 +2,7 @@
 import EmotionBanner from "@/components/EmotionBanner"
 import WalkthroughModal from "@/components/WalkthroughModal"
 import FallbackCenter from "@/components/FallbackCenter"
+import SellAssistButton from "@/components/SellAssistButton"
 
 let MenuGrid: React.ComponentType | null = null
 try {
@@ -18,6 +19,7 @@ export default function MobileHomePage() {
       <EmotionBanner />
       {!mockUser.hasSeenIntro && <WalkthroughModal />}
       {MenuGrid ? <MenuGrid /> : <FallbackCenter title="โหลดเมนูไม่สำเร็จ ลองรีเฟรช" />}
+      <SellAssistButton />
     </div>
   )
 }
