@@ -63,7 +63,7 @@ export default function NewOrderPage() {
         existing.push(order)
         localStorage.setItem("orders", JSON.stringify(existing))
       }
-      router.push(`/order/${order.id}`)
+      router.push(`/orders/${order.id}`)
     } catch (err) {
       console.error(err)
     }
