@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Plus, ClipboardList, MessageCircle, Settings } from "lucide-react"
+import { Plus, ClipboardList, MessageCircle, Settings, Megaphone, BarChart3 } from "lucide-react"
 
 export default function QuickActionBar() {
   return (
@@ -18,6 +18,14 @@ export default function QuickActionBar() {
         <MessageCircle className="h-5 w-5" />
         <span>แชท</span>
       </Link>
+        <Link href="/admin/broadcast" className="flex flex-col items-center text-xs">
+          <Megaphone className="h-5 w-5" />
+          <span>บรอดแคสต์</span>
+        </Link>
+        <Link href="/admin/analytics" className="flex flex-col items-center text-xs">
+          <BarChart3 className="h-5 w-5" />
+          <span>สถิติ</span>
+        </Link>
       <Link href="/admin/settings" className="flex flex-col items-center text-xs">
         <Settings className="h-5 w-5" />
         <span>ตั้งค่า</span>

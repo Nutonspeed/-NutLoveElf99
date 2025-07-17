@@ -161,7 +161,7 @@ export default function AdminDashboard() {
               <Link href="/admin/bill/create">เปิดบิล</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/collections">คอลเลกชัน</Link>
+              <Link href="/admin/collections">คอลเลกชัน</Link>
             </Button>
             <Button asChild className="w-full">
               <Link href="/admin/promo">โปรโมชัน</Link>
@@ -177,6 +177,42 @@ export default function AdminDashboard() {
             </Button>
             <Button asChild className="w-full">
               <Link href="/admin/feature-map">Feature Map</Link>
+            </Button>
+              <Button asChild className="w-full">
+                <Link href="/admin/analytics">Analytics</Link>
+              </Button>
+              <Button asChild className="w-full">
+                <Link href="/admin/broadcast">Broadcast</Link>
+              </Button>
+              <Button asChild className="w-full">
+                <Link href="/admin/claims">เคลม</Link>
+              </Button>
+              <Button asChild className="w-full">
+                <Link href="/admin/media">มีเดีย</Link>
+              </Button>
+              <Button asChild className="w-full">
+              <Link href="/admin/supply-tracker">Supply</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/unpaid">ค้างจ่าย</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/faq">FAQ</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/feedback">Feedback</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/campaign-insight">Campaign Insight</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/campaigns/summary">สรุปแคมเปญ</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/bills/fast">Fast Bills</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/users">ผู้ใช้</Link>
             </Button>
           </div>
         </div>
