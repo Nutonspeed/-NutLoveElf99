@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, type ReactNode } from "react"
+import { useRouter } from "next/navigation"
 import { mockUsers } from "@/lib/mock-users"
 
 import type { Role } from "@/lib/mock-roles"
@@ -31,7 +32,12 @@ interface AuthState {
 const AuthContext = createContext<AuthState | null>(null)
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null)
+  const router = useRouter()
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window === "undefined") return null
+    const stored = localStorage.getItem("auth_user")
+    return stored ? (JSON.parse(stored) as User) : null
+  })
   const [guestId] = useState(() => `guest-${crypto.randomUUID()}`)
   // Since authentication is mocked, the loading state simply starts as false.
   const [isLoading] = useState(false)
@@ -41,6 +47,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const foundUser = mockUsers.find((u) => u.email === email)
     if (foundUser && password === "password") {
       setUser(foundUser)
+      if (typeof window !== "undefined") {
+        localStorage.setItem("auth_user", JSON.stringify(foundUser))
+      }
       if (typeof document !== 'undefined') {
         document.cookie = 'elf_admin_session=1; path=/'
       }
@@ -55,6 +64,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         'elf_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     }
     setUser(null)
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_user')
+    }
+    router.push('/')
   }
 
   return (

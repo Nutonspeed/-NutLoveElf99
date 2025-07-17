@@ -5,10 +5,12 @@ import { Menu, Search } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/modals/sheet"
 import { Input } from "@/components/ui/inputs/input"
 import { Button } from "@/components/ui/buttons/button"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const { isAuthenticated, user, logout } = useAuth()
   const navigation = [
     { name: "หน้าแรก", href: "/" },
     { name: "สินค้า", href: "/products" },
@@ -45,6 +47,16 @@ export default function MobileNav() {
           />
         </div>
       </form>
+      {isAuthenticated ? (
+        <div className="flex items-center space-x-2">
+          {user?.role === "admin" && <span className="text-sm">{user.name}</span>}
+          <Button variant="ghost" onClick={logout} className="text-sm">ออกจากระบบ</Button>
+        </div>
+      ) : (
+        <Link href="/login">
+          <Button variant="outline" className="text-sm">เข้าสู่ระบบ</Button>
+        </Link>
+      )}
     </div>
   )
 }
