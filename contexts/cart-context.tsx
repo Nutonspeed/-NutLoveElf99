@@ -1,7 +1,13 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useReducer, type ReactNode } from "react"
+import {
+  createContext,
+  useContext,
+  useReducer,
+  type ReactNode,
+  useEffect,
+} from "react"
 
 interface CartItem {
   id: string
@@ -88,11 +94,27 @@ export const cartReducer = (
 }
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
-    items: [],
-    total: 0,
-    itemCount: 0,
-  })
+  const [state, dispatch] = useReducer(
+    cartReducer,
+    undefined,
+    () => {
+      if (typeof window === 'undefined') {
+        return { items: [], total: 0, itemCount: 0 }
+      }
+      try {
+        const stored = window.localStorage.getItem('cart')
+        if (stored) return JSON.parse(stored) as CartState
+      } catch {}
+      return { items: [], total: 0, itemCount: 0 }
+    },
+  )
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      window.localStorage.setItem('cart', JSON.stringify(state))
+    } catch {}
+  }, [state])
 
   return <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>
 }
