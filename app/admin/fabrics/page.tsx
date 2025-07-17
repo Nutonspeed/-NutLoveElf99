@@ -6,6 +6,10 @@ import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
+import { getFabrics as fetchMockFabrics } from "@/lib/mock-fabrics"
+import EmptyState from "@/components/EmptyState"
+import { Skeleton } from "@/components/ui/skeleton"
+import { AvailabilityTag } from "@/components/AvailabilityTag"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/modals/dialog"
@@ -31,6 +35,7 @@ interface Fabric {
   price_min: number
   price_max: number
   collection_name?: string | null
+  availability?: "available" | "out" | "discontinued"
 }
 
 export default function AdminFabricsPage() {
@@ -38,6 +43,7 @@ export default function AdminFabricsPage() {
   const router = useRouter()
   const { toast } = useToast()
   const [fabrics, setFabrics] = useState<Fabric[]>([])
+  const [loading, setLoading] = useState(true)
   const [imgError, setImgError] = useState<Record<string, boolean>>({})
   const [searchTerm, setSearchTerm] = useState("")
   const [collectionFilter, setCollectionFilter] = useState("all")
@@ -96,16 +102,10 @@ export default function AdminFabricsPage() {
 
   useEffect(() => {
     const fetchFabrics = async () => {
-      if (!supabase) return
-      const { data: fabricsData, error } = await supabase
-        .from("fabrics")
-        .select("id, name, sku, collection_id, image_url, price_min, price_max")
-      if (error || !fabricsData) {
-        console.error("Failed to fetch fabrics", error)
-        return
-      }
+      setLoading(true)
+      const data = await fetchMockFabrics()
       const { data: collectionsData } = await supabase
-        .from("collections")
+        ?.from("collections")
         .select("id, name")
       const collectionMap: Record<string, string> = {}
       collectionsData?.forEach((c) => {
@@ -114,11 +114,12 @@ export default function AdminFabricsPage() {
       if (collectionsData) {
         setCollectionOptions(collectionsData)
       }
-      const withCollectionName = fabricsData.map((f) => ({
+      const withCollectionName = data.map((f: Fabric) => ({
         ...f,
         collection_name: collectionMap[f.collection_id] || null,
       }))
       setFabrics(withCollectionName)
+      setLoading(false)
     }
     fetchFabrics()
   }, [])
@@ -167,7 +168,7 @@ export default function AdminFabricsPage() {
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="ค้นหา..."
+                    placeholder="ค้นหาลายผ้า..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-8 w-60"
@@ -190,7 +191,17 @@ export default function AdminFabricsPage() {
             </div>
           </CardHeader>
           <CardContent className="overflow-x-auto">
-            {filteredFabrics.length > 0 ? (
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="space-y-2 rounded-md border p-4">
+                    <Skeleton className="h-20 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                ))}
+              </div>
+            ) : filteredFabrics.length > 0 ? (
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -198,6 +209,7 @@ export default function AdminFabricsPage() {
                     <TableHead>ชื่อผ้า</TableHead>
                     <TableHead>ราคา</TableHead>
                     <TableHead>คอลเลกชัน</TableHead>
+                    <TableHead>สถานะ</TableHead>
                     <TableHead className="text-right">การจัดการ</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -227,6 +239,11 @@ export default function AdminFabricsPage() {
                         ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
                       </TableCell>
                       <TableCell>{fabric.collection_name || "-"}</TableCell>
+                      <TableCell>
+                        {fabric.availability && (
+                          <AvailabilityTag status={fabric.availability} />
+                        )}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <Button
@@ -253,15 +270,20 @@ export default function AdminFabricsPage() {
                           </Button>
                         </div>
                       </TableCell>
-                    </TableRow>
-                  ))}
+                  </TableRow>
+                ))}
                 </TableBody>
               </Table>
             ) : (
-              <div className="text-center py-8">
-                {fabrics.length === 0
-                  ? "ยังไม่มีผ้าในระบบ"
-                  : "ไม่พบผ้าที่ตรงกับเงื่อนไขการค้นหา"}
+              <div className="py-8">
+                {fabrics.length === 0 ? (
+                  <EmptyState
+                    icon={<Image src="/placeholder.svg" alt="empty" width={120} height={120} />}
+                    title="ยังไม่มีลายผ้าในระบบ"
+                  />
+                ) : (
+                  <EmptyState title="ไม่พบผ้าที่ตรงกับเงื่อนไขการค้นหา" />
+                )}
               </div>
             )}
           </CardContent>
