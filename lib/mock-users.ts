@@ -7,6 +7,13 @@ export const mockUsers = [
     avatar: "/placeholder.svg?height=40&width=40",
   },
   {
+    id: "0",
+    name: "Super Admin",
+    email: "root@sofacover.com",
+    role: "superadmin" as const,
+    avatar: "/placeholder.svg?height=40&width=40",
+  },
+  {
     id: "2",
     name: "John Doe",
     email: "john@example.com",

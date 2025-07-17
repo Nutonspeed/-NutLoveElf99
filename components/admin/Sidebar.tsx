@@ -38,7 +38,7 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { canAccess } from "@/lib/mock-roles"
 
-const navItems = [
+const menuItems = [
   { href: "/admin/dashboard", label: "แดชบอร์ด", icon: Home, feature: "dashboard" },
   { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart, feature: "inventory" },
   { href: "/admin/products", label: "สินค้า", icon: Package, feature: "inventory" },
@@ -48,8 +48,6 @@ const navItems = [
   { href: "/admin/quotes", label: "ใบเสนอราคา", icon: FileText, feature: "inventory" },
   { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell, feature: "inventory" },
   { href: "/admin/chat", label: "แชท", icon: MessageCircle, feature: "chat" },
-  { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText, feature: "logs" },
-  { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List, feature: "logs" },
   { href: "/admin/analytics", label: "สถิติ", icon: BarChart3, feature: "analytics" },
   { href: "/admin/broadcast", label: "บรอดแคสต์", icon: Megaphone, feature: "broadcast" },
   { href: "/admin/claims", label: "เคลม", icon: ShieldCheck, feature: "claims" },
@@ -64,6 +62,11 @@ const navItems = [
   { href: "/admin/campaigns/summary", label: "สรุปแคมเปญ", icon: Flag, feature: "campaigns" },
   { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "fastBills" },
   { href: "/admin/users", label: "ผู้ใช้", icon: UserCog, feature: "users" },
+]
+
+const toolItems = [
+  { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText, feature: "logs" },
+  { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List, feature: "logs" },
   { href: "/admin/logs", label: "บันทึก", icon: FileText, feature: "logs" },
 ]
 
@@ -83,7 +86,8 @@ export default function Sidebar({ className = "" }: { className?: string }) {
         แอดมิน
       </div>
       <nav className="flex-1 space-y-1 px-2 py-4">
-        {navItems.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
+        <p className="px-3 mb-1 text-xs font-semibold text-gray-500">เมนูแอดมิน</p>
+        {menuItems.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`)
           const badge = href === "/admin/notifications" ? count : 0
           return (
@@ -106,6 +110,28 @@ export default function Sidebar({ className = "" }: { className?: string }) {
             </Link>
           )
         })}
+        {user?.role === 'superadmin' && (
+          <>
+            <p className="px-3 mt-4 mb-1 text-xs font-semibold text-gray-500">เครื่องมือผู้ดูแล</p>
+            {toolItems.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
+              const active = pathname === href || pathname.startsWith(`${href}/`)
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  className={clsx(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium",
+                    "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    active && "bg-sidebar-primary text-sidebar-primary-foreground",
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="flex-1">{label}</span>
+                </Link>
+              )
+            })}
+          </>
+        )}
       </nav>
     </aside>
   )
