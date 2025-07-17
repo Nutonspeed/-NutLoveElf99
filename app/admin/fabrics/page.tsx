@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ArrowLeft, Edit, Plus, Trash2, Search } from "lucide-react"
+import { ArrowLeft, Edit, Plus, Trash2, Search, Upload } from "lucide-react"
 import { Input } from "@/components/ui/inputs/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/hooks/use-toast"
@@ -151,12 +151,20 @@ export default function AdminFabricsPage() {
               <p className="text-gray-600">เพิ่ม แก้ไข และลบผ้าในระบบ</p>
             </div>
           </div>
-          <Link href="/admin/fabrics/create">
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              เพิ่มผ้าใหม่
-            </Button>
-          </Link>
+          <div className="flex space-x-2">
+            <Link href="/admin/fabrics/upload">
+              <Button variant="outline">
+                <Upload className="mr-2 h-4 w-4" />
+                อัพโหลดผ้า
+              </Button>
+            </Link>
+            <Link href="/admin/fabrics/create">
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                เพิ่มผ้าใหม่
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <Card>
