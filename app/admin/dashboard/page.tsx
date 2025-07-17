@@ -66,13 +66,13 @@ export default function AdminDashboard() {
           คำสั่งซื้อ
         </Link>
         <Link href="/admin/ai-tools" className="block p-2 hover:underline">
-          AI Tools
+          เครื่องมือ AI
         </Link>
         <Link href="/chat" className="block p-2 hover:underline">
           แชท
         </Link>
         <Link href="/admin/feature-map" className="block p-2 hover:underline">
-          Feature Map
+          แผนที่ฟีเจอร์
         </Link>
         <Link href="/admin/menu" className="block p-2 hover:underline">
           เมนู
@@ -143,7 +143,7 @@ export default function AdminDashboard() {
         <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>AI Insights</CardTitle>
+              <CardTitle>ข้อมูลเชิงลึก AI</CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-1 text-sm">
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
               <Link href="/admin/promo">โปรโมชัน</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/admin/ai-tools">AI Tools</Link>
+              <Link href="/admin/ai-tools">เครื่องมือ AI</Link>
             </Button>
             <Button asChild className="w-full">
               <Link href="/admin/menu">เมนู</Link>
@@ -176,13 +176,13 @@ export default function AdminDashboard() {
               <Link href="/chat">แชท</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/admin/feature-map">Feature Map</Link>
+              <Link href="/admin/feature-map">แผนที่ฟีเจอร์</Link>
             </Button>
               <Button asChild className="w-full">
-                <Link href="/admin/analytics">Analytics</Link>
+                <Link href="/admin/analytics">สถิติ</Link>
               </Button>
               <Button asChild className="w-full">
-                <Link href="/admin/broadcast">Broadcast</Link>
+                <Link href="/admin/broadcast">บรอดแคสต์</Link>
               </Button>
               <Button asChild className="w-full">
                 <Link href="/admin/claims">เคลม</Link>
@@ -191,25 +191,25 @@ export default function AdminDashboard() {
                 <Link href="/admin/media">มีเดีย</Link>
               </Button>
               <Button asChild className="w-full">
-              <Link href="/admin/supply-tracker">Supply</Link>
-            </Button>
+                <Link href="/admin/supply-tracker">ติดตามสต็อก</Link>
+              </Button>
             <Button asChild className="w-full">
               <Link href="/admin/unpaid">ค้างจ่าย</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/admin/faq">FAQ</Link>
+              <Link href="/admin/faq">คำถามพบบ่อย</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/admin/feedback">Feedback</Link>
+              <Link href="/admin/feedback">ความคิดเห็น</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/admin/campaign-insight">Campaign Insight</Link>
+              <Link href="/admin/campaign-insight">ข้อมูลแคมเปญ</Link>
             </Button>
             <Button asChild className="w-full">
               <Link href="/admin/campaigns/summary">สรุปแคมเปญ</Link>
             </Button>
             <Button asChild className="w-full">
-              <Link href="/admin/bills/fast">Fast Bills</Link>
+              <Link href="/admin/bills/fast">เปิดบิลด่วน</Link>
             </Button>
             <Button asChild className="w-full">
               <Link href="/admin/users">ผู้ใช้</Link>
