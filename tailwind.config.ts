@@ -53,17 +53,25 @@ const config: Config = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		},
+                        sidebar: {
+                                DEFAULT: 'hsl(var(--sidebar-background))',
+                                foreground: 'hsl(var(--sidebar-foreground))',
+                                primary: 'hsl(var(--sidebar-primary))',
+                                'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+                                accent: 'hsl(var(--sidebar-accent))',
+                                'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+                                border: 'hsl(var(--sidebar-border))',
+                                ring: 'hsl(var(--sidebar-ring))'
+                        },
+                        'dashboard-2025': {
+                                DEFAULT: 'hsl(var(--dashboard-2025-background))',
+                                foreground: 'hsl(var(--dashboard-2025-foreground))',
+                                primary: 'hsl(var(--dashboard-2025-primary))',
+                                'primary-foreground': 'hsl(var(--dashboard-2025-primary-foreground))',
+                                accent: 'hsl(var(--dashboard-2025-accent))',
+                                'accent-foreground': 'hsl(var(--dashboard-2025-accent-foreground))'
+                        }
+                },
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
