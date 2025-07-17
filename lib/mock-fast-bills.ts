@@ -1,3 +1,5 @@
+export type FastBillStatus = "รอชำระ" | "สำเร็จ"
+
 export interface FastBill {
   id: string
   customerName: string
@@ -7,16 +9,20 @@ export interface FastBill {
   deposit: number
   days: number
   depositPaid: boolean
+  status: FastBillStatus
   createdAt: string
 }
 
 export const fastBills: FastBill[] = []
 
-export function addFastBill(data: Omit<FastBill, 'id' | 'depositPaid' | 'createdAt'>): FastBill {
+export function addFastBill(
+  data: Omit<FastBill, 'id' | 'depositPaid' | 'createdAt' | 'status'>,
+): FastBill {
   const bill: FastBill = {
     ...data,
     id: `mock-${Math.random().toString(36).slice(2, 8)}`,
     depositPaid: false,
+    status: "รอชำระ",
     createdAt: new Date().toISOString(),
   }
   fastBills.unshift(bill)
@@ -30,4 +36,12 @@ export function getFastBill(id: string): FastBill | undefined {
 export function markDepositPaid(id: string) {
   const b = getFastBill(id)
   if (b) b.depositPaid = true
+}
+
+export function markBillSuccess(id: string) {
+  const b = getFastBill(id)
+  if (b) {
+    b.depositPaid = true
+    b.status = "สำเร็จ"
+  }
 }
