@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, Users, Award, Heart, Shield, Truck } from "lucide-react"
 import Image from "next/image"
+import AboutClient from "@/components/AboutClient"
 
 export default function AboutPage() {
   const stats = [
@@ -55,6 +56,9 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen">
       <Navbar />
+      <div className="p-4">
+        <AboutClient />
+      </div>
 
       {/* Hero Section */}
       <section className="relative py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
