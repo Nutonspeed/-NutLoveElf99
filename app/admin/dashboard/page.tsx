@@ -58,7 +58,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="grid min-h-screen md:grid-cols-[220px_1fr]">
-      <aside className="border-r bg-gray-50 p-4 space-y-2">
+      <aside className="hidden md:block w-56 border-r bg-gray-50 p-4 space-y-2">
         <Link href="/admin/fabrics" className="block p-2 hover:underline">
           ผ้า
         </Link>
@@ -81,9 +81,6 @@ export default function AdminDashboard() {
       <div className="p-4 space-y-6">
         <header className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">แดชบอร์ดแอดมินหลัก</h1>
-          <Button asChild>
-            <Link href="/admin/dashboard-mobile">เปิดหน้าแอดมินมือถือ</Link>
-          </Button>
         </header>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
