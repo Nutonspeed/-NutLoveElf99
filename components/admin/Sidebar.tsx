@@ -27,6 +27,8 @@ import {
   Flag,
   Bolt,
   UserCog,
+  CircleAlert,
+  FileChartLine,
 } from "lucide-react"
 import clsx from "clsx"
 import { mockNotifications } from "@/lib/mock-notifications"
@@ -51,6 +53,8 @@ const navItems = [
   { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText, feature: "logs" },
   { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List, feature: "logs" },
   { href: "/admin/analytics", label: "สถิติ", icon: BarChart3, feature: "analytics" },
+  { href: "/admin/alerts", label: "Alerts", icon: CircleAlert, feature: "alerts" },
+  { href: "/admin/reports", label: "Reports", icon: FileChartLine, feature: "reports" },
   { href: "/admin/broadcast", label: "บรอดแคสต์", icon: Megaphone, feature: "broadcast" },
   { href: "/admin/claims", label: "เคลม", icon: ShieldCheck, feature: "claims" },
   { href: "/admin/collections", label: "คอลเลกชัน", icon: Folder, feature: "collections" },

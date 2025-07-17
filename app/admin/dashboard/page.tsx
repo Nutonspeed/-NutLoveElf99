@@ -214,6 +214,12 @@ export default function AdminDashboard() {
             <Button asChild className="w-full">
               <Link href="/admin/users">ผู้ใช้</Link>
             </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/alerts">Alerts</Link>
+            </Button>
+            <Button asChild className="w-full">
+              <Link href="/admin/reports">Reports</Link>
+            </Button>
           </div>
         </div>
 
