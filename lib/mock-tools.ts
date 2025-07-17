@@ -1,5 +1,5 @@
 import { mockProducts } from './mock-products'
-import { mockBills } from './bills'
+import { mockBills } from './mock-bills'
 import { mockFabrics } from './mock-fabrics'
 import { downloadJSON } from './mock-export'
 

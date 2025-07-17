@@ -3,9 +3,22 @@ import { mockOrders } from "./mock-orders"
 import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
 import { addChatMessage } from "./mock-chat-messages"
-import { mockBills } from "./bills"
 import { generateMockId } from "./mock-uid"
-export { mockBills } from "./bills"
+
+export let mockBills: Bill[] = []
+export const mockBillLinks: Record<string, string> = {}
+
+export function getBillById(id: string): Bill | null {
+  return mockBills.find((b) => b.id === id) || null
+}
+
+export function getAllBills(): Bill[] {
+  return mockBills
+}
+
+export function getBillLink(id: string): string | undefined {
+  return mockBillLinks[id]
+}
 
 
 export function createBill(
