@@ -58,13 +58,13 @@ const navItems = [
   { href: "/admin/reviews", label: "รีวิว", icon: Star, feature: "reviews" },
   { href: "/admin/supply-tracker", label: "สต็อกภายใน", icon: Boxes, feature: "supply" },
   { href: "/admin/unpaid", label: "ค้างจ่าย", icon: Wallet, feature: "unpaid" },
-  { href: "/admin/faq", label: "FAQ", icon: HelpCircle, feature: "faq" },
-  { href: "/admin/feedback", label: "Feedback", icon: MailQuestion, feature: "feedback" },
-  { href: "/admin/campaign-insight", label: "Campaign Insight", icon: Target, feature: "campaigns" },
+  { href: "/admin/faq", label: "คำถามพบบ่อย", icon: HelpCircle, feature: "faq" },
+  { href: "/admin/feedback", label: "ความคิดเห็น", icon: MailQuestion, feature: "feedback" },
+  { href: "/admin/campaign-insight", label: "ข้อมูลแคมเปญ", icon: Target, feature: "campaigns" },
   { href: "/admin/campaigns/summary", label: "สรุปแคมเปญ", icon: Flag, feature: "campaigns" },
-  { href: "/admin/bills/fast", label: "Fast Bills", icon: Bolt, feature: "fastBills" },
+  { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "fastBills" },
   { href: "/admin/users", label: "ผู้ใช้", icon: UserCog, feature: "users" },
-  { href: "/admin/logs", label: "Log", icon: FileText, feature: "logs" },
+  { href: "/admin/logs", label: "บันทึก", icon: FileText, feature: "logs" },
 ]
 
 export default function Sidebar({ className = "" }: { className?: string }) {
@@ -80,7 +80,7 @@ export default function Sidebar({ className = "" }: { className?: string }) {
   return (
     <aside className={clsx("w-60 flex-col border-r bg-sidebar text-sidebar-foreground", className)}>
       <div className="h-16 flex items-center px-4 text-lg font-bold bg-sidebar-primary text-sidebar-primary-foreground">
-        Admin
+        แอดมิน
       </div>
       <nav className="flex-1 space-y-1 px-2 py-4">
         {navItems.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
