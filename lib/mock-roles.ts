@@ -1,6 +1,27 @@
-export type Role = 'admin' | 'staff' | 'limited' | 'customer'
+export type Role = 'superadmin' | 'admin' | 'staff' | 'limited' | 'customer'
 
 const roleAccess: Record<Role, string[]> = {
+  superadmin: [
+    'dev',
+    'logs',
+    'inventory',
+    'inventorySettings',
+    'claims',
+    'media',
+    'dashboard',
+    'chat',
+    'analytics',
+    'broadcast',
+    'collections',
+    'reviews',
+    'supply',
+    'unpaid',
+    'faq',
+    'feedback',
+    'campaigns',
+    'fastBills',
+    'users',
+  ],
   admin: [
     'dev',
     'logs',

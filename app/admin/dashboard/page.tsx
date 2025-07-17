@@ -8,6 +8,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { ShoppingCart, Wallet, Clock, MessageSquare } from "lucide-react"
 import { mockOrders } from "@/lib/mock-orders"
 import { conversations } from "@/lib/mock-conversations"
+import { useAuth } from "@/contexts/auth-context"
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts"
 
 interface OrderData {
   id: string
@@ -23,6 +25,7 @@ interface ChatData {
 }
 
 export default function AdminDashboard() {
+  const { user } = useAuth()
   const [orders, setOrders] = useState<OrderData[] | null>(null)
   const [chats, setChats] = useState<ChatData[] | null>(null)
   const [debug, setDebug] = useState(false)
@@ -66,172 +69,95 @@ export default function AdminDashboard() {
     </div>
   )
 
+  const quickActions = [
+    { href: '/admin/fabrics', label: 'ผ้า' },
+    { href: '/admin/bill/create', label: 'เปิดบิล' },
+    { href: '/admin/collections', label: 'คอลเลกชัน' },
+    { href: '/admin/promo', label: 'โปรโมชัน' },
+    { href: '/admin/ai-tools', label: 'เครื่องมือ AI' },
+    { href: '/admin/menu', label: 'เมนู' },
+    { href: '/chat', label: 'แชท' },
+    { href: '/admin/feature-map', label: 'แผนที่ฟีเจอร์' },
+  ]
+
+  const systemTools = [
+    { href: '/admin/analytics', label: 'สถิติ' },
+    { href: '/admin/broadcast', label: 'บรอดแคสต์' },
+    { href: '/admin/claims', label: 'เคลม' },
+    { href: '/admin/media', label: 'มีเดีย' },
+    { href: '/admin/supply-tracker', label: 'ติดตามสต็อก' },
+    { href: '/admin/unpaid', label: 'ค้างจ่าย' },
+    { href: '/admin/faq', label: 'คำถามพบบ่อย' },
+    { href: '/admin/feedback', label: 'ความคิดเห็น' },
+    { href: '/admin/campaign-insight', label: 'ข้อมูลแคมเปญ' },
+    { href: '/admin/campaigns/summary', label: 'สรุปแคมเปญ' },
+    { href: '/admin/bills/fast', label: 'เปิดบิลด่วน' },
+    { href: '/admin/users', label: 'ผู้ใช้' },
+  ]
+
   return (
-    <div className="grid min-h-screen md:grid-cols-[220px_1fr]">
-      <aside className="hidden md:block w-56 border-r bg-gray-50 p-4 space-y-2">
-        <Link href="/admin/fabrics" className="block p-2 hover:underline">
-          ผ้า
-        </Link>
-        <Link href="/admin/orders" className="block p-2 hover:underline">
-          คำสั่งซื้อ
-        </Link>
-        <Link href="/admin/ai-tools" className="block p-2 hover:underline">
-          เครื่องมือ AI
-        </Link>
-        <Link href="/chat" className="block p-2 hover:underline">
-          แชท
-        </Link>
-        <Link href="/admin/feature-map" className="block p-2 hover:underline">
-          แผนที่ฟีเจอร์
-        </Link>
-        <Link href="/admin/menu" className="block p-2 hover:underline">
-          เมนู
-        </Link>
-      </aside>
-      <div className="p-4 space-y-6">
-        <header className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">แดชบอร์ดแอดมินหลัก</h1>
-        </header>
+    <div className="p-4 space-y-6">
+      <header className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">แดชบอร์ดแอดมินหลัก</h1>
+      </header>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {!orders || !chats ? (
-            Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)
-          ) : (
-            <>
-              <SummaryCard title="ยอดสั่งซื้อวันนี้" value={todayOrders.length} icon={ShoppingCart} />
-              <SummaryCard title="ยอดขายรวม" value={`฿${totalSales.toLocaleString()}`} icon={Wallet} />
-              <SummaryCard title="บิลที่ยังไม่โอน" value={unpaid.length} icon={Clock} />
-              <SummaryCard title="แชทใหม่วันนี้" value={newChats.length} icon={MessageSquare} />
-            </>
-          )}
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>ออเดอร์ล่าสุด</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {!orders ? (
-              <p>กำลังโหลด...</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>ชื่อลูกค้า</TableHead>
-                    <TableHead>ยอด</TableHead>
-                    <TableHead>สถานะ</TableHead>
-                    <TableHead>แชท</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {recentOrders.map(o => (
-                    <TableRow key={o.id}>
-                      <TableCell>{o.customerName}</TableCell>
-                      <TableCell>฿{o.total.toLocaleString()}</TableCell>
-                      <TableCell>{o.status}</TableCell>
-                      <TableCell>
-                        <Link href={`/chat?order=${o.id}`} className="text-blue-600 underline">
-                          เปิด
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-            <div className="mt-2 text-right">
-              <Link href="/admin/orders" className="text-sm text-primary underline">
-                ดูทั้งหมด
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>ข้อมูลเชิงลึก AI</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-1 text-sm">
-                <li>Top Pattern: Floral</li>
-                <li>Best Product: Sofa Set A</li>
-                <li>Most Asked Fabric: Cotton</li>
-              </ul>
-            </CardContent>
-          </Card>
-          <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
-            <Button asChild className="w-full">
-              <Link href="/admin/fabrics">ผ้า</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/bill/create">เปิดบิล</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/collections">คอลเลกชัน</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/promo">โปรโมชัน</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/ai-tools">เครื่องมือ AI</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/menu">เมนู</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/chat">แชท</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/feature-map">แผนที่ฟีเจอร์</Link>
-            </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/analytics">สถิติ</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/broadcast">บรอดแคสต์</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/claims">เคลม</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/media">มีเดีย</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/supply-tracker">ติดตามสต็อก</Link>
-              </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/unpaid">ค้างจ่าย</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/faq">คำถามพบบ่อย</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/feedback">ความคิดเห็น</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/campaign-insight">ข้อมูลแคมเปญ</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/campaigns/summary">สรุปแคมเปญ</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/bills/fast">เปิดบิลด่วน</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/users">ผู้ใช้</Link>
-            </Button>
-          </div>
-        </div>
-
-        {debug && (
-          <div className="rounded border p-4 text-sm space-y-1">
-            <p className="font-semibold">Debug</p>
-            <p>AutoSell-02 = in progress</p>
-            <p>ยังไม่เชื่อม</p>
-          </div>
+      <h2 className="text-lg font-semibold">สถิติอย่างย่อ</h2>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {!orders || !chats ? (
+          Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)
+        ) : (
+          <>
+            <SummaryCard title="ยอดสั่งซื้อวันนี้" value={todayOrders.length} icon={ShoppingCart} />
+            <SummaryCard title="ยอดขายรวม" value={`฿${totalSales.toLocaleString()}`} icon={Wallet} />
+            <SummaryCard title="บิลที่ยังไม่โอน" value={unpaid.length} icon={Clock} />
+            <SummaryCard title="แชทใหม่วันนี้" value={newChats.length} icon={MessageSquare} />
+          </>
         )}
       </div>
+
+      <h2 className="text-lg font-semibold">กราฟข้อมูล</h2>
+      <Card>
+        <CardContent className="h-40">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={recentOrders.map(o => ({ name: o.customerName, value: o.total }))}>
+              <Line type="monotone" dataKey="value" stroke="#0ea5e9" />
+              <XAxis dataKey="name" hide />
+              <YAxis hide />
+              <Tooltip />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      <h2 className="text-lg font-semibold">การทำงานด่วน</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+        {quickActions.map(a => (
+          <Button asChild key={a.href} className="w-full">
+            <Link href={a.href}>{a.label}</Link>
+          </Button>
+        ))}
+      </div>
+
+      {user?.role === 'superadmin' && (
+        <>
+          <h2 className="text-lg font-semibold">เครื่องมือระบบ</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            {systemTools.map(t => (
+              <Button asChild key={t.href} className="w-full">
+                <Link href={t.href}>{t.label}</Link>
+              </Button>
+            ))}
+          </div>
+        </>
+      )}
+
+      {debug && (
+        <div className="rounded border p-4 text-sm space-y-1">
+          <p className="font-semibold">Debug</p>
+          <p>AutoSell-02 = in progress</p>
+          <p>ยังไม่เชื่อม</p>
+        </div>
+      )}
     </div>
   )
 }
