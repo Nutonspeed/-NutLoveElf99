@@ -300,7 +300,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 เพิ่มลงตะกร้า
               </Button>
-              <Link href={`/order/new?product=${product.slug}`} className="flex-1">
+              <Link href={`/orders/new?product=${product.slug}`} className="flex-1">
                 <Button className="w-full" size="lg">สั่งซื้อ</Button>
               </Link>
               <Button onClick={demoPurchase} className="flex-1" size="lg" variant="outline">
