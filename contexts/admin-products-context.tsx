@@ -1,10 +1,8 @@
 "use client"
 
 import { createContext, useContext, type ReactNode } from "react"
-import { useLocalStorage } from "@/hooks/use-local-storage"
-import { mockProducts } from "@/lib/mock-products"
 import type { Product } from "@/types/product"
-import { addAdminLog } from "@/lib/mock-admin-logs"
+import { useAdminStore } from "./admin-store"
 
 interface AdminProductsContextValue {
   products: Product[]
@@ -16,32 +14,15 @@ interface AdminProductsContextValue {
 const AdminProductsContext = createContext<AdminProductsContextValue | null>(null)
 
 export function AdminProductsProvider({ children }: { children: ReactNode }) {
-  const [products, setProducts] = useLocalStorage<Product[]>("admin-products", mockProducts)
-
-  const addProduct = (data: Omit<Product, "id">) => {
-    const newProduct: Product = {
-      id: Date.now().toString(),
-      status: "active",
-      ...data,
-    }
-    setProducts((prev) => [...prev, newProduct])
-    addAdminLog(`add product ${newProduct.id}`, 'mockAdminId')
-  }
-
-  const updateProduct = (id: string, data: Partial<Product>) => {
-    setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...data } : p)))
-    addAdminLog(`update product ${id}`, 'mockAdminId')
-  }
-
-  const deleteProduct = (id: string) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id))
-    addAdminLog(`delete product ${id}`, 'mockAdminId')
-  }
+  const store = useAdminStore((state) => ({
+    products: state.products,
+    addProduct: state.addProduct,
+    updateProduct: state.updateProduct,
+    deleteProduct: state.deleteProduct,
+  }))
 
   return (
-    <AdminProductsContext.Provider
-      value={{ products, addProduct, updateProduct, deleteProduct }}
-    >
+    <AdminProductsContext.Provider value={store}>
       {children}
     </AdminProductsContext.Provider>
   )
