@@ -16,7 +16,7 @@ export interface QuickBill {
   createdAt: string
 }
 
-import { mockBillLinks } from "./bills"
+import { mockBillLinks } from "./mock-bills"
 export const quickBills: QuickBill[] = []
 
 export function addQuickBill(bill: Omit<QuickBill, "status" | "createdAt">): QuickBill {
