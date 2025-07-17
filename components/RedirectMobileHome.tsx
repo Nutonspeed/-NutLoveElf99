@@ -3,10 +3,10 @@ import { useEffect } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-export default function RedirectMobileHome() {
+function Redirect() {
+  const router = useRouter()
   const isMobile = useIsMobile()
   const pathname = usePathname()
-  const router = useRouter()
 
   useEffect(() => {
     if (isMobile && pathname === "/") {
@@ -15,4 +15,12 @@ export default function RedirectMobileHome() {
   }, [isMobile, pathname, router])
 
   return null
+}
+
+export default function RedirectMobileHome() {
+  const pathname = usePathname()
+  if (pathname !== "/") {
+    return null
+  }
+  return <Redirect />
 }
