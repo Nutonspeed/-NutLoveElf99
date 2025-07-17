@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ShoppingCart, Wallet, Clock, MessageSquare } from "lucide-react"
+import { mockOrders } from "@/lib/mock-orders"
+import { conversations } from "@/lib/mock-conversations"
 
 interface OrderData {
   id: string
@@ -26,14 +28,22 @@ export default function AdminDashboard() {
   const [debug, setDebug] = useState(false)
 
   useEffect(() => {
-    fetch("/mock/orders.json")
-      .then(r => (r.ok ? r.json() : Promise.reject()))
-      .then(setOrders)
-      .catch(() => setOrders([]))
-    fetch("/mock/chat.json")
-      .then(r => (r.ok ? r.json() : Promise.reject()))
-      .then(setChats)
-      .catch(() => setChats([]))
+    setOrders(
+      mockOrders.map(o => ({
+        id: o.id,
+        customerName: o.customerName,
+        total: o.total,
+        status: o.status,
+        createdAt: o.createdAt,
+      })),
+    )
+    setChats(
+      conversations.map(c => ({
+        id: c.id,
+        createdAt: c.updatedAt,
+        text: c.lastMessage,
+      })),
+    )
     setDebug(window.location.search.includes("debug=true"))
   }, [])
 
