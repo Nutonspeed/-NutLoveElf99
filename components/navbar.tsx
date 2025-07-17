@@ -7,7 +7,6 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/buttons/button"
-import { Input } from "@/components/ui/inputs/input"
 import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
@@ -16,12 +15,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/modals/sheet"
 import {
   Search,
   ShoppingCart,
   User,
-  Menu,
   Heart,
   GitCompare,
   Ticket,
@@ -35,6 +32,9 @@ import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useDevelopmentNotice } from "@/hooks/use-development-notice"
 import { addChatActivity, loadChatActivity } from "@/lib/mock-chat-activity"
+import { DesktopMenu } from "@/components/navbar/DesktopMenu"
+import { MobileMenu } from "@/components/navbar/MobileMenu"
+import { SearchBar } from "@/components/navbar/SearchBar"
 
 export function Navbar() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -129,29 +129,16 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium transition-colors hover:text-primary"
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+          <DesktopMenu navigation={navigation} />
 
           {/* Search Bar - Desktop */}
           <div className="hidden lg:flex items-center flex-1 max-w-md mx-8">
-            <form onSubmit={handleSearch} className="relative w-full">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="ค้นหาสินค้า..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
-              />
-            </form>
+            <SearchBar
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              handleSearch={handleSearch}
+              className="w-full"
+            />
           </div>
 
           {/* Right Side Actions */}
@@ -256,115 +243,41 @@ export function Navbar() {
               </div>
             )}
 
-            {/* Mobile Menu */}
-            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              <SheetTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="md:hidden"
-                  onClick={handleMenuClick}
-                  disabled={menuLoading}
-                >
-                  {menuLoading ? (
-                    <span className="text-xs">กำลังโหลด...</span>
-                  ) : (
-                    <Menu className="h-5 w-5" />
-                  )}
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-80">
-                <div className="flex flex-col space-y-4 mt-8">
-                  {/* Mobile Search */}
-                  <form onSubmit={handleSearch} className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="ค้นหาสินค้า..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-8"
-                    />
-                  </form>
-
-                  {/* Navigation Links */}
-                  <div className="space-y-2">
-                    {navigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="block px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
-                  </div>
-
-                  {isAuthenticated && (
-                    <>
-                      <div className="border-t pt-4 space-y-2">
-                        {userMenuItems.map((item) => (
-                          <Link
-                            key={item.name}
-                            href={item.href}
-                            onClick={() => {
-                              if (item.href === "/chat") {
-                                loadChatActivity()
-                                addChatActivity(user?.id || guestId!, "open_chat")
-                              }
-                            }}
-                            className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                          >
-                            <item.icon className="mr-2 h-4 w-4" />
-                            {item.name}
-                          </Link>
-                        ))}
-                      </div>
-
-                      {user?.role === "admin" && (
-                        <div className="border-t pt-4">
-                          <Link
-                            href="/admin/dashboard"
-                            onClick={handleDashboardClick}
-                            className="flex items-center px-3 py-2 text-sm font-medium rounded-md hover:bg-accent"
-                          >
-                            <Settings className="mr-2 h-4 w-4" />
-                            {dashboardLoading ? "กำลังโหลด..." : "ระบบจัดการ"}
-                          </Link>
-                        </div>
-                      )}
-
-                      <div className="border-t pt-4">
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center w-full px-3 py-2 text-sm font-medium rounded-md hover:bg-accent text-red-600"
-                        >
-                          <LogOut className="mr-2 h-4 w-4" />
-                          ออกจากระบบ
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </SheetContent>
-            </Sheet>
+          {/* Mobile Menu */}
+          <MobileMenu
+            open={menuOpen}
+            onOpenChange={setMenuOpen}
+            loading={menuLoading}
+            handleOpen={handleMenuClick}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearch={handleSearch}
+            navigation={navigation}
+            userMenuItems={userMenuItems}
+            isAuthenticated={isAuthenticated}
+            isAdmin={user?.role === "admin"}
+            handleLogout={handleLogout}
+            handleDashboardClick={handleDashboardClick}
+            dashboardLoading={dashboardLoading}
+            guestId={guestId}
+            userId={user?.id}
+            loadChatActivity={loadChatActivity}
+            addChatActivity={addChatActivity}
+          />
           </div>
         </div>
 
-        {/* Mobile Search Bar */}
-        {isSearchOpen && (
-          <div className="lg:hidden border-t py-4">
-            <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="ค้นหาสินค้า..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8"
+          {/* Mobile Search Bar */}
+          {isSearchOpen && (
+            <div className="lg:hidden border-t py-4">
+              <SearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                handleSearch={handleSearch}
                 autoFocus
               />
-            </form>
-          </div>
-        )}
+            </div>
+          )}
       </div>
     </nav>
   )
