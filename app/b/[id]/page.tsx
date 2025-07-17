@@ -1,9 +1,12 @@
 import QRCode from "react-qr-code"
 import { mockOrders } from "@/lib/mock-orders"
+import { notFound } from "next/navigation"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const order = mockOrders.find(o => o.id === params.id)
-  if (!order) return <div className="p-4 text-red-500">ไม่พบคำสั่งซื้อ</div>
+  if (!order) {
+    notFound()
+  }
 
   const billUrl = `https://elfcover.vercel.app/b/${order.id}`
 

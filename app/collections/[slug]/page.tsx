@@ -18,6 +18,7 @@ import { CopyPageLinkButton } from "@/components/CopyPageLinkButton"
 import { CollectionStickyBar } from "@/components/CollectionStickyBar"
 import { mockFabricReviews } from "@/lib/mock/fabricReviews"
 import { Star } from "lucide-react"
+import { notFound } from "next/navigation"
 
 export default async function CollectionDetailPage({ params }: { params: { slug: string } }) {
   let data: any
@@ -26,9 +27,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
     const collections = await getCollections()
     data = collections.find((c) => c.slug === params.slug)
     if (!data) {
-      return (
-        <div className="text-center text-destructive">ไม่พบคอลเลกชันนี้ในระบบ</div>
-      )
+      notFound()
     }
   } else {
     const { data: dbData, error } = await supabase
@@ -38,9 +37,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
       .single()
 
     if (error || !dbData) {
-      return (
-        <div className="text-center text-destructive">ไม่พบคอลเลกชันนี้ในระบบ</div>
-      )
+      notFound()
     }
 
     data = {
