@@ -20,10 +20,12 @@ export function useAdminGuard() {
     }
     if (!isAuthenticated) {
       router.replace("/login")
+      setLoading(false)
       return
     }
     if (!canAccess(user?.role, 'dashboard')) {
       router.replace("/")
+      setLoading(false)
       return
     }
     setLoading(false)

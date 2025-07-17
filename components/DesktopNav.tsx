@@ -6,11 +6,13 @@ import { Input } from "@/components/ui/inputs/input"
 import { Button } from "@/components/ui/buttons/button"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/contexts/cart-context"
+import { useAuth } from "@/contexts/auth-context"
 
 export default function DesktopNav() {
   const [searchQuery, setSearchQuery] = useState("")
   const { state } = useCart()
   const totalItems = state.items.reduce((s, i) => s + i.quantity, 0)
+  const { isAuthenticated, user, logout } = useAuth()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -45,16 +47,30 @@ export default function DesktopNav() {
           className="pl-8"
         />
       </form>
-      <Link href="/cart">
-        <Button variant="ghost" size="icon" className="relative">
-          <ShoppingCart className="h-5 w-5" />
-          {totalItems > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
-              {totalItems}
-            </Badge>
-          )}
-        </Button>
-      </Link>
+      <div className="flex items-center space-x-4">
+        <Link href="/cart">
+          <Button variant="ghost" size="icon" className="relative">
+            <ShoppingCart className="h-5 w-5" />
+            {totalItems > 0 && (
+              <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                {totalItems}
+              </Badge>
+            )}
+          </Button>
+        </Link>
+        {isAuthenticated ? (
+          <div className="flex items-center space-x-2">
+            {user?.role === "admin" && <span className="text-sm">{user.name}</span>}
+            <Button variant="ghost" onClick={logout} className="text-sm">
+              ออกจากระบบ
+            </Button>
+          </div>
+        ) : (
+          <Link href="/login">
+            <Button variant="outline" className="text-sm">เข้าสู่ระบบ</Button>
+          </Link>
+        )}
+      </div>
     </div>
   )
 }
