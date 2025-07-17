@@ -15,9 +15,12 @@ import {
   regenerateMockCustomers,
   resetMockCustomers,
 } from "@/lib/mock-customers"
+import { Switch } from "@/components/ui/switch"
+import { useTheme } from "@/contexts/theme-context"
 
 export default function AdminDevPage() {
   const { user, isAuthenticated } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   if (!isDevMock) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -47,6 +50,12 @@ export default function AdminDevPage() {
   }
   return (
     <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <Switch checked={theme === 'admin'} onCheckedChange={toggleTheme} id="theme-toggle" />
+        <label htmlFor="theme-toggle" className="text-sm">
+          {theme === 'admin' ? 'Admin' : 'Customer'}
+        </label>
+      </div>
       <div className="flex gap-2">
         <Button variant="outline" onClick={handleClear}>
           ล้างข้อมูล

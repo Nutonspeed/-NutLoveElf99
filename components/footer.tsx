@@ -1,7 +1,9 @@
 import Link from "next/link"
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
+import { useTheme } from "@/contexts/theme-context"
 
 export function Footer() {
+  const { theme } = useTheme()
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -86,6 +88,7 @@ export function Footer() {
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="text-gray-400 text-sm">© 2024 SofaCover Pro. สงวนลิขสิทธิ์ทั้งหมด.</p>
+          <p className="text-gray-500 text-xs mt-2">Theme: {theme === 'admin' ? 'Admin' : 'Customer'}</p>
         </div>
       </div>
     </footer>
