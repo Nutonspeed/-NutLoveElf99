@@ -10,6 +10,13 @@ try {
   MenuGrid = null
 }
 
+let QuickToolbar: React.ComponentType | null = null
+try {
+  QuickToolbar = require("@/components/MobileActionToolbar").default
+} catch {
+  QuickToolbar = null
+}
+
 const mockUser = { hasSeenIntro: false }
 
 export default function MobileHomePage() {
@@ -18,6 +25,13 @@ export default function MobileHomePage() {
       <EmotionBanner />
       {!mockUser.hasSeenIntro && <WalkthroughModal />}
       {MenuGrid ? <MenuGrid /> : <FallbackCenter title="โหลดเมนูไม่สำเร็จ ลองรีเฟรช" />}
+      {QuickToolbar ? (
+        <QuickToolbar />
+      ) : (
+        <div className="mt-4 rounded bg-gray-100 p-4 text-center text-sm text-gray-500">
+          ไม่สามารถโหลดทางลัดได้
+        </div>
+      )}
     </div>
   )
 }
