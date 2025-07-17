@@ -1,35 +1,28 @@
 "use client"
 
 import Link from "next/link"
-import { Plus, ClipboardList, MessageCircle, Settings, Megaphone, BarChart3 } from "lucide-react"
+import { adminRoutes } from "@/components/admin/admin-nav"
 
 export default function QuickActionBar() {
+  const quickPaths = [
+    "/admin/openbill/quick",
+    "/admin/orders",
+    "/admin/chat",
+    "/admin/broadcast",
+    "/admin/analytics",
+    "/admin/settings",
+  ]
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-20 flex justify-around border-t bg-background py-2 md:hidden">
-      <Link href="/admin/openbill/quick" className="flex flex-col items-center text-xs">
-        <Plus className="h-5 w-5" />
-        <span>เปิดบิล</span>
-      </Link>
-      <Link href="/admin/orders" className="flex flex-col items-center text-xs">
-        <ClipboardList className="h-5 w-5" />
-        <span>ออเดอร์</span>
-      </Link>
-      <Link href="/admin/chat" className="flex flex-col items-center text-xs">
-        <MessageCircle className="h-5 w-5" />
-        <span>แชท</span>
-      </Link>
-        <Link href="/admin/broadcast" className="flex flex-col items-center text-xs">
-          <Megaphone className="h-5 w-5" />
-          <span>บรอดแคสต์</span>
-        </Link>
-        <Link href="/admin/analytics" className="flex flex-col items-center text-xs">
-          <BarChart3 className="h-5 w-5" />
-          <span>สถิติ</span>
-        </Link>
-      <Link href="/admin/settings" className="flex flex-col items-center text-xs">
-        <Settings className="h-5 w-5" />
-        <span>ตั้งค่า</span>
-      </Link>
+      {adminRoutes
+        .filter(r => quickPaths.includes(r.href))
+        .map(({ href, label, icon: Icon }) => (
+          <Link key={href} href={href} className="flex flex-col items-center text-xs">
+            {Icon && <Icon className="h-5 w-5" />}
+            <span>{label}</span>
+          </Link>
+        ))}
     </nav>
   )
 }
