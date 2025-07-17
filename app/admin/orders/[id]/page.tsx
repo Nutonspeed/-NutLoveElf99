@@ -215,6 +215,10 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             <div className="space-y-1">
               <p>วันที่: {new Date(payment.date).toLocaleDateString('th-TH')}</p>
               <p>จำนวน: ฿{payment.amount.toLocaleString()}</p>
+              <p>ช่องทาง: {payment.channel}</p>
+              {payment.note && (
+                <p className="text-sm text-gray-600">หมายเหตุ: {payment.note}</p>
+              )}
               {payment.slip && <p className="text-sm text-gray-600">{payment.slip}</p>}
               {!payment.verified && (
                 <Button size="sm" onClick={() => {
