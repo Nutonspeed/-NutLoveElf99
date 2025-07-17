@@ -28,6 +28,7 @@ import {
   Bolt,
   UserCog,
 } from "lucide-react"
+import { adminRoutes } from "@/components/admin/admin-nav"
 import clsx from "clsx"
 import { mockNotifications } from "@/lib/mock-notifications"
 import {
@@ -38,34 +39,6 @@ import { useEffect, useState } from "react"
 import { useAuth } from "@/contexts/auth-context"
 import { canAccess } from "@/lib/mock-roles"
 
-const navItems = [
-  { href: "/admin/dashboard", label: "แดชบอร์ด", icon: Home, feature: "dashboard" },
-  { href: "/admin/orders", label: "คำสั่งซื้อ", icon: ShoppingCart, feature: "inventory" },
-  { href: "/admin/products", label: "สินค้า", icon: Package, feature: "inventory" },
-  { href: "/admin/inventory", label: "สต็อก", icon: Layers, feature: "inventory" },
-  { href: "/admin/customers", label: "ลูกค้า", icon: Users, feature: "inventory" },
-  { href: "/admin/coupons", label: "คูปอง", icon: Percent, feature: "inventory" },
-  { href: "/admin/quotes", label: "ใบเสนอราคา", icon: FileText, feature: "inventory" },
-  { href: "/admin/notifications", label: "แจ้งเตือน", icon: Bell, feature: "inventory" },
-  { href: "/admin/chat", label: "แชท", icon: MessageCircle, feature: "chat" },
-  { href: "/admin/chat-insight", label: "บิลแชท", icon: FileText, feature: "logs" },
-  { href: "/admin/chat-activity", label: "กิจกรรมแชท", icon: List, feature: "logs" },
-  { href: "/admin/analytics", label: "สถิติ", icon: BarChart3, feature: "analytics" },
-  { href: "/admin/broadcast", label: "บรอดแคสต์", icon: Megaphone, feature: "broadcast" },
-  { href: "/admin/claims", label: "เคลม", icon: ShieldCheck, feature: "claims" },
-  { href: "/admin/collections", label: "คอลเลกชัน", icon: Folder, feature: "collections" },
-  { href: "/admin/media", label: "มีเดีย", icon: Image, feature: "media" },
-  { href: "/admin/reviews", label: "รีวิว", icon: Star, feature: "reviews" },
-  { href: "/admin/supply-tracker", label: "สต็อกภายใน", icon: Boxes, feature: "supply" },
-  { href: "/admin/unpaid", label: "ค้างจ่าย", icon: Wallet, feature: "unpaid" },
-  { href: "/admin/faq", label: "คำถามพบบ่อย", icon: HelpCircle, feature: "faq" },
-  { href: "/admin/feedback", label: "ความคิดเห็น", icon: MailQuestion, feature: "feedback" },
-  { href: "/admin/campaign-insight", label: "ข้อมูลแคมเปญ", icon: Target, feature: "campaigns" },
-  { href: "/admin/campaigns/summary", label: "สรุปแคมเปญ", icon: Flag, feature: "campaigns" },
-  { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "fastBills" },
-  { href: "/admin/users", label: "ผู้ใช้", icon: UserCog, feature: "users" },
-  { href: "/admin/logs", label: "บันทึก", icon: FileText, feature: "logs" },
-]
 
 export default function Sidebar({ className = "" }: { className?: string }) {
   const pathname = usePathname()
@@ -83,7 +56,7 @@ export default function Sidebar({ className = "" }: { className?: string }) {
         แอดมิน
       </div>
       <nav className="flex-1 space-y-1 px-2 py-4">
-        {navItems.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
+        {adminRoutes.filter(item => canAccess(user?.role, item.feature)).map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`)
           const badge = href === "/admin/notifications" ? count : 0
           return (

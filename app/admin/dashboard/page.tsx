@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Skeleton } from "@/components/ui/skeleton"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { ShoppingCart, Wallet, Clock, MessageSquare } from "lucide-react"
+import { adminRoutes } from "@/components/admin/admin-nav"
 
 interface OrderData {
   id: string
@@ -59,24 +60,20 @@ export default function AdminDashboard() {
   return (
     <div className="grid min-h-screen md:grid-cols-[220px_1fr]">
       <aside className="border-r bg-gray-50 p-4 space-y-2">
-        <Link href="/admin/fabrics" className="block p-2 hover:underline">
-          ผ้า
-        </Link>
-        <Link href="/admin/orders" className="block p-2 hover:underline">
-          คำสั่งซื้อ
-        </Link>
-        <Link href="/admin/ai-tools" className="block p-2 hover:underline">
-          เครื่องมือ AI
-        </Link>
-        <Link href="/chat" className="block p-2 hover:underline">
-          แชท
-        </Link>
-        <Link href="/admin/feature-map" className="block p-2 hover:underline">
-          แผนที่ฟีเจอร์
-        </Link>
-        <Link href="/admin/menu" className="block p-2 hover:underline">
-          เมนู
-        </Link>
+        {adminRoutes
+          .filter(r => [
+            "/admin/fabrics",
+            "/admin/orders",
+            "/admin/ai-tools",
+            "/chat",
+            "/admin/feature-map",
+            "/admin/menu",
+          ].includes(r.href))
+          .map(({ href, label }) => (
+            <Link key={href} href={href} className="block p-2 hover:underline">
+              {label}
+            </Link>
+          ))}
       </aside>
       <div className="p-4 space-y-6">
         <header className="flex items-center justify-between">
@@ -155,65 +152,35 @@ export default function AdminDashboard() {
           </Card>
           <div className="md:col-span-2 grid grid-cols-2 sm:grid-cols-3 gap-2">
             <Button asChild className="w-full">
-              <Link href="/admin/fabrics">ผ้า</Link>
-            </Button>
-            <Button asChild className="w-full">
               <Link href="/admin/bill/create">เปิดบิล</Link>
             </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/collections">คอลเลกชัน</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/promo">โปรโมชัน</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/ai-tools">เครื่องมือ AI</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/menu">เมนู</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/chat">แชท</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/feature-map">แผนที่ฟีเจอร์</Link>
-            </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/analytics">สถิติ</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/broadcast">บรอดแคสต์</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/claims">เคลม</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/media">มีเดีย</Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link href="/admin/supply-tracker">ติดตามสต็อก</Link>
-              </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/unpaid">ค้างจ่าย</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/faq">คำถามพบบ่อย</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/feedback">ความคิดเห็น</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/campaign-insight">ข้อมูลแคมเปญ</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/campaigns/summary">สรุปแคมเปญ</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/bills/fast">เปิดบิลด่วน</Link>
-            </Button>
-            <Button asChild className="w-full">
-              <Link href="/admin/users">ผู้ใช้</Link>
-            </Button>
+            {adminRoutes
+              .filter(r => [
+                "/admin/collections",
+                "/admin/promo",
+                "/admin/ai-tools",
+                "/admin/menu",
+                "/chat",
+                "/admin/feature-map",
+                "/admin/analytics",
+                "/admin/broadcast",
+                "/admin/claims",
+                "/admin/media",
+                "/admin/supply-tracker",
+                "/admin/unpaid",
+                "/admin/faq",
+                "/admin/feedback",
+                "/admin/campaign-insight",
+                "/admin/campaigns/summary",
+                "/admin/bills/fast",
+                "/admin/users"
+              ].includes(r.href))
+              .map(({ href, label }) => (
+                <Button asChild key={href} className="w-full">
+                  <Link href={href}>{label}</Link>
+                </Button>
+              ))}
+
           </div>
         </div>
 
