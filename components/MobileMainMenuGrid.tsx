@@ -14,10 +14,14 @@ const menu = [
 
 export default function MobileMainMenuGrid() {
   return (
-    <div className="grid grid-cols-3 gap-4 text-center">
+    <div className="grid grid-cols-3 gap-4 text-center lg:hidden">
       {menu.map(({ href, label, icon: Icon }) => (
-        <Link key={label} href={href} className="bg-blue-50 rounded-lg p-4 flex flex-col items-center text-sm hover:bg-blue-100">
-          <Icon className="w-6 h-6 mb-2" />
+        <Link
+          key={label}
+          href={href}
+          className="flex flex-col items-center rounded-lg bg-blue-50 p-4 text-sm hover:bg-blue-100"
+        >
+          <Icon className="mb-2 h-6 w-6" />
           <span>{label}</span>
         </Link>
       ))}
