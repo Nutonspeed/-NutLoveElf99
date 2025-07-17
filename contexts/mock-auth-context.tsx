@@ -5,6 +5,7 @@ export const mockUser = {
   id: "user-001",
   name: "คุณลูกค้าจำลอง",
   role: "customer",
+  hasSeenIntro: false,
 }
 
 export const mockAdmin = {

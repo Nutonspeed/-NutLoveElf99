@@ -2,6 +2,7 @@
 import EmotionBanner from "@/components/EmotionBanner"
 import WalkthroughModal from "@/components/WalkthroughModal"
 import FallbackCenter from "@/components/FallbackCenter"
+import { mockUser } from "@/contexts/mock-auth-context"
 
 let MenuGrid: React.ComponentType | null = null
 try {
@@ -10,7 +11,6 @@ try {
   MenuGrid = null
 }
 
-const mockUser = { hasSeenIntro: false }
 
 export default function MobileHomePage() {
   return (
