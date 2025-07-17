@@ -14,7 +14,18 @@ export function useSidebarState(
 ) {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
-  const [_open, _setOpen] = React.useState(defaultOpen)
+  const [_open, _setOpen] = React.useState(() => {
+    if (typeof document !== "undefined") {
+      const cookie = document.cookie
+        .split("; ")
+        .find((c) => c.startsWith(`${SIDEBAR_COOKIE_NAME}=`))
+      if (cookie) {
+        const value = cookie.split("=")[1]
+        return value === "true"
+      }
+    }
+    return defaultOpen
+  })
   const open = openProp ?? _open
 
   const setOpen = React.useCallback(
