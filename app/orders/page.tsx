@@ -27,6 +27,7 @@ import {
   getOrderStatusText,
 } from "@/lib/order-status";
 import { Progress } from "@/components/ui/progress";
+import ClaimRequestDialog from "@/components/ClaimRequestDialog";
 
 function getProgress(status: OrderStatus) {
   switch (status) {
@@ -235,6 +236,8 @@ export default function OrdersPage() {
                       >
                         สั่งซ้ำ
                       </Button>
+
+                      <ClaimRequestDialog orderId={order.id} />
 
                       <Link href="/chat">
                         <Button variant="outline" size="sm">
