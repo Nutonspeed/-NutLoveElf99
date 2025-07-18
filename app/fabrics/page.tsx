@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { FabricsList } from "@/components/FabricsList"
+import { FabricCarousel } from "@/components/FabricCarousel"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
@@ -52,7 +53,15 @@ export default async function FabricsPage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">แกลเลอรี่ลายผ้า</h1>
+        <div className="mb-8">
+          <FabricCarousel />
+        </div>
         <FabricsList fabrics={fabrics} />
+        {fabrics.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">ไม่พบลายผ้าในหมวดนี้</p>
+          </div>
+        )}
       </div>
       <Footer />
       <AnalyticsTracker event="ViewContent" />
