@@ -92,6 +92,7 @@ const initialMockOrders: Order[] = [
     packingStatus: "packing",
     shipping_date: "2024-01-15T08:00:00Z",
     delivery_note: "ส่งตามเวลาทำการ",
+    cod: true,
     scheduledDelivery: "2024-01-18T10:00",
     timeline: [
       {

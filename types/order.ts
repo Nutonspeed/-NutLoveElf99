@@ -79,6 +79,8 @@ export interface Order {
   total: number
   status: OrderStatus
   depositPercent?: number
+  /** Cash on delivery flag */
+  cod?: boolean
   note?: string
   chatNote?: string
   createdAt: string
