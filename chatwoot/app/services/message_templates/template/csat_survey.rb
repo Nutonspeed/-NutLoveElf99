@@ -5,7 +5,10 @@ class MessageTemplates::Template::CsatSurvey
     return unless should_send_csat_survey?
 
     ActiveRecord::Base.transaction do
-      conversation.messages.create!(csat_survey_message_params)
+      message = conversation.messages.create!(csat_survey_message_params)
+      CsatSurvey.create!(account_id: conversation.account_id,
+                         conversation_id: conversation.id,
+                         message_id: message.id)
     end
   end
 
