@@ -30,6 +30,7 @@ export default function PaymentPage({ params }: { params: { id: string } }) {
     const p = addPayment(id, {
       date,
       amount: parseFloat(amount) || 0,
+      method: 'bank',
       slip: slip?.name,
     })
     if (p) {
