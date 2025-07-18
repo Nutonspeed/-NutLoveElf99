@@ -39,6 +39,12 @@ Real data is fetched from Supabase when the following variables are provided:
 
 If these variables are absent, the app falls back to built-in mock data.
 
+The notification service uses additional variables:
+
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SMTP settings for email
+- `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` – Twilio SMS credentials
+- `LINE_NOTIFY_TOKEN` – token for sending Line notifications
+
 ## Chatwoot
 
 The store now uses [Chatwoot](https://www.chatwoot.com/) for the customer chat

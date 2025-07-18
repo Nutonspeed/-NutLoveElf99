@@ -7,6 +7,10 @@ let client: SupabaseClient | null = null
 
 if (supabaseUrl && supabaseAnonKey) {
   client = createClient(supabaseUrl, supabaseAnonKey)
+} else {
+  console.warn(
+    'Supabase environment variables are not set; falling back to mock data.'
+  )
 }
 
 export const supabase = client
