@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plus } from "lucide-react"
-import Image from "next/image"
+import LazyImage from "@/components/LazyImage"
 import Link from "next/link"
 import { mockProducts } from "@/lib/mock-products"
 import { mockOrders } from "@/lib/mock-orders"
@@ -173,7 +173,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
           {/* Product Images */}
           <div className="space-y-4">
             <div className="aspect-square overflow-hidden rounded-lg border">
-              <Image
+              <LazyImage
                 src={product.images[selectedImage] || "/placeholder.svg"}
                 alt={product.name}
                 width={600}
@@ -190,7 +190,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                     selectedImage === index ? "border-primary" : "border-gray-200"
                   }`}
                 >
-                  <Image
+                  <LazyImage
                     src={image || "/placeholder.svg"}
                     alt={`${product.name} ${index + 1}`}
                     width={150}
@@ -514,9 +514,9 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               .map((relatedProduct) => (
                 <Card key={relatedProduct.id} className="group hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
-                    <Link href={`/products/${relatedProduct.slug}`}>
+                    <PrefetchLink href={`/products/${relatedProduct.slug}`}>
                       <div className="relative overflow-hidden rounded-t-lg">
-                        <Image
+                        <LazyImage
                           src={relatedProduct.images[0] || "/placeholder.svg"}
                           alt={relatedProduct.name}
                           width={300}
@@ -537,7 +537,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                           )}
                         </div>
                       </div>
-                    </Link>
+                    </PrefetchLink>
                   </CardContent>
                 </Card>
               ))}

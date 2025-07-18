@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Star, Shield, Truck, Headphones, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+import LazyImage from "@/components/LazyImage"
+import PrefetchLink from "@/components/PrefetchLink"
 import { HeroBannerSection } from "@/components/HeroBannerSection"
 import { mockProducts } from "@/lib/mock-products"
 import { getCollections } from "@/lib/mock-collections"
@@ -33,9 +34,9 @@ export default async function HomePage() {
               {curatedProducts.map((product) => (
                 <Card key={product.id} className="group hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
-                    <Link href={`/products/${product.slug}`}>
+                    <PrefetchLink href={`/products/${product.slug}`}>
                       <div className="relative overflow-hidden rounded-t-lg">
-                        <Image
+                        <LazyImage
                           src={product.images[0] || "/placeholder.svg"}
                           alt={product.name}
                           width={300}
@@ -52,7 +53,7 @@ export default async function HomePage() {
                           )}
                         </div>
                       </div>
-                    </Link>
+                    </PrefetchLink>
                   </CardContent>
                 </Card>
               ))}
@@ -119,7 +120,7 @@ export default async function HomePage() {
                 className="border rounded-lg overflow-hidden bg-white hover:shadow transition"
               >
                 <div className="relative w-full h-40">
-                  <Image
+                  <LazyImage
                     src={col.images[0] || "/placeholder.svg"}
                     alt={col.name}
                     fill
@@ -157,14 +158,14 @@ export default async function HomePage() {
               <Card key={product.id} className="group hover:shadow-lg transition-shadow">
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
-                    <Image
+                    <LazyImage
                       src={product.images[0] || "/placeholder.svg"}
                       alt={product.name}
                       width={300}
                       height={300}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    {product.originalPrice && (
+                  {product.originalPrice && (
                       <Badge className="absolute top-2 left-2 bg-red-500">
                         ลด {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                       </Badge>
@@ -196,9 +197,9 @@ export default async function HomePage() {
                       )}
                     </div>
 
-                    <Link href={`/products/${product.slug}`}> 
+                    <PrefetchLink href={`/products/${product.slug}`}>
                       <Button className="w-full mt-4">ดูรายละเอียด</Button>
-                    </Link>
+                    </PrefetchLink>
                   </div>
                 </CardContent>
               </Card>

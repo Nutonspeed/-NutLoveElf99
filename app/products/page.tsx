@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Star, Filter, Grid, List } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
+import LazyImage from "@/components/LazyImage"
+import PrefetchLink from "@/components/PrefetchLink"
 import { mockProducts } from "@/lib/mock-products"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
@@ -170,7 +171,7 @@ export default function ProductsPage() {
                     {viewMode === "grid" ? (
                       <>
                         <div className="relative overflow-hidden rounded-t-lg">
-                          <Image
+                          <LazyImage
                             src={product.images[0] || "/placeholder.svg"}
                             alt={product.name}
                             width={300}
@@ -214,15 +215,15 @@ export default function ProductsPage() {
                             )}
                           </div>
 
-                          <Link href={`/products/${product.slug}`}> 
+                          <PrefetchLink href={`/products/${product.slug}`}>
                             <Button className="w-full mt-4">ดูรายละเอียด</Button>
-                          </Link>
+                          </PrefetchLink>
                         </div>
                       </>
                     ) : (
                       <div className="flex p-4 space-x-4">
                         <div className="relative w-32 h-32 flex-shrink-0">
-                          <Image
+                          <LazyImage
                             src={product.images[0] || "/placeholder.svg"}
                             alt={product.name}
                             width={128}
@@ -267,9 +268,9 @@ export default function ProductsPage() {
                               )}
                             </div>
 
-                            <Link href={`/products/${product.slug}`}> 
+                            <PrefetchLink href={`/products/${product.slug}`}>
                               <Button>ดูรายละเอียด</Button>
-                            </Link>
+                            </PrefetchLink>
                           </div>
                         </div>
                       </div>
