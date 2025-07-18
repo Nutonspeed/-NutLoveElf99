@@ -4,13 +4,13 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
-import { mockOrders } from "@/lib/mock-orders"
+import { getOrders } from "@/core/mock/store"
 import Link from "next/link"
 import { CheckCircle, Hammer, Package, Truck, MapPin, CreditCard } from "lucide-react"
 
 export default function OrderTrackPage({ params }: { params: { orderId: string } }) {
   const { orderId } = params
-  const order = mockOrders.find((o) => o.id === orderId)
+  const order = getOrders().find((o) => o.id === orderId)
 
   if (!order) {
     return (

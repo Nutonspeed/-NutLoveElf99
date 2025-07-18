@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { mockOrders } from "@/lib/mock-orders"
+import { getOrders } from "@/core/mock/store"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -17,7 +17,7 @@ import {
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
-  const order = mockOrders.find((o) => o.id === id)
+  const order = getOrders().find((o) => o.id === id)
 
   if (!order) {
     return (

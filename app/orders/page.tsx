@@ -16,7 +16,7 @@ import { Package, Eye, Download, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
-import { mockOrders } from "@/lib/mock-orders";
+import { getOrders } from "@/core/mock/store";
 import { mockProducts } from "@/lib/mock-products";
 import { mockFeedbacks } from "@/lib/mock-feedback";
 import { reviewReminder, loadReviewReminder } from "@/lib/mock-settings";
@@ -60,7 +60,7 @@ export default function OrdersPage() {
     if (!isAuthenticated) return;
     loadReviewReminder();
     if (!reviewReminder) return;
-    const pending = mockOrders.find(
+    const pending = getOrders().find(
       (o) =>
         o.customerId === user?.id &&
         o.status === "delivered" &&
@@ -84,7 +84,7 @@ export default function OrdersPage() {
     return null;
   }
 
-  const userOrders = mockOrders.filter(
+  const userOrders = getOrders().filter(
     (order) =>
       order.customerId === user?.id &&
       (statusFilter === "all" || order.status === statusFilter),

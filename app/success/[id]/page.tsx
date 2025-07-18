@@ -4,7 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
-import { mockOrders } from "@/lib/mock-orders";
+import { getOrders } from "@/core/mock/store";
 import { autoMessage, loadAutoMessage } from "@/lib/mock-settings";
 import { addFeedback } from "@/lib/mock-feedback";
 import { Star } from "lucide-react";
@@ -20,7 +20,7 @@ export default function SuccessPage({ params }: { params: { id: string } }) {
     loadAutoMessage();
     setMessage(autoMessage);
   }, []);
-  const order = mockOrders.find((o) => o.id === id);
+  const order = getOrders().find((o) => o.id === id);
 
   const submitFeedback = () => {
     if (submitted || rating === 0) return;
