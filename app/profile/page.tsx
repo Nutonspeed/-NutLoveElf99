@@ -16,6 +16,8 @@ import { Badge } from "@/components/ui/badge"
 import { User, MapPin, Shield, Bell } from "lucide-react"
 import Link from "next/link"
 import { mockCustomers } from "@/lib/mock-customers"
+import { mockBills } from "@/lib/mock-bills"
+import { mockOrders } from "@/lib/mock-orders"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 
@@ -88,6 +90,26 @@ export default function ProfilePage() {
                 <Link href="/profile/orders">
                   <Button className="mt-2">ดูคำสั่งซื้อ</Button>
                 </Link>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    try {
+                      const bill = mockBills.find((b) => {
+                        const o = mockOrders.find((o) => o.id === b.orderId)
+                        return o?.customerId === user?.id && b.status !== "paid"
+                      })
+                      if (!bill) throw new Error('no-bill')
+                      const link = `${window.location.origin}/bill/${bill.id}`
+                      navigator.clipboard.writeText(link)
+                      toast({ title: "คัดลอกลิงก์บิลแล้ว" })
+                    } catch {
+                      toast({ title: "ไม่สามารถสร้างลิงก์ได้" })
+                    }
+                  }}
+                  className="mt-2"
+                >
+                  ส่งลิงก์บิลผ่าน LINE/Facebook
+                </Button>
               </CardContent>
             </Card>
           )}
