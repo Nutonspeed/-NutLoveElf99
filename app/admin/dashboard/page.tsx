@@ -2,98 +2,66 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/buttons/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { Skeleton } from "@/components/ui/skeleton"
+import { Card, CardContent } from "@/components/ui/cards/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ShoppingCart, Wallet, Clock, MessageSquare } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  ShoppingCart,
+  Wallet,
+  MessageSquare,
+  Users as UsersIcon,
+  Inbox,
+} from "lucide-react"
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts"
 import { mockOrders } from "@/lib/mock-orders"
 import { conversations } from "@/lib/mock-conversations"
+import { mockCustomers, type Customer } from "@/lib/mock-customers"
 import { useAuth } from "@/contexts/auth-context"
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts"
 
 interface OrderData {
   id: string
   customerName: string
   total: number
-  status: string
   createdAt: string
-}
-interface ChatData {
-  id: string
-  createdAt: string
-  text: string
 }
 
 export default function AdminDashboard() {
   const { user } = useAuth()
   const [orders, setOrders] = useState<OrderData[] | null>(null)
-  const [chats, setChats] = useState<ChatData[] | null>(null)
-  const [debug, setDebug] = useState(false)
+  const [customers, setCustomers] = useState<Customer[] | null>(null)
+  const [chatCount, setChatCount] = useState<number | null>(null)
 
   useEffect(() => {
     setOrders(
-      mockOrders.map(o => ({
-        id: o.id,
-        customerName: o.customerName,
-        total: o.total,
-        status: o.status,
-        createdAt: o.createdAt,
-      })),
+      mockOrders.map(o => ({ id: o.id, customerName: o.customerName, total: o.total, createdAt: o.createdAt }))
     )
-    setChats(
-      conversations.map(c => ({
-        id: c.id,
-        createdAt: c.updatedAt,
-        text: c.lastMessage,
-      })),
-    )
-    setDebug(window.location.search.includes("debug=true"))
+    setCustomers(mockCustomers)
+    setChatCount(conversations.length)
   }, [])
 
-  const today = new Date().toDateString()
-  const todayOrders = orders?.filter(o => new Date(o.createdAt).toDateString() === today) || []
-  const totalSales = orders?.reduce((s, o) => s + o.total, 0) || 0
-  const unpaid = orders?.filter(o => o.status === "pendingPayment") || []
-  const newChats = chats?.filter(c => new Date(c.createdAt).toDateString() === today) || []
-  const recentOrders = orders
-    ? [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 5)
-    : []
+  const loading = !orders || !customers || chatCount === null
 
-  const SummaryCard = ({ title, value, icon: Icon }: { title: string; value: string | number; icon: any }) => (
-    <div className="rounded border bg-white p-4 flex items-center justify-between">
-      <div>
-        <p className="text-sm text-gray-500">{title}</p>
-        <p className="text-2xl font-bold">{value}</p>
-      </div>
-      <Icon className="h-6 w-6 text-gray-400" />
+  const totalSales = orders?.reduce((s, o) => s + o.total, 0) || 0
+  const recentOrders = orders ? orders.slice(0, 3) : []
+  const newCustomers = customers ? customers.slice(0, 3) : []
+
+  const dailyData = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date()
+    d.setDate(d.getDate() - (6 - i))
+    const value = orders
+      ? orders
+          .filter(o => new Date(o.createdAt).toDateString() === d.toDateString())
+          .reduce((s, o) => s + o.total, 0)
+      : 0
+    return { name: d.toLocaleDateString('th-TH', { month: 'short', day: 'numeric' }), value }
+  })
+
+  const Fallback = () => (
+    <div className="flex flex-col items-center justify-center py-6 text-sm text-muted-foreground">
+      <Inbox className="h-6 w-6 mb-2" />
+      ไม่มีข้อมูลในระบบ
     </div>
   )
-
-  const quickActions = [
-    { href: '/admin/fabrics', label: 'ผ้า' },
-    { href: '/admin/bill/create', label: 'เปิดบิล' },
-    { href: '/admin/collections', label: 'คอลเลกชัน' },
-    { href: '/admin/promo', label: 'โปรโมชัน' },
-    { href: '/admin/ai-tools', label: 'เครื่องมือ AI' },
-    { href: '/admin/menu', label: 'เมนู' },
-    { href: '/chat', label: 'แชท' },
-    { href: '/admin/feature-map', label: 'แผนที่ฟีเจอร์' },
-  ]
-
-  const systemTools = [
-    { href: '/admin/analytics', label: 'สถิติ' },
-    { href: '/admin/broadcast', label: 'บรอดแคสต์' },
-    { href: '/admin/claims', label: 'เคลม' },
-    { href: '/admin/media', label: 'มีเดีย' },
-    { href: '/admin/supply-tracker', label: 'ติดตามสต็อก' },
-    { href: '/admin/unpaid', label: 'ค้างจ่าย' },
-    { href: '/admin/faq', label: 'คำถามพบบ่อย' },
-    { href: '/admin/feedback', label: 'ความคิดเห็น' },
-    { href: '/admin/campaign-insight', label: 'ข้อมูลแคมเปญ' },
-    { href: '/admin/campaigns/summary', label: 'สรุปแคมเปญ' },
-    { href: '/admin/bills/fast', label: 'เปิดบิลด่วน' },
-    { href: '/admin/users', label: 'ผู้ใช้' },
-  ]
 
   return (
     <div className="p-4 space-y-6">
@@ -101,63 +69,116 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold">แดชบอร์ดแอดมินหลัก</h1>
       </header>
 
-      <h2 className="text-lg font-semibold">สถิติอย่างย่อ</h2>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {!orders || !chats ? (
-          Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-24" />)
-        ) : (
-          <>
-            <SummaryCard title="ยอดสั่งซื้อวันนี้" value={todayOrders.length} icon={ShoppingCart} />
-            <SummaryCard title="ยอดขายรวม" value={`฿${totalSales.toLocaleString()}`} icon={Wallet} />
-            <SummaryCard title="บิลที่ยังไม่โอน" value={unpaid.length} icon={Clock} />
-            <SummaryCard title="แชทใหม่วันนี้" value={newChats.length} icon={MessageSquare} />
-          </>
-        )}
-      </div>
-
-      <h2 className="text-lg font-semibold">กราฟข้อมูล</h2>
-      <Card>
-        <CardContent className="h-40">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={recentOrders.map(o => ({ name: o.customerName, value: o.total }))}>
-              <Line type="monotone" dataKey="value" stroke="#0ea5e9" />
-              <XAxis dataKey="name" hide />
-              <YAxis hide />
-              <Tooltip />
-            </LineChart>
-          </ResponsiveContainer>
-        </CardContent>
-      </Card>
-
-      <h2 className="text-lg font-semibold">การทำงานด่วน</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-        {quickActions.map(a => (
-          <Button asChild key={a.href} className="w-full">
-            <Link href={a.href}>{a.label}</Link>
-          </Button>
-        ))}
-      </div>
-
-      {user?.role === 'superadmin' && (
-        <>
-          <h2 className="text-lg font-semibold">เครื่องมือระบบ</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {systemTools.map(t => (
-              <Button asChild key={t.href} className="w-full">
-                <Link href={t.href}>{t.label}</Link>
-              </Button>
-            ))}
-          </div>
-        </>
-      )}
-
-      {debug && (
-        <div className="rounded border p-4 text-sm space-y-1">
-          <p className="font-semibold">Debug</p>
-          <p>AutoSell-02 = in progress</p>
-          <p>ยังไม่เชื่อม</p>
+      <section className="space-y-2">
+        <h2 className="text-lg font-semibold">สถิติอย่างย่อ</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {loading ? (
+            Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24" />)
+          ) : (
+            <>
+              <SummaryCard title="ยอดขายรวม" value={`฿${totalSales.toLocaleString()}`} icon={Wallet} />
+              <SummaryCard title="ออเดอร์ทั้งหมด" value={orders!.length} icon={ShoppingCart} />
+              <SummaryCard title="จำนวนแชท" value={chatCount} icon={MessageSquare} />
+            </>
+          )}
         </div>
-      )}
+      </section>
+
+      <section className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">ออเดอร์ล่าสุด</h2>
+          <Button variant="link" size="sm" asChild>
+            <Link href="/admin/bills">ดูทั้งหมด</Link>
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="p-0">
+            {loading ? (
+              <Skeleton className="h-24 w-full" />
+            ) : recentOrders.length ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>รหัส</TableHead>
+                    <TableHead>ลูกค้า</TableHead>
+                    <TableHead className="text-right">ยอด</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentOrders.map(o => (
+                    <TableRow key={o.id}>
+                      <TableCell>{o.id}</TableCell>
+                      <TableCell>{o.customerName}</TableCell>
+                      <TableCell className="text-right">฿{o.total.toLocaleString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Fallback />
+            )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="space-y-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">ลูกค้าใหม่</h2>
+          <Button variant="link" size="sm" asChild>
+            <Link href="/admin/customers">ดูทั้งหมด</Link>
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="p-0">
+            {loading ? (
+              <Skeleton className="h-24 w-full" />
+            ) : newCustomers.length ? (
+              <ul className="divide-y">
+                {newCustomers.map(c => (
+                  <li key={c.id} className="flex items-center justify-between px-4 py-2">
+                    <span>{c.name}</span>
+                    <UsersIcon className="h-4 w-4 text-muted-foreground" />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Fallback />
+            )}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="space-y-2">
+        <h2 className="text-lg font-semibold">ยอดขายรายวัน</h2>
+        <Card>
+          <CardContent className="h-40 overflow-x-auto">
+            {loading ? (
+              <Skeleton className="h-full w-full" />
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={dailyData} margin={{ left: 0, right: 0 }}>
+                  <Line type="monotone" dataKey="value" stroke="#0ea5e9" />
+                  <XAxis dataKey="name" />
+                  <YAxis hide />
+                  <Tooltip />
+                </LineChart>
+              </ResponsiveContainer>
+            )}
+          </CardContent>
+        </Card>
+      </section>
+    </div>
+  )
+}
+
+function SummaryCard({ title, value, icon: Icon }: { title: string; value: string | number; icon: any }) {
+  return (
+    <div className="rounded border p-4 flex items-center justify-between bg-card">
+      <div>
+        <p className="text-sm text-muted-foreground">{title}</p>
+        <p className="text-2xl font-bold">{value}</p>
+      </div>
+      <Icon className="h-6 w-6 text-muted-foreground" />
     </div>
   )
 }
