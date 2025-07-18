@@ -12,7 +12,7 @@ export interface Fabric {
   availability: "available" | "out" | "discontinued"
 }
 
-export const mockFabrics: Fabric[] = [
+export const fabrics: Fabric[] = [
   {
     id: 'f01',
     name: 'Soft Linen',
@@ -72,12 +72,12 @@ export const mockFabrics: Fabric[] = [
 
 export async function getFabrics() {
   if (!supabase) {
-    return Promise.resolve(mockFabrics)
+    return Promise.resolve(fabrics)
   }
   const { data, error } = await supabase.from('fabrics').select('*')
   if (error || !data) {
     console.error('Supabase fetch fabrics error', error)
-    return mockFabrics
+    return fabrics
   }
   return data as Fabric[]
 }

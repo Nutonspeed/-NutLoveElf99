@@ -12,7 +12,7 @@ import {
 import { supabase } from "@/lib/supabase"
 import { getCollections } from "@/lib/mock-collections"
 import { WishlistButton } from "@/components/WishlistButton"
-import { mockFabrics } from "@/lib/mock-fabrics"
+import { fabrics } from "@/lib/mock-fabrics"
 import { FabricsList } from "@/components/FabricsList"
 import { CopyPageLinkButton } from "@/components/CopyPageLinkButton"
 import { CollectionStickyBar } from "@/components/CollectionStickyBar"
@@ -53,11 +53,11 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
     }
   }
 
-  const fabrics = mockFabrics.filter((f) => f.collectionSlug === data.slug)
+  const filtered = fabrics.filter((f) => f.collectionSlug === data.slug)
   const reviews = mockFabricReviews.filter((r) =>
-    fabrics.some((f) => f.id === r.fabricId),
+    filtered.some((f) => f.id === r.fabricId),
   )
-  const subtitle = `มีทั้งหมด ${fabrics.length} ลายผ้าในกลุ่มนี้`
+  const subtitle = `มีทั้งหมด ${filtered.length} ลายผ้าในกลุ่มนี้`
 
   return (
     <div className="min-h-screen flex flex-col">

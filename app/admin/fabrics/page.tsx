@@ -6,7 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
-import { getFabrics as fetchMockFabrics } from "@/lib/mock-fabrics"
+import { getFabrics } from "@/lib/mock-fabrics"
 import EmptyState from "@/components/EmptyState"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AvailabilityTag } from "@/components/AvailabilityTag"
@@ -103,7 +103,7 @@ export default function AdminFabricsPage() {
   useEffect(() => {
     const fetchFabrics = async () => {
       setLoading(true)
-      const data = await fetchMockFabrics()
+      const data = await getFabrics()
       const { data: collectionsData } = await supabase
         ?.from("collections")
         .select("id, name")

@@ -8,7 +8,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { useCompare } from "@/contexts/compare-context"
-import { mockFabrics } from "@/lib/mock-fabrics"
+import { fabrics } from "@/lib/mock-fabrics"
 
 interface Fabric {
   id: string
@@ -26,7 +26,7 @@ export default function ComparePage() {
 
   useEffect(() => {
     setFabrics(
-      mockFabrics
+      fabrics
         .filter((f) => items.includes(f.slug))
         .map((f) => ({ ...f }))
     )

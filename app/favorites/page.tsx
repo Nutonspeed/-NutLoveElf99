@@ -5,11 +5,11 @@ import Link from 'next/link'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { useFavorites } from '@/contexts/favorites-context'
-import { mockFabrics } from '@/lib/mock-fabrics'
+import { fabrics } from '@/lib/mock-fabrics'
 
 export default function FavoritesPage() {
   const { favorites } = useFavorites()
-  const items = mockFabrics.filter(f => favorites.includes(f.slug))
+  const items = fabrics.filter(f => favorites.includes(f.slug))
 
   return (
     <div className="min-h-screen">
