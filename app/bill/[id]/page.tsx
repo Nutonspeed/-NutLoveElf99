@@ -17,6 +17,7 @@ import ErrorBoundary from "@/components/ErrorBoundary"
 import EmptyState from "@/components/EmptyState"
 import { Badge } from "@/components/ui/badge"
 import { getMockNow } from "@/lib/mock-date"
+import { downloadPDF, getReceiptFileName } from "@/lib/mock-export"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -104,7 +105,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
   }
 
   const handleDownload = () => {
-    alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+    const name = getReceiptFileName(order?.id)
+    downloadPDF('receipt', name)
   }
 
   const handleCopy = () => {
