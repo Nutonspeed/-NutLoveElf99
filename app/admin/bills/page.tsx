@@ -32,7 +32,7 @@ export default function AdminBillsPage() {
     note: string
   } | null>(null)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'unpaid' | 'paid' | 'cancelled'>('all')
 
   const handleCreate = () => {
     if (items.length === 0) {
@@ -193,9 +193,8 @@ export default function AdminBillsPage() {
           <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
             <TabsList>
               <TabsTrigger value="all">ทั้งหมด</TabsTrigger>
-              <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
               <TabsTrigger value="unpaid">รอชำระ</TabsTrigger>
-              <TabsTrigger value="paid">ชำระแล้ว</TabsTrigger>
+              <TabsTrigger value="paid">สำเร็จ</TabsTrigger>
               <TabsTrigger value="cancelled">ยกเลิก</TabsTrigger>
             </TabsList>
           </Tabs>
