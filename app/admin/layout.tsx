@@ -12,6 +12,7 @@ import { AdminCollectionsProvider } from "@/contexts/admin-collections-context"
 import { AdminToast } from "@/components/admin/AdminToast"
 import QuickActionBar from "@/components/admin/QuickActionBar"
 import ErrorBoundary from "@/components/ErrorBoundary"
+import AssistantSidebar from "@/components/admin/AssistantSidebar"
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { loading, isAdmin, conflict } = useAdminGuard()
@@ -54,12 +55,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </SheetContent>
               </Sheet>
             )}
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col md:pr-60">
               <Topbar onMenuClick={() => setSidebarOpen(true)} />
               <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
               <AdminToast />
               <QuickActionBar />
             </div>
+            <AssistantSidebar className="hidden md:block" />
           </div>
         </AdminProductsProvider>
       </AdminCollectionsProvider>
