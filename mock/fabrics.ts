@@ -28,3 +28,8 @@ export function updateFabric(id: string, data: Partial<Omit<Fabric, 'id'>>): Fab
   if (fabric) Object.assign(fabric, data)
   return fabric
 }
+
+export function removeFabric(id: string) {
+  const idx = fabrics.findIndex(f => f.id === id)
+  if (idx !== -1) fabrics.splice(idx, 1)
+}

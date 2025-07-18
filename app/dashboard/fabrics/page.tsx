@@ -17,7 +17,12 @@ export default function DashboardFabricsPage() {
       {items.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {items.map((fabric) => (
-            <FabricCard key={fabric.id} fabric={fabric} onUpdated={() => setItems([...mockFabrics])} />
+            <FabricCard
+              key={fabric.id}
+              fabric={fabric}
+              onUpdated={() => setItems([...mockFabrics])}
+              onDelete={() => setItems([...mockFabrics])}
+            />
           ))}
         </div>
       ) : (
