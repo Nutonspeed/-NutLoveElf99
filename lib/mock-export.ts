@@ -6,7 +6,10 @@ export function exportCSV<T extends object>(rows: T[]): string {
 }
 
 export function downloadCSV<T extends object>(rows: T[], filename: string) {
-  if (rows.length === 0) return
+  if (rows.length === 0) {
+    alert('ไม่มีข้อมูลส่งออกในตอนนี้')
+    return
+  }
   const csv = exportCSV(rows)
   const blob = new Blob([csv], { type: 'text/csv' })
   const url = URL.createObjectURL(blob)
@@ -32,7 +35,10 @@ export async function downloadExcel<T extends object>(
   rows: T[],
   filename: string,
 ) {
-  if (rows.length === 0) return
+  if (rows.length === 0) {
+    alert('ไม่มีข้อมูลส่งออกในตอนนี้')
+    return
+  }
   const XLSX = await import('xlsx')
   const ws = XLSX.utils.json_to_sheet(rows)
   const wb = XLSX.utils.book_new()
