@@ -1,8 +1,10 @@
 "use client"
 import { useState } from 'react'
+import Link from 'next/link'
 import FabricCard from '@/components/fabric/FabricCard'
 import AddNewFabricButton from '@/components/fabric/AddNewFabricButton'
 import EmptyState from '@/components/ui/EmptyState'
+import { Button } from '@/components/ui/buttons/button'
 import { fabrics as mockFabrics, Fabric } from '@/mock/fabrics'
 
 export default function DashboardFabricsPage() {
@@ -12,7 +14,12 @@ export default function DashboardFabricsPage() {
     <div className="container mx-auto py-8 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">ลายผ้า</h1>
-        <AddNewFabricButton onAdd={() => setItems([...mockFabrics])} />
+        <div className="flex gap-2">
+          <Link href="/dashboard/fabrics/batch-edit">
+            <Button variant="outline">แก้ไขหลายผ้า</Button>
+          </Link>
+          <AddNewFabricButton onAdd={() => setItems([...mockFabrics])} />
+        </div>
       </div>
       {items.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
