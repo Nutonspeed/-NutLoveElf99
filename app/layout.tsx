@@ -15,6 +15,7 @@ import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-cont
 import { validateMockData } from "@/lib/mock-validator"
 import RedirectMobileHome from "@/components/RedirectMobileHome"
 import DevBar from "@/components/DevBar"
+import StoreBottomNav from "@/components/StoreBottomNav"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -46,6 +47,7 @@ export default function RootLayout({
                         <ReviewImagesProvider>
                           <RedirectMobileHome />
                           {children}
+                          <StoreBottomNav />
                           <DevBar />
                           <Toaster />
                         </ReviewImagesProvider>
