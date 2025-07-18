@@ -61,3 +61,12 @@ export async function prepareProductImage(
   const blob = await resizeAndCompressImage(file, 1200, 1200, 0.8, mimeType)
   return new File([blob], fileName, { type: blob.type || mimeType })
 }
+
+export async function prepareFabricImageWebP(
+  file: File,
+  index: number,
+): Promise<File> {
+  const fileName = `fabric-${String(index).padStart(3, '0')}.webp`
+  const blob = await resizeAndCompressImage(file, 1200, 1200, 0.8, 'image/webp')
+  return new File([blob], fileName, { type: 'image/webp' })
+}
