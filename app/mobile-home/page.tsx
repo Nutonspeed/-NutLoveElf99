@@ -2,6 +2,7 @@
 import EmotionBanner from "@/components/EmotionBanner"
 import WalkthroughModal from "@/components/WalkthroughModal"
 import FallbackCenter from "@/components/FallbackCenter"
+import LoadingSpinner from "@/components/LoadingSpinner"
 import { useAdminGuard } from "@/contexts/use-admin-guard"
 
 let MenuGrid: React.ComponentType | null = null
@@ -18,10 +19,7 @@ export default function MobileHomePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p>กำลังตรวจสอบสิทธิ์...</p>
-        </div>
+        <LoadingSpinner label="กำลังตรวจสอบสิทธิ์..." />
       </div>
     )
   }
