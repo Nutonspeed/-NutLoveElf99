@@ -8,6 +8,7 @@ export let conversations: Conversation[] = [
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
     updatedAt: new Date().toISOString(),
+    agentId: 'agent-001',
   },
   {
     id: 'conv-002',
@@ -16,6 +17,16 @@ export let conversations: Conversation[] = [
     lastMessage: 'จะโอนพรุ่งนี้',
     tags: ['รอโอน'],
     updatedAt: new Date().toISOString(),
+    // agentId intentionally missing
+  },
+  {
+    id: 'conv-003',
+    customerId: '4',
+    customerName: 'Bob Lee',
+    lastMessage: 'สินค้ายังมีไหม',
+    tags: ['สอบถามสินค้า'],
+    // updatedAt intentionally missing
+    agentId: 'agent-002',
   },
 ]
 
@@ -34,6 +45,15 @@ function save() {
 
 export function listConversations() {
   return conversations
+}
+
+export function validateConversations() {
+  const tags = new Set<string>()
+  const flagged = conversations.filter((c) => {
+    c.tags.forEach((t) => tags.add(t))
+    return !c.agentId || !c.updatedAt
+  })
+  return { total: conversations.length, flagged, tagCount: tags.size }
 }
 
 export function addTag(id: string, tag: string) {
