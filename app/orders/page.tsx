@@ -16,7 +16,7 @@ import { Package, Eye, Download, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
-import { mockOrders } from "@/lib/mock-orders";
+import { mockOrders, updateOrderTag } from "@/lib/mock-orders";
 import { mockProducts } from "@/lib/mock-products";
 import { mockFeedbacks } from "@/lib/mock-feedback";
 import { reviewReminder, loadReviewReminder } from "@/lib/mock-settings";
@@ -27,6 +27,7 @@ import {
   getOrderStatusText,
 } from "@/lib/order-status";
 import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function getProgress(status: OrderStatus) {
   switch (status) {
@@ -49,6 +50,7 @@ export default function OrdersPage() {
   const { dispatch } = useCart();
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -115,6 +117,13 @@ export default function OrdersPage() {
     }
   };
 
+  const handleCreateQuote = (order: Order) => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("quoteFromOrder", JSON.stringify(order));
+      router.push("/quotes/new");
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -175,6 +184,22 @@ export default function OrdersPage() {
                         className="w-24"
                         value={getProgress(order.status)}
                       />
+                      <Select
+                        value={order.tag || ''}
+                        onValueChange={(v) => {
+                          updateOrderTag(order.id, v);
+                          setRefresh((r) => r + 1);
+                        }}
+                      >
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder="แท็ก" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="">-</SelectItem>
+                          <SelectItem value="ด่วน">ด่วน</SelectItem>
+                          <SelectItem value="ติดตาม">ติดตาม</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 </CardHeader>
@@ -234,6 +259,14 @@ export default function OrdersPage() {
                         onClick={() => handleReorder(order)}
                       >
                         สั่งซ้ำ
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleCreateQuote(order)}
+                      >
+                        สร้างใบเสนอราคาจากออเดอร์นี้
                       </Button>
 
                       <Link href="/chat">
