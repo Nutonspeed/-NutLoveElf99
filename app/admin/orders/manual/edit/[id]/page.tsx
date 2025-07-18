@@ -55,7 +55,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || user?.role !== "admin")) {
-      router.push("/login")
+      router.push("/auth/login")
     }
   }, [isAuthenticated, user, router, isLoading])
 

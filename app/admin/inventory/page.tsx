@@ -113,7 +113,7 @@ export default function InventoryPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login")
+      router.push("/auth/login")
       return
     }
     if (!canAccess(user?.role, 'inventory')) {
@@ -127,7 +127,7 @@ export default function InventoryPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">ไม่มีสิทธิ์เข้าถึง</h1>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button>เข้าสู่ระบบ</Button>
           </Link>
         </div>

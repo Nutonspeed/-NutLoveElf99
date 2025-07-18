@@ -53,7 +53,7 @@ export default function RegisterPage() {
         title: "สมัครสมาชิกสำเร็จ!",
         description: "ยินดีต้อนรับสู่ SofaCover Pro",
       })
-      router.push("/login")
+      router.push("/auth/login")
     }, 2000)
   }
 
@@ -200,7 +200,7 @@ export default function RegisterPage() {
           <div className="mt-6 text-center">
             <div className="text-sm text-gray-600">
               มีบัญชีอยู่แล้ว?{" "}
-              <Link href="/login" className="text-blue-600 hover:underline">
+              <Link href="/auth/login" className="text-blue-600 hover:underline">
                 เข้าสู่ระบบ
               </Link>
             </div>

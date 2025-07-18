@@ -64,7 +64,7 @@ export default function SettingsPage() {
     setReviewRemind(reviewReminder);
     setShowIdsState(mockPreferences.showIds);
     if (!isAuthenticated) {
-      router.push("/login");
+      router.push("/auth/login");
     } else if (user?.role !== "admin") {
       router.push("/");
     }

@@ -30,7 +30,7 @@ export default function AdminProductsPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">กรุณาเข้าสู่ระบบ</h1>
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button>เข้าสู่ระบบ</Button>
           </Link>
         </div>
