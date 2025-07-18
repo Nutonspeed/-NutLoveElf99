@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/buttons/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card";
@@ -19,6 +19,37 @@ export default function AdminIndex() {
 
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [debugOpen, setDebugOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!('Notification' in window)) {
+      toast.warning('เบราว์เซอร์ไม่รองรับการแจ้งเตือน');
+      return;
+    }
+
+    Notification.requestPermission().then((permission) => {
+      if (permission !== 'granted') return;
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register('/sw.js')
+          .then((reg) => {
+            const list = [...mockNotifications, ...chatNotifications];
+            list.forEach((n) => {
+              reg.active?.postMessage({
+                title: 'SofaCover',
+                options: { body: n.message },
+              });
+            });
+          })
+          .catch(() => {
+            toast.warning('ไม่สามารถลงทะเบียน Service Worker ได้');
+          });
+      } else {
+        toast.warning('เบราว์เซอร์ไม่รองรับ Service Worker');
+      }
+    });
+  }, []);
 
   let todayCount = 0;
   let todayIncome = 0;
