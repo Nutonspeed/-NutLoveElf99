@@ -6,7 +6,6 @@ import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { useCompare } from "@/contexts/compare-context"
 import { fabrics } from "@/lib/mock-fabrics"
 
@@ -32,13 +31,13 @@ export default function ComparePage() {
     )
   }, [items])
 
-  if (fabrics.length === 0) {
+  if (fabrics.length !== 2) {
     return (
       <div className="min-h-screen">
         <Navbar />
         <div className="container mx-auto px-4 py-16 text-center">
           <div className="text-6xl mb-4">🔍</div>
-          <p className="text-gray-600">ไม่มีรายการเปรียบเทียบ</p>
+          <p className="text-gray-600">กรุณาเลือกผ้า 2 ลาย</p>
           <Link href="/fabrics">
             <Button className="mt-4">เลือกผ้า</Button>
           </Link>
@@ -53,63 +52,22 @@ export default function ComparePage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">เปรียบเทียบลายผ้า</h1>
-        <Dialog defaultOpen>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="mb-4">เปิดตารางเปรียบเทียบ</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-2xl">
-            <DialogHeader>
-              <DialogTitle>เปรียบเทียบลายผ้า</DialogTitle>
-            </DialogHeader>
-            <div className="overflow-x-auto">
-                <table className="min-w-full text-center border">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2">รายละเอียด</th>
-                      {fabrics.map((f) => (
-                        <th key={f.slug} className="px-4 py-2">
-                          <Image
-                            src={f.images[0] || "/placeholder.svg"}
-                            alt={f.name}
-                            width={100}
-                            height={100}
-                            className="mx-auto rounded"
-                          />
-                          <p className="mt-2 font-medium">{f.name}</p>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-              <tr>
-                <td className="font-medium">สี</td>
-                {fabrics.map((f) => (
-                  <td key={f.slug}>{f.color}</td>
-                ))}
-              </tr>
-              <tr>
-                <td className="font-medium">ราคา</td>
-                {fabrics.map((f) => (
-                  <td key={f.slug}>฿{f.price.toLocaleString()}</td>
-                ))}
-              </tr>
-              <tr>
-                <td className="font-medium">ความรู้สึก</td>
-                {fabrics.map((f) => (
-                  <td key={f.slug}>นุ่มสบาย</td>
-                ))}
-              </tr>
-              <tr>
-                <td className="font-medium">ผิวสัมผัส</td>
-                {fabrics.map((f) => (
-                  <td key={f.slug}>ผิวละเอียด</td>
-                ))}
-              </tr>
-            </tbody>
-              </table>
+        <div className="grid grid-cols-2 gap-4">
+          {fabrics.map((f) => (
+            <div key={f.slug} className="text-center space-y-2">
+              <Image
+                src={f.images[0] || "/placeholder.svg"}
+                alt={f.name}
+                width={300}
+                height={300}
+                className="mx-auto rounded object-cover"
+              />
+              <p className="font-medium">{f.name}</p>
+              <p className="text-sm text-gray-600">สี: {f.color}</p>
+              <p className="text-sm text-gray-600">ราคา: ฿{f.price.toLocaleString()}</p>
             </div>
-          </DialogContent>
-        </Dialog>
+          ))}
+        </div>
         <div className="mt-6 text-center">
           <Button variant="outline" onClick={clear}>ล้างรายการเปรียบเทียบ</Button>
         </div>
