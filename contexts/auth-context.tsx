@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { mockUsers } from "@/lib/mock-users"
+import { addAccessLog } from "@/lib/mock-access-logs"
 
 import type { Role } from "@/lib/mock-roles"
 
@@ -49,6 +50,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(foundUser)
       if (typeof window !== "undefined") {
         localStorage.setItem("auth_user", JSON.stringify(foundUser))
+        const ip = Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join('.')
+        addAccessLog(ip, navigator.userAgent)
       }
       if (typeof document !== 'undefined') {
         document.cookie = 'elf_admin_session=1; path=/'
