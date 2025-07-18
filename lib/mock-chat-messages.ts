@@ -35,3 +35,10 @@ export function getLatestChatMessage(conversationId: string): ChatMessageEntry |
   return msgs[msgs.length - 1]
 }
 
+export function searchChatMessages(conversationId: string, keyword: string): ChatMessageEntry[] {
+  const term = keyword.toLowerCase()
+  return listChatMessages(conversationId).filter(m =>
+    m.text.toLowerCase().includes(term)
+  )
+}
+
