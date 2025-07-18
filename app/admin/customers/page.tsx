@@ -6,7 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
+import {
+  Search,
+  ArrowLeft,
+  Eye,
+  Mail,
+  Phone,
+  ShoppingBag,
+  Calendar,
+} from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/modals/dialog"
 import Link from "next/link"
 import {
   fetchCustomers,
@@ -33,6 +47,7 @@ export default function AdminCustomersPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState("")
   const [newEmail, setNewEmail] = useState("")
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null)
 
   useEffect(() => {
     loadCustomerNotes()
@@ -326,11 +341,13 @@ export default function AdminCustomersPage() {
                       )}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Link href={`/admin/customers/${customer.id}`}>
-                        <Button variant="outline" size="icon">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => setSelectedCustomer(customer)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -345,6 +362,36 @@ export default function AdminCustomersPage() {
           </CardContent>
         </Card>
       </div>
+      <Dialog
+        open={!!selectedCustomer}
+        onOpenChange={(open) => !open && setSelectedCustomer(null)}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ข้อมูลลูกค้า</DialogTitle>
+          </DialogHeader>
+          {selectedCustomer ? (
+            <div className="space-y-2">
+              <p className="font-medium">{selectedCustomer.name}</p>
+              <div className="flex items-center space-x-2">
+                <Mail className="h-4 w-4 text-gray-400" />
+                <span>{selectedCustomer.email}</span>
+              </div>
+              {selectedCustomer.phone && (
+                <div className="flex items-center space-x-2">
+                  <Phone className="h-4 w-4 text-gray-400" />
+                  <span>{selectedCustomer.phone}</span>
+                </div>
+              )}
+              {selectedCustomer.note && (
+                <p className="text-sm text-gray-500">{selectedCustomer.note}</p>
+              )}
+            </div>
+          ) : (
+            <p className="text-center">ไม่พบข้อมูลลูกค้า</p>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

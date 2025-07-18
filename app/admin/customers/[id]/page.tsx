@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
-import { useRouter } from "next/navigation"
 import CustomerCard from "@/components/admin/customers/CustomerCard"
 import { useAuth } from "@/contexts/auth-context"
 import {
@@ -55,7 +54,6 @@ export default function CustomerDetailPage({
 }) {
   const { id } = params
   const { user } = useAuth()
-  const router = useRouter()
   const customer = mockCustomers.find((c) => c.id === id)
 
   useEffect(() => {
@@ -64,16 +62,9 @@ export default function CustomerDetailPage({
     loadFlaggedUsers()
   }, [])
 
-  useEffect(() => {
-    if (!customer) {
-      if (process.env.NODE_ENV === 'development') {
-        console.warn('Mock Error at customers/[id]')
-      }
-      router.replace('/admin/customers')
-    }
-  }, [customer, router])
-
-  if (!customer) return null
+  if (!customer) {
+    return <div className="p-4 text-center">ไม่พบข้อมูลลูกค้า</div>
+  }
 
   const orders = getCustomerOrders(customer.id)
   const stats = getCustomerStats(customer.id)
