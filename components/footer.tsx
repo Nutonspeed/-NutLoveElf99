@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
+import { APP_VERSION, GIT_BRANCH, GIT_COMMIT } from "@/lib/version"
 
 export function Footer() {
   return (
@@ -84,8 +85,11 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center">
+        <div className="border-t border-gray-800 mt-8 pt-8 text-center space-y-1">
           <p className="text-gray-400 text-sm">© 2024 SofaCover Pro. สงวนลิขสิทธิ์ทั้งหมด.</p>
+          <p className="text-gray-500 text-xs">
+            Version {APP_VERSION} ({GIT_BRANCH}@{GIT_COMMIT})
+          </p>
         </div>
       </div>
     </footer>

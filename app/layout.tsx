@@ -5,6 +5,8 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { CartProvider } from "@/contexts/cart-context"
 import { AuthProvider } from "@/contexts/auth-context"
+import { FeatureFlagProvider } from "@/contexts/feature-flag-context"
+import { DemoProvider } from "@/contexts/demo-context"
 import { WishlistProvider } from "@/contexts/wishlist-context"
 import { CompareProvider } from "@/contexts/compare-context"
 import { ReviewImagesProvider } from "@/contexts/review-images-context"
@@ -12,6 +14,7 @@ import { FavoritesProvider } from "@/contexts/favorites-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 import { validateMockData } from "@/lib/mock-validator"
 import RedirectMobileHome from "@/components/RedirectMobileHome"
+import DevBar from "@/components/DevBar"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -32,23 +35,28 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
-        <AuthProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <CompareProvider>
-                <FavoritesProvider>
-                  <AdminProductGroupsProvider>
-                    <ReviewImagesProvider>
-                      <RedirectMobileHome />
-                      {children}
-                      <Toaster />
-                    </ReviewImagesProvider>
-                  </AdminProductGroupsProvider>
-                </FavoritesProvider>
-              </CompareProvider>
-            </WishlistProvider>
-          </CartProvider>
-        </AuthProvider>
+        <FeatureFlagProvider>
+          <DemoProvider>
+            <AuthProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <CompareProvider>
+                    <FavoritesProvider>
+                      <AdminProductGroupsProvider>
+                        <ReviewImagesProvider>
+                          <RedirectMobileHome />
+                          {children}
+                          <DevBar />
+                          <Toaster />
+                        </ReviewImagesProvider>
+                      </AdminProductGroupsProvider>
+                    </FavoritesProvider>
+                  </CompareProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </AuthProvider>
+          </DemoProvider>
+        </FeatureFlagProvider>
       </body>
     </html>
   )

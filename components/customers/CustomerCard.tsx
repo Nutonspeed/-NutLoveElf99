@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import type { Customer } from "@/lib/mock-customers"
+import { useDemo } from "@/contexts/demo-context"
 
 function statusColor(status: string) {
   if (status === "VIP") return "bg-yellow-200 text-yellow-800"
@@ -11,6 +12,7 @@ function statusColor(status: string) {
 }
 
 export default function CustomerCard({ customer }: { customer: Customer }) {
+  const { enabled } = useDemo()
   const status =
     customer.tier === "VIP" ? "VIP" : (customer.points ?? 0) > 50 ? "returning" : "new"
   return (
@@ -18,7 +20,7 @@ export default function CustomerCard({ customer }: { customer: Customer }) {
       <Card className="hover:bg-muted/50">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            {customer.name}
+            {enabled ? <span className="blur-sm">{customer.name}</span> : customer.name}
             <span
               className={`rounded px-2 py-0.5 text-xs font-medium ${statusColor(status)}`}
             >
