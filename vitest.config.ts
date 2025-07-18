@@ -4,7 +4,7 @@ import path from 'path'
 export default defineConfig({
   test: {
     environment: 'jsdom',
-    exclude: [...configDefaults.exclude, 'chatwoot/**'],
+    exclude: [...configDefaults.exclude],
   },
   resolve: {
     alias: {
