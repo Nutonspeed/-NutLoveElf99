@@ -36,6 +36,9 @@ export interface Collection {
   priceRange: string
   description: string
   images: string[]
+  metaTitle: string
+  metaDesc: string
+  isFeatured: boolean
 }
 
 export const mockCollections: Collection[] = Array.from({ length: 40 }, (_, i) => ({
@@ -50,6 +53,9 @@ export const mockCollections: Collection[] = Array.from({ length: 40 }, (_, i) =
     '/placeholder.jpg',
     '/placeholder.jpg',
   ],
+  metaTitle: `คอลเลกชัน #${i + 1}`,
+  metaDesc: `ลายผ้าในชุด ${i + 1}`,
+  isFeatured: false,
 }))
 
 export async function getCollections(): Promise<Collection[]> {
@@ -58,7 +64,7 @@ export async function getCollections(): Promise<Collection[]> {
   }
   const { data, error } = await supabase
     .from('collections')
-    .select('id, name, slug, price_range, description, all_images')
+    .select('id, name, slug, price_range, description, all_images, meta_title, meta_desc, is_featured')
     .order('created_at', { ascending: false })
 
   if (error || !data) {
@@ -73,6 +79,9 @@ export async function getCollections(): Promise<Collection[]> {
     priceRange: c.price_range,
     description: c.description,
     images: c.all_images || [],
+    metaTitle: c.meta_title || c.name,
+    metaDesc: c.meta_desc || '',
+    isFeatured: !!c.is_featured,
   })) as Collection[]
 }
 
