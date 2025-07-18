@@ -9,6 +9,7 @@ export default function ImportFabricPage() {
   const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
   const [error, setError] = useState('')
+  const [done, setDone] = useState(false)
 
   const handleImport = async () => {
     if (!file) return
@@ -29,7 +30,7 @@ export default function ImportFabricPage() {
         addFabric({ name: fabricName, imageUrl: `/mock/${name}`, collectionId: '' })
         i++
       }
-      router.push('/dashboard/fabrics')
+      setDone(true)
     } catch (e) {
       setError('เกิดข้อผิดพลาดในการอ่านไฟล์')
     }
@@ -40,7 +41,10 @@ export default function ImportFabricPage() {
       <h1 className="text-2xl font-bold">นำเข้าลายผ้าจาก ZIP</h1>
       <input type="file" accept=".zip" onChange={e => { setError(''); setFile(e.target.files?.[0] || null) }} />
       {error && <p className="text-red-600 text-sm">{error}</p>}
-      <Button onClick={handleImport} disabled={!file}>นำเข้า</Button>
+      <Button onClick={handleImport} disabled={!file || done}>นำเข้า</Button>
+      {done && (
+        <Button onClick={() => router.push('/dashboard/fabrics')}>เสร็จสิ้น</Button>
+      )}
     </div>
   )
 }
