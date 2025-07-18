@@ -111,12 +111,17 @@ export async function getProducts(): Promise<Product[]> {
     return Promise.resolve(mockProducts)
   }
 
-  const { data, error } = await supabase.from("products").select("*")
+  try {
+    const { data, error } = await supabase.from("products").select("*")
 
-  if (error || !data) {
-    console.error("Supabase fetchProducts error", error)
+    if (error || !data) {
+      console.error("Supabase fetchProducts error", error)
+      return mockProducts
+    }
+
+    return data as Product[]
+  } catch (err) {
+    console.error("Supabase fetchProducts unexpected error", err)
     return mockProducts
   }
-
-  return data as Product[]
 }

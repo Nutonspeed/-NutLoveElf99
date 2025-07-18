@@ -74,10 +74,15 @@ export async function getFabrics() {
   if (!supabase) {
     return Promise.resolve(mockFabrics)
   }
-  const { data, error } = await supabase.from('fabrics').select('*')
-  if (error || !data) {
-    console.error('Supabase fetch fabrics error', error)
+  try {
+    const { data, error } = await supabase.from('fabrics').select('*')
+    if (error || !data) {
+      console.error('Supabase fetch fabrics error', error)
+      return mockFabrics
+    }
+    return data as Fabric[]
+  } catch (err) {
+    console.error('Supabase fetch fabrics unexpected error', err)
     return mockFabrics
   }
-  return data as Fabric[]
 }

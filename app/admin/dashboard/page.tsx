@@ -18,8 +18,6 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "rec
 import { mockCustomers, type Customer } from "@/lib/mock-customers"
 import {
   mockDB,
-  countOrders,
-  sumOrderTotal,
   countChats,
   averageFeedback,
   isWithinDays,
@@ -49,8 +47,11 @@ export default function AdminDashboard() {
     setOrders(filteredOrders.map(o => ({ id: o.id, customerName: o.customerName, total: o.total, createdAt: o.createdAt })))
     const filteredCustomers = days ? mockCustomers.filter(c => isWithinDays(c.createdAt, days)) : mockCustomers
     setCustomers(filteredCustomers)
-    setChatCount(countChats(days))
-    setFeedbackScore(Number(averageFeedback(days).toFixed(1)))
+    ;(async () => {
+      const [chatCt, fb] = await Promise.all([countChats(days), averageFeedback(days)])
+      setChatCount(chatCt)
+      setFeedbackScore(Number(fb.toFixed(1)))
+    })()
   }, [range])
 
   const loading = !orders || !customers || chatCount === null
