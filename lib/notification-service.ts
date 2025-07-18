@@ -3,6 +3,22 @@ import { mockCustomers } from "./mock-customers"
 import { mockOrders } from "./mock-orders"
 import type { Customer } from "./mock-customers"
 
+function warnMissing(varName: string) {
+  if (!process.env[varName]) {
+    console.warn(`Environment variable ${varName} is not set.`)
+    return true
+  }
+  return false
+}
+
+// Validate notification related environment variables
+warnMissing("SMTP_USER")
+warnMissing("SMTP_PASS")
+warnMissing("TWILIO_ACCOUNT_SID")
+warnMissing("TWILIO_AUTH_TOKEN")
+warnMissing("TWILIO_FROM_NUMBER")
+warnMissing("LINE_NOTIFY_TOKEN")
+
 // Types
 export interface NotificationTemplate {
   id: string
