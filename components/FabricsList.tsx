@@ -17,7 +17,13 @@ interface Fabric {
   image_urls?: string[] | null
 }
 
-export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
+export function FabricsList({
+  fabrics,
+  testStates = {},
+}: {
+  fabrics: Fabric[]
+  testStates?: Record<string, boolean>
+}) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
 
@@ -32,6 +38,7 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
           const slug = fabric.slug || fabric.id
           const checked = items.includes(slug)
           const coViewed = mockCoViewLog[slug]?.length
+          const valid = testStates[slug]
           return (
             <div
               key={slug}
@@ -40,6 +47,11 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
               {coViewed && (
                 <span className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded">
                   ดูด้วยกันบ่อย
+                </span>
+              )}
+              {valid !== undefined && (
+                <span className="absolute bottom-2 right-2 text-xl">
+                  {valid ? '✅' : '❌'}
                 </span>
               )}
               <Checkbox
