@@ -1,5 +1,6 @@
 "use client"
 import { cn } from '@/lib/utils'
+import InlineStatusBadge from '@/components/ui/InlineStatusBadge'
 
 interface Props {
   id: string
@@ -9,16 +10,8 @@ interface Props {
 }
 
 export default function OrderCard({ id, customer, status, total }: Props) {
-  const statusColor =
-    status === 'Paid'
-      ? 'bg-green-100 text-green-800'
-      : status === 'Cancelled'
-      ? 'bg-red-100 text-red-800'
-      : 'bg-yellow-100 text-yellow-800'
-
   return (
     <div
-      onClick={() => alert(id)}
       className={cn(
         'rounded border p-4 space-y-1 hover:shadow hover:border-gray-300',
         'transition-colors'
@@ -26,7 +19,7 @@ export default function OrderCard({ id, customer, status, total }: Props) {
     >
       <div className="flex justify-between text-sm font-medium">
         <span>{id}</span>
-        <span className={cn('px-2 rounded text-xs', statusColor)}>{status}</span>
+        <InlineStatusBadge status={status as any} />
       </div>
       <p className="text-sm">{customer}</p>
       <p className="text-sm font-semibold">฿{total.toLocaleString()}</p>

@@ -1,7 +1,7 @@
 import CopyLinkButton from '@/components/bills/CopyLinkButton'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
 import PaidStatusToggle from '@/components/bills/PaidStatusToggle'
-import { getBill } from '@/mock/bills'
+import { getBill, updateBillStatus } from '@/mock/bills'
 
 interface Props {
   params: { id: string }
@@ -42,7 +42,12 @@ export default function DashboardBillPage({ params }: Props) {
       <div className="flex items-center justify-between border-t pt-4">
         <CopyLinkButton link={`https://example.com/bill/${bill.id}`} />
         <div className="space-y-1 text-right">
-          <PaidStatusToggle defaultPaid={bill.status === 'paid'} />
+          <PaidStatusToggle
+            defaultPaid={bill.status === 'paid'}
+            onChange={(paid) =>
+              updateBillStatus(bill.id, paid ? 'paid' : 'unpaid')
+            }
+          />
           <p className="text-xs text-muted-foreground">แก้ไขล่าสุด: 2024-05-01</p>
         </div>
       </div>
