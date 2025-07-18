@@ -3,8 +3,18 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import QRCode from "react-qr-code"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel"
+import { Dialog, DialogContent } from "@/components/ui/modals/dialog"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
@@ -20,6 +30,7 @@ interface Fabric {
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
+  const [qrSlug, setQrSlug] = useState<string | null>(null)
 
   const handleCompare = () => {
     router.push(`/compare`)
@@ -48,20 +59,40 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                 className="absolute top-2 left-2 z-10 bg-white/80"
               />
               <Link href={`/fabrics/${slug}`}>
-                <div className="relative aspect-square">
-                  <Image
-                    src={
-                      fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
-                    }
-                    alt={fabric.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+                <Carousel className="relative aspect-square">
+                  <CarouselContent>
+                    {(fabric.image_urls?.length ? fabric.image_urls : [fabric.image_url]).map(
+                      (img, idx) => (
+                        <CarouselItem key={idx} className="relative aspect-square">
+                          <Image
+                            src={img || '/placeholder.svg'}
+                            alt={fabric.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </CarouselItem>
+                      )
+                    )}
+                  </CarouselContent>
+                  {fabric.image_urls && fabric.image_urls.length > 1 && (
+                    <>
+                      <CarouselPrevious />
+                      <CarouselNext />
+                    </>
+                  )}
+                </Carousel>
                 <div className="p-2 text-center">
                   <p className="font-medium line-clamp-2">{fabric.name}</p>
                 </div>
               </Link>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setQrSlug(slug)}
+                className="absolute bottom-2 right-2"
+              >
+                QR Preview
+              </Button>
             </div>
           )
         })}
@@ -71,6 +102,13 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
           <Button onClick={handleCompare}>เปรียบเทียบตอนนี้</Button>
         </div>
       )}
+      <Dialog open={qrSlug !== null} onOpenChange={() => setQrSlug(null)}>
+        <DialogContent className="flex flex-col items-center">
+          {qrSlug && (
+            <QRCode value={`https://elfcover.vercel.app/fabrics/${qrSlug}`} />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
