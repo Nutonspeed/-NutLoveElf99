@@ -23,6 +23,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
     section: "Inventory",
     items: [
       { label: "Products", icon: require("lucide-react").Package, href: "/products" },
+      { label: "Stock", icon: require("lucide-react").ClipboardList, href: "/dashboard/stock" },
     ],
   },
 ]
