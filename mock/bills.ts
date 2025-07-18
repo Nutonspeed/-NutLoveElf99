@@ -31,6 +31,20 @@ export const mockBills: AdminBill[] = [
   },
 ]
 
+export const invoiceLinks: Record<string, string> = {}
+
+export function generateInvoiceLink(id: string): string {
+  const bill = getBill(id)
+  if (!bill) throw new Error('bill not found')
+  const link = `https://elfnity.app/invoice-bill/${id}`
+  invoiceLinks[id] = link
+  return link
+}
+
+export function getInvoiceLink(id: string): string | undefined {
+  return invoiceLinks[id]
+}
+
 export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): AdminBill {
   const bill: AdminBill = {
     id: generateMockId('bill'),
