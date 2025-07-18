@@ -59,3 +59,8 @@ export function updateBill(
   if (bill) Object.assign(bill, data)
   return bill
 }
+
+export function deleteBill(id: string) {
+  const bill = mockBills.find((b) => b.id === id)
+  if (bill) bill.status = 'cancelled'
+}
