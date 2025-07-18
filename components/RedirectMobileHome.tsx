@@ -4,11 +4,11 @@ import { usePathname, useRouter } from "next/navigation"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { useAuth } from "@/contexts/auth-context"
 
-export default function RedirectMobileHome() {
+function Redirect() {
+  const router = useRouter()
   const isMobile = useIsMobile()
   const { isAuthenticated } = useAuth()
   const pathname = usePathname()
-  const router = useRouter()
 
   useEffect(() => {
     if (isMobile && pathname === "/" && isAuthenticated) {
@@ -17,4 +17,12 @@ export default function RedirectMobileHome() {
   }, [isMobile, isAuthenticated, pathname, router])
 
   return null
+}
+
+export default function RedirectMobileHome() {
+  const pathname = usePathname()
+  if (pathname !== "/") {
+    return null
+  }
+  return <Redirect />
 }
