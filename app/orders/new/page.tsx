@@ -9,6 +9,7 @@ import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem } from "@/types/order"
 import { supabase } from "@/lib/supabase"
+import { toast } from "@/hooks/use-toast"
 import { mockProducts } from "@/lib/mock-products"
 
 export default function NewOrderPage() {
@@ -58,10 +59,18 @@ export default function NewOrderPage() {
     try {
       if (supabase) {
         await supabase.from("orders").insert({ id: order.id, data: JSON.stringify(order) })
-      } else if (typeof window !== "undefined") {
+      } else if (process.env.NODE_ENV === "development" && typeof window !== "undefined") {
         const existing = JSON.parse(localStorage.getItem("orders") || "[]")
         existing.push(order)
         localStorage.setItem("orders", JSON.stringify(existing))
+      } else {
+        console.error("Supabase credentials are missing")
+        toast({
+          title: "ไม่พบการตั้งค่า Supabase",
+          description: "กรุณาเพิ่มคีย์ในไฟล์ .env ก่อนใช้งาน",
+          variant: "destructive",
+        })
+        return
       }
       router.push(`/orders/${order.id}`)
     } catch (err) {
