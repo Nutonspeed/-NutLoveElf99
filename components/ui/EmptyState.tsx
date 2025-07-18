@@ -6,6 +6,7 @@ export interface EmptyStateProps {
   title?: ReactNode
   description?: ReactNode
   action?: ReactNode
+  children?: ReactNode
   className?: string
 }
 
@@ -14,6 +15,7 @@ export default function EmptyState({
   title,
   description,
   action,
+  children,
   className,
 }: EmptyStateProps) {
   return (
@@ -21,6 +23,7 @@ export default function EmptyState({
       {icon && <div className="text-5xl">{icon}</div>}
       {title && <h2 className="text-lg font-semibold">{title}</h2>}
       {description && <p className="text-sm text-muted-foreground">{description}</p>}
+      {children}
       {action}
     </div>
   )

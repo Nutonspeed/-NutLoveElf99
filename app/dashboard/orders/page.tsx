@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { orders as mockOrders, SimpleOrder } from '@/mock/orders'
 import OrderCard from '@/components/order/OrderCard'
 import EmptyState from '@/components/EmptyState'
+import InlineStatusBadge from '@/components/ui/InlineStatusBadge'
 import { Input } from '@/components/ui/inputs/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/buttons/button'
@@ -12,6 +13,7 @@ export default function DashboardOrdersPage() {
   const [orders, setOrders] = useState<SimpleOrder[]>([...mockOrders])
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [sort, setSort] = useState('newest')
 
   const filtered = orders.filter(o => {
     const matchStatus = statusFilter === 'all' || o.status === statusFilter
@@ -19,6 +21,11 @@ export default function DashboardOrdersPage() {
     const matchSearch = o.id.toLowerCase().includes(term) || o.customer.toLowerCase().includes(term)
     return matchStatus && matchSearch
   })
+
+  const sorted = [...filtered]
+  if (sort === 'oldest') sorted.reverse()
+  if (sort === 'high') sorted.sort((a, b) => b.total - a.total)
+  if (sort === 'low') sorted.sort((a, b) => a.total - b.total)
 
   const handleCancel = (id: string) => {
     if (confirm('ยืนยันยกเลิกคำสั่งซื้อ?')) {
@@ -46,8 +53,20 @@ export default function DashboardOrdersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <select
+            className="border rounded-md p-2"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="high">High Total</option>
+            <option value="low">Low Total</option>
+          </select>
         </div>
       </div>
+
+      <p className="text-sm text-muted-foreground">แสดงทั้งหมด {sorted.length} รายการ</p>
 
       {filtered.length > 0 ? (
         <>
@@ -63,11 +82,13 @@ export default function DashboardOrdersPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filtered.map((order) => (
+                {sorted.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell>{order.id}</TableCell>
                     <TableCell>{order.customer}</TableCell>
-                    <TableCell>{order.status}</TableCell>
+                    <TableCell>
+                      <InlineStatusBadge status={order.status} />
+                    </TableCell>
                     <TableCell>฿{order.total.toLocaleString()}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
@@ -90,7 +111,7 @@ export default function DashboardOrdersPage() {
           </div>
 
           <div className="md:hidden space-y-4">
-            {filtered.map((order) => (
+            {sorted.map((order) => (
               <OrderCard key={order.id} order={order} onCancel={handleCancel} />
             ))}
           </div>
