@@ -28,6 +28,14 @@ export function createBill(
     bill.hidden = true
   }
   mockBills.push(bill)
+  if (typeof window !== 'undefined') {
+    try {
+      const raw = window.localStorage.getItem('bill-timestamps')
+      const times: number[] = raw ? JSON.parse(raw) : []
+      times.push(Date.now())
+      window.localStorage.setItem('bill-timestamps', JSON.stringify(times))
+    } catch {}
+  }
   addAdminLog(`create bill ${bill.id}`, 'mockAdminId')
   addChatMessage(orderId, 'bill_created')
   return bill
