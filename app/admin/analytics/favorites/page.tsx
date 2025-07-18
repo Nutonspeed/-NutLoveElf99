@@ -5,11 +5,11 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { useLocalStorage } from '@/hooks/use-local-storage'
-import { mockFabrics } from '@/lib/mock-fabrics'
+import { fabrics } from '@/lib/mock-fabrics'
 
 export default function AdminFavoritesAnalytics() {
   const [counts] = useLocalStorage<Record<string, number>>('favorite-counts', {})
-  const ranking = [...mockFabrics].map((f) => ({
+  const ranking = [...fabrics].map((f) => ({
     ...f,
     count: counts[f.slug] || 0,
   })).sort((a, b) => b.count - a.count)

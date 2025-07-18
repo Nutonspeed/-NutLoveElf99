@@ -93,9 +93,9 @@ describe('getFabrics', () => {
     const from = vi.fn().mockReturnValue({ select })
     vi.doMock('../supabase', () => ({ supabase: { from } }))
 
-    const { getFabrics, mockFabrics } = await import('../mock-fabrics')
+    const { getFabrics, fabrics } = await import('../mock-fabrics')
     const result = await getFabrics()
 
-    expect(result).toEqual(mockFabrics)
+    expect(result).toEqual(fabrics)
   })
 })

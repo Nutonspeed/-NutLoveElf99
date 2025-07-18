@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 
-const mockFabrics = [
+const fabrics = [
   { id: 1, name: 'สีเทาเข้ม', image: '/images/fabrics/dark-gray.jpg' },
   { id: 2, name: 'สีเบจ', image: '/images/fabrics/beige.jpg' },
   { id: 3, name: 'ลายสก็อต', image: '/images/fabrics/scott.jpg' },
@@ -33,9 +33,9 @@ export default function SofaCoversPage() {
           เลือกผ้าคลุมโซฟาที่เหมาะกับบ้านคุณ ทั้งผ้ายืดหยุ่น กันน้ำ และลายยอดนิยม
         </p>
 
-        {mockFabrics.length > 0 ? (
+        {fabrics.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {mockFabrics.map((fabric) => (
+            {fabrics.map((fabric) => (
               <div key={fabric.id} className="border rounded-xl p-4 shadow">
                 <Image
                   src={fabric.image}

@@ -3,7 +3,7 @@ import { Footer } from "@/components/footer"
 import { FabricsList } from "@/components/FabricsList"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
-import { mockFabrics } from "@/lib/mock-fabrics"
+import { fabrics } from "@/lib/mock-fabrics"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 
 export const metadata: Metadata = {
@@ -21,9 +21,9 @@ interface Fabric {
 }
 
 export default async function FabricsPage() {
-  let fabrics: Fabric[] = []
+  let items: Fabric[] = []
   if (!supabase) {
-    fabrics = mockFabrics.map((f) => ({
+    items = fabrics.map((f) => ({
       id: f.id,
       slug: f.slug,
       name: f.name,
@@ -44,7 +44,7 @@ export default async function FabricsPage() {
         </div>
       )
     }
-    fabrics = data as Fabric[]
+    items = data as Fabric[]
   }
 
   return (
@@ -52,7 +52,7 @@ export default async function FabricsPage() {
       <Navbar />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">แกลเลอรี่ลายผ้า</h1>
-        <FabricsList fabrics={fabrics} />
+        <FabricsList fabrics={items} />
       </div>
       <Footer />
       <AnalyticsTracker event="ViewContent" />

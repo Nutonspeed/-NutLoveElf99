@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { mockBookmarks, Bookmark } from '@/lib/mock-bookmark'
-import { mockFabrics } from '@/lib/mock-fabrics'
+import { fabrics } from '@/lib/mock-fabrics'
 import { mockOrders } from '@/lib/mock-orders'
 
 interface BookmarkView {
@@ -19,7 +19,7 @@ export default function AllBookmarksPage() {
   const items: BookmarkView[] = mockBookmarks
     .map((b) => {
       if (b.type === 'fabric') {
-        const f = mockFabrics.find((f) => f.slug === b.ref)
+        const f = fabrics.find((f) => f.slug === b.ref)
         return f
           ? {
               href: `/fabrics/${f.slug}`,

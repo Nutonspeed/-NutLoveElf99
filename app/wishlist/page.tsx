@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { useWishlist } from "@/contexts/wishlist-context"
-import { mockFabrics } from "@/lib/mock-fabrics"
+import { fabrics } from "@/lib/mock-fabrics"
 import { mockCollections } from "@/lib/mock-collections"
 
 export default function WishlistPage() {
@@ -13,10 +13,10 @@ export default function WishlistPage() {
 
   const items = wishlist
     .map((slug) =>
-      mockFabrics.find((f) => f.slug === slug) ||
+      fabrics.find((f) => f.slug === slug) ||
       mockCollections.find((c) => c.slug === slug),
     )
-    .filter(Boolean) as (typeof mockFabrics[number] | typeof mockCollections[number])[]
+    .filter(Boolean) as (typeof fabrics[number] | typeof mockCollections[number])[]
 
   return (
     <div className="min-h-screen">

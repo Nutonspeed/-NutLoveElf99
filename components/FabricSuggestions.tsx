@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { mockFabrics } from '@/lib/mock-fabrics'
+import { fabrics } from '@/lib/mock-fabrics'
 import { mockFabricSimilarity } from '@/lib/mock-fabric-similarity'
 import { recordFabricClick, getFabricPreference } from '@/lib/mock-user-preference'
 
@@ -12,15 +12,15 @@ interface Props {
 }
 
 export function FabricSuggestions({ slug }: Props) {
-  const [items, setItems] = useState<typeof mockFabrics>([])
+  const [items, setItems] = useState<typeof fabrics>([])
 
   useEffect(() => {
     recordFabricClick(slug)
     const prefs = getFabricPreference()
     const similar = mockFabricSimilarity[slug] || []
-    const fabrics = mockFabrics.filter((f) => similar.includes(f.slug))
-    fabrics.sort((a, b) => (prefs[b.slug] || 0) - (prefs[a.slug] || 0))
-    setItems(fabrics.slice(0, 4))
+    const list = fabrics.filter((f) => similar.includes(f.slug))
+    list.sort((a, b) => (prefs[b.slug] || 0) - (prefs[a.slug] || 0))
+    setItems(list.slice(0, 4))
   }, [slug])
 
   if (items.length === 0) return null

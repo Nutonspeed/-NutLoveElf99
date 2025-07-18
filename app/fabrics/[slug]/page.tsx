@@ -7,7 +7,7 @@ import { WishlistButton } from "@/components/WishlistButton"
 import { FavoriteButton } from "@/components/FavoriteButton"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
-import { mockFabrics } from "@/lib/mock-fabrics"
+import { fabrics } from "@/lib/mock-fabrics"
 import { notFound } from "next/navigation"
 import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
@@ -30,7 +30,7 @@ interface Fabric {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   if (!supabase) {
-    const fabric = mockFabrics.find((f) => f.slug === params.slug)
+    const fabric = fabrics.find((f) => f.slug === params.slug)
     if (!fabric) return {}
     const title = `${fabric.name} | SofaCover Pro`
     const description = `รายละเอียดลายผ้า ${fabric.name}`
@@ -66,7 +66,7 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
   let collection: { name: string; slug: string } | null = null
 
   if (!supabase) {
-    const f = mockFabrics.find((fab) => fab.slug === params.slug)
+    const f = fabrics.find((fab) => fab.slug === params.slug)
     if (!f) {
       notFound()
     }
