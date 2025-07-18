@@ -20,8 +20,11 @@ import { useCart } from "@/contexts/cart-context"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/auth-context"
 import type { ShippingStatus } from "@/types/order"
-import { loadSocialLinks, socialLinks } from "@/lib/mock-settings"
+
 import { RecommendedAddons } from "@/components/RecommendedAddons"
+import SharePanel from "@/components/SharePanel"
+import RefNotice from "@/components/RefNotice"
+import ShareLinkButton from "@/components/ShareLinkButton"
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
   const { slug } = params
@@ -34,17 +37,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
   const { dispatch } = useCart()
   const { showImages } = useReviewImagesSetting()
   const { toast } = useToast()
-  const [links, setLinks] = useState(socialLinks)
-  const shareUrl = typeof window !== "undefined" ? window.location.href : ""
   const reviewImages = mockReviewImages.filter(
     (img) => img.productId === product?.id && img.active,
   )
   const [zoomImg, setZoomImg] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadSocialLinks()
-    setLinks(socialLinks)
-  }, [])
+
 
   if (!product) {
     return (
@@ -89,21 +87,6 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
       title: "เพิ่มลงตะกร้าแล้ว",
       description: `${product.name} ถูกเพิ่มลงตะกร้าเรียบร้อยแล้ว`,
     })
-  }
-
-  const shareFacebook = () => {
-    const base = links.facebook || "https://www.facebook.com/sharer/sharer.php?u="
-    window.open(`${base}${encodeURIComponent(shareUrl)}`, "_blank")
-  }
-
-  const shareLine = () => {
-    const base = links.line || "https://social-plugins.line.me/lineit/share?url="
-    window.open(`${base}${encodeURIComponent(shareUrl)}`, "_blank")
-  }
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(shareUrl)
-    toast({ title: 'คัดลอกลิงก์แล้ว' })
   }
 
   const router = useRouter()
@@ -168,6 +151,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
           <span>/</span>
           <span className="text-gray-900">{product.name}</span>
         </nav>
+        <RefNotice />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Product Images */}
@@ -200,6 +184,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                 </button>
               ))}
             </div>
+            <SharePanel />
           </div>
 
           {/* Product Info */}
@@ -314,18 +299,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               >
                 <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current" : ""}`} />
               </Button>
-              <Button variant="outline" size="lg" onClick={shareFacebook}>
-                <span className="sr-only">share facebook</span>
-                <Share2 className="h-5 w-5" />
-              </Button>
-              <Button variant="outline" size="lg" onClick={shareLine}>
-                <span className="sr-only">share line</span>
-                <Share2 className="h-5 w-5" />
-              </Button>
-              <Button variant="outline" size="lg" onClick={copyLink}>
-                <span className="sr-only">copy link</span>
-                <Share2 className="h-5 w-5" />
-              </Button>
+              <ShareLinkButton />
             </div>
 
             {/* Features */}
