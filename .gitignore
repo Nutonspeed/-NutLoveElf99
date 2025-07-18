@@ -18,6 +18,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 !chatwoot/.env.example
 
 # vercel
