@@ -33,11 +33,12 @@ export async function downloadExcel<T extends object>(
   filename: string,
 ) {
   if (rows.length === 0) return
-  const XLSX = await import('xlsx')
-  const ws = XLSX.utils.json_to_sheet(rows)
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1')
-  const buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' })
+  const ExcelJS = await import('exceljs')
+  const wb = new ExcelJS.Workbook()
+  const ws = wb.addWorksheet('Sheet1')
+  ws.columns = Object.keys(rows[0]).map(key => ({ header: key, key }))
+  rows.forEach(row => ws.addRow(row))
+  const buf = await wb.xlsx.writeBuffer()
   const blob = new Blob([buf], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   })
