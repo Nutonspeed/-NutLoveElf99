@@ -6,4 +6,7 @@ export interface Conversation {
   tags: string[]
   rating?: number
   updatedAt: string
+  status: 'open' | 'closed'
+  answered: boolean
+  archived?: boolean
 }
