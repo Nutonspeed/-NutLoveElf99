@@ -31,6 +31,12 @@ Continue building your app on:
 
 ## Environment Variables
 
+Before starting the app, copy the example environment file and fill in your own values:
+
+```bash
+cp .env.example .env
+```
+
 Real data is fetched from Supabase when the following variables are provided:
 
 - `NEXT_PUBLIC_SUPABASE_URL` – your Supabase project URL
