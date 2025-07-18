@@ -1,15 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { Input } from "@/components/ui/inputs/input"
-import { Label } from "@/components/ui/label"
-import { addCollection, mockCollections } from "@/lib/mock-collections"
-import { uniqueCollectionName } from "@/lib/speed-namer"
+import { addCollection } from "@/lib/mock-collections"
+import { useForm } from "react-hook-form"
+import type { Collection } from "@/types/collection"
+import { Form } from "@/components/ui/form"
+import { CollectionForm } from "@/components/collection/CollectionForm"
 
 function slugify(str: string) {
   return str
@@ -23,16 +24,17 @@ function slugify(str: string) {
 
 export default function CreateCollectionPage() {
   const router = useRouter()
-  const [name, setName] = useState("")
-  const [slug, setSlug] = useState("")
-  const [description, setDescription] = useState("")
-  const [images, setImages] = useState("")
+  const form = useForm<Collection & { tags?: string; seoDescription?: string; featured?: boolean }>({
+    defaultValues: { id: "", name: "", slug: "", description: "", priceRange: "", images: [] }
+  })
 
+  const name = form.watch('name')
+  const slug = form.watch('slug')
   useEffect(() => {
     if (!name) return
     const auto = slugify(name)
     if (!slug || slug === slugify(slug)) {
-      setSlug(auto)
+      form.setValue('slug', auto)
     }
   }, [name])
 
@@ -44,31 +46,21 @@ export default function CreateCollectionPage() {
         const names = JSON.parse(raw) as string[]
         if (names.length > 1) {
           const base = `${names[0]} Collection`
-          setName(base)
-          setSlug(slugify(base))
+          form.setValue('name', base)
+          form.setValue('slug', slugify(base))
         }
       }
     } catch {}
   }, [])
 
-  const handleRandomName = () => {
-    const slugs = mockCollections.map((c) => c.slug)
-    const newName = uniqueCollectionName(slugs)
-    setName(newName)
-    setSlug(slugify(newName))
-  }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = (values: Collection & { tags?: string; seoDescription?: string; featured?: boolean }) => {
     addCollection({
-      name,
-      slug,
-      description,
+      name: values.name,
+      slug: values.slug,
+      description: values.description,
       priceRange: "",
-      images: images
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean),
+      images: values.images,
     })
     router.push("/admin/collections")
   }
@@ -89,30 +81,9 @@ export default function CreateCollectionPage() {
             <CardTitle>ข้อมูลคอลเลกชัน</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">ชื่อคอลเลกชัน</Label>
-                <div className="flex space-x-2">
-                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-                  <Button type="button" onClick={handleRandomName}>สุ่มชื่อ</Button>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug</Label>
-                <Input id="slug" value={slug} onChange={(e) => setSlug(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description">คำอธิบาย</Label>
-                <Input id="description" value={description} onChange={(e) => setDescription(e.target.value)} />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="images">รูปภาพ (คั่นด้วย comma)</Label>
-                <Input id="images" value={images} onChange={(e) => setImages(e.target.value)} />
-              </div>
-              <div className="pt-4 flex justify-end">
-                <Button type="submit">บันทึก</Button>
-              </div>
-            </form>
+            <Form {...form}>
+              <CollectionForm form={form} onSubmit={handleSubmit} />
+            </Form>
           </CardContent>
         </Card>
       </div>
