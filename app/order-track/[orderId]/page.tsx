@@ -1,23 +1,35 @@
 "use client"
 
+import { useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
+import { Badge } from "@/components/ui/badge"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
-import { mockOrders } from "@/lib/mock-orders"
+import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
+import { mockOrders, setOrderStatus } from "@/lib/mock-orders"
+import {
+  getOrderStatusBadgeVariant,
+  getOrderStatusText,
+} from "@/lib/order-status"
+import { useAuth } from "@/contexts/auth-context"
 import Link from "next/link"
 import { CheckCircle, Hammer, Package, Truck, MapPin, CreditCard } from "lucide-react"
 
 export default function OrderTrackPage({ params }: { params: { orderId: string } }) {
   const { orderId } = params
-  const order = mockOrders.find((o) => o.id === orderId)
+  const { user } = useAuth()
+  const orderIndex = mockOrders.findIndex((o) => o.id === orderId)
+  const order = mockOrders[orderIndex]
+  const [status, setStatus] = useState(order?.status ?? "depositPaid")
+  const [timeline, setTimeline] = useState(order?.timeline ?? [])
 
   if (!order) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card>
           <CardContent className="p-6 text-center space-y-4">
-            <p className="font-semibold">ไม่พบคำสั่งซื้อ</p>
+            <p className="font-semibold">ไม่พบบิลนี้ในระบบ</p>
             <Link href="/">
               <span className="text-blue-600">กลับหน้าหลัก</span>
             </Link>
@@ -37,15 +49,30 @@ export default function OrderTrackPage({ params }: { params: { orderId: string }
     { key: "delivered", label: "ส่งมอบแล้ว", icon: MapPin },
   ]
 
-  const currentStepIndex = steps.findIndex((s) => s.key === order.status)
+  const currentStepIndex = steps.findIndex((s) => s.key === status)
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <div className="flex-1 container mx-auto px-4 py-8 space-y-6">
         <Card>
-          <CardHeader>
+          <CardHeader className="space-y-2 text-center">
             <CardTitle className="text-center">ติดตามคำสั่งซื้อ {order.id}</CardTitle>
+            <Badge variant={getOrderStatusBadgeVariant(status)}>
+              {getOrderStatusText(status)}
+            </Badge>
+            {user?.role === "admin" && (
+              <div className="flex justify-center">
+                <OrderStatusDropdown
+                  status={status as any}
+                  onChange={(s) => {
+                    setOrderStatus(order.id, s)
+                    setStatus(s)
+                    setTimeline([...mockOrders[orderIndex].timeline])
+                  }}
+                />
+              </div>
+            )}
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between relative">
@@ -96,7 +123,7 @@ export default function OrderTrackPage({ params }: { params: { orderId: string }
             </div>
             <div className="mt-6">
               <h4 className="font-semibold mb-2">ไทม์ไลน์การผลิต</h4>
-              <OrderTimeline timeline={order.timeline} />
+              <OrderTimeline timeline={timeline} />
             </div>
           </CardContent>
         </Card>
