@@ -228,6 +228,14 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                   <span>จำนวนสินค้า:</span>
                   <span>{order.items.reduce((sum, item) => sum + item.quantity, 0)} ชิ้น</span>
                 </div>
+                <div className="flex justify-between">
+                  <span>วิธีจัดส่ง:</span>
+                  <span>{order.delivery_method || "ยังไม่ได้เลือกวิธีจัดส่ง"}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>ค่าจัดส่ง:</span>
+                  <span>{order.shipping_fee ? `฿${order.shipping_fee}` : "ฟรี"}</span>
+                </div>
                 <Separator />
                 <div className="flex justify-between font-bold">
                   <span>ยอดรวม:</span>

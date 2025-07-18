@@ -182,7 +182,7 @@ export default function OrdersPage() {
                   <div className="space-y-4">
                     {/* Order Items */}
                     <div className="space-y-2">
-                      {order.items.map((item, index) => (
+                    {order.items.map((item, index) => (
                         <div
                           key={index}
                           className="flex justify-between items-center py-2 border-b last:border-b-0"
@@ -201,6 +201,13 @@ export default function OrdersPage() {
                         </div>
                       ))}
                     </div>
+
+                    <p className="text-sm text-gray-600">
+                      วิธีจัดส่ง: {order.delivery_method || "ยังไม่ได้เลือกวิธีจัดส่ง"}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      ค่าจัดส่ง: {order.shipping_fee ? `฿${order.shipping_fee}` : "ฟรี"}
+                    </p>
 
                     {/* Order Total */}
                     <div className="flex justify-between items-center pt-4 border-t">
