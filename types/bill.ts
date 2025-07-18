@@ -17,6 +17,7 @@ export interface Bill {
   payments: BillPayment[]
   createdAt: string
   dueDate?: string
+  taxId?: string
   hidden?: boolean
   abandonReason?: string
 }

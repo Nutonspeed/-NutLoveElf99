@@ -3,9 +3,10 @@ import type { Order } from "@/types/order"
 
 interface BillPreviewProps {
   order: Order
+  taxId?: string
 }
 
-export default function BillPreview({ order }: BillPreviewProps) {
+export default function BillPreview({ order, taxId }: BillPreviewProps) {
   const tax = Math.round(order.total * 0.07)
   const subtotal = order.total - tax
   const depositPercent = order.depositPercent ?? 100
@@ -54,6 +55,7 @@ export default function BillPreview({ order }: BillPreviewProps) {
             <p className="font-medium">{order.customerName}</p>
             <p>{order.customerEmail}</p>
             <p>{order.shippingAddress.phone}</p>
+            {taxId && <p>เลขประจำตัวผู้เสียภาษี: {taxId}</p>}
           </div>
         </div>
         <div>

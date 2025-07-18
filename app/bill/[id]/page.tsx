@@ -29,6 +29,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [taxId, setTaxId] = useState(bill?.taxId || "")
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -103,8 +104,23 @@ export default function BillPage({ params }: { params: { id: string } }) {
     }
   }
 
-  const handleDownload = () => {
-    alert("ดาวน์โหลดบิล (ฟีเจอร์นี้จะพัฒนาในอนาคต)")
+  const handleDownload = async () => {
+    const element = document.getElementById("bill-content")
+    if (!element) return
+    try {
+      const { default: html2canvas } = await import("html2canvas")
+      const { jsPDF } = await import("jspdf")
+      const canvas = await html2canvas(element)
+      const img = canvas.toDataURL("image/png")
+      const pdf = new jsPDF()
+      const width = pdf.internal.pageSize.getWidth()
+      const height = (canvas.height * width) / canvas.width
+      pdf.addImage(img, "PNG", 0, 0, width, height)
+      pdf.save(`bill-${id}.pdf`)
+    } catch (e) {
+      const { downloadPDF } = await import("@/lib/mock-export")
+      downloadPDF(element.innerText, `bill-${id}.pdf`)
+    }
   }
 
   const handleCopy = () => {
@@ -197,14 +213,23 @@ export default function BillPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="container mx-auto px-4 py-8 print:p-0">
-        <Card className="max-w-4xl mx-auto print:shadow-none print:border-none">
+        <Card id="bill-content" className="max-w-4xl mx-auto print:shadow-none print:border-none">
           <CardContent className="p-8 print:p-6 space-y-6">
-            <BillPreview order={order} />
+            <BillPreview order={order} taxId={taxId} />
             <div className="flex justify-center">
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
             </div>
             <OrderTimeline timeline={order.timeline} />
             <div className="space-y-2">
+              <Label htmlFor="tax">เลขประจำตัวผู้เสียภาษี</Label>
+              <Input
+                id="tax"
+                value={taxId}
+                onChange={(e) => {
+                  setTaxId(e.target.value)
+                  if (bill) bill.taxId = e.target.value
+                }}
+              />
               <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
               <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
               <Input type="file" onChange={(e) => setSlip(e.target.files?.[0] ?? null)} />
