@@ -12,6 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/
 import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import ConfirmDialog from "@/components/ui/ConfirmDialog"
+import { useToast } from "@/hooks/use-toast"
 import type { Collection } from "@/types/collection"
 
 interface CollectionWithFabrics extends Collection {
@@ -23,6 +25,8 @@ export default function AdminCollectionsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingCollection, setEditingCollection] = useState<CollectionWithFabrics | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
+  const { toast } = useToast()
   const form = useForm<Collection>({
     defaultValues: {
       name: "",
@@ -76,6 +80,7 @@ export default function AdminCollectionsPage() {
 
   const handleDeleteCollection = (id: string) => {
     setCollections((prev) => prev.filter((c) => c.id !== id))
+    toast({ description: "ลบคอลเลกชันเรียบร้อย" })
   }
 
   const filteredCollections = collections.filter(
@@ -244,7 +249,7 @@ export default function AdminCollectionsPage() {
                         <Button
                           variant="outline"
                           size="icon"
-                          onClick={() => handleDeleteCollection(collection.id)}
+                          onClick={() => setDeleteId(collection.id)}
                           className="text-red-600 hover:text-red-700"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -263,7 +268,15 @@ export default function AdminCollectionsPage() {
           </CardContent>
         </Card>
       </div>
-
+      <ConfirmDialog
+        open={!!deleteId}
+        message="ลบคอลเลกชันนี้?"
+        onCancel={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) handleDeleteCollection(deleteId)
+          setDeleteId(null)
+        }}
+      />
     </div>
   )
 }

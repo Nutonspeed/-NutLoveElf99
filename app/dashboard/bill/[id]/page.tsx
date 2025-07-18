@@ -1,6 +1,9 @@
 import CopyLinkButton from '@/components/bills/CopyLinkButton'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
 import PaidStatusToggle from '@/components/bills/PaidStatusToggle'
+import InlineStatusBadge from '@/components/ui/InlineStatusBadge'
+import { useToast } from '@/hooks/use-toast'
+import { useState } from 'react'
 import { getBill } from '@/mock/bills'
 
 interface Props {
@@ -12,6 +15,9 @@ export default function DashboardBillPage({ params }: Props) {
   if (!bill) {
     return <div className="p-8">ไม่พบใบเสร็จนี้</div>
   }
+  const { toast } = useToast()
+  const [paid, setPaid] = useState(bill.status === 'paid')
+  const badgeStatus = paid ? 'Paid' : 'Pending'
   const total = bill.items.reduce((sum, it) => sum + it.price * it.quantity, 0) + bill.shipping
   return (
     <div className="container mx-auto space-y-4 py-8">
@@ -42,7 +48,16 @@ export default function DashboardBillPage({ params }: Props) {
       <div className="flex items-center justify-between border-t pt-4">
         <CopyLinkButton link={`https://example.com/bill/${bill.id}`} />
         <div className="space-y-1 text-right">
-          <PaidStatusToggle defaultPaid={bill.status === 'paid'} />
+          <div className="flex items-center justify-end gap-2">
+            <PaidStatusToggle
+              defaultPaid={bill.status === 'paid'}
+              onChange={(val) => {
+                setPaid(val)
+                toast({ description: 'สถานะการชำระเงินถูกเปลี่ยนแล้ว' })
+              }}
+            />
+            <InlineStatusBadge status={badgeStatus} />
+          </div>
           <p className="text-xs text-muted-foreground">แก้ไขล่าสุด: 2024-05-01</p>
         </div>
       </div>
