@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
+import { downloadPDF } from "@/lib/mock-export"
 import Link from "next/link"
 import { getOrders } from "@/core/mock/store"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
@@ -43,6 +44,10 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   ]
 
   const currentStepIndex = orderSteps.findIndex((step) => step.status === order.status)
+
+  const handleDownload = () => {
+    downloadPDF('order summary', `${order.id}.pdf`)
+  }
 
   return (
     <div className="min-h-screen">
@@ -120,6 +125,11 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
+                  {order.items.length === 0 && (
+                    <p className="text-center text-sm text-gray-500">
+                      ออเดอร์นี้ว่างเปล่า
+                    </p>
+                  )}
                   {order.items.map((item, index) => (
                     <div key={index} className="flex justify-between items-center py-4 border-b last:border-b-0">
                       <div>
@@ -206,8 +216,12 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
 
             {/* Order Summary */}
             <Card>
-              <CardHeader>
-                <CardTitle>สรุปคำสั่งซื้อ</CardTitle>
+              <CardHeader className="flex items-center justify-between">
+                <CardTitle>สรุปออเดอร์</CardTitle>
+                <Button size="sm" variant="outline" onClick={handleDownload}>
+                  <Download className="mr-2 h-4 w-4" />
+                  ดาวน์โหลดเป็น PDF
+                </Button>
               </CardHeader>
               <CardContent className="space-y-2">
                 <div className="flex justify-between">
