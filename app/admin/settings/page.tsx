@@ -14,6 +14,7 @@ import {
   loadMockPreferences,
   mockPreferences,
   setShowIds,
+  setShowEmotion,
 } from "@/lib/mock-preferences";
 import { clearMockData, downloadMockMappingPlan } from "@/lib/mock-tools";
 import {
@@ -47,6 +48,7 @@ export default function SettingsPage() {
   const [reviewRemind, setReviewRemind] = useState(reviewReminder);
   const [archiveOld, setArchiveOld] = useState(autoArchive);
   const [showIds, setShowIdsState] = useState(mockPreferences.showIds);
+  const [showEmotion, setShowEmotionState] = useState(mockPreferences.showEmotion);
 
   useEffect(() => {
     loadAutoMessage();
@@ -63,6 +65,7 @@ export default function SettingsPage() {
     setArchiveOld(autoArchive);
     setReviewRemind(reviewReminder);
     setShowIdsState(mockPreferences.showIds);
+    setShowEmotionState(mockPreferences.showEmotion);
     if (!isAuthenticated) {
       router.push("/login");
     } else if (user?.role !== "admin") {
@@ -80,6 +83,7 @@ export default function SettingsPage() {
     setAutoArchive(archiveOld);
     setReviewReminder(reviewRemind);
     setShowIds(showIds);
+    setShowEmotion(showEmotion);
     alert("บันทึกข้อความแล้ว");
   };
 
@@ -190,6 +194,14 @@ export default function SettingsPage() {
             <CardTitle>ทดลอง</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-emotion"
+                checked={showEmotion}
+                onCheckedChange={(v) => setShowEmotionState(Boolean(v))}
+              />
+              <Label htmlFor="show-emotion">แสดงข้อความกำลังใจ</Label>
+            </div>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="show-ids"

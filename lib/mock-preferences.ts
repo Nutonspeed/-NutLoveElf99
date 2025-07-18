@@ -1,10 +1,11 @@
 export interface MockPreferences {
   showIds: boolean
+  showEmotion: boolean
 }
 
 const STORAGE_KEY = 'mockPreferences'
 
-export let mockPreferences: MockPreferences = { showIds: false }
+export let mockPreferences: MockPreferences = { showIds: false, showEmotion: true }
 
 export function loadMockPreferences() {
   if (typeof window !== 'undefined') {
@@ -22,4 +23,8 @@ export function setMockPreferences(val: MockPreferences) {
 
 export function setShowIds(show: boolean) {
   setMockPreferences({ ...mockPreferences, showIds: show })
+}
+
+export function setShowEmotion(show: boolean) {
+  setMockPreferences({ ...mockPreferences, showEmotion: show })
 }
