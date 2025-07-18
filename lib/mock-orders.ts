@@ -194,3 +194,42 @@ export function getTopSellingItems(start: Date, end: Date, top = 5) {
     .slice(0, top)
     .map(([name, count]) => ({ name, count }))
 }
+
+export function splitOrder(orderId: string, itemIndices: number[]) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return undefined
+
+  const itemsToMove = itemIndices
+    .map((i) => order.items[i])
+    .filter((i): i is (typeof order.items)[number] => Boolean(i))
+
+  if (itemsToMove.length === 0) return undefined
+
+  order.items = order.items.filter((_, idx) => !itemIndices.includes(idx))
+  order.total = order.items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  )
+
+  const newOrder: Order = {
+    ...order,
+    id: `ORD-${Math.random().toString(36).slice(2, 8)}`,
+    items: itemsToMove.map((i) => ({ ...i })),
+    total: itemsToMove.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0,
+    ),
+    createdAt: new Date().toISOString(),
+    timeline: [
+      {
+        timestamp: new Date().toISOString(),
+        status: order.status,
+        updatedBy: 'system',
+        note: `Split from ${order.id}`,
+      },
+    ],
+  }
+
+  mockOrders.push(newOrder)
+  return newOrder
+}

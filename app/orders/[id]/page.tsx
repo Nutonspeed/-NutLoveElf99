@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
+import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle, Split } from "lucide-react"
 import Link from "next/link"
 import { mockOrders } from "@/lib/mock-orders"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
@@ -195,6 +195,13 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                   <Button className="w-full bg-transparent" variant="outline">
                     <MessageCircle className="mr-2 h-4 w-4" />
                     ติดต่อฝ่ายบริการลูกค้า
+                  </Button>
+                </Link>
+
+                <Link href={`/orders/${order.id}/split`}>
+                  <Button className="w-full bg-transparent" variant="outline">
+                    <Split className="mr-2 h-4 w-4" />
+                    แยกคำสั่งซื้อ
                   </Button>
                 </Link>
 
