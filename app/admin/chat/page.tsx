@@ -43,8 +43,11 @@ import {
 } from '@/lib/mock-conversations'
 import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
 import { toast } from 'sonner'
+import CreateChatBillDialog from '@/components/admin/chat/CreateChatBillDialog'
+import { useRouter } from 'next/navigation'
 
 export default function AdminChatPage() {
+  const router = useRouter()
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
@@ -184,6 +187,7 @@ export default function AdminChatPage() {
                       >
                         แจ้งหัวหน้าทีม
                       </Button>
+                      <CreateChatBillDialog onCreated={() => {}} />
                     </TableCell>
                   </TableRow>
                 ))}
