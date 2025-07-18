@@ -12,6 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/modals/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertTriangle, Package, TrendingDown, TrendingUp, ArrowLeft, Plus, Edit, Bell, Settings } from "lucide-react"
+import { mockStockRefills, addStockRefill } from "@/lib/mock-stock-refill"
 import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { useMockNotification } from "@/hooks/use-mock-notification"
@@ -109,6 +110,9 @@ export default function InventoryPage() {
   const [adjustDialog, setAdjustDialog] = useState(false)
   const [adjustAmount, setAdjustAmount] = useState("")
   const [adjustReason, setAdjustReason] = useState("")
+  const [refillDialog, setRefillDialog] = useState(false)
+  const [refillAmount, setRefillAmount] = useState("")
+  const [refills, setRefills] = useState(mockStockRefills)
   const [filterStatus, setFilterStatus] = useState<string>("all")
 
   useEffect(() => {
@@ -175,6 +179,31 @@ export default function InventoryPage() {
     setSelectedItem(null)
     setAdjustAmount("")
     setAdjustReason("")
+  }
+
+  const handleStockRefill = () => {
+    if (!selectedItem || !refillAmount) return
+    const qty = Number.parseInt(refillAmount)
+    const updatedItem = {
+      ...selectedItem,
+      currentStock: selectedItem.currentStock + qty,
+      lastUpdated: new Date().toISOString(),
+      status: getStockStatus(
+        selectedItem.currentStock + qty,
+        selectedItem.minStock,
+      ),
+    }
+    setStockData((prev) =>
+      prev.map((i) => (i.id === selectedItem.id ? updatedItem : i)),
+    )
+    addStockRefill(selectedItem.id, qty)
+    setRefills([...mockStockRefills])
+    toast({
+      title: "เติมสต็อกแล้ว",
+      description: `${selectedItem.name} +${qty} ชิ้น`,
+    })
+    setRefillAmount("")
+    setRefillDialog(false)
   }
 
   const getStockStatus = (current: number, min: number): "normal" | "low" | "out" | "critical" => {
@@ -403,7 +432,7 @@ export default function InventoryPage() {
                       <Badge className={getStatusColor(item.status)}>{getStatusText(item.status)}</Badge>
                     </TableCell>
                     <TableCell>{new Date(item.lastUpdated).toLocaleDateString("th-TH")}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right space-x-2">
                       <Button
                         variant="outline"
                         size="icon"
@@ -413,6 +442,16 @@ export default function InventoryPage() {
                         }}
                       >
                         <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => {
+                          setSelectedItem(item)
+                          setRefillDialog(true)
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -477,6 +516,62 @@ export default function InventoryPage() {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Stock Refill Dialog */}
+        <Dialog open={refillDialog} onOpenChange={setRefillDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>เติมสต็อก</DialogTitle>
+            </DialogHeader>
+            {selectedItem && (
+              <div className="space-y-4">
+                <p className="font-medium">{selectedItem.name}</p>
+                <div>
+                  <Label htmlFor="refillAmount">จำนวนที่เติม</Label>
+                  <Input
+                    id="refillAmount"
+                    type="number"
+                    min="1"
+                    value={refillAmount}
+                    onChange={(e) => setRefillAmount(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setRefillDialog(false)}>
+                    ยกเลิก
+                  </Button>
+                  <Button onClick={handleStockRefill} disabled={!refillAmount}>
+                    บันทึก
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Refill History */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>ประวัติการเติมสต็อก</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {refills.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center">ยังไม่มีประวัติ</p>
+            ) : (
+              <ul className="space-y-1 text-sm">
+                {refills
+                  .slice()
+                  .reverse()
+                  .map((r) => (
+                    <li key={r.id}>
+                      {mockStockData.find((s) => s.id === r.productId)?.name || r.productId}{" "}
+                      +{r.quantity} ชิ้น ({new Date(r.timestamp).toLocaleString("th-TH")})
+                    </li>
+                  ))}
+              </ul>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

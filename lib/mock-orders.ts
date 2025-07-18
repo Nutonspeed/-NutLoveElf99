@@ -179,6 +179,20 @@ export function getDailySales(start: Date, end: Date) {
   return days
 }
 
+export function getDailyOrders(start: Date, end: Date) {
+  const days: Array<{ date: string; count: number }> = []
+  const cur = new Date(start)
+  while (cur <= end) {
+    const dateStr = cur.toISOString().slice(0, 10)
+    const count = mockOrders.filter(
+      (o) => o.createdAt.slice(0, 10) === dateStr,
+    ).length
+    days.push({ date: dateStr, count })
+    cur.setDate(cur.getDate() + 1)
+  }
+  return days
+}
+
 export function getTopSellingItems(start: Date, end: Date, top = 5) {
   const counts: Record<string, number> = {}
   mockOrders.forEach((o) => {

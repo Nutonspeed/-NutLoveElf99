@@ -4,6 +4,7 @@ import {
   setOrderStatus,
   getOrdersInRange,
   getDailySales,
+  getDailyOrders,
   getTopSellingItems,
 } from "../mock-orders"
 
@@ -13,4 +14,4 @@ export function updateOrderStatus(id: string, status: OrderStatus) {
   setOrderStatus(id, status)
 }
 
-export { getOrdersInRange, getDailySales, getTopSellingItems }
+export { getOrdersInRange, getDailySales, getDailyOrders, getTopSellingItems }
