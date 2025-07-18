@@ -1,10 +1,10 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
-import Image from "next/image"
 import Link from "next/link"
 import { WishlistButton } from "@/components/WishlistButton"
 import { FavoriteButton } from "@/components/FavoriteButton"
+import { FabricGallery } from "@/components/FabricGallery"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { fabrics } from "@/lib/mock-fabrics"
@@ -114,14 +114,10 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
           </Link>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="relative w-full aspect-square">
-            <Image
-              src={fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"}
-              alt={fabric.name}
-              fill
-              className="object-cover rounded-lg"
-            />
-          </div>
+          <FabricGallery
+            images={fabric.image_urls || (fabric.image_url ? [fabric.image_url] : null)}
+            name={fabric.name}
+          />
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <h1 className="text-3xl font-bold">{fabric.name}</h1>
