@@ -47,6 +47,11 @@ import {
   getFlagStatus,
 } from "@/lib/mock-flagged-users"
 import { getLatestChatMessage } from "@/lib/mock-chat-messages"
+import {
+  loadNotificationSettings,
+  getCustomerAlertSettings,
+  setCustomerAlertFlag,
+} from "@/lib/mock-notification-settings"
 
 export default function CustomerDetailPage({
   params,
@@ -62,6 +67,13 @@ export default function CustomerDetailPage({
     loadCustomerNotes()
     loadCustomerTags()
     loadFlaggedUsers()
+    loadNotificationSettings()
+    const flags = getCustomerAlertSettings(id)
+    if (flags) {
+      setVip(flags.vip)
+      setBlacklist(flags.blacklist)
+      setNotify(flags.notify)
+    }
   }, [])
 
   useEffect(() => {
@@ -82,6 +94,9 @@ export default function CustomerDetailPage({
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
   const [noteInput, setNoteInput] = useState("")
   const [tagInput, setTagInput] = useState("")
+  const [vip, setVip] = useState(false)
+  const [blacklist, setBlacklist] = useState(false)
+  const [notify, setNotify] = useState(false)
   const latestMessage = getLatestChatMessage(customer.id)
 
   return (
@@ -236,6 +251,47 @@ export default function CustomerDetailPage({
                 setCustomerMuted(customer.id, v)
               }}
             />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>การตั้งค่าพิเศษ</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <div className="flex items-center justify-between">
+              <span>VIP</span>
+              <Switch
+                checked={vip}
+                onCheckedChange={(v) => {
+                  setVip(v)
+                  setCustomerAlertFlag(customer.id, 'vip', v)
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Blacklist</span>
+              <Switch
+                checked={blacklist}
+                onCheckedChange={(v) => {
+                  setBlacklist(v)
+                  setCustomerAlertFlag(customer.id, 'blacklist', v)
+                }}
+              />
+            </div>
+            <div className="flex items-center justify-between">
+              <span>ขอแจ้งเตือนพิเศษ</span>
+              <Switch
+                checked={notify}
+                onCheckedChange={(v) => {
+                  setNotify(v)
+                  setCustomerAlertFlag(customer.id, 'notify', v)
+                }}
+              />
+            </div>
+            {!vip && !blacklist && !notify && (
+              <p className="text-sm text-gray-500">ลูกค้านี้ยังไม่มีการตั้งค่าพิเศษ</p>
+            )}
           </CardContent>
         </Card>
 
