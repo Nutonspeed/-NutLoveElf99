@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Search, ShoppingCart } from "lucide-react"
 import { Input } from "@/components/ui/inputs/input"
@@ -10,6 +11,7 @@ import { useAuth } from "@/contexts/auth-context"
 
 export default function DesktopNav() {
   const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
   const { state } = useCart()
   const totalItems = state.items.reduce((s, i) => s + i.quantity, 0)
   const { isAuthenticated, user, logout } = useAuth()
@@ -17,7 +19,7 @@ export default function DesktopNav() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
     }
   }
 
