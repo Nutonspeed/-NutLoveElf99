@@ -15,10 +15,7 @@ export default function DashboardBillPage({ params }: Props) {
   const total = bill.items.reduce((sum, it) => sum + it.price * it.quantity, 0) + bill.shipping
   return (
     <div className="container mx-auto space-y-4 py-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">ใบเสร็จ {bill.id}</h1>
-        <CopyLinkButton link={`https://example.com/bill/${bill.id}`} />
-      </div>
+      <h1 className="text-2xl font-bold">ใบเสร็จ {bill.id}</h1>
       <div className="grid gap-4 md:grid-cols-3">
         <div className="md:col-span-2 space-y-4">
           {bill.items.map((it, idx) => (
@@ -40,7 +37,13 @@ export default function DashboardBillPage({ params }: Props) {
         </div>
         <div className="space-y-4">
           <QRCodePlaceholder />
+        </div>
+      </div>
+      <div className="flex items-center justify-between border-t pt-4">
+        <CopyLinkButton link={`https://example.com/bill/${bill.id}`} />
+        <div className="space-y-1 text-right">
           <PaidStatusToggle defaultPaid={bill.status === 'paid'} />
+          <p className="text-xs text-muted-foreground">แก้ไขล่าสุด: 2024-05-01</p>
         </div>
       </div>
     </div>
