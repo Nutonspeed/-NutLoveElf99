@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
@@ -12,6 +13,7 @@ import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
 import { getBill as getAdminBill } from "@/mock/bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
+import { getFastBill, convertFastBillToOrder } from "@/lib/mock-fast-bills"
 import { billSecurity } from "@/lib/mock-settings"
 import ErrorBoundary from "@/components/ErrorBoundary"
 import EmptyState from "@/components/EmptyState"
@@ -20,9 +22,11 @@ import { getMockNow } from "@/lib/mock-date"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
+  const router = useRouter()
   const bill = getBill(id)
   const quickBill = getQuickBill(id)
   const simpleBill = getAdminBill(id)
+  const fastBill = getFastBill(id)
   const order = mockOrders.find((o) => o.id === bill?.orderId)
   const [access, setAccess] = useState(!billSecurity.enabled)
   const [code, setCode] = useState("")
@@ -65,6 +69,21 @@ export default function BillPage({ params }: { params: { id: string } }) {
             ส่งบิลใหม่แทนใบเดิม
           </Button>
         </div>
+      </div>
+    )
+  }
+
+  if (fastBill) {
+    const handleConfirm = () => {
+      const o = convertFastBillToOrder(fastBill.id)
+      if (o) router.push(`/orders/${o.id}`)
+    }
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-4 p-4">
+        <h1 className="text-2xl font-bold">บิล {fastBill.id}</h1>
+        <p>{fastBill.customerName}</p>
+        <p>ยอดรวม ฿{fastBill.total.toLocaleString()}</p>
+        <Button onClick={handleConfirm}>ยืนยันคำสั่งซื้อ</Button>
       </div>
     )
   }
