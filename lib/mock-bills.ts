@@ -1,4 +1,4 @@
-import type { Bill, BillPayment, BillStatus } from "@/types/bill"
+import type { Bill, BillPayment, BillStatus, BillType } from "@/types/bill"
 import { mockOrders } from "./mock-orders"
 import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
@@ -51,6 +51,11 @@ export function cancelBill(id: string) {
     b.status = "cancelled"
     addAdminLog(`cancel bill ${id}`, 'mockAdminId')
   }
+}
+
+export function updateBillType(id: string, type: BillType) {
+  const b = getBill(id)
+  if (b) b.type = type
 }
 
 export function addBillPayment(id: string, payment: BillPayment) {

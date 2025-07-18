@@ -1,5 +1,7 @@
 export type BillStatus = "unpaid" | "paid" | "pending" | "cancelled"
 
+export type BillType = "normal" | "quote" | "cod"
+
 export interface BillPayment {
   id: string
   date: string
@@ -17,6 +19,7 @@ export interface Bill {
   payments: BillPayment[]
   createdAt: string
   dueDate?: string
+  type?: BillType
   hidden?: boolean
   abandonReason?: string
 }

@@ -3,13 +3,26 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
 import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
-import { getBill, addBillPayment } from "@/lib/mock-bills"
+import {
+  getBill,
+  addBillPayment,
+  cancelBill,
+  updateBillType,
+} from "@/lib/mock-bills"
+import type { BillType } from "@/types/bill"
 import { getBill as getAdminBill } from "@/mock/bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
@@ -29,6 +42,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [billType, setBillType] = useState<BillType | undefined>(bill?.type)
+  const [, forceRender] = useState({})
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -113,6 +128,21 @@ export default function BillPage({ params }: { params: { id: string } }) {
     }
   }
 
+  const handleCancel = () => {
+    if (!bill) return
+    if (window.confirm("ยืนยันยกเลิกบิลนี้?")) {
+      cancelBill(bill.id)
+      forceRender({})
+    }
+  }
+
+  const handleTypeChange = (v: BillType) => {
+    if (!bill) return
+    updateBillType(bill.id, v)
+    setBillType(v)
+    forceRender({})
+  }
+
   const handleVerify = () => {
     if (code === billSecurity.phone || code === billSecurity.pin) {
       setAccess(true)
@@ -175,8 +205,18 @@ export default function BillPage({ params }: { params: { id: string } }) {
             </Link>
             <h1 className="text-xl font-semibold">บิล {order.id}</h1>
             <Badge variant="secondary">{bill.status}</Badge>
+            <Select value={billType ?? ""} onValueChange={v => handleTypeChange(v as BillType)}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="ยังไม่กำหนดประเภทบิล" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="normal">ปกติ</SelectItem>
+                <SelectItem value="quote">ใบเสนอราคา</SelectItem>
+                <SelectItem value="cod">เก็บเงินปลายทาง</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
             <Button variant="outline" onClick={handlePrint}>
               <Print className="mr-2 h-4 w-4" />
               พิมพ์
@@ -192,6 +232,9 @@ export default function BillPage({ params }: { params: { id: string } }) {
             <Link href="/admin/chat">
               <Button variant="outline">เปิดแชท</Button>
             </Link>
+            <Button variant="destructive" onClick={handleCancel}>
+              ยกเลิกบิล
+            </Button>
           </div>
         </div>
       </div>
