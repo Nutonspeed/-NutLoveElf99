@@ -7,6 +7,11 @@ import { ArrowLeft } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { supabase } from "@/lib/supabase"
 import { prepareFabricImage } from "@/lib/image-handler"
+import {
+  checkImageIssues,
+  updateFabricImage,
+} from "@/lib/mock-fabric-qa"
+import { ImageCompareModal } from "@/components/ImageCompareModal"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -21,6 +26,11 @@ export default function CreateFabricPage() {
   const [collectionId, setCollectionId] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string>("")
+  const [imageIssues, setImageIssues] = useState<{
+    blurred: boolean
+    torn: boolean
+    edgeDamage: boolean
+  } | null>(null)
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -40,6 +50,18 @@ export default function CreateFabricPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!supabase) return
+
+    if (
+      imageIssues &&
+      (imageIssues.blurred || imageIssues.torn || imageIssues.edgeDamage)
+    ) {
+      if (
+        typeof window !== 'undefined' &&
+        !window.confirm('ภาพอาจไม่สมบูรณ์ ต้องการบันทึกต่อหรือไม่?')
+      ) {
+        return
+      }
+    }
 
     let uploadedUrl = imageUrl
 
@@ -90,6 +112,7 @@ export default function CreateFabricPage() {
       return
     }
 
+    updateFabricImage(sku, user?.email || "admin", uploadedUrl)
     router.push("/admin/fabrics")
   }
 
@@ -131,6 +154,7 @@ export default function CreateFabricPage() {
                     if (file) {
                       setImageFile(file)
                       setPreviewUrl(URL.createObjectURL(file))
+                      setImageIssues(checkImageIssues(file))
                     }
                   }}
                 />
@@ -141,7 +165,16 @@ export default function CreateFabricPage() {
                     className="h-24 w-24 object-cover rounded-md mt-2"
                   />
                 )}
-              </div>
+                {imageIssues &&
+                  (imageIssues.blurred || imageIssues.torn || imageIssues.edgeDamage) && (
+                    <p className="text-sm text-red-600">
+                      พบปัญหาภาพ:
+                      {imageIssues.blurred && " เบลอ"}
+                      {imageIssues.torn && " ภาพขาด"}
+                      {imageIssues.edgeDamage && " ขอบขาด"}
+                    </p>
+                  )}
+                </div>
               <div className="space-y-2">
                 <Label htmlFor="collection_id">รหัสคอลเลกชัน</Label>
                 <Input
