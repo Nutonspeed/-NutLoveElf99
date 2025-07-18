@@ -5,14 +5,6 @@ import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/inputs/input'
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/modals/dialog'
 import {
   Card,
   CardContent,
@@ -42,30 +34,24 @@ import {
   searchByTag,
 } from '@/lib/mock-conversations'
 import { chatTemplates, loadChatTemplates } from '@/lib/mock-chat-templates'
+import { chatTags, loadChatTags } from '@/lib/mock-chat'
 import { toast } from 'sonner'
 
 export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
-  const [selected, setSelected] = useState<string | null>(null)
-  const [tag, setTag] = useState('')
+  const [tags, setTags] = useState<string[]>([])
 
   useEffect(() => {
     loadConversations()
     loadChatTemplates()
+    loadChatTags()
     setConvos([...listConversations()])
+    setTags([...chatTags])
   }, [])
 
-  const openDialog = (id: string) => {
-    setSelected(id)
-    setTag('')
-  }
-
-  const add = () => {
-    if (selected && tag) {
-      addTag(selected, tag)
-      setConvos([...listConversations()])
-    }
-    setSelected(null)
+  const assignTag = (id: string, t: string) => {
+    addTag(id, t)
+    setConvos([...listConversations()])
   }
 
   const stats = (() => {
@@ -161,13 +147,24 @@ export default function AdminChatPage() {
                       </Select>
                     </TableCell>
                     <TableCell className="space-y-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => openDialog(c.id)}
-                      >
-                        ใส่ tag บทสนทนา
-                      </Button>
+                      {tags.length > 0 ? (
+                        <Select onValueChange={(v) => assignTag(c.id, v)}>
+                          <SelectTrigger className="w-32">
+                            <SelectValue placeholder="เลือก tag" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {tags.map((t) => (
+                              <SelectItem key={t} value={t}>
+                                {t}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <p className="text-sm text-gray-500">
+                          ไม่มี tag ใช้งานในระบบ
+                        </p>
+                      )}
                       {c.tags[0] && (
                         <Button
                           variant="outline"
@@ -195,21 +192,6 @@ export default function AdminChatPage() {
           </CardContent>
         </Card>
       </div>
-      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>เพิ่มแท็ก</DialogTitle>
-          </DialogHeader>
-          <Input
-            placeholder="tag"
-            value={tag}
-            onChange={(e) => setTag(e.target.value)}
-          />
-          <DialogFooter>
-            <Button onClick={add}>บันทึก</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }
