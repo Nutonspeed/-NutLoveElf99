@@ -1,6 +1,6 @@
-import CopyLinkButton from '@/components/bill/CopyLinkButton'
-import QRCodePlaceholder from '@/components/bill/QRCodePlaceholder'
-import PaidStatusToggle from '@/components/bill/PaidStatusToggle'
+import CopyLinkButton from '@/components/bills/CopyLinkButton'
+import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
+import PaidStatusToggle from '@/components/bills/PaidStatusToggle'
 import { getBill } from '@/mock/bills'
 
 interface Props {
