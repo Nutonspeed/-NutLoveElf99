@@ -152,7 +152,7 @@ export default function AdminFabricsPage() {
               <p className="text-gray-600">เพิ่ม แก้ไข และลบผ้าในระบบ</p>
             </div>
           </div>
-          <Link href="/admin/fabrics/create">
+          <Link href="/admin/fabrics/create" className="hidden md:block">
             <Button>
               <Plus className="mr-2 h-4 w-4" />
               เพิ่มผ้าใหม่
@@ -202,10 +202,63 @@ export default function AdminFabricsPage() {
                 ))}
               </div>
             ) : filteredFabrics.length > 0 ? (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>รูปภาพ</TableHead>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:hidden mb-4">
+                  {filteredFabrics.map((fabric) => (
+                    <div key={fabric.id} className="space-y-2 rounded-md border p-4">
+                      <div className="h-20 w-full flex items-center justify-center">
+                        {fabric.image_url && !imgError[fabric.id] ? (
+                          <Image
+                            src={fabric.image_url}
+                            alt={fabric.name}
+                            width={80}
+                            height={80}
+                            className="rounded-md object-cover"
+                            onError={() =>
+                              setImgError((prev) => ({ ...prev, [fabric.id]: true }))
+                            }
+                          />
+                        ) : (
+                          <span className="text-sm text-gray-500">No image</span>
+                        )}
+                      </div>
+                      <p className="font-medium">{fabric.name}</p>
+                      <p>
+                        ฿{fabric.price_min.toLocaleString()} - ฿{fabric.price_max.toLocaleString()}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {fabric.collection_name || "-"}
+                      </p>
+                      {fabric.availability && (
+                        <AvailabilityTag status={fabric.availability} />
+                      )}
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => router.push(`/admin/fabrics/${fabric.id}/edit`)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => handleOptimize(fabric)}>
+                          ลดขนาดภาพ
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => handleDelete(fabric.id)}
+                          className="text-red-600 hover:text-red-700"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <Table className="hidden md:table">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>รูปภาพ</TableHead>
                     <TableHead>ชื่อผ้า</TableHead>
                     <TableHead>ราคา</TableHead>
                     <TableHead>คอลเลกชัน</TableHead>
@@ -273,7 +326,8 @@ export default function AdminFabricsPage() {
                   </TableRow>
                 ))}
                 </TableBody>
-              </Table>
+                </Table>
+              </>
             ) : (
               <div className="py-8">
                 {fabrics.length === 0 ? (
@@ -301,6 +355,14 @@ export default function AdminFabricsPage() {
           </DialogContent>
         </Dialog>
         </Card>
+        <div className="mt-4 md:hidden text-center">
+          <Link href="/admin/fabrics/create">
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              เพิ่มผ้าใหม่
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   )
