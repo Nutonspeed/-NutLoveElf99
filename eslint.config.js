@@ -4,7 +4,7 @@ const compat = new FlatCompat({ baseDirectory: import.meta.dirname })
 
 export default [
   {
-    ignores: ['**'],
+    ignores: ['node_modules/**', 'dist/**', '.next/**'],
   },
   ...compat.extends('airbnb-base'),
   ...compat.extends('plugin:react/recommended'),
