@@ -12,13 +12,30 @@ import {
   CardTitle,
 } from "@/components/ui/cards/card";
 import { Badge } from "@/components/ui/badge";
-import { Package, Eye, Download, MessageCircle } from "lucide-react";
+import { Package, Eye, Download, MessageCircle, Shield } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/modals/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/inputs/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Link from "next/link";
 import { useAuth } from "@/contexts/auth-context";
 import { useCart } from "@/contexts/cart-context";
 import { mockOrders } from "@/lib/mock-orders";
 import { mockProducts } from "@/lib/mock-products";
 import { mockFeedbacks } from "@/lib/mock-feedback";
+import { mockClaims, createClaim, loadClaims } from "@/lib/mock-claims";
 import { reviewReminder, loadReviewReminder } from "@/lib/mock-settings";
 import { toast } from "sonner";
 import type { OrderStatus, Order } from "@/types/order";
@@ -49,12 +66,21 @@ export default function OrdersPage() {
   const { dispatch } = useCart();
   const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [claimOpen, setClaimOpen] = useState(false);
+  const [claimOrder, setClaimOrder] = useState<string | null>(null);
+  const [claimReason, setClaimReason] = useState('');
+  const [claimDesc, setClaimDesc] = useState('');
+  const [claimFile, setClaimFile] = useState<File | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
       router.push("/login");
     }
   }, [isAuthenticated, router]);
+
+  useEffect(() => {
+    loadClaims();
+  }, []);
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -115,6 +141,25 @@ export default function OrdersPage() {
     }
   };
 
+  const handleClaimSubmit = () => {
+    if (!claimOrder) return;
+    const newClaim = createClaim({
+      orderId: claimOrder,
+      image: claimFile ? '/placeholder.svg' : '',
+      reason: `${claimReason} ${claimDesc}`.trim(),
+    });
+    if (!newClaim) {
+      toast.error('ไม่สามารถส่งคำขอเคลม กรุณาลองใหม่อีกครั้ง');
+    } else {
+      toast.success('คำขอเคลมถูกส่งแล้ว รอเจ้าหน้าที่ติดต่อกลับ');
+      setClaimOpen(false);
+      setClaimOrder(null);
+      setClaimReason('');
+      setClaimDesc('');
+      setClaimFile(null);
+    }
+  };
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -162,6 +207,11 @@ export default function OrdersPage() {
                       <CardTitle className="text-lg">
                         คำสั่งซื้อ {order.id}
                       </CardTitle>
+                      {mockClaims.some(c => c.orderId === order.id) && (
+                        <Badge variant="outline" className="bg-yellow-200 text-yellow-800 mt-1">
+                          <Shield className="h-3 w-3 mr-1 inline" /> มีการเคลม
+                        </Badge>
+                      )}
                       <p className="text-sm text-gray-600">
                         สั่งซื้อเมื่อ{" "}
                         {new Date(order.createdAt).toLocaleDateString("th-TH")}
@@ -242,6 +292,17 @@ export default function OrdersPage() {
                           ติดต่อเรา
                         </Button>
                       </Link>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setClaimOrder(order.id);
+                          setClaimOpen(true);
+                        }}
+                      >
+                        แจ้งเคลมสินค้า
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -250,6 +311,51 @@ export default function OrdersPage() {
           </div>
         )}
       </div>
+
+      <Dialog open={claimOpen} onOpenChange={setClaimOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>แจ้งเคลมสินค้า</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>เหตุผล</Label>
+              <Select value={claimReason} onValueChange={setClaimReason}>
+                <SelectTrigger>
+                  <SelectValue placeholder="เลือกเหตุผล" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="damage">สินค้าเสียหาย</SelectItem>
+                  <SelectItem value="wrong">ส่งสินค้าผิด</SelectItem>
+                  <SelectItem value="other">อื่นๆ</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="desc">รายละเอียดเพิ่มเติม</Label>
+              <textarea
+                id="desc"
+                className="w-full border rounded p-2"
+                rows={3}
+                value={claimDesc}
+                onChange={(e) => setClaimDesc(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="file">รูปประกอบ (ไม่บังคับ)</Label>
+              <Input
+                id="file"
+                type="file"
+                accept="image/*"
+                onChange={(e) => setClaimFile(e.target.files?.[0] || null)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={handleClaimSubmit}>ส่งคำขอ</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { packingStatusOptions } from "@/types/order"
 import { mockBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
-import { createClaim } from "@/lib/mock-claims"
+import { createClaim, loadClaims } from "@/lib/mock-claims"
 import { toast } from "sonner"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
@@ -45,11 +45,16 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
     const reason = window.prompt('แจ้งปัญหา') || ''
     if (!reason) return
     const image = '/mock/img' + Date.now() + '.jpg'
-    createClaim({ orderId: order.id, image, reason })
-    alert('ส่งคำขอเคลมแล้ว')
+    const res = createClaim({ orderId: order.id, image, reason })
+    if (!res) {
+      toast.error('ไม่สามารถส่งคำขอเคลม กรุณาลองใหม่อีกครั้ง')
+    } else {
+      toast.success('คำขอเคลมถูกส่งแล้ว รอเจ้าหน้าที่ติดต่อกลับ')
+    }
   }
 
   useEffect(() => {
+    loadClaims()
     loadAutoReminder()
     if (autoReminder) {
       const bill = mockBills.find((b) => b.orderId === order.id)
