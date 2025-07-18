@@ -75,6 +75,8 @@ export interface Order {
     price: number
     size?: string
     color?: string
+    /** extra note for this item */
+    note?: string
   }>
   total: number
   status: OrderStatus
