@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { SmartReply } from "@/components/SmartReply";
 import { chatWelcome, loadChatWelcome } from "@/lib/mock-chat";
 import { Button } from "@/components/ui/buttons/button";
 import {
@@ -53,6 +54,9 @@ export default function ChatPage() {
           className="w-full h-full border-none"
           onError={() => setShowError(true)}
         />
+      </div>
+      <div className="container mx-auto px-4 py-8">
+        <SmartReply />
       </div>
       <Footer />
       <Dialog open={showError} onOpenChange={setShowError}>
