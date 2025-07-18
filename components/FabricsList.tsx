@@ -2,11 +2,14 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
 import { useCompare } from "@/contexts/compare-context"
+import { useToast } from "@/hooks/use-toast"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
+import { CompareModal } from "./CompareModal"
+import { mockFabrics } from "@/lib/mock-fabrics"
 
 interface Fabric {
   id: string
@@ -19,10 +22,15 @@ interface Fabric {
 
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
   const { items, toggleCompare } = useCompare()
-  const router = useRouter()
+  const { toast } = useToast()
+  const [open, setOpen] = useState(false)
 
   const handleCompare = () => {
-    router.push(`/compare`)
+    if (items.length < 2) {
+      toast({ title: "กรุณาเลือกอย่างน้อย 2 ลายผ้า" })
+    } else {
+      setOpen(true)
+    }
   }
 
   return (
@@ -42,11 +50,13 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                   ดูด้วยกันบ่อย
                 </span>
               )}
-              <Checkbox
-                checked={checked}
-                onCheckedChange={() => toggleCompare(slug)}
-                className="absolute top-2 left-2 z-10 bg-white/80"
-              />
+              <label className="absolute top-2 left-2 z-10 bg-white/80 flex items-center gap-1 px-1 rounded">
+                <Checkbox
+                  checked={checked}
+                  onCheckedChange={() => toggleCompare(slug)}
+                />
+                <span className="text-xs">เปรียบเทียบผ้า</span>
+              </label>
               <Link href={`/fabrics/${slug}`}>
                 <div className="relative aspect-square">
                   <Image
@@ -71,6 +81,11 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
           <Button onClick={handleCompare}>เปรียบเทียบตอนนี้</Button>
         </div>
       )}
+      <CompareModal
+        open={open}
+        onOpenChange={setOpen}
+        fabrics={mockFabrics.filter((f) => items.includes(f.slug))}
+      />
     </>
   )
 }
