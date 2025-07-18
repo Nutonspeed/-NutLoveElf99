@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { orders as mockOrders, SimpleOrder } from '@/mock/orders'
-import OrderCard from '@/components/order/OrderCard'
+import OrderCard from '@/components/orders/OrderCard'
 import EmptyState from '@/components/EmptyState'
 import InlineStatusBadge from '@/components/ui/InlineStatusBadge'
 import { Input } from '@/components/ui/inputs/input'
@@ -112,7 +112,13 @@ export default function DashboardOrdersPage() {
 
           <div className="md:hidden space-y-4">
             {sorted.map((order) => (
-              <OrderCard key={order.id} order={order} onCancel={handleCancel} />
+              <OrderCard
+                key={order.id}
+                id={order.id}
+                customer={order.customer}
+                status={order.status}
+                total={order.total}
+              />
             ))}
           </div>
         </>

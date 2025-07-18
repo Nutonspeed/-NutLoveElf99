@@ -6,6 +6,7 @@ import { Edit, Trash2 } from 'lucide-react'
 import EditFabricModal from './EditFabricModal'
 import type { Fabric } from '@/mock/fabrics'
 import { removeFabric } from '@/mock/fabrics'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 export default function FabricCard({
   fabric,
@@ -17,12 +18,12 @@ export default function FabricCard({
   onDelete?: (id: string) => void
 }) {
   const [open, setOpen] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
 
   const handleDelete = () => {
-    if (confirm('ลบลายผ้านี้?')) {
-      removeFabric(fabric.id)
-      onDelete?.(fabric.id)
-    }
+    removeFabric(fabric.id)
+    onDelete?.(fabric.id)
+    setConfirmDelete(false)
   }
 
   return (
@@ -37,7 +38,7 @@ export default function FabricCard({
         <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
           <Edit className="h-4 w-4" />
         </Button>
-        <Button variant="outline" size="sm" onClick={handleDelete}>
+        <Button variant="outline" size="sm" onClick={() => setConfirmDelete(true)}>
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
@@ -49,6 +50,12 @@ export default function FabricCard({
           setOpen(false)
           onUpdated?.(f)
         }}
+      />
+      <ConfirmDialog
+        open={confirmDelete}
+        message="ลบลายผ้านี้?"
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={handleDelete}
       />
     </div>
   )

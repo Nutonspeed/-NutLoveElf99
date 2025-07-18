@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
+import ModalWrapper from '@/components/ui/ModalWrapper'
 import type { Fabric } from '@/mock/fabrics'
 import { updateFabric } from '@/mock/fabrics'
 
@@ -29,11 +30,9 @@ export default function EditFabricModal({ fabric, open, onClose, onUpdated }: Pr
     onClose()
   }
 
-  if (!open) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-80 space-y-4 rounded bg-white p-4">
+    <ModalWrapper open={open} onClose={onClose}>
+      <div className="w-80 space-y-4">
         <h2 className="text-lg font-bold">แก้ไขลายผ้า</h2>
         <Input placeholder="ชื่อผ้า" value={name} onChange={e => setName(e.target.value)} />
         <Input placeholder="Image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
@@ -42,6 +41,6 @@ export default function EditFabricModal({ fabric, open, onClose, onUpdated }: Pr
           <Button onClick={handleSave}>บันทึก</Button>
         </div>
       </div>
-    </div>
+    </ModalWrapper>
   )
 }

@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import FabricCard from '@/components/fabric/FabricCard'
 import AddNewFabricButton from '@/components/fabric/AddNewFabricButton'
-import EmptyState from '@/components/EmptyState'
+import EmptyState from '@/components/ui/EmptyState'
 import { fabrics as mockFabrics, Fabric } from '@/mock/fabrics'
 
 export default function DashboardFabricsPage() {
@@ -26,7 +26,10 @@ export default function DashboardFabricsPage() {
           ))}
         </div>
       ) : (
-        <EmptyState title="ยังไม่มีลายผ้าในระบบ" />
+        <EmptyState
+          title="ยังไม่มีลายผ้าในระบบ"
+          action={<AddNewFabricButton onAdd={() => setItems([...mockFabrics])} />}
+        />
       )}
     </div>
   )
