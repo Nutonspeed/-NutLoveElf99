@@ -1,13 +1,9 @@
 "use client"
 import { useState } from 'react'
-import Link from 'next/link'
 import { orders as mockOrders, SimpleOrder } from '@/mock/orders'
 import OrderCard from '@/components/orders/OrderCard'
 import EmptyState from '@/components/EmptyState'
-import InlineStatusBadge from '@/components/ui/InlineStatusBadge'
 import { Input } from '@/components/ui/inputs/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/buttons/button'
 
 export default function DashboardOrdersPage() {
   const [orders, setOrders] = useState<SimpleOrder[]>([...mockOrders])
@@ -27,11 +23,6 @@ export default function DashboardOrdersPage() {
   if (sort === 'high') sorted.sort((a, b) => b.total - a.total)
   if (sort === 'low') sorted.sort((a, b) => a.total - b.total)
 
-  const handleCancel = (id: string) => {
-    if (confirm('ยืนยันยกเลิกคำสั่งซื้อ?')) {
-      setOrders(prev => prev.map(o => (o.id === id ? { ...o, status: 'Cancelled' } : o)))
-    }
-  }
 
   return (
     <div className="container mx-auto py-8 space-y-4">
@@ -68,62 +59,20 @@ export default function DashboardOrdersPage() {
 
       <p className="text-sm text-muted-foreground">แสดงทั้งหมด {sorted.length} รายการ</p>
 
-      {filtered.length > 0 ? (
-        <>
-          <div className="hidden md:block">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>รหัส</TableHead>
-                  <TableHead>ลูกค้า</TableHead>
-                  <TableHead>สถานะ</TableHead>
-                  <TableHead>ยอดรวม</TableHead>
-                  <TableHead className="text-right">การจัดการ</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {sorted.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell>{order.id}</TableCell>
-                    <TableCell>{order.customer}</TableCell>
-                    <TableCell>
-                      <InlineStatusBadge status={order.status} />
-                    </TableCell>
-                    <TableCell>฿{order.total.toLocaleString()}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Link href={`/dashboard/orders/${order.id}`}>
-                          <Button variant="outline" size="sm">ดู</Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleCancel(order.id)}
-                        >
-                          ยกเลิก
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="md:hidden space-y-4">
-            {sorted.map((order) => (
-              <OrderCard
-                key={order.id}
-                id={order.id}
-                customer={order.customer}
-                status={order.status}
-                total={order.total}
-              />
-            ))}
-          </div>
-        </>
+      {sorted.length > 0 ? (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {sorted.map((order) => (
+            <OrderCard
+              key={order.id}
+              id={order.id}
+              customer={order.customer}
+              status={order.status}
+              total={order.total}
+            />
+          ))}
+        </div>
       ) : (
-        <EmptyState title="ยังไม่มีคำสั่งซื้อในระบบ" />
+        <EmptyState title="ยังไม่มีคำสั่งซื้อ" />
       )}
     </div>
   )
