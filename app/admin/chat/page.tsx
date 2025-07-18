@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/inputs/input'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Dialog,
   DialogContent,
@@ -37,6 +38,7 @@ import {
 import type { Conversation } from '@/types/conversation'
 import {
   addTag,
+  addAdminComment,
   listConversations,
   loadConversations,
   searchByTag,
@@ -48,6 +50,8 @@ export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
+  const [commenting, setCommenting] = useState<string | null>(null)
+  const [comment, setComment] = useState('')
 
   useEffect(() => {
     loadConversations()
@@ -60,12 +64,25 @@ export default function AdminChatPage() {
     setTag('')
   }
 
+  const openComment = (id: string) => {
+    setCommenting(id)
+    setComment('')
+  }
+
   const add = () => {
     if (selected && tag) {
       addTag(selected, tag)
       setConvos([...listConversations()])
     }
     setSelected(null)
+  }
+
+  const saveComment = () => {
+    if (commenting) {
+      addAdminComment(commenting, comment)
+      setConvos([...listConversations()])
+    }
+    setCommenting(null)
   }
 
   const stats = (() => {
@@ -103,6 +120,12 @@ export default function AdminChatPage() {
             </Button>
           </Link>
           <h1 className="text-3xl font-bold">การสนทนาลูกค้า</h1>
+          <Button asChild variant="secondary">
+            <Link href="/chat/qa">ดูแชทที่ถูกประเมินต่ำ</Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href="/admin/chat/ranking">อันดับแอดมิน</Link>
+          </Button>
         </div>
         <Card>
           <CardHeader>
@@ -125,8 +148,9 @@ export default function AdminChatPage() {
                   <TableHead>ลูกค้า</TableHead>
                   <TableHead>แท็ก</TableHead>
                   <TableHead>เรตติ้ง</TableHead>
+                  <TableHead>คอมเมนต์</TableHead>
                   <TableHead>ตอบด่วน</TableHead>
-                  <TableHead className="w-40"></TableHead>
+                  <TableHead className="w-48"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -146,6 +170,7 @@ export default function AdminChatPage() {
                       </div>
                     </TableCell>
                     <TableCell>{c.rating ? `${c.rating}/5` : '-'}</TableCell>
+                    <TableCell>{c.adminComment ?? '-'}</TableCell>
                     <TableCell>
                       <Select onValueChange={quickReply}>
                         <SelectTrigger className="w-32">
@@ -184,6 +209,13 @@ export default function AdminChatPage() {
                       >
                         แจ้งหัวหน้าทีม
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openComment(c.id)}
+                      >
+                        เพิ่มคอมเมนต์
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -207,6 +239,22 @@ export default function AdminChatPage() {
           />
           <DialogFooter>
             <Button onClick={add}>บันทึก</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!commenting} onOpenChange={() => setCommenting(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>บันทึกคอมเมนต์</DialogTitle>
+          </DialogHeader>
+          <Textarea
+            rows={4}
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="ความคิดเห็น"
+          />
+          <DialogFooter>
+            <Button onClick={saveComment}>บันทึก</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
