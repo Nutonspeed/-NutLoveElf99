@@ -20,7 +20,7 @@ import Image from "next/image"
 import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { mockOrders } from "@/lib/mock-orders"
+import { addOrder } from "@/core/mock/store"
 import type { OrderStatus, ShippingStatus } from "@/types/order"
 import { db } from "@/lib/database"
 import { SuggestedExtras } from "@/components/SuggestedExtras"
@@ -112,7 +112,7 @@ export default function CheckoutPage() {
     setTimeout(() => {
       const orderId = `ORD-${Date.now()}`
 
-      mockOrders.push({
+      addOrder({
         id: orderId,
         customerId: user?.id || guestId || "guest",
         customerName: `${shippingInfo.firstName} ${shippingInfo.lastName}`,
