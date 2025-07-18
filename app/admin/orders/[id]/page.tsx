@@ -10,7 +10,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
-import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
+import {
+  mockOrders,
+  setPackingStatus,
+  setOrderStatus,
+  setConversationId as updateConversationId,
+} from "@/lib/mock-orders"
 import { mockProducts } from "@/lib/mock-products"
 import { useCart } from "@/contexts/cart-context"
 import type { Order } from "@/types/order"
@@ -46,6 +51,7 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
   const [packingStatus, setPackingStatusState] = useState<PackingStatus>(order?.packingStatus ?? "packing")
   const [scheduledDelivery, setScheduledDelivery] = useState(order?.scheduledDelivery || "")
   const [chatNote, setChatNote] = useState(order?.chatNote || "")
+  const [conversationId, setConversationIdState] = useState(order?.conversationId || "")
   const [payment, setPayment] = useState(() => getPayment(id))
   const [chatSent, setChatSent] = useState<boolean>(mockChatStatus[id] || false)
   const [showSendModal, setShowSendModal] = useState(false)
@@ -352,6 +358,45 @@ export default function AdminOrderDetailPage({ params }: { params: { id: string 
             }}>
               เพิ่มบันทึกการโทร/ส่ง
             </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>เชื่อมต่อแชท</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <input
+              className="border rounded w-full p-2"
+              value={conversationId}
+              onChange={(e) => setConversationIdState(e.target.value)}
+              placeholder="conversation id"
+            />
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  updateConversationId(order.id, conversationId)
+                  mockOrders[orderIndex].conversationId = conversationId
+                  toast.success('บันทึกแล้ว')
+                }}
+              >
+                บันทึก
+              </Button>
+              {conversationId && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    updateConversationId(order.id, '')
+                    mockOrders[orderIndex].conversationId = undefined
+                    setConversationIdState('')
+                    toast.success('ลบการเชื่อมต่อแล้ว')
+                  }}
+                >
+                  ลบ
+                </Button>
+              )}
+            </div>
           </CardContent>
         </Card>
 
