@@ -27,3 +27,29 @@ export function getChatTemplate(id: string): ChatTemplate | undefined {
   return chatTemplates.find((t) => t.id === id)
 }
 
+export function importChatTemplates(json: string): boolean {
+  try {
+    const data = JSON.parse(json) as ChatTemplate[]
+    if (!Array.isArray(data)) return false
+    if (!data.every(t => typeof t.id === 'string' && typeof t.name === 'string' && typeof t.text === 'string')) {
+      return false
+    }
+    setChatTemplates(data)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function exportChatTemplates(filename: string) {
+  const blob = new Blob([JSON.stringify(chatTemplates, null, 2)], {
+    type: 'application/json',
+  })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
