@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { FabricsList } from "@/components/FabricsList"
+import Link from "next/link"
 import type { Metadata } from "next"
 import { supabase } from "@/lib/supabase"
 import { mockFabrics } from "@/lib/mock-fabrics"
@@ -51,6 +52,9 @@ export default async function FabricsPage() {
     <div className="min-h-screen">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-900">
+          กำลังมองหาผ้าคลุมโซฟาเข้ารูปใช่ไหม? <Link href="/sofa-covers" className="underline text-blue-600">ดูลายผ้าสำหรับผ้าคลุมโซฟา</Link>
+        </div>
         <h1 className="text-3xl font-bold mb-6">แกลเลอรี่ลายผ้า</h1>
         <FabricsList fabrics={fabrics} />
       </div>
