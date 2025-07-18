@@ -26,7 +26,7 @@ export function addQuickBill(bill: Omit<QuickBill, "status" | "createdAt">): Qui
     createdAt: new Date().toISOString(),
   }
   quickBills.unshift(newBill)
-  mockBillLinks[newBill.id] = `https://elfnity.app/bill/${newBill.id}`
+  mockBillLinks[newBill.id] = `https://elfnity.app/bills/${newBill.id}`
   return newBill
 }
 
