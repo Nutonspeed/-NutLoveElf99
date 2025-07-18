@@ -11,12 +11,16 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
+import { TagSuggestionDialog } from "@/components/admin/fabrics/TagSuggestionDialog"
+import { saveTagHistory } from "@/lib/fabric-tag-utils"
 
 export default function CreateFabricPage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
 
   const [name, setName] = useState("")
+  const [color, setColor] = useState("")
+  const [tags, setTags] = useState("")
   const [imageUrl, setImageUrl] = useState("")
   const [collectionId, setCollectionId] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -81,6 +85,8 @@ export default function CreateFabricPage() {
     const { error } = await supabase.from("fabrics").insert({
       name,
       sku,
+      color,
+      tags: tags.split(',').map((t) => t.trim()).filter(Boolean),
       image_url: uploadedUrl,
       collection_id: collectionId,
     })
@@ -89,6 +95,8 @@ export default function CreateFabricPage() {
       console.error("Failed to create fabric", error)
       return
     }
+
+    saveTagHistory(tags.split(',').map((t) => t.trim()).filter(Boolean))
 
     router.push("/admin/fabrics")
   }
@@ -150,6 +158,34 @@ export default function CreateFabricPage() {
                   onChange={(e) => setCollectionId(e.target.value)}
                   placeholder="เช่น 1"
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="color">สีผ้า</Label>
+                <Input
+                  id="color"
+                  value={color}
+                  onChange={(e) => setColor(e.target.value)}
+                  placeholder="เช่น Gray"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="tags">แท็ก (คั่นด้วยคอมมา)</Label>
+                <Input
+                  id="tags"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="เช่น premium, velvet"
+                />
+                <div className="pt-2">
+                  <TagSuggestionDialog
+                    name={name}
+                    color={color}
+                    onApply={(t) => setTags(t.join(', '))}
+                  />
+                </div>
+                {tags.split(',').filter((t) => t.trim()).length > 5 && (
+                  <p className="text-sm text-red-600">มีแท็กเกิน 5 รายการ</p>
+                )}
               </div>
               <div className="pt-4 flex justify-end">
                 <Button type="submit">บันทึก</Button>
