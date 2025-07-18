@@ -8,7 +8,37 @@ export interface ChatMessageEntry {
   createdAt: string
 }
 
-export const chatMessages: Record<string, ChatMessageEntry[]> = {}
+export let chatMessages: Record<string, ChatMessageEntry[]> = {
+  'conv-001': [
+    {
+      id: 'm1',
+      conversationId: 'conv-001',
+      templateId: 'bill_created',
+      text: 'เราได้ออกบิลใหม่ให้คุณแล้วค่ะ',
+      createdAt: new Date().toISOString(),
+    },
+    {
+      id: 'm2',
+      conversationId: 'conv-001',
+      templateId: 'status_paid',
+      text: 'ออเดอร์ของคุณชำระเรียบร้อยแล้วค่ะ',
+      createdAt: new Date().toISOString(),
+    },
+  ],
+}
+
+export function loadChatMessages() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('chatMessages')
+    if (stored) chatMessages = JSON.parse(stored)
+  }
+}
+
+function save() {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('chatMessages', JSON.stringify(chatMessages))
+  }
+}
 
 export function addChatMessage(conversationId: string, templateId: string): ChatMessageEntry | null {
   const template = getChatTemplate(templateId)
@@ -22,7 +52,15 @@ export function addChatMessage(conversationId: string, templateId: string): Chat
   }
   if (!chatMessages[conversationId]) chatMessages[conversationId] = []
   chatMessages[conversationId].push(msg)
+  save()
   return msg
+}
+
+export function deleteChatMessages(conversationId: string, ids: string[]) {
+  const msgs = chatMessages[conversationId]
+  if (!msgs) return
+  chatMessages[conversationId] = msgs.filter(m => !ids.includes(m.id))
+  save()
 }
 
 export function listChatMessages(conversationId: string): ChatMessageEntry[] {
