@@ -99,7 +99,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   const handlePrint = () => {
     if (typeof window !== "undefined") {
-      window.print()
+      window.open(`/bill/${id}/print`, "_blank")
     }
   }
 
@@ -179,7 +179,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
           <div className="flex space-x-2">
             <Button variant="outline" onClick={handlePrint}>
               <Print className="mr-2 h-4 w-4" />
-              พิมพ์
+              พิมพ์บิล
             </Button>
             <Button variant="outline" onClick={handleCopy}>
               <Copy className="mr-2 h-4 w-4" />
