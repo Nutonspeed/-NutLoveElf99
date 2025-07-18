@@ -55,3 +55,20 @@ export function exportLogsJson(entries: LogEntry[], filename: string) {
   a.click()
   URL.revokeObjectURL(url)
 }
+
+export function exportLogsCsv(entries: LogEntry[], filename: string) {
+  const header = ['id', 'timestamp', 'action', 'payload'].join(',')
+  const rows = entries.map(e => {
+    const payload = e.payload ? JSON.stringify(e.payload).replace(/"/g, '""') : ''
+    return [e.id, e.timestamp, e.action, `"${payload}"`].join(',')
+  })
+  const csv = [header, ...rows].join('\n')
+  const blob = new Blob([csv], { type: 'text/csv' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
