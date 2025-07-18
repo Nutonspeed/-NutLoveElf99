@@ -188,3 +188,17 @@ export function checkCustomerInfo(id: string): string | null {
   if (!customer.phone) missing.push("เบอร์โทร")
   return missing.length > 0 ? `ข้อมูลลูกค้าไม่ครบ (${missing.join(", ")})` : null
 }
+
+export function updateCustomer(
+  id: string,
+  data: Partial<Omit<Customer, 'id' | 'createdAt'>>,
+): Customer | undefined {
+  const customer = mockCustomers.find((c) => c.id === id)
+  if (customer) Object.assign(customer, data)
+  return customer
+}
+
+export function removeCustomer(id: string) {
+  const idx = mockCustomers.findIndex((c) => c.id === id)
+  if (idx !== -1) mockCustomers.splice(idx, 1)
+}
