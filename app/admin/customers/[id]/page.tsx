@@ -42,6 +42,7 @@ import {
   listCustomerTags,
   addCustomerTag,
 } from "@/lib/mock-customer-tags"
+import TagSelector from "@/components/admin/customers/TagSelector"
 import {
   loadFlaggedUsers,
   getFlagStatus,
@@ -81,7 +82,6 @@ export default function CustomerDetailPage({
   const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
   const [noteInput, setNoteInput] = useState("")
-  const [tagInput, setTagInput] = useState("")
   const latestMessage = getLatestChatMessage(customer.id)
 
   return (
@@ -97,6 +97,9 @@ export default function CustomerDetailPage({
         </div>
 
         <CustomerCard customer={customer} />
+        <Link href={`/admin/customers/${id}/timeline`}>
+          <Button variant="outline">ดูไทม์ไลน์</Button>
+        </Link>
         {getFlagStatus(customer.id) && (
           <Badge variant="destructive">ต้องตรวจสอบก่อนตอบ</Badge>
         )}
@@ -110,24 +113,9 @@ export default function CustomerDetailPage({
                 </Badge>
               ))}
             </div>
-            <div className="flex space-x-2 pt-1">
-              <input
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                className="border px-2 py-1 rounded"
-              />
-              <Button
-                variant="outline"
-                onClick={() => {
-                  if (tagInput) {
-                    addCustomerTag(customer.id, tagInput)
-                    setTagInput("")
-                  }
-                }}
-              >
-                เพิ่มแท็ก
-              </Button>
-            </div>
+            <TagSelector
+              onSelect={(t) => addCustomerTag(customer.id, t, user?.id || 'admin')}
+            />
           </div>
           <div>
             <p className="font-semibold">โน้ต</p>

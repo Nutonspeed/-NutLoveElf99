@@ -2,6 +2,7 @@ export interface CustomerTag {
   id: string
   customerId: string
   tag: string
+  adminId: string
   createdAt: string
 }
 
@@ -22,7 +23,11 @@ function save() {
   }
 }
 
-export function addCustomerTag(customerId: string, tag: string): CustomerTag {
+export function addCustomerTag(
+  customerId: string,
+  tag: string,
+  adminId: string = 'unknown',
+): CustomerTag {
   if (customerTags.some((t) => t.customerId === customerId && t.tag === tag)) {
     return customerTags.find((t) => t.customerId === customerId && t.tag === tag)!;
   }
@@ -30,6 +35,7 @@ export function addCustomerTag(customerId: string, tag: string): CustomerTag {
     id: Date.now().toString(),
     customerId,
     tag,
+    adminId,
     createdAt: new Date().toISOString(),
   }
   customerTags = [entry, ...customerTags]
@@ -37,8 +43,13 @@ export function addCustomerTag(customerId: string, tag: string): CustomerTag {
   return entry
 }
 
-export function listCustomerTags(customerId: string): CustomerTag[] {
-  return customerTags.filter((t) => t.customerId === customerId)
+export function listCustomerTags(
+  customerId: string,
+  adminId?: string,
+): CustomerTag[] {
+  return customerTags.filter(
+    (t) => t.customerId === customerId && (!adminId || t.adminId === adminId),
+  )
 }
 
 export function removeCustomerTag(id: string) {

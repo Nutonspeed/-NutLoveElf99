@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
+import { Search, ArrowLeft, Eye, Clock, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
 import Link from "next/link"
 import {
   fetchCustomers,
@@ -325,10 +325,15 @@ export default function AdminCustomersPage() {
                         <span className="text-sm text-gray-500">ยังไม่เคยซื้อ</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right space-x-2">
                       <Link href={`/admin/customers/${customer.id}`}>
                         <Button variant="outline" size="icon">
                           <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Link href={`/admin/customers/${customer.id}/timeline`}>
+                        <Button variant="outline" size="icon">
+                          <Clock className="h-4 w-4" />
                         </Button>
                       </Link>
                     </TableCell>

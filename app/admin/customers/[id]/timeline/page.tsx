@@ -46,7 +46,7 @@ export default function CustomerTimelinePage({ params }: { params: { id: string 
                 ))}
               </ul>
             ) : (
-              <p className="text-center py-4 text-gray-500">ลูกค้ารายนี้ยังไม่มีประวัติกิจกรรม</p>
+              <p className="text-center py-4 text-gray-500">ไม่พบประวัติลูกค้ารายนี้</p>
             )}
           </CardContent>
         </Card>
