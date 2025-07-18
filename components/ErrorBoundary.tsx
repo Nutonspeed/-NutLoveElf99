@@ -1,5 +1,8 @@
 "use client"
 import React from "react"
+import EmptyState from "./ui/EmptyState"
+import { Button } from "@/components/ui/buttons/button"
+import { AlertTriangle } from "lucide-react"
 
 export default class ErrorBoundary extends React.Component<{
   children: React.ReactNode
@@ -25,15 +28,12 @@ export default class ErrorBoundary extends React.Component<{
     if ((this.state as any).hasError) {
       return (
         <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center space-y-2">
-            <p>เกิดปัญหาชั่วคราว</p>
-            <button
-              className="px-4 py-2 rounded bg-primary text-white"
-              onClick={this.handleRefresh}
-            >
-              Refresh
-            </button>
-          </div>
+          <EmptyState
+            icon={<AlertTriangle className="h-8 w-8 text-red-600" />}
+            title="เกิดปัญหาชั่วคราว"
+            description="โปรดลองรีเฟรชหน้านี้"
+            action={<Button onClick={this.handleRefresh}>Refresh</Button>}
+          />
         </div>
       )
     }
