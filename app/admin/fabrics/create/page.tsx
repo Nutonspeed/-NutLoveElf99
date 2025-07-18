@@ -24,7 +24,7 @@ export default function CreateFabricPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login")
+      router.push("/auth/login")
       return
     }
     if (user?.role !== "admin") {

@@ -29,7 +29,7 @@ export default function EditFabricPage({ params }: EditFabricPageProps) {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login")
+      router.push("/auth/login")
       return
     }
     if (user?.role !== "admin") {

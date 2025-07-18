@@ -33,7 +33,7 @@ export default function ManualOrdersPage() {
 
   useEffect(() => {
     if (!isLoading && (!isAuthenticated || !canAccess(user?.role, 'inventory'))) {
-      router.push("/login")
+      router.push("/auth/login")
     }
   }, [isAuthenticated, user, router, isLoading])
 
