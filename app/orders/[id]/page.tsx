@@ -7,7 +7,11 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download, MessageCircle, Package, Truck, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { mockOrders } from "@/lib/mock-orders"
+import { mockProducts } from "@/lib/mock-products"
+import { useCart } from "@/contexts/cart-context"
+import { toast } from "sonner"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
 import {
@@ -18,6 +22,8 @@ import {
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
   const order = mockOrders.find((o) => o.id === id)
+  const { dispatch } = useCart()
+  const router = useRouter()
 
   if (!order) {
     return (
@@ -43,6 +49,37 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   ]
 
   const currentStepIndex = orderSteps.findIndex((step) => step.status === order.status)
+
+  const handleReorder = () => {
+    let added = false
+    for (const item of order.items) {
+      const product = mockProducts.find((p) => p.id === item.productId)
+      if (!product || !product.inStock || product.status === "draft") {
+        continue
+      }
+      dispatch({
+        type: "ADD_ITEM",
+        payload: {
+          id: item.productId,
+          name: item.productName,
+          price: item.price,
+          image: "/placeholder.svg",
+          quantity: item.quantity,
+          size: item.size,
+          color: item.color,
+        },
+      })
+      added = true
+    }
+    if (!added) {
+      toast.error("ไม่สามารถสั่งซ้ำได้")
+      return
+    }
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("reorderFromId", order.id)
+    }
+    router.push("/cart")
+  }
 
   return (
     <div className="min-h-screen">
@@ -197,6 +234,10 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                     ติดต่อฝ่ายบริการลูกค้า
                   </Button>
                 </Link>
+
+                <Button className="w-full" variant="outline" onClick={handleReorder}>
+                  สั่งซ้ำ
+                </Button>
 
                 <Link href="/products">
                   <Button className="w-full">ช้อปปิ้งต่อ</Button>
