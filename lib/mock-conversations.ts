@@ -7,6 +7,7 @@ export let conversations: Conversation[] = [
     customerName: 'John Doe',
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
+    flagged: false,
     updatedAt: new Date().toISOString(),
   },
   {
@@ -15,6 +16,7 @@ export let conversations: Conversation[] = [
     customerName: 'Jane Smith',
     lastMessage: 'จะโอนพรุ่งนี้',
     tags: ['รอโอน'],
+    flagged: false,
     updatedAt: new Date().toISOString(),
   },
 ]
@@ -64,4 +66,16 @@ export function setRating(id: string, rating: number) {
     convo.rating = rating
     save()
   }
+}
+
+export function flagConversation(id: string) {
+  const convo = conversations.find((c) => c.id === id)
+  if (convo) {
+    convo.flagged = true
+    save()
+  }
+}
+
+export function listFlaggedConversations() {
+  return conversations.filter((c) => c.flagged)
 }

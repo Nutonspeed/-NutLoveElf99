@@ -37,6 +37,8 @@ import {
 import type { Conversation } from '@/types/conversation'
 import {
   addTag,
+  flagConversation,
+  listFlaggedConversations,
   listConversations,
   loadConversations,
   searchByTag,
@@ -48,6 +50,7 @@ export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
+  const [flagOnly, setFlagOnly] = useState(false)
 
   useEffect(() => {
     loadConversations()
@@ -93,6 +96,8 @@ export default function AdminChatPage() {
     toast.success('คัดลอกข้อความแล้ว')
   }
 
+  const displayConvos = flagOnly ? convos.filter((c) => c.flagged) : convos
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 space-y-6">
@@ -115,8 +120,15 @@ export default function AdminChatPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader>
-            <CardTitle>บทสนทนา ({convos.length})</CardTitle>
+          <CardHeader className="flex items-center justify-between">
+          <CardTitle>บทสนทนา ({displayConvos.length})</CardTitle>
+          <Button
+            variant={flagOnly ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setFlagOnly((v) => !v)}
+          >
+            เฉพาะแชทที่ถูกติดธง
+          </Button>
           </CardHeader>
           <CardContent>
             <Table>
@@ -130,7 +142,7 @@ export default function AdminChatPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {convos.map((c) => (
+                {displayConvos.map((c) => (
                   <TableRow key={c.id} className="align-top">
                     <TableCell>
                       <p className="font-medium">{c.customerName}</p>
@@ -184,13 +196,28 @@ export default function AdminChatPage() {
                       >
                         แจ้งหัวหน้าทีม
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          flagConversation(c.id)
+                          setConvos([...listConversations()])
+                        }}
+                      >
+                        ติดธงไว้ภายหลัง
+                      </Button>
+                      {c.flagged && (
+                        <Badge variant="destructive">ติดธง</Badge>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            {convos.length === 0 && (
-              <p className="text-center py-8 text-gray-500">ไม่มีข้อมูล</p>
+            {displayConvos.length === 0 && (
+              <p className="text-center py-8 text-gray-500">
+                {flagOnly ? 'ไม่มีการติดธงในตอนนี้' : 'ไม่มีข้อมูล'}
+              </p>
             )}
           </CardContent>
         </Card>
