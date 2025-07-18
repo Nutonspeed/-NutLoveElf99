@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { useForm } from "react-hook-form"
-import { getCollections } from "@/lib/mock-collections"
+import { getCollections, addCollectionTag } from "@/lib/mock-collections"
+import { mockFabrics } from "@/lib/mock-fabrics"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
@@ -10,9 +11,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
 import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
+import { Layers, Scissors } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import type { Collection } from "@/types/collection"
+import { addAdminLog } from "@/lib/mock-admin-logs"
 
 interface CollectionWithFabrics extends Collection {
   fabrics: { id: string; name: string }[]
@@ -22,6 +25,11 @@ export default function AdminCollectionsPage() {
   const [collections, setCollections] = useState<CollectionWithFabrics[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [mergeTarget, setMergeTarget] = useState<string | null>(null)
+  const [mergeSource, setMergeSource] = useState<CollectionWithFabrics | null>(null)
+  const [isMergeOpen, setIsMergeOpen] = useState(false)
+  const [splitSource, setSplitSource] = useState<CollectionWithFabrics | null>(null)
+  const [isSplitOpen, setIsSplitOpen] = useState(false)
   const [editingCollection, setEditingCollection] = useState<CollectionWithFabrics | null>(null)
   const form = useForm<Collection>({
     defaultValues: {
@@ -30,6 +38,7 @@ export default function AdminCollectionsPage() {
       description: "",
       priceRange: "",
       images: [],
+      tags: [],
       id: "",
     },
   })
@@ -37,15 +46,19 @@ export default function AdminCollectionsPage() {
   useEffect(() => {
     const fetchCollections = async () => {
       const cols = await getCollections()
-      setCollections(
-        cols.map((c) => ({ ...c, fabrics: [] })) as CollectionWithFabrics[],
-      )
+      const mapped = cols.map((c) => ({
+        ...c,
+        fabrics: mockFabrics
+          .filter((f) => f.collectionSlug === c.slug)
+          .map((f) => ({ id: f.id, name: f.name })),
+      })) as CollectionWithFabrics[]
+      setCollections(mapped)
     }
     fetchCollections()
   }, [])
 
   const resetForm = () => {
-    form.reset({ id: "", name: "", slug: "", description: "", priceRange: "", images: [] })
+    form.reset({ id: "", name: "", slug: "", description: "", priceRange: "", images: [], tags: [] })
   }
 
   const handleSubmit = (values: Collection) => {
@@ -74,6 +87,17 @@ export default function AdminCollectionsPage() {
     setIsDialogOpen(true)
   }
 
+  const openMergeDialog = (source: CollectionWithFabrics) => {
+    setMergeSource(source)
+    setMergeTarget(null)
+    setIsMergeOpen(true)
+  }
+
+  const openSplitDialog = (source: CollectionWithFabrics) => {
+    setSplitSource(source)
+    setIsSplitOpen(true)
+  }
+
   const handleDeleteCollection = (id: string) => {
     setCollections((prev) => prev.filter((c) => c.id !== id))
   }
@@ -81,7 +105,9 @@ export default function AdminCollectionsPage() {
   const filteredCollections = collections.filter(
     (c) =>
       c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      c.slug.toLowerCase().includes(searchTerm.toLowerCase()),
+      c.slug.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      c.fabrics.some((f) => f.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (c.tags || []).some((t) => t.toLowerCase().includes(searchTerm.toLowerCase())),
   )
 
   return (
@@ -179,6 +205,21 @@ export default function AdminCollectionsPage() {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    name="tags"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>แท็ก (คั่นด้วย comma)</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="tag1,tag2"
+                            value={field.value.join(',')}
+                            onChange={(e) => field.onChange(e.target.value.split(','))}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                   <div className="flex justify-end space-x-2 pt-4">
                     <Button variant="outline" onClick={() => setIsDialogOpen(false)} type="button">
                       ยกเลิก
@@ -215,6 +256,7 @@ export default function AdminCollectionsPage() {
                   <TableHead>Slug</TableHead>
                   <TableHead>คำอธิบาย</TableHead>
                   <TableHead>ลายผ้า</TableHead>
+                  <TableHead>แท็ก</TableHead>
                   <TableHead className="text-right">การจัดการ</TableHead>
                 </TableRow>
               </TableHeader>
@@ -236,10 +278,19 @@ export default function AdminCollectionsPage() {
                     <TableCell className="max-w-xs truncate">
                       {collection.fabrics.map((f) => f.name).join(', ') || '-'}
                     </TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {(collection.tags || []).join(', ') || '-'}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <Button variant="outline" size="icon" onClick={() => openEditDialog(collection)}>
                           <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => openMergeDialog(collection)}>
+                          <Layers className="h-4 w-4" />
+                        </Button>
+                        <Button variant="outline" size="icon" onClick={() => openSplitDialog(collection)}>
+                          <Scissors className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
@@ -262,6 +313,76 @@ export default function AdminCollectionsPage() {
             )}
           </CardContent>
         </Card>
+        <Dialog open={isMergeOpen} onOpenChange={setIsMergeOpen}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>รวมคอลเลกชัน</DialogTitle>
+            </DialogHeader>
+            {mergeSource && (
+              <div className="space-y-4">
+                <p>เลือกคอลเลกชันที่จะรวมกับ {mergeSource.name}</p>
+                <select
+                  className="w-full border rounded p-2"
+                  value={mergeTarget || ''}
+                  onChange={(e) => setMergeTarget(e.target.value)}
+                >
+                  <option value="" disabled>
+                    เลือกคอลเลกชัน
+                  </option>
+                  {collections
+                    .filter((c) => c.id !== mergeSource.id)
+                    .map((c) => (
+                      <option key={c.id} value={c.slug}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsMergeOpen(false)}>
+                    ยกเลิก
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (mergeSource && mergeTarget) {
+                        addAdminLog(`merge ${mergeSource.slug} -> ${mergeTarget}`, 'admin')
+                      }
+                      setIsMergeOpen(false)
+                    }}
+                  >
+                    บันทึก
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+        <Dialog open={isSplitOpen} onOpenChange={setIsSplitOpen}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>แยกคอลเลกชัน</DialogTitle>
+            </DialogHeader>
+            {splitSource && (
+              <div className="space-y-4">
+                <p>ยืนยันการแยกคอลเลกชัน {splitSource.name}</p>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setIsSplitOpen(false)}>
+                    ยกเลิก
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (splitSource) {
+                        addAdminLog(`split ${splitSource.slug}`, 'admin')
+                      }
+                      setIsSplitOpen(false)
+                    }}
+                  >
+                    บันทึก
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
     </div>

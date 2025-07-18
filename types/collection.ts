@@ -5,4 +5,5 @@ export interface Collection {
   priceRange: string
   description: string
   images: string[]
+  tags?: string[]
 }
