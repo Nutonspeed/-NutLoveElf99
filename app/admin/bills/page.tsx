@@ -3,6 +3,15 @@ import { useState } from 'react'
 import { Plus, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Button } from '@/components/ui/buttons/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination'
 import Link from 'next/link'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Dialog, DialogContent, DialogFooter, DialogHeader as DHeader, DialogTitle, DialogTrigger } from '@/components/ui/modals/dialog'
@@ -33,6 +42,8 @@ export default function AdminBillsPage() {
   } | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
+  const [selected, setSelected] = useState<string[]>([])
+  const [page, setPage] = useState(1)
 
   const handleCreate = () => {
     if (items.length === 0) {
@@ -69,6 +80,10 @@ export default function AdminBillsPage() {
         b.id.toLowerCase().includes(search.toLowerCase()),
     )
     .filter((b) => (statusFilter === 'all' ? true : b.status === statusFilter))
+
+  const pageCount = Math.max(1, Math.ceil(filteredBills.length / 10))
+  const currentPage = Math.min(page, pageCount)
+  const billsPage = filteredBills.slice((currentPage - 1) * 10, currentPage * 10)
 
   return (
     <div className="space-y-6">
@@ -199,12 +214,77 @@ export default function AdminBillsPage() {
               <TabsTrigger value="cancelled">ยกเลิก</TabsTrigger>
             </TabsList>
           </Tabs>
+          {selected.length > 0 && (
+            <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded bg-gray-100 p-3">
+              <span className="text-sm">เลือก {selected.length} รายการ</span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    const ids = new Set(selected)
+                    for (const id of selected) {
+                      const idx = mockBills.findIndex((b) => b.id === id)
+                      if (idx > -1) mockBills.splice(idx, 1)
+                    }
+                    setBills([...mockBills])
+                    setSelected([])
+                    toast.success('ลบแล้ว (mock)')
+                  }}
+                >
+                  ลบ
+                </Button>
+                <Select
+                  onValueChange={(v) => {
+                    selected.forEach((id) =>
+                      updateBillStatus(id, v as AdminBill['status']),
+                    )
+                    setBills([...mockBills])
+                    setSelected([])
+                    toast.success('อัปเดตแล้ว (mock)')
+                  }}
+                >
+                  <SelectTrigger className="w-28" size="sm">เปลี่ยนสถานะ</SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="unpaid">รอชำระ</SelectItem>
+                    <SelectItem value="paid">ชำระแล้ว</SelectItem>
+                    <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    toast.success('ส่งซ้ำแล้ว (mock)')
+                    setSelected([])
+                  }}
+                >
+                  ส่งซ้ำ
+                </Button>
+              </div>
+            </div>
+          )}
         </CardHeader>
         <CardContent>
           {filteredBills.length ? (
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-4">
+                    <Checkbox
+                      checked={
+                        billsPage.length > 0 &&
+                        billsPage.every((bb) => selected.includes(bb.id))
+                      }
+                      onCheckedChange={(checked) => {
+                        const ids = billsPage.map((bb) => bb.id)
+                        setSelected((prev) =>
+                          checked
+                            ? Array.from(new Set([...prev, ...ids]))
+                            : prev.filter((id) => !ids.includes(id)),
+                        )
+                      }}
+                    />
+                  </TableHead>
                   <TableHead>เลขบิล</TableHead>
                   <TableHead>ชื่อลูกค้า</TableHead>
                   <TableHead>สถานะ</TableHead>
@@ -213,8 +293,20 @@ export default function AdminBillsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredBills.map((b) => (
+                {billsPage.map((b) => (
                   <TableRow key={b.id}>
+                    <TableCell className="w-4">
+                      <Checkbox
+                        checked={selected.includes(b.id)}
+                        onCheckedChange={() =>
+                          setSelected((prev) =>
+                            prev.includes(b.id)
+                              ? prev.filter((id) => id !== b.id)
+                              : [...prev, b.id],
+                          )
+                        }
+                      />
+                    </TableCell>
                     <TableCell>{b.id}</TableCell>
                     <TableCell>{b.customer}</TableCell>
                     <TableCell>
@@ -262,6 +354,42 @@ export default function AdminBillsPage() {
                 ))}
               </TableBody>
             </Table>
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setPage((p) => Math.max(1, p - 1))
+                    }}
+                  />
+                </PaginationItem>
+                {Array.from({ length: pageCount }, (_, i) => i + 1).map((p) => (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      href="#"
+                      isActive={p === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setPage(p)
+                      }}
+                    >
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setPage((p) => Math.min(pageCount, p + 1))
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           ) : (
             <div className="text-center text-muted text-sm">
               {bills.length === 0 ? 'ยังไม่มีบิลในระบบ' : 'ไม่พบบิลที่ค้นหา'}
