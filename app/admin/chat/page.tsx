@@ -48,10 +48,13 @@ export default function AdminChatPage() {
   const [convos, setConvos] = useState<Conversation[]>([])
   const [selected, setSelected] = useState<string | null>(null)
   const [tag, setTag] = useState('')
+  const [loadError, setLoadError] = useState(false)
+  const [preview, setPreview] = useState<string | null>(null)
 
   useEffect(() => {
     loadConversations()
-    loadChatTemplates()
+    const ok = loadChatTemplates()
+    if (!ok) setLoadError(true)
     setConvos([...listConversations()])
   }, [])
 
@@ -89,13 +92,25 @@ export default function AdminChatPage() {
   }
 
   const quickReply = (text: string) => {
-    navigator.clipboard.writeText(text)
-    toast.success('คัดลอกข้อความแล้ว')
+    setPreview(text)
+  }
+
+  const confirmSend = () => {
+    if (preview) {
+      navigator.clipboard.writeText(preview)
+      toast.success('คัดลอกข้อความแล้ว')
+      setPreview(null)
+    }
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 space-y-6">
+        {loadError && (
+          <div className="bg-red-100 text-red-600 p-2 text-center w-full">
+            ไม่สามารถโหลดข้อความแนะนำได้
+          </div>
+        )}
         <div className="flex items-center space-x-4">
           <Link href="/admin/dashboard">
             <Button variant="outline" size="icon">
@@ -207,6 +222,19 @@ export default function AdminChatPage() {
           />
           <DialogFooter>
             <Button onClick={add}>บันทึก</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={!!preview} onOpenChange={(v) => !v && setPreview(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ตัวอย่างข้อความ</DialogTitle>
+          </DialogHeader>
+          <pre className="whitespace-pre-wrap bg-gray-100 p-4 rounded">
+            {preview}
+          </pre>
+          <DialogFooter>
+            <Button onClick={confirmSend}>ยืนยันส่งข้อความ</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
