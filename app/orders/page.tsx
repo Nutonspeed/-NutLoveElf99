@@ -22,10 +22,8 @@ import { mockFeedbacks } from "@/lib/mock-feedback";
 import { reviewReminder, loadReviewReminder } from "@/lib/mock-settings";
 import { toast } from "sonner";
 import type { OrderStatus, Order } from "@/types/order";
-import {
-  getOrderStatusBadgeVariant,
-  getOrderStatusText,
-} from "@/lib/order-status";
+import { getOrderStatusBadgeVariant } from "@/lib/order-status";
+import { formatDate, getOrderStatusLabel } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 
 function getProgress(status: OrderStatus) {
@@ -163,13 +161,12 @@ export default function OrdersPage() {
                         คำสั่งซื้อ {order.id}
                       </CardTitle>
                       <p className="text-sm text-gray-600">
-                        สั่งซื้อเมื่อ{" "}
-                        {new Date(order.createdAt).toLocaleDateString("th-TH")}
+                        สั่งซื้อเมื่อ {formatDate(order.createdAt)}
                       </p>
                     </div>
                     <div className="flex items-center space-x-2">
                       <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                        {getOrderStatusText(order.status)}
+                        {getOrderStatusLabel(order.status)}
                       </Badge>
                       <Progress
                         className="w-24"

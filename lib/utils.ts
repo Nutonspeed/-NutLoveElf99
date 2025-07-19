@@ -12,3 +12,21 @@ export function formatCurrency(amount: number) {
 export function formatThaiDate(date: string | number | Date) {
   return new Date(date).toLocaleDateString('th-TH')
 }
+
+export function formatDate(date: string | number | Date, locale = 'th-TH') {
+  return new Date(date).toLocaleDateString(locale)
+}
+
+export function calculateTotal<T extends { price: number; quantity: number }>(
+  items: T[],
+) {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+}
+
+import type { OrderStatus } from '@/types/order'
+import { orderStatusOptions } from '@/types/order'
+
+export function getOrderStatusLabel(status: string | OrderStatus) {
+  const opt = orderStatusOptions.find(o => o.value === status)
+  return opt ? opt.label : 'Unknown'
+}

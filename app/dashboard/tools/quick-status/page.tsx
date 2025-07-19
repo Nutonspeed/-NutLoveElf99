@@ -3,7 +3,7 @@ import SectionHeader from '@/components/ui/SectionHeader'
 import { orders as ordersMock } from '@/mock/orders'
 import { mockBills as billsMock } from '@/mock/bills'
 import { fabrics } from '@/mock/fabrics'
-import { formatCurrency, formatThaiDate } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
 
 export default function QuickStatusPage() {
   const latestOrder = ordersMock[0]
@@ -48,7 +48,7 @@ export default function QuickStatusPage() {
               <div className="rounded-md border p-4 space-y-1">
                 <h3 className="font-medium">บิลล่าสุด</h3>
                 <p className="text-sm">{latestBill.id} – {latestBill.customer}</p>
-                <p className="text-sm text-muted-foreground">{formatThaiDate(latestBill.createdAt)}</p>
+                <p className="text-sm text-muted-foreground">{formatDate(latestBill.createdAt)}</p>
               </div>
             )}
           </div>

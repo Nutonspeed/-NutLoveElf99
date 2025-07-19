@@ -10,6 +10,7 @@ import { CheckCircle, Clock, Package, Truck, MapPin, Phone, Mail, Calendar } fro
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { ManualOrder, OrderStatus } from "@/types/order"
 import { orderDb } from "@/lib/order-database"
+import { formatDate } from "@/lib/utils"
 
 interface PublicOrderPageProps {
   params: {
@@ -417,11 +418,11 @@ export default function PublicOrderPage({ params }: PublicOrderPageProps) {
                 </div>
                 <div className="flex justify-between">
                   <span>วันที่สร้าง:</span>
-                  <span>{new Date(order.createdAt).toLocaleDateString("th-TH")}</span>
+                  <span>{formatDate(order.createdAt)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>อัปเดตล่าสุด:</span>
-                  <span>{new Date(order.updatedAt).toLocaleDateString("th-TH")}</span>
+                  <span>{formatDate(order.updatedAt)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>จำนวนรายการ:</span>
