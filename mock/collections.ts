@@ -26,9 +26,11 @@ export function updateCollection(id: string, data: Partial<Omit<Collection, 'id'
   return col
 }
 
-export function softDeleteCollection(id: string) {
+export function softDeleteCollection(id: string): boolean {
   const col = collections.find(c => c.id === id)
-  if (col) col.isDeleted = true
+  if (!col) return false
+  col.isDeleted = true
+  return true
 }
 
 export function getCollection(id: string): Collection | undefined {
