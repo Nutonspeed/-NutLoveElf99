@@ -1,12 +1,12 @@
 "use client"
 import { sendEmail, loadEmailData } from "@/lib/mock-email"
-import { mockOrders } from "@/mock/orders"
+import { mockOrders, type SimpleOrder } from "@/mock/orders"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/buttons/button"
 
 export default function SendInvoice({ params }: { params: { id: string } }) {
   const { id } = params
-  const order = mockOrders.find((o) => o.id === id)
+  const order = mockOrders.find((o: SimpleOrder) => o.id === id)
 
   useEffect(() => {
     loadEmailData()

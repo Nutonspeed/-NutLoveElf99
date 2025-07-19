@@ -244,7 +244,7 @@ export default function AdminBillsPage() {
                       </Link>
                       <Button
                         variant="outline"
-                        size="xs"
+                        size="sm"
                         onClick={() => {
                           setEdit(b.id)
                           setEditData({

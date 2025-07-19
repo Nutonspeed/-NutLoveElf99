@@ -89,7 +89,12 @@ export default function AdminDashboard() {
       <section className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">สถิติอย่างย่อ</h2>
-          <Select value={range} onValueChange={setRange}>
+          <Select
+            value={range}
+            onValueChange={(value) =>
+              setRange(value as '1' | '7' | '30' | 'all')
+            }
+          >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>

@@ -20,9 +20,9 @@ export default function DashboardOrdersPage() {
         onChange={e => setStatus(e.target.value)}
       >
         <option value="all">ทั้งหมด</option>
-        <option value="รอชำระ">รอชำระ</option>
-        <option value="กำลังแพ็ค">กำลังแพ็ค</option>
-        <option value="ส่งแล้ว">ส่งแล้ว</option>
+        <option value="pendingPayment">รอชำระ</option>
+        <option value="processing">กำลังแพ็ค</option>
+        <option value="shipped">ส่งแล้ว</option>
       </select>
 
       {filtered.length > 0 ? (

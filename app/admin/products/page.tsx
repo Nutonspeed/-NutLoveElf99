@@ -52,7 +52,7 @@ export default function AdminProductsPage() {
   }
 
   const filteredProducts = products.filter(
-    (product) =>
+    (product: Product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase()),
   )
@@ -119,7 +119,7 @@ export default function AdminProductsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredProducts.map((product) => (
+              {filteredProducts.map((product: Product) => (
                   <TableRow key={product.id}>
                     <TableCell>
                       <Image

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { useAdminProducts } from "@/contexts/admin-products-context"
 import { useAdminCollections } from "@/contexts/admin-collections-context"
+import type { Product } from "@/types/product"
 
 interface EditProductPageProps {
   params: { id: string }
@@ -50,7 +51,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   }, [isAuthenticated, user, router])
 
   useEffect(() => {
-    const p = products.find((pr) => pr.id === params.id)
+    const p = products.find((pr: Product) => pr.id === params.id)
     if (p) {
       setName(p.name)
       setDescription(p.description)
