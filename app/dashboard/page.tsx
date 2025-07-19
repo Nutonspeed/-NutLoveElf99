@@ -6,8 +6,11 @@ import { fabrics } from '@/mock/fabrics'
 import { orders } from '@/mock/orders'
 import { mockBills } from '@/mock/bills'
 import SectionHeader from '@/components/ui/SectionHeader'
+import { useSearchParams } from 'next/navigation'
 
 export default function DashboardPage() {
+  const searchParams = useSearchParams()
+  const preview = searchParams.get('preview') === 'grouped'
   const today = new Date().toLocaleDateString('th-TH')
   const links = [
     {
@@ -36,6 +39,19 @@ export default function DashboardPage() {
     },
   ]
   const latest = orders.slice(0, 3)
+  if (preview) {
+    return (
+      <div className="p-4 space-y-4">
+        <h1 className="text-xl font-bold">Preview Dashboard</h1>
+        <div className="grid md:grid-cols-2 gap-4">
+          {links.map(l => (
+            <DashboardQuickCard key={l.link} {...l} />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto space-y-6 py-8">
       <div>
