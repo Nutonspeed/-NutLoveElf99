@@ -12,6 +12,13 @@ export interface OrderItem {
   image?: string
 }
 
+export interface CustomerInfo {
+  name: string
+  phone: string
+  email?: string
+  address: string
+}
+
 export type OrderStatus =
   | "draft"
   | "pending"
@@ -65,9 +72,13 @@ export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
 
 export interface Order {
   id: string
+  /** Human readable order number */
+  orderNumber: string
   customerId: string
   customerName: string
   customerEmail: string
+  /** Contact and shipping info */
+  customerInfo: CustomerInfo
   items: Array<{
     productId: string
     productName: string
@@ -76,7 +87,10 @@ export interface Order {
     size?: string
     color?: string
   }>
+  /** Legacy total field */
   total: number
+  /** Total amount for the order */
+  totalAmount: number
   status: OrderStatus
   depositPercent?: number
   note?: string
