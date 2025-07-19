@@ -23,7 +23,7 @@ export function useAdminGuard() {
       setLoading(false)
       return
     }
-    if (!canAccess(user?.role, 'dashboard')) {
+    if (isAuthenticated && !canAccess(user?.role, 'dashboard')) {
       router.replace("/")
       setLoading(false)
       return
