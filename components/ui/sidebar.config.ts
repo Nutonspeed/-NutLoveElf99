@@ -17,6 +17,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
     items: [
       { label: "Dashboard", icon: require("lucide-react").Home, href: "/dashboard" },
       { label: "Orders", icon: require("lucide-react").ShoppingCart, href: "/orders" },
+      { label: "Returns", icon: require("lucide-react").Undo2, href: "/returns" },
     ],
   },
   {

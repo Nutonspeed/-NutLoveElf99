@@ -17,6 +17,7 @@ export default function MobileNav() {
     { name: "คอลเลกชัน", href: "/collections" },
     { name: "เกี่ยวกับเรา", href: "/about" },
     { name: "ติดต่อเรา", href: "/contact" },
+    { name: "การคืนสินค้า", href: "/returns" },
   ]
   return (
     <div className="flex md:hidden h-16 items-center justify-between w-full">
