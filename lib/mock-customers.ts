@@ -1,30 +1,5 @@
-export interface Customer {
-  id: string
-  name: string
-  email: string
-  phone?: string
-  address?: string
-  city?: string
-  postalCode?: string
-  avatar?: string
-  tags?: string[]
-  note?: string
-  /** mock reward points */
-  points?: number
-  /** membership tier */
-  tier?: "Silver" | "Gold" | "VIP"
-  /** mute notifications */
-  muted?: boolean
-  /** point change history */
-  pointHistory?: PointLog[]
-  createdAt: string
-}
-
-export interface PointLog {
-  timestamp: string
-  change: number
-  reason?: string
-}
+import type { Customer, PointLog } from '@/types/customer'
+export type { Customer }
 
 import { mockOrders } from "./mock-orders"
 

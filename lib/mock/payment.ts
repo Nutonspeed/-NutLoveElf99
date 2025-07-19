@@ -1,10 +1,4 @@
-export interface Payment {
-  orderId: string
-  date: string
-  amount: number
-  slip?: string
-  verified?: boolean
-}
+import type { Payment } from '@/types/payment'
 
 const payments: Payment[] = []
 

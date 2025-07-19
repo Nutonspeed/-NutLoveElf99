@@ -10,7 +10,7 @@ import { Download, Trash2, Archive, CheckCircle, XCircle, Mail, Printer } from "
 import { useToast } from "@/hooks/use-toast"
 import { ConfirmationDialog } from "./confirmation-dialog"
 import type { Order } from "@/types/order"
-import type { OrderStatus } from "@/types/order"
+import type { OrderStatus } from "@/types/order-status"
 
 interface BulkActionsProps {
   orders: Order[]

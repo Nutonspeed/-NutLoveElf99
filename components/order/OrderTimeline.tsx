@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/buttons/button"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import type { OrderStatus } from "@/types/order"
+import type { OrderStatus } from "@/types/order-status"
 import { orderStatusOptions } from "@/types/order"
 import {
   getOrderStatusBadgeVariant,
