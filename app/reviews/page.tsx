@@ -14,6 +14,7 @@ import Image from "next/image"
 import { db } from "@/lib/database"
 import { mockProducts } from "@/lib/mock-products"
 import { DevelopmentNotice } from "@/components/development-notice"
+import { formatDate } from "@/lib/utils"
 
 export default function ReviewsPage() {
   const [products, setProducts] = useState<any[]>([])
@@ -221,7 +222,7 @@ export default function ReviewsPage() {
                               ))}
                             </div>
                             <span className="text-sm text-gray-600">
-                              {new Date(review.createdAt).toLocaleDateString("th-TH")}
+                              {formatDate(review.createdAt)}
                             </span>
                           </div>
                         </div>

@@ -2,6 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useReducer, type ReactNode } from "react"
+import { calculateTotal } from "@/lib/utils"
 
 interface CartItem {
   id: string
@@ -44,7 +45,7 @@ export const cartReducer = (
         return {
           ...state,
           items: updatedItems,
-          total: updatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+          total: calculateTotal(updatedItems),
           itemCount: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
         }
       }
@@ -52,7 +53,7 @@ export const cartReducer = (
       return {
         ...state,
         items: newItems,
-        total: newItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        total: calculateTotal(newItems),
         itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
       }
     }
@@ -61,7 +62,7 @@ export const cartReducer = (
       return {
         ...state,
         items: newItems,
-        total: newItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        total: calculateTotal(newItems),
         itemCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
       }
     }
@@ -72,7 +73,7 @@ export const cartReducer = (
       return {
         ...state,
         items: updatedItems,
-        total: updatedItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+        total: calculateTotal(updatedItems),
         itemCount: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
       }
     }

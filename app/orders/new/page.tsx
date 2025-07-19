@@ -10,6 +10,7 @@ import { OrderSummary } from "@/components/order/order-summary"
 import type { OrderItem } from "@/types/order"
 import { supabase } from "@/lib/supabase"
 import { mockProducts } from "@/lib/mock-products"
+import { calculateTotal } from "@/lib/utils"
 
 export default function NewOrderPage() {
   const router = useRouter()
@@ -41,7 +42,7 @@ export default function NewOrderPage() {
     }
   }, [defaultProduct])
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = calculateTotal(items)
   const total = subtotal - discount + shippingCost + tax
 
   const createOrder = async () => {
