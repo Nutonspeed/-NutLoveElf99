@@ -29,6 +29,7 @@ export const sidebarSections: SidebarSectionConfig[] = [
   {
     section: "System",
     items: [
+      { label: "Overview", icon: require("lucide-react").Server, href: "/dashboard/overview" },
       { label: "Access Log", icon: require("lucide-react").List, href: "/dashboard/logs/access" },
       { label: "Performance", icon: require("lucide-react").BarChart3, href: "/dashboard/insight/performance" },
       { label: "Campaigns", icon: require("lucide-react").Target, href: "/dashboard/campaigns" },
