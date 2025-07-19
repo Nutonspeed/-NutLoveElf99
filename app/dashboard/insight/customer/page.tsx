@@ -3,13 +3,13 @@ import React from "react"
 import { useMemo } from "react"
 import { PieChart, Pie, Cell, Tooltip } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { getOrders, getCustomers } from "@/core/mock/store"
+import { useOrderStore, useCustomerStore } from "@/core/store"
 
 const COLORS = ["#0088FE", "#FFBB28"]
 
 export default function CustomerBehaviorPage() {
-  const orders = getOrders()
-  const customers = getCustomers()
+  const orders = useOrderStore((s) => s.orders)
+  const customers = useCustomerStore((s) => s.customers)
 
   const ordersPerCustomer = useMemo(() => {
     const map: Record<string, number> = {}

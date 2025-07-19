@@ -2,7 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from "react"
 import type { Collection } from "@/lib/mock-collections"
-import { useAdminStore } from "./admin-store"
+import { useAdminStore } from "@/core/store"
 
 type AdminCollectionsContextValue = {
   collections: Collection[]
