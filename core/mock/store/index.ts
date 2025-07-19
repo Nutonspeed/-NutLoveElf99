@@ -1,6 +1,7 @@
 export * from './orders'
 export * from './customers'
 export * from './fabrics'
+export * from './config'
 
 import { resetOrders, regenerateOrders } from './orders'
 import { resetCustomers, regenerateCustomers } from './customers'
