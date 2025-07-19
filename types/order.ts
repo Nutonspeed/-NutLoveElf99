@@ -65,9 +65,18 @@ export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
 
 export interface Order {
   id: string
+  /** reference code */
+  orderNumber?: string
   customerId: string
   customerName: string
   customerEmail: string
+  /** shipping contact details */
+  customerInfo?: {
+    name: string
+    phone: string
+    email?: string
+    address: string
+  }
   items: Array<{
     productId: string
     productName: string
@@ -77,6 +86,8 @@ export interface Order {
     color?: string
   }>
   total: number
+  /** total amount including shipping and discounts */
+  totalAmount?: number
   status: OrderStatus
   depositPercent?: number
   note?: string

@@ -17,6 +17,12 @@ export interface Customer {
   muted?: boolean
   /** point change history */
   pointHistory?: PointLog[]
+  /** number of orders placed */
+  totalOrders?: number
+  /** total amount spent */
+  totalSpent?: number
+  /** date of the latest order */
+  lastOrderDate?: string
   createdAt: string
 }
 
