@@ -1,6 +1,6 @@
 import DashboardQuickCard from '@/components/dashboard/DashboardQuickCard'
 import SectionHeader from '@/components/ui/SectionHeader'
-import { orders as ordersMock } from '@/mock/orders'
+import { orders as ordersMock } from '@/core/mock/orders'
 import { mockBills as billsMock } from '@/mock/bills'
 import { fabrics } from '@/mock/fabrics'
 import { formatCurrency, formatThaiDate } from '@/lib/utils'

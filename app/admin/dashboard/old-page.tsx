@@ -33,9 +33,9 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { fetchDashboardStats, type DashboardStats } from "@/lib/mock-dashboard"
-import { mockCustomers, type Customer } from "@/lib/mock-customers"
+import { mockCustomers, type Customer } from "@/core/mock/customers"
 import { mockProducts } from "@/lib/mock-products"
 import {
   mockNotifications,

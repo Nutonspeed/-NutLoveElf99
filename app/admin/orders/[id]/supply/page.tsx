@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { addSupplyEntry, listSupplyForOrder, type SupplyItem } from "@/lib/mock-supply"
 import { getMockNow } from "@/lib/mock-date"
 

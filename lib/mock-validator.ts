@@ -1,6 +1,6 @@
-import { mockOrders } from './mock-orders'
+import { mockOrders } from '@/core/mock/orders'
 import { mockSupply } from './mock-supply'
-import { mockCustomers } from './mock-customers'
+import { mockCustomers } from '@/core/mock/customers'
 
 export function validateMockData() {
   const orderIds = new Set<string>()

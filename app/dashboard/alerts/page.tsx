@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import { Card } from '@/components/ui/cards/card'
-import { mockOrders } from '@/lib/mock-orders'
+import { mockOrders } from '@/core/mock/orders'
 import { getMockNow } from '@/lib/mock-date'
 
 export default function DashboardAlertsPage() {

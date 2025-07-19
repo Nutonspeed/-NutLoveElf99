@@ -1,7 +1,7 @@
 "use client"
 import { useMemo, useState } from "react"
 import SalesChart from "@/components/dashboard/SalesChart"
-import { orders as ordersMock } from "@/mock/orders"
+import { orders as ordersMock } from "@/core/mock/orders"
 import { mockBills as billsMock } from "@/mock/bills"
 import { formatCurrency } from "@/lib/utils"
 

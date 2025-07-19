@@ -4,7 +4,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { mockOrders, setOrderStatus } from "@/lib/mock-orders"
+import { mockOrders, setOrderStatus } from "@/core/mock/orders"
 import { toast } from "sonner"
 
 export default function ConfirmPackPage({ params }: { params: { id: string } }) {

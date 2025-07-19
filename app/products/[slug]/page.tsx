@@ -13,7 +13,7 @@ import { Star, Heart, Share2, ShoppingCart, Truck, Shield, RotateCcw, Minus, Plu
 import LazyImage from "@/components/LazyImage"
 import Link from "next/link"
 import { mockProducts } from "@/lib/mock-products"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { mockReviewImages } from "@/lib/mock-review-images"
 import { useReviewImagesSetting } from "@/contexts/review-images-context"
 import { useCart } from "@/contexts/cart-context"

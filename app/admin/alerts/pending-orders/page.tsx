@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { ArrowLeft } from "lucide-react"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { getMockNow } from "@/lib/mock-date"
 
 export default function PendingOrderAlerts() {
