@@ -1,6 +1,55 @@
-export type Role = 'superadmin' | 'admin' | 'staff' | 'limited' | 'customer'
+export type Role =
+  | 'owner'
+  | 'manager'
+  | 'superadmin'
+  | 'admin'
+  | 'staff'
+  | 'limited'
+  | 'customer'
 
 const roleAccess: Record<Role, string[]> = {
+  owner: [
+    'dev',
+    'logs',
+    'inventory',
+    'inventorySettings',
+    'claims',
+    'media',
+    'dashboard',
+    'chat',
+    'analytics',
+    'broadcast',
+    'collections',
+    'reviews',
+    'supply',
+    'unpaid',
+    'faq',
+    'feedback',
+    'campaigns',
+    'fastBills',
+    'users',
+  ],
+  manager: [
+    'dev',
+    'logs',
+    'inventory',
+    'inventorySettings',
+    'claims',
+    'media',
+    'dashboard',
+    'chat',
+    'analytics',
+    'broadcast',
+    'collections',
+    'reviews',
+    'supply',
+    'unpaid',
+    'faq',
+    'feedback',
+    'campaigns',
+    'fastBills',
+    'users',
+  ],
   superadmin: [
     'dev',
     'logs',
