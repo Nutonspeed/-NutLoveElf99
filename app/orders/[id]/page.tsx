@@ -10,10 +10,8 @@ import Link from "next/link"
 import { useOrder } from "@/lib/hooks/useOrder"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import type { OrderStatus } from "@/types/order"
-import {
-  getOrderStatusBadgeVariant,
-  getOrderStatusText,
-} from "@/lib/order-status"
+import { getOrderStatusBadgeVariant } from "@/lib/order-status"
+import { formatDate, getOrderStatusLabel } from "@/lib/utils"
 
 export default function OrderDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -58,7 +56,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
           </Link>
           <div>
             <h1 className="text-3xl font-bold">คำสั่งซื้อ {order.id}</h1>
-            <p className="text-gray-600">สั่งซื้อเมื่อ {new Date(order.createdAt).toLocaleDateString("th-TH")}</p>
+            <p className="text-gray-600">สั่งซื้อเมื่อ {formatDate(order.createdAt)}</p>
           </div>
         </div>
 
@@ -71,7 +69,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <div className="flex items-center justify-between">
                   <CardTitle>สถานะคำสั่งซื้อ</CardTitle>
                   <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                    {getOrderStatusText(order.status)}
+                    {getOrderStatusLabel(order.status)}
                   </Badge>
                 </div>
               </CardHeader>
@@ -216,12 +214,12 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 </div>
                 <div className="flex justify-between">
                   <span>วันที่สั่งซื้อ:</span>
-                  <span>{new Date(order.createdAt).toLocaleDateString("th-TH")}</span>
+                  <span>{formatDate(order.createdAt)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>สถานะ:</span>
                   <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                    {getOrderStatusText(order.status)}
+                    {getOrderStatusLabel(order.status)}
                   </Badge>
                 </div>
                 <div className="flex justify-between">

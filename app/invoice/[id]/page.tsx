@@ -12,6 +12,7 @@ import { mockBills } from "@/lib/mock-bills"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
 import { createClaim } from "@/lib/mock-claims"
 import { toast } from "sonner"
+import { formatDate } from "@/lib/utils"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -126,10 +127,10 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
                     <strong>เลขที่:</strong> {order.id}
                   </p>
                   <p>
-                    <strong>วันที่:</strong> {new Date(order.createdAt).toLocaleDateString("th-TH")}
+                    <strong>วันที่:</strong> {formatDate(order.createdAt)}
                   </p>
                   <p>
-                    <strong>ครบกำหนด:</strong> {new Date(order.createdAt).toLocaleDateString("th-TH")}
+                    <strong>ครบกำหนด:</strong> {formatDate(order.createdAt)}
                   </p>
                 </div>
               </div>
