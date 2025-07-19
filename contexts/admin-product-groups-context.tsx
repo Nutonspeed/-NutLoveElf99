@@ -2,7 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from 'react'
 import { type ProductGroup } from '@/lib/mock-product-groups'
-import { useAdminStore } from './admin-store'
+import { useAdminStore } from '@/core/store'
 
 type AdminProductGroupsContextValue = {
   groups: ProductGroup[]

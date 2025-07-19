@@ -1,7 +1,7 @@
 "use client"
 
 import { createContext, useContext, type ReactNode } from "react"
-import { useAdminStore } from "./admin-store"
+import { useAdminStore } from "@/core/store"
 
 type AdminProductsContextValue = ReturnType<typeof useAdminStore>
 
