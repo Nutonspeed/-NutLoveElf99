@@ -19,7 +19,14 @@ export interface LayoutComponent {
   type: LayoutComponentType
 }
 
+export interface AutoPromotion {
+  code: string
+  threshold: number
+  discount: number
+}
+
 export interface StorefrontConfig {
   theme: ThemeConfig
   layout: LayoutComponent[]
+  autoPromotion?: AutoPromotion | null
 }
