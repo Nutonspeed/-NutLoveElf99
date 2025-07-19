@@ -190,7 +190,15 @@ export default function AdminBillsPage() {
               </div>
             </div>
           </div>
-          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
+          <Tabs
+            value={statusFilter}
+            onValueChange={(value) =>
+              setStatusFilter(
+                value as 'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'
+              )
+            }
+            className="mt-4"
+          >
             <TabsList>
               <TabsTrigger value="all">ทั้งหมด</TabsTrigger>
               <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
