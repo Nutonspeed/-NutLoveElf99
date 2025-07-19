@@ -1,36 +1,35 @@
 import DashboardQuickCard from '@/components/dashboard/DashboardQuickCard'
 import OrderCard from '@/components/orders/OrderCard'
-import { fabrics } from '@/mock/fabrics'
 import { orders } from '@/mock/orders'
-import { mockBills } from '@/mock/bills'
 import SectionHeader from '@/components/ui/SectionHeader'
 
 export default function DashboardPage() {
   const today = new Date().toLocaleDateString('th-TH')
   const links = [
     {
-      link: '/dashboard/fabrics',
-      title: 'Fabrics',
-      icon: '🧵',
-      count: fabrics.length,
-    },
-    {
       link: '/dashboard/orders',
       title: 'Orders',
       icon: '📦',
-      count: orders.length,
     },
     {
-      link: '/dashboard/collections',
-      title: 'Collections',
-      icon: '🗂️',
-      count: null,
+      link: '/dashboard/customers',
+      title: 'Customers',
+      icon: '👥',
     },
     {
-      link: '/dashboard/bill/BILL-001',
-      title: 'Bills',
-      icon: '🧾',
-      count: mockBills.length,
+      link: '/dashboard/analytics',
+      title: 'Reports',
+      icon: '📊',
+    },
+    {
+      link: '/reviews',
+      title: 'Reviews',
+      icon: '⭐',
+    },
+    {
+      link: '/dashboard/settings',
+      title: 'Settings',
+      icon: '⚙️',
     },
   ]
   const latest = orders.slice(0, 3)
