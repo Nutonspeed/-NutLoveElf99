@@ -1,7 +1,9 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { orders as mockOrders } from '@/mock/orders'
+import { addOrder } from '@/core/mock/store'
+import { getCustomers } from '@/core/mock/store'
+import { mockProducts } from '@/lib/mock-products'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -17,16 +19,30 @@ export default function CreateOrderPage() {
   const [error, setError] = useState('')
 
   const handleCreate = () => {
-    if (!product.trim() || !customer.trim()) {
+    if (!product || !customer) {
       setError('กรุณากรอกข้อมูลที่จำเป็น')
       return
     }
-    mockOrders.unshift({
-      id: `ORD-${String(mockOrders.length + 1).padStart(3, '0')}`,
-      customer,
-      status: 'รอชำระ',
-      total: Math.max(0, 1000 - discount),
-      date: new Date().toISOString(),
+    const prod = mockProducts.find(p => p.id === product)!
+    const cust = getCustomers().find(c => c.id === customer)!
+    addOrder({
+      id: `ORD-${Date.now()}`,
+      customerId: cust.id,
+      customerName: cust.name,
+      customerEmail: cust.email,
+      items: [{ productId: prod.id, productName: prod.name, quantity: 1, price: prod.price }],
+      total: Math.max(0, prod.price - discount),
+      status: 'pending',
+      createdAt: new Date().toISOString(),
+      shippingAddress: { name: cust.name, address, city: '', postalCode: '', phone: cust.phone || '' },
+      delivery_method: '',
+      tracking_number: '',
+      shipping_fee: 0,
+      shipping_status: 'pending',
+      packingStatus: 'packing',
+      shipping_date: '',
+      delivery_note: note,
+      timeline: []
     })
     router.push('/dashboard/orders')
   }
@@ -35,8 +51,18 @@ export default function CreateOrderPage() {
     <div className="container mx-auto py-8 space-y-4">
       <h1 className="text-2xl font-bold">เปิดบิลใหม่</h1>
       <div className="space-y-2 max-w-md">
-        <Input placeholder="สินค้า" value={product} onChange={e => setProduct(e.target.value)} />
-        <Input placeholder="ชื่อลูกค้า" value={customer} onChange={e => setCustomer(e.target.value)} />
+        <select className="border rounded p-2 w-full" value={product} onChange={e=>setProduct(e.target.value)}>
+          <option value="">เลือกสินค้า</option>
+          {mockProducts.map(p=> (
+            <option key={p.id} value={p.id}>{p.name}</option>
+          ))}
+        </select>
+        <select className="border rounded p-2 w-full" value={customer} onChange={e=>setCustomer(e.target.value)}>
+          <option value="">เลือกลูกค้า</option>
+          {getCustomers().map(c=> (
+            <option key={c.id} value={c.id}>{c.name}</option>
+          ))}
+        </select>
         <Textarea placeholder="ที่อยู่" value={address} onChange={e => setAddress(e.target.value)} />
         <Textarea placeholder="หมายเหตุ" value={note} onChange={e => setNote(e.target.value)} />
         <Input type="number" placeholder="ส่วนลด" value={discount} onChange={e => setDiscount(Number(e.target.value) || 0)} />
