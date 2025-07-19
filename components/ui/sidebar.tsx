@@ -37,7 +37,9 @@ import {
   SidebarMenuSubItem,
   sidebarMenuButtonVariants,
 } from "./SidebarItem"
-import { sidebarSections } from "./sidebar.config"
+import { useDashboardRoute, type DashboardRoute } from "@/hooks/useDashboardRoute"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ChevronDown } from "lucide-react"
 import {
   Tooltip,
   TooltipContent,
@@ -335,26 +337,52 @@ const SidebarInput = React.forwardRef<
 SidebarInput.displayName = "SidebarInput"
 
 function SidebarNavigation() {
+  const routes = useDashboardRoute()
+
+  const groups = React.useMemo(() => {
+    const map = new Map<string, DashboardRoute[]>()
+    routes.forEach((r) => {
+      if (!map.has(r.category)) map.set(r.category, [])
+      map.get(r.category)!.push(r)
+    })
+    return Array.from(map.entries())
+  }, [routes])
+
   return (
     <SidebarContent>
-      {sidebarSections.map((section) => (
-        <SidebarGroup key={section.section}>
-          <SidebarGroupLabel>{section.section}</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {section.items.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.href} className="flex items-center gap-2">
-                      <item.icon className="size-4" />
-                      <span>{item.label}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+      {groups.map(([category, items]) => (
+        <Collapsible key={category} defaultOpen>
+          <SidebarGroup className="p-0">
+            <div className="flex items-center">
+              <CollapsibleTrigger asChild>
+                <SidebarGroupLabel className="flex-1 cursor-pointer">
+                  {category}
+                </SidebarGroupLabel>
+              </CollapsibleTrigger>
+              <SidebarGroupAction asChild>
+                <CollapsibleTrigger className="ml-auto">
+                  <ChevronDown className="size-4 transition-transform data-[state=open]:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupAction>
+            </div>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {items.map((item) => (
+                    <SidebarMenuItem key={item.href}>
+                      <SidebarMenuButton asChild>
+                        <a href={item.href} className="flex items-center gap-2">
+                          <item.icon className="size-4" />
+                          <span>{item.label}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
       ))}
     </SidebarContent>
   )
