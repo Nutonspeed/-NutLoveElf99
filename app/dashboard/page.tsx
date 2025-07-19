@@ -1,3 +1,5 @@
+"use client"
+
 import DashboardQuickCard from '@/components/dashboard/DashboardQuickCard'
 import OrderCard from '@/components/orders/OrderCard'
 import { fabrics } from '@/mock/fabrics'
