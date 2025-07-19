@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/cards/card"
 import { Separator } from "@/components/ui/separator"
 import { Download, PrinterIcon as Print, ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { mockOrders } from "@/lib/mock-orders"
+import { useOrder } from "@/lib/hooks/useOrder"
 import { Badge } from "@/components/ui/badge"
 import { packingStatusOptions } from "@/types/order"
 import { mockBills } from "@/lib/mock-bills"
@@ -15,7 +15,7 @@ import { toast } from "sonner"
 
 export default function InvoicePage({ params }: { params: { id: string } }) {
   const { id } = params
-  const order = mockOrders.find((o) => o.id === id)
+  const { order } = useOrder(id)
 
   if (!order) {
     return (
