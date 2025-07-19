@@ -2,6 +2,7 @@ export interface AdminUser {
   id: string
   name: string
   email: string
+  role: string
   permissions: {
     read: boolean
     write: boolean
@@ -16,6 +17,7 @@ export let adminUsers: AdminUser[] = [
     id: '1',
     name: 'Super Admin',
     email: 'root@sofacover.com',
+    role: 'owner',
     permissions: { read: true, write: true, manage: true },
   },
 ]
