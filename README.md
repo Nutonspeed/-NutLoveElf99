@@ -49,11 +49,12 @@ The notification service uses additional variables:
 
 ## Chatwoot
 
-The store now uses [Chatwoot](https://www.chatwoot.com/) for the customer chat
-system. The source for Chatwoot is included under the `chatwoot/` directory.
-To run Chatwoot locally:
+The store uses [Chatwoot](https://www.chatwoot.com/) for the customer chat
+system. Chatwoot itself is **not** included in this repository. To run it
+locally, clone the official Chatwoot project and start it with Docker:
 
 ```bash
+git clone https://github.com/chatwoot/chatwoot.git
 cd chatwoot
 cp .env.example .env
 docker-compose build
