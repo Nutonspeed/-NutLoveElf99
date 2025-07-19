@@ -5,6 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/buttons/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/inputs/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Label } from "@/components/ui/label"
@@ -12,7 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
-import { mockUsers } from "@/lib/mock-users"
+import { useAuthStore } from "@/contexts/auth-store"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [rememberMe, setRememberMe] = useState(false)
   const { login } = useAuth()
   const router = useRouter()
 
@@ -29,10 +31,10 @@ export default function LoginPage() {
     setIsLoading(true)
 
     try {
-      const success = await login(email, password)
+      const success = await login(email, password, rememberMe)
       if (success) {
-        const userData = mockUsers.find((u) => u.email === email)
-        if (userData?.role === "admin") {
+        const currentUser = useAuthStore.getState().user
+        if (currentUser?.role === "admin") {
           router.push("/admin/dashboard")
         } else {
           router.push("/")
@@ -99,6 +101,11 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox id="remember" checked={rememberMe} onCheckedChange={(v) => setRememberMe(!!v)} />
+              <Label htmlFor="remember" className="text-sm">จำการเข้าสู่ระบบ</Label>
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>

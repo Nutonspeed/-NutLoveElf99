@@ -9,7 +9,7 @@ interface AuthState {
   isAuthenticated: boolean
   guestId: string | null
   isLoading: boolean
-  login: (email: string, password: string) => Promise<boolean>
+  login: (email: string, password: string, remember?: boolean) => Promise<boolean>
   logout: () => void
 }
 
@@ -19,8 +19,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const router = useRouter()
   const auth = useAuthStore()
 
-  const login = async (email: string, password: string) => {
-    const success = await auth.login(email, password)
+  const login = async (email: string, password: string, remember = false) => {
+    const success = await auth.login(email, password, remember)
     return success
   }
 
