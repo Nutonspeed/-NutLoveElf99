@@ -8,76 +8,13 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import {
-  BarChart3,
-  Bolt,
-  FileText,
-  Folder,
-  HelpCircle,
-  Layers,
-  MailQuestion,
-  Megaphone,
-  MessageCircle,
-  Percent,
-  Settings,
-  Target,
-  Users,
-} from "lucide-react"
+
 import clsx from "clsx"
 import { useAuth } from "@/contexts/auth-context"
 import { canAccess } from "@/lib/mock-roles"
+import { adminSidebarGroups } from "./sidebar.config"
 
-const groups = [
-  {
-    label: "Orders",
-    items: [
-      { href: "/admin/bills", label: "บิลทั้งหมด", icon: FileText, feature: "bills" },
-      { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "bills" },
-    ],
-  },
-  {
-    label: "Fabrics",
-    items: [
-      { href: "/admin/fabrics", label: "ผ้า", icon: Layers, feature: "fabrics" },
-      { href: "/admin/collections", label: "คอลเลกชัน", icon: Folder, feature: "collections" },
-    ],
-  },
-  {
-    label: "Customers",
-    items: [
-      { href: "/admin/customers", label: "ลูกค้า", icon: Users, feature: "customers" },
-    ],
-  },
-  {
-    label: "Analytics",
-    items: [
-      { href: "/admin/dashboard", label: "แดชบอร์ด", icon: BarChart3, feature: "dashboard" },
-      { href: "/admin/analytics", label: "สถิติ", icon: BarChart3, feature: "analytics" },
-    ],
-  },
-  {
-    label: "Chat",
-    items: [
-      { href: "/admin/chat", label: "แชท", icon: MessageCircle, feature: "chat" },
-      { href: "/admin/broadcast", label: "บรอดแคสต์", icon: Megaphone, feature: "broadcast" },
-    ],
-  },
-  {
-    label: "Campaign",
-    items: [
-      { href: "/admin/campaigns", label: "แคมเปญ", icon: Target, feature: "campaigns" },
-      { href: "/admin/coupons", label: "คูปอง", icon: Percent, feature: "campaigns" },
-    ],
-  },
-  {
-    label: "Settings",
-    items: [
-      { href: "/admin/feature-map", label: "แผนที่ฟีเจอร์", icon: Settings, feature: "settings" },
-      { href: "/admin/faq", label: "คำถามพบบ่อย", icon: HelpCircle, feature: "settings" },
-      { href: "/admin/feedback", label: "ความคิดเห็น", icon: MailQuestion, feature: "settings" },
-    ],
-  },
-]
+const groups = adminSidebarGroups
 
 
 export default function Sidebar({ className = "" }: { className?: string }) {
