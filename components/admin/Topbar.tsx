@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/buttons/button"
 import { useAuth } from "@/contexts/auth-context"
 import GlobalBadge from "./GlobalBadge"
 import { getGlobalAlertCount } from "@/lib/mock-alerts"
+import { useRouteInfo } from "@/hooks/use-route-info"
 
 export default function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { logout } = useAuth()
+  const { title } = useRouteInfo()
   const [count, setCount] = useState(0)
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
           <Menu className="h-5 w-5" />
           <span className="sr-only">เมนู</span>
         </Button>
-        <span className="font-semibold">แดชบอร์ดผู้ดูแล</span>
+        <span className="font-semibold">{title || 'แดชบอร์ดผู้ดูแล'}</span>
         <GlobalBadge count={count} />
       </div>
       <Button variant="ghost" size="icon" onClick={logout}>
