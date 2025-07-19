@@ -19,7 +19,13 @@ export interface LayoutComponent {
   type: LayoutComponentType
 }
 
+export interface TaxConfig {
+  rate: number
+  included: boolean
+}
+
 export interface StorefrontConfig {
   theme: ThemeConfig
   layout: LayoutComponent[]
+  tax: TaxConfig
 }
