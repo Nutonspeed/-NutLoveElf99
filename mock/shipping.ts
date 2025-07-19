@@ -1,11 +1,16 @@
+import type {
+  ShippingOrderStatus,
+  DeliveryStatus,
+} from '@/types/shipping'
+
 export interface ShippingOrder {
   id: string
   name: string
   address: string
   phone: string
   tracking: string
-  status: 'รอพิมพ์' | 'ส่งแล้ว' | 'ตีกลับ'
-  deliveryStatus: 'กำลังจัดส่ง' | 'ถึงแล้ว'
+  status: ShippingOrderStatus
+  deliveryStatus: DeliveryStatus
 }
 
 export const shippingOrders: ShippingOrder[] = [
@@ -15,8 +20,8 @@ export const shippingOrders: ShippingOrder[] = [
     address: '123 ถนนสุขุมวิท, กรุงเทพฯ 10110',
     phone: '081-234-5678',
     tracking: 'TH1234567890',
-    status: 'ส่งแล้ว',
-    deliveryStatus: 'ถึงแล้ว',
+    status: 'shipped',
+    deliveryStatus: 'delivered',
   },
   {
     id: 'SHIP-002',
@@ -24,8 +29,8 @@ export const shippingOrders: ShippingOrder[] = [
     address: '456 ถนนพหลโยธิน, กรุงเทพฯ 10400',
     phone: '082-345-6789',
     tracking: '',
-    status: 'รอพิมพ์',
-    deliveryStatus: 'กำลังจัดส่ง',
+    status: 'pendingPrint',
+    deliveryStatus: 'shipping',
   },
   {
     id: 'SHIP-003',
@@ -33,16 +38,19 @@ export const shippingOrders: ShippingOrder[] = [
     address: '789 ถนนเจริญกรุง, กรุงเทพฯ 10500',
     phone: '083-456-7890',
     tracking: 'TH5555555555',
-    status: 'ตีกลับ',
-    deliveryStatus: 'กำลังจัดส่ง',
+    status: 'returned',
+    deliveryStatus: 'shipping',
   },
 ]
 
-export function addTrackingNumber(id: string, tracking: string): ShippingOrder | undefined {
-  const order = shippingOrders.find(o => o.id === id)
+export function addTrackingNumber(
+  id: string,
+  tracking: string,
+): ShippingOrder | undefined {
+  const order = shippingOrders.find((o) => o.id === id)
   if (order) {
     order.tracking = tracking
-    if (order.status === 'รอพิมพ์') order.status = 'ส่งแล้ว'
+    if (order.status === 'pendingPrint') order.status = 'shipped'
   }
   return order
 }
