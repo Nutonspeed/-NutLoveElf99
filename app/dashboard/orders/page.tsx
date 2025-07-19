@@ -2,14 +2,28 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { orders as mockOrders, type SimpleOrder } from '@/mock/orders'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { Button } from '@/components/ui/buttons/button'
 import EmptyState from '@/components/EmptyState'
+import { orderStatusOptions, type OrderStatus } from '@/types/order'
+
+const statusLabel = Object.fromEntries(
+  orderStatusOptions.map((o) => [o.value, o.label]),
+) as Record<OrderStatus, string>
 
 export default function DashboardOrdersPage() {
-  const [status, setStatus] = useState('all')
+  const [status, setStatus] = useState<'all' | OrderStatus>('all')
 
-  const filtered = mockOrders.filter(o => status === 'all' || o.status === status)
+  const filtered = mockOrders.filter(
+    (o) => status === 'all' || o.status === status,
+  )
 
   return (
     <div className="container mx-auto py-8 space-y-4">
@@ -20,9 +34,13 @@ export default function DashboardOrdersPage() {
         onChange={e => setStatus(e.target.value)}
       >
         <option value="all">ทั้งหมด</option>
-        <option value="pendingPayment">รอชำระ</option>
-        <option value="processing">กำลังแพ็ค</option>
-        <option value="shipped">ส่งแล้ว</option>
+        {(['pendingPayment', 'processing', 'shipped'] as OrderStatus[]).map(
+          (s) => (
+            <option key={s} value={s}>
+              {statusLabel[s]}
+            </option>
+          ),
+        )}
       </select>
 
       {filtered.length > 0 ? (
@@ -42,7 +60,7 @@ export default function DashboardOrdersPage() {
               <TableRow key={order.id}>
                 <TableCell>{order.id}</TableCell>
                 <TableCell>{order.customer}</TableCell>
-                <TableCell>{order.status}</TableCell>
+                <TableCell>{statusLabel[order.status]}</TableCell>
                 <TableCell className="text-right">฿{order.total.toLocaleString()}</TableCell>
                 <TableCell className="text-right">{new Date(order.date).toLocaleDateString('th-TH')}</TableCell>
                 <TableCell className="text-right">
