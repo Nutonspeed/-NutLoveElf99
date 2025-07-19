@@ -514,7 +514,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
               .map((relatedProduct) => (
                 <Card key={relatedProduct.id} className="group hover:shadow-lg transition-shadow">
                   <CardContent className="p-0">
-                    <PrefetchLink href={`/products/${relatedProduct.slug}`}>
+                    <Link href={`/products/${relatedProduct.slug}`}>
                       <div className="relative overflow-hidden rounded-t-lg">
                         <LazyImage
                           src={relatedProduct.images[0] || "/placeholder.svg"}
@@ -537,7 +537,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                           )}
                         </div>
                       </div>
-                    </PrefetchLink>
+                    </Link>
                   </CardContent>
                 </Card>
               ))}

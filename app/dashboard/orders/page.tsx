@@ -21,7 +21,7 @@ export default function DashboardOrdersPage() {
       >
         <option value="all">ทั้งหมด</option>
         <option value="pendingPayment">รอชำระ</option>
-        <option value="processing">กำลังแพ็ค</option>
+        <option value="processing">กำลังแพ็ก</option>
         <option value="shipped">ส่งแล้ว</option>
       </select>
 
