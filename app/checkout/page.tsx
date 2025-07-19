@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -20,10 +20,11 @@ import Image from "next/image"
 import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
-import { addOrder } from "@/core/mock/store"
+import { addOrder, updateCustomerPoints } from "@/core/mock/store"
 import type { OrderStatus, ShippingStatus } from "@/types/order"
 import { db } from "@/lib/database"
 import { SuggestedExtras } from "@/components/SuggestedExtras"
+import { fetchCustomerById } from "@/lib/mock-customers"
 
 export default function CheckoutPage() {
   const { state, dispatch } = useCart()
@@ -52,6 +53,14 @@ export default function CheckoutPage() {
   })
   const [couponCode, setCouponCode] = useState("")
   const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null)
+  const [availablePoints, setAvailablePoints] = useState(0)
+  const [usedPoints, setUsedPoints] = useState(0)
+
+  useEffect(() => {
+    if (user) {
+      fetchCustomerById(user.id).then((c) => setAvailablePoints(c?.points ?? 0))
+    }
+  }, [user])
 
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [checklist, setChecklist] = useState({ confirmSize: false, confirmColor: false })
@@ -64,7 +73,8 @@ export default function CheckoutPage() {
       ? Math.round(state.total * (appliedCoupon.discount / 100))
       : appliedCoupon.discount
     : 0
-  const finalTotal = state.total - discountAmount + shipping + tax
+  const pointDiscount = usedPoints / 10
+  const finalTotal = state.total - discountAmount - pointDiscount + shipping + tax
 
   const handleApplyCoupon = async () => {
     const coupons = await db.getCoupons()
@@ -103,6 +113,11 @@ export default function CheckoutPage() {
         description: "โปรดยอมรับเงื่อนไขการใช้งานก่อนดำเนินการต่อ",
         variant: "destructive",
       })
+      return
+    }
+
+    if (usedPoints > availablePoints) {
+      toast({ title: 'แต้มไม่เพียงพอ', variant: 'destructive' })
       return
     }
 
@@ -160,6 +175,13 @@ export default function CheckoutPage() {
           },
         ],
       })
+
+      if (user) {
+        updateCustomerPoints(user.id, Math.floor(finalTotal), 'purchase')
+        if (usedPoints > 0) {
+          updateCustomerPoints(user.id, -usedPoints, 'redeem')
+        }
+      }
 
       sessionStorage.removeItem("reorderFromId")
 
@@ -432,6 +454,16 @@ export default function CheckoutPage() {
                         ใช้คูปอง {appliedCoupon.code} ลด {appliedCoupon.type === "percentage" ? `${appliedCoupon.discount}%` : `฿${appliedCoupon.discount}`}
                       </p>
                     )}
+                    <div className="flex space-x-2 items-center">
+                      <Input
+                        type="number"
+                        min={0}
+                        value={usedPoints}
+                        onChange={(e) => setUsedPoints(Number(e.target.value))}
+                        className="w-24"
+                      />
+                      <span className="text-sm">แต้ม (คงเหลือ {availablePoints})</span>
+                    </div>
                     <div className="flex justify-between">
                       <span>ยอดรวมสินค้า</span>
                       <span>฿{state.total.toLocaleString()}</span>
