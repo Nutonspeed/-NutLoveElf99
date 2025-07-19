@@ -7,6 +7,7 @@ export default function DevToolsPage() {
         <li><a href="/dashboard/devtools/flags" className="text-blue-600 underline">Feature Flags</a></li>
         <li><a href="/dashboard/devtools/env" className="text-blue-600 underline">Environment Mode</a></li>
         <li><a href="/dashboard/devtools/mock-editor" className="text-blue-600 underline">Mock Editor</a></li>
+        <li><a href="/internal/dev/feature-map" className="text-blue-600 underline">Feature Map</a></li>
       </ul>
     </div>
   )
