@@ -99,6 +99,8 @@ export interface Order {
   delivery_note: string
   /** Base64 label image */
   labelImage?: string
+  /** Uploaded payment slip filename */
+  paymentSlip?: string
   /** Scheduled date and time for delivery */
   scheduledDelivery?: string
   reorderedFromId?: string

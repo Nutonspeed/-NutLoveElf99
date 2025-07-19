@@ -4,6 +4,8 @@ import {
   regenerateMockOrders,
 } from '@/lib/mock-orders'
 import { loadFromStorage, saveToStorage } from './persist'
+import fs from 'fs'
+import path from 'path'
 
 const KEY = 'mockStore_orders'
 
@@ -11,6 +13,12 @@ let orders: Order[] = loadFromStorage<Order[]>(KEY, [...seedOrders])
 
 function persist() {
   saveToStorage(KEY, orders)
+  if (typeof window === 'undefined') {
+    try {
+      const file = path.join(process.cwd(), 'mock/orders.json')
+      fs.writeFileSync(file, JSON.stringify(orders, null, 2))
+    } catch {}
+  }
 }
 
 export function getOrders() {
