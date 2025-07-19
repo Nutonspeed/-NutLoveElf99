@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "next build",
+    "build": "pnpm eslint && pnpm typecheck && next build",
     "dev": "next dev",
     "start": "next start",
     "pretest": "pnpm install",
     "test": "vitest run",
     "test:watch": "vitest --watch",
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx,.vue --no-error-on-unmatched-pattern",
-    "eslint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.vue --fix --no-error-on-unmatched-pattern"
+    "eslint:fix": "eslint . --ext .js,.jsx,.ts,.tsx,.vue --fix --no-error-on-unmatched-pattern",
+    "typecheck": "tsc --pretty --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",
