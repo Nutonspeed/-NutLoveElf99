@@ -1,8 +1,14 @@
+export interface FabricVariant {
+  color: string
+  size: string
+}
+
 export interface Fabric {
   id: string
   name: string
   imageUrl: string
   collectionId?: string
+  variants?: FabricVariant[]
 }
 
 export const fabrics: Fabric[] = [
@@ -11,12 +17,20 @@ export const fabrics: Fabric[] = [
     name: 'Soft Linen',
     imageUrl: '/images/039.jpg',
     collectionId: 'col-1',
+    variants: [
+      { color: 'แดง', size: 'S' },
+      { color: 'เขียว', size: 'M' },
+    ],
   },
   {
     id: 'fab-2',
     name: 'Cozy Cotton',
     imageUrl: '/images/041.jpg',
     collectionId: 'col-2',
+    variants: [
+      { color: 'น้ำเงิน', size: 'L' },
+      { color: 'แดง', size: 'XL' },
+    ],
   },
 ]
 
