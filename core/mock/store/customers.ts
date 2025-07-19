@@ -40,3 +40,14 @@ export function regenerateCustomers() {
   customers = [...seedCustomers]
   persist()
 }
+
+export function updateCustomerPoints(id: string, change: number, reason?: string) {
+  const idx = customers.findIndex(c => c.id === id)
+  if (idx !== -1) {
+    const c = customers[idx]
+    c.points = (c.points || 0) + change
+    if (!c.pointHistory) c.pointHistory = []
+    c.pointHistory.push({ timestamp: new Date().toISOString(), change, reason })
+    persist()
+  }
+}
