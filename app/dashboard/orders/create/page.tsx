@@ -24,7 +24,7 @@ export default function CreateOrderPage() {
     mockOrders.unshift({
       id: `ORD-${String(mockOrders.length + 1).padStart(3, '0')}`,
       customer,
-      status: 'รอชำระ',
+      status: 'pendingPayment',
       total: Math.max(0, 1000 - discount),
       date: new Date().toISOString(),
     })

@@ -523,7 +523,6 @@ export default function AdminCouponsPage() {
                         <Switch
                           checked={coupon.active}
                           onCheckedChange={() => toggleCouponStatus(coupon.id)}
-                          size="sm"
                         />
                         <Badge variant={coupon.active ? "default" : "secondary"}>
                           {coupon.active ? "เปิดใช้งาน" : "ปิดใช้งาน"}

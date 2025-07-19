@@ -7,7 +7,7 @@ import { formatCurrency } from "@/lib/utils"
 
 export default function DashboardAnalyticsPage() {
   const [range, setRange] = useState(7)
-  const paidOrders = ordersMock.filter(o => o.status === "Paid").length
+  const paidOrders = ordersMock.filter(o => o.status === "paid").length
   const totalOrders = ordersMock.length
 
   const salesToday = useMemo(() => {

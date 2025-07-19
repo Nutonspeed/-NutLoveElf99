@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/inputs/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import { useAdminProducts } from '@/contexts/admin-products-context'
 import { useAdminProductGroups } from '@/contexts/admin-product-groups-context'
+import type { Product } from '@/types/product'
 
 export default function AdminProductGroupsPage() {
   const { products } = useAdminProducts()
@@ -45,7 +46,7 @@ export default function AdminProductGroupsPage() {
           <CardContent className="space-y-4">
             <Input placeholder="ชื่อกลุ่ม" value={name} onChange={(e) => setName(e.target.value)} />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 max-h-40 overflow-y-auto border p-2 rounded">
-              {products.map(p => (
+              {products.map((p: Product) => (
                 <label key={p.id} className="flex items-center space-x-2 text-sm">
                   <Checkbox checked={selected.includes(p.id)} onCheckedChange={() => toggle(p.id)} id={`cb-${p.id}`} />
                   <span>{p.name}</span>

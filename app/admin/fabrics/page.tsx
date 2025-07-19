@@ -108,7 +108,7 @@ export default function AdminFabricsPage() {
         ?.from("collections")
         .select("id, name")
       const collectionMap: Record<string, string> = {}
-      collectionsData?.forEach((c) => {
+      collectionsData?.forEach((c: { id: string; name: string }) => {
         collectionMap[c.id] = c.name
       })
       if (collectionsData) {

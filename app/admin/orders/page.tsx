@@ -35,7 +35,7 @@ const statusTag = (o: Order) => {
   return null
 }
 
-const statusOptions = [
+const statusOptions: { value: string; label: string }[] = [
   { value: "all", label: "ทั้งหมด" },
   { value: "pendingPayment", label: "รอชำระ" },
   { value: "depositPaid", label: "มัดจำแล้ว" },
@@ -268,7 +268,7 @@ export default function AdminOrdersPage() {
                         </Badge>
                       </SelectTrigger>
                       <SelectContent>
-                        {orderStatusOptions.map((opt) => (
+                        {statusOptions.map((opt) => (
                           <SelectItem key={opt.value} value={opt.value}>
                             {opt.label}
                           </SelectItem>
