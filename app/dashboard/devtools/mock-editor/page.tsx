@@ -4,9 +4,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/buttons/button"
 import { fabrics } from "@/mock/fabrics"
-import { orders } from "@/mock/orders"
+import { orders } from "@/core/mock/orders"
 import { mockBills } from "@/mock/bills"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
 
 const defaults = {
   fabrics,

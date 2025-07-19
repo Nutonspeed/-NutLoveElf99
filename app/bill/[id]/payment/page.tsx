@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/buttons/button"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { addPayment } from "@/lib/mock/payment"
-import { mockOrders } from "@/lib/mock-orders"
+import { addPayment } from "@/core/mock/payments"
+import { mockOrders } from "@/core/mock/orders"
 
 export default function PaymentPage({ params }: { params: { id: string } }) {
   const { id } = params

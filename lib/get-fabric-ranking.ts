@@ -1,4 +1,4 @@
-import { mockOrders } from './mock-orders'
+import { mockOrders } from '@/core/mock/orders'
 import { fabrics } from './mock-fabrics'
 
 export interface FabricRanking { slug: string; name: string; image: string; count: number }

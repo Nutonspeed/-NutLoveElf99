@@ -14,7 +14,7 @@ import {
 import { ArrowLeft, Send } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { mockCustomers } from "@/lib/mock-customers";
+import { mockCustomers } from "@/core/mock/customers";
 
 export default function BroadcastPage() {
   const [tier, setTier] = useState("all");

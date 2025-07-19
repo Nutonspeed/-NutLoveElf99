@@ -1,6 +1,6 @@
 "use client"
 import { sendEmail, loadEmailData } from "@/lib/mock-email"
-import { mockOrders, type SimpleOrder } from "@/mock/orders"
+import { mockOrders, type SimpleOrder } from "@/core/mock/orders"
 import { useEffect } from "react"
 import { Button } from "@/components/ui/buttons/button"
 

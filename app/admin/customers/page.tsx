@@ -14,7 +14,7 @@ import {
   getCustomerOrders,
   addCustomer,
   type Customer,
-} from "@/lib/mock-customers"
+} from "@/core/mock/customers"
 import {
   loadCustomerNotes,
   listCustomerNotes,

@@ -1,8 +1,8 @@
 // Mock Notification Service สำหรับการทดสอบ
 import { notifyTeams, loadNotifyTeams } from './mock-settings'
-import { mockCustomers } from './mock-customers'
-import { mockOrders } from './mock-orders'
-import type { Customer } from './mock-customers'
+import { mockCustomers } from '@/core/mock/customers'
+import { mockOrders } from '@/core/mock/orders'
+import type { Customer } from '@/core/mock/customers'
 export interface NotificationTemplate {
   id: string
   name: string

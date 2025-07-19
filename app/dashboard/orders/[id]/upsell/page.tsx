@@ -1,6 +1,6 @@
 "use client"
 import { useParams, useRouter } from "next/navigation"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { Button } from "@/components/ui/buttons/button"
 import { toast } from "sonner"
 

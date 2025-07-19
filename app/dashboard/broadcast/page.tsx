@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
 import { Input } from "@/components/ui/inputs/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/buttons/button"

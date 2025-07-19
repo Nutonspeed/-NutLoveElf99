@@ -1,5 +1,5 @@
-import { mockOrders } from '@/lib/mock-orders'
-import { mockCustomers } from '@/lib/mock-customers'
+import { mockOrders } from '@/core/mock/orders'
+import { mockCustomers } from '@/core/mock/customers'
 import { mockProducts } from '@/lib/mock-products'
 import type { OrderType, OrderItemSchema } from '@/lib/schema/order'
 

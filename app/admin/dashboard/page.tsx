@@ -15,7 +15,7 @@ import {
   Inbox,
 } from "lucide-react"
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts"
-import { mockCustomers, type Customer } from "@/lib/mock-customers"
+import { mockCustomers, type Customer } from "@/core/mock/customers"
 import {
   mockDB,
   countOrders,

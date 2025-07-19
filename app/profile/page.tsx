@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { User, MapPin, Shield, Bell } from "lucide-react"
 import Link from "next/link"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 

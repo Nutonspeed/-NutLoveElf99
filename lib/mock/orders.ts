@@ -5,7 +5,7 @@ import {
   getOrdersInRange,
   getDailySales,
   getTopSellingItems,
-} from "../mock-orders"
+} from "@/core/mock/orders"
 
 export const mockOrders: Order[] = baseOrders
 

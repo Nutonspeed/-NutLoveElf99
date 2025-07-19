@@ -5,7 +5,7 @@ import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/buttons/button"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import type { Order } from "@/types/order"
 import type { OrderItem, ShippingStatus } from "@/types/order"
 

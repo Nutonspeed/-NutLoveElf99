@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { Input } from "@/components/ui/inputs/input"
 import { Button } from "@/components/ui/buttons/button"
 import { Textarea } from "@/components/ui/textarea"
-import { addCustomer } from "@/lib/mock-customers"
+import { addCustomer } from "@/core/mock/customers"
 import { toast } from "sonner"
 
 export default function NewCustomerPage() {

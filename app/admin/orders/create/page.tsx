@@ -5,11 +5,11 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import OrderForm from "@/components/admin/orders/OrderForm"
 import { Button } from "@/components/ui/buttons/button"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import type { Order } from "@/types/order"
 import type { ShippingStatus } from "@/types/order"
 import { mockProducts } from "@/lib/mock-products"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
 import type { OrderItem } from "@/types/order"
 
 export default function CreateOrderPage() {

@@ -31,7 +31,7 @@ import {
   updateCustomerPoints,
   setCustomerTier,
   setCustomerMuted,
-} from "@/lib/mock-customers"
+} from "@/core/mock/customers"
 import {
   loadCustomerNotes,
   listCustomerNotes,

@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { orders as mockOrders } from '@/mock/orders'
+import { orders as mockOrders } from '@/core/mock/orders'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
