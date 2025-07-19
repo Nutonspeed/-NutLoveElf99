@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { getOrders } from "@/core/mock/store";
 import { autoMessage, loadAutoMessage } from "@/lib/mock-settings";
 import { addFeedback } from "@/lib/mock-feedback";
+import { sendEmail, loadEmailData } from "@/lib/mock-email";
 import { Star } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -19,6 +20,15 @@ export default function SuccessPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     loadAutoMessage();
     setMessage(autoMessage);
+    loadEmailData();
+    const order = getOrders().find((o) => o.id === id);
+    if (order) {
+      sendEmail(order.customerName || order.customer, {
+        "customer.name": order.customerName || order.customer,
+        "order.id": order.id,
+        "order.total": String(order.total),
+      });
+    }
   }, []);
   const order = getOrders().find((o) => o.id === id);
 
