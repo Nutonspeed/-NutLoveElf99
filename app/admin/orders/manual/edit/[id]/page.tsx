@@ -411,7 +411,7 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
                 <CardTitle>การชำระเงิน</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                {payments.map((p) => (
+                {payments?.map((p) => (
                   <div key={p.id} className="flex justify-between items-center border-b pb-1 last:border-b-0">
                     <div>
                       <p className="font-medium">฿{p.amount.toLocaleString()}</p>
@@ -419,9 +419,9 @@ export default function EditManualOrderPage({ params }: EditManualOrderPageProps
                     </div>
                     {!p.confirmed && (
                       <Button size="sm" onClick={() => {
-                        const updated = payments.map((pp) =>
+                        const updated = payments?.map((pp) =>
                           pp.id === p.id ? { ...pp, confirmed: true } : pp,
-                        )
+                        ) || []
                         setPayments(updated)
                         setOrder({ ...order!, payments: updated })
                       }}>ยืนยัน</Button>

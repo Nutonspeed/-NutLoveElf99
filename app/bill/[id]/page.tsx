@@ -122,6 +122,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
   }
 
   const handleSendSlip = () => {
+    if (!bill) return
     addBillPayment(bill.id, {
       id: `pay-${Date.now()}`,
       date: new Date().toISOString(),
@@ -173,8 +174,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             </Link>
-            <h1 className="text-xl font-semibold">บิล {order.id}</h1>
-            <Badge variant="secondary">{bill.status}</Badge>
+              <h1 className="text-xl font-semibold">บิล {order?.id}</h1>
+              <Badge variant="secondary">{bill?.status}</Badge>
           </div>
           <div className="flex space-x-2">
             <Button variant="outline" onClick={handlePrint}>
@@ -199,11 +200,11 @@ export default function BillPage({ params }: { params: { id: string } }) {
       <div className="container mx-auto px-4 py-8 print:p-0">
         <Card className="max-w-4xl mx-auto print:shadow-none print:border-none">
           <CardContent className="p-8 print:p-6 space-y-6">
-            <BillPreview order={order} />
+              {order && <BillPreview order={order} />}
             <div className="flex justify-center">
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
             </div>
-            <OrderTimeline timeline={order.timeline} />
+              <OrderTimeline timeline={order?.timeline ?? []} />
             <div className="space-y-2">
               <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
               <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
@@ -216,7 +217,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
                     const r = window.prompt("บอกเหตุผลการไม่ชำระ")
                     if (r) {
                       setReason(r)
-                      bill.abandonReason = r
+                      if (bill) bill.abandonReason = r
                     }
                   }}
                 >
