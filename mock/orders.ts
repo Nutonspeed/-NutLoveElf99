@@ -29,3 +29,6 @@ export const orders: SimpleOrder[] = [
     date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ]
+
+// Provide mockOrders alias for compatibility with older imports
+export const mockOrders = orders
