@@ -21,7 +21,9 @@ import { useCart } from "@/contexts/cart-context"
 import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { addOrder } from "@/core/mock/store"
+import { getConfig } from "@/core/mock/store"
 import type { OrderStatus, ShippingStatus } from "@/types/order"
+import { logEvent } from "@/lib/logs"
 import { db } from "@/lib/database"
 import { SuggestedExtras } from "@/components/SuggestedExtras"
 
@@ -52,6 +54,7 @@ export default function CheckoutPage() {
   })
   const [couponCode, setCouponCode] = useState("")
   const [appliedCoupon, setAppliedCoupon] = useState<any | null>(null)
+  const [autoApplied, setAutoApplied] = useState(false)
 
   const [agreeTerms, setAgreeTerms] = useState(false)
   const [checklist, setChecklist] = useState({ confirmSize: false, confirmColor: false })
@@ -65,6 +68,25 @@ export default function CheckoutPage() {
       : appliedCoupon.discount
     : 0
   const finalTotal = state.total - discountAmount + shipping + tax
+
+  useEffect(() => {
+    if (autoApplied) return
+    const cfg = getConfig()
+    if (cfg.autoPromotion && state.total >= cfg.autoPromotion.threshold) {
+      setAppliedCoupon({
+        id: 'auto',
+        code: cfg.autoPromotion.code,
+        discount: cfg.autoPromotion.discount,
+        type: 'fixed',
+        active: true,
+        usageCount: 0,
+        validFrom: '',
+        validUntil: '',
+      })
+      setAutoApplied(true)
+      logEvent('coupon-used', { userId: user?.id || guestId, code: cfg.autoPromotion.code, auto: true })
+    }
+  }, [state.total, autoApplied])
 
   const handleApplyCoupon = async () => {
     const coupons = await db.getCoupons()
@@ -82,6 +104,7 @@ export default function CheckoutPage() {
     }
     setAppliedCoupon(found)
     toast({ title: "ใช้คูปองแล้ว", description: found.code })
+    logEvent('coupon-used', { userId: user?.id || guestId, code: found.code })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
