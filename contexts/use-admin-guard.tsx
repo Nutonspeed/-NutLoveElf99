@@ -19,7 +19,7 @@ export function useAdminGuard() {
       return
     }
     if (!isAuthenticated) {
-      router.replace("/login")
+      router.replace("/auth/login")
       setLoading(false)
       return
     }

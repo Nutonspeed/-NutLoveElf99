@@ -53,7 +53,7 @@ export default function MobileNav() {
           <Button variant="ghost" onClick={logout} className="text-sm">ออกจากระบบ</Button>
         </div>
       ) : (
-        <Link href="/login">
+        <Link href="/auth/login">
           <Button variant="outline" className="text-sm">เข้าสู่ระบบ</Button>
         </Link>
       )}
