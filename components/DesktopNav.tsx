@@ -66,7 +66,7 @@ export default function DesktopNav() {
             </Button>
           </div>
         ) : (
-          <Link href="/login">
+          <Link href="/auth/login">
             <Button variant="outline" className="text-sm">เข้าสู่ระบบ</Button>
           </Link>
         )}
