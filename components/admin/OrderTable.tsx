@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/buttons/button"
 import OrderStatusDropdown from "./orders/OrderStatusDropdown"
-import type { OrderStatus } from "@/types/order"
+import type { OrderStatus } from "@/types/order-status"
 import {
   Dialog,
   DialogContent,
