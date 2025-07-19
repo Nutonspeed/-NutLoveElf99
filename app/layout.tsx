@@ -16,6 +16,8 @@ import { validateMockData } from "@/lib/mock-validator"
 import RedirectMobileHome from "@/components/RedirectMobileHome"
 import DevBar from "@/components/DevBar"
 import StoreBottomNav from "@/components/StoreBottomNav"
+import { NotificationProvider } from "@/contexts/notifications-context"
+import NotificationBell from "@/components/NotificationBell"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -36,8 +38,9 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
-        <FeatureFlagProvider>
-          <DemoProvider>
+        <NotificationProvider>
+          <FeatureFlagProvider>
+            <DemoProvider>
             <AuthProvider>
               <CartProvider>
                 <WishlistProvider>
@@ -48,6 +51,7 @@ export default function RootLayout({
                           <RedirectMobileHome />
                           {children}
                           <StoreBottomNav />
+                          <NotificationBell />
                           <DevBar />
                           <Toaster />
                         </ReviewImagesProvider>
@@ -57,8 +61,9 @@ export default function RootLayout({
                 </WishlistProvider>
               </CartProvider>
             </AuthProvider>
-          </DemoProvider>
-        </FeatureFlagProvider>
+            </DemoProvider>
+          </FeatureFlagProvider>
+        </NotificationProvider>
       </body>
     </html>
   )
