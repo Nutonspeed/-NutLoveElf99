@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getOrders, addOrder, resetOrders } from '../store'
+import { getOrders, addOrder, resetOrders, addReview, getReviews, resetReviews, addNps, getNps, resetNps } from '../store'
 import type { Order } from '@/types/order'
 
 const sample: Order = {
@@ -31,5 +31,29 @@ describe('mock store orders', () => {
     const prev = getOrders().length
     addOrder(sample)
     expect(getOrders().length).toBe(prev + 1)
+  })
+})
+
+describe('mock store reviews', () => {
+  beforeEach(() => {
+    resetReviews()
+  })
+
+  it('adds review to store', () => {
+    const prev = getReviews().length
+    addReview({ orderId: 'O1', rating: 5, comment: 'good', createdAt: '' })
+    expect(getReviews().length).toBe(prev + 1)
+  })
+})
+
+describe('mock store nps', () => {
+  beforeEach(() => {
+    resetNps()
+  })
+
+  it('adds nps record', () => {
+    const prev = getNps().length
+    addNps({ id: '1', score: 8, createdAt: '' })
+    expect(getNps().length).toBe(prev + 1)
   })
 })
