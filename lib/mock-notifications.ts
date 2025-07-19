@@ -1,6 +1,6 @@
 export interface Notification {
   id: string
-  type: 'order' | 'claim' | 'chat'
+  type: 'order' | 'claim' | 'chat' | 'comment' | 'payment'
   message: string
   link: string
 }
@@ -35,6 +35,18 @@ export const mockNotifications: Notification[] = [
     type: 'chat',
     message: 'ลูกค้าเก่าทักแชทอีกครั้ง',
     link: '/admin/chat-customers',
+  },
+  {
+    id: 'cmt-4001',
+    type: 'comment',
+    message: 'มีคอมเมนต์ใหม่ในบล็อก',
+    link: '/dashboard/comments',
+  },
+  {
+    id: 'pay-5001',
+    type: 'payment',
+    message: 'ลูกค้าชำระเงินสำหรับ #ORD-1001',
+    link: '/dashboard/orders/ORD-1001',
   },
 ]
 
