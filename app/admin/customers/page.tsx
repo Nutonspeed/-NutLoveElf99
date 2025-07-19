@@ -9,10 +9,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, ArrowLeft, Eye, Mail, Phone, ShoppingBag, Calendar } from "lucide-react"
 import Link from "next/link"
 import {
-  fetchCustomers,
   getCustomerStats,
   getCustomerOrders,
-  addCustomer,
   type Customer,
 } from "@/lib/mock-customers"
 import {
@@ -43,7 +41,8 @@ export default function AdminCustomersPage() {
 
   const loadData = async () => {
     try {
-      const usersData = await fetchCustomers()
+      const res = await fetch('/api/customers')
+      const usersData: Customer[] = await res.json()
 
       const customersData = usersData.map((user) => {
         const stats = getCustomerStats(user.id)
@@ -67,10 +66,14 @@ export default function AdminCustomersPage() {
     }
   }
 
-  const handleAdd = (e: React.FormEvent) => {
+  const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newName || !newEmail) return
-    addCustomer({ name: newName, email: newEmail })
+    await fetch('/api/customers', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-role': 'admin' },
+      body: JSON.stringify({ name: newName, email: newEmail }),
+    })
     setNewName('')
     setNewEmail('')
     setShowAdd(false)

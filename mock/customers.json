@@ -1,0 +1,69 @@
+[
+  {
+    "id": "02ff2461-8042-4a0e-a886-eb70e63116d5",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "081-234-5678",
+    "address": "123 ถนนสุขุมวิท",
+    "city": "กรุงเทพฯ",
+    "postalCode": "10110",
+    "avatar": "/placeholder.svg?height=40&width=40",
+    "tags": ["ลูกค้าประจำ"],
+    "note": "ชอบผ้ากำมะหยี่",
+    "points": 120,
+    "tier": "Gold",
+    "pointHistory": [{"timestamp": "2024-05-01T00:00:00.000Z", "change": 120, "reason": "สมัครสมาชิก"}],
+    "createdAt": "2024-05-01T00:00:00.000Z"
+  },
+  {
+    "id": "6e165985-0833-4c02-bc6f-907298bc98fe",
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "phone": "082-345-6789",
+    "address": "456 ถนนพหลโยธิน",
+    "city": "กรุงเทพฯ",
+    "postalCode": "10400",
+    "avatar": "/placeholder.svg?height=40&width=40",
+    "tags": ["COD"],
+    "note": "เก็บเงินปลายทาง",
+    "points": 60,
+    "tier": "Silver",
+    "createdAt": "2024-05-16T00:00:00.000Z"
+  },
+  {
+    "id": "ad5afc3d-fdb2-4425-be42-eda8c413161f",
+    "name": "Mike Johnson",
+    "email": "mike@example.com",
+    "avatar": "/placeholder.svg?height=40&width=40",
+    "points": 200,
+    "tier": "VIP",
+    "createdAt": "2024-06-07T00:00:00.000Z"
+  },
+  {
+    "id": "77f0d50a-283a-446a-9a18-802a93e21c98",
+    "name": "Sarah Wilson",
+    "email": "sarah@example.com",
+    "avatar": "/placeholder.svg?height=40&width=40",
+    "points": 10,
+    "tier": "Silver",
+    "createdAt": "2024-05-22T00:00:00.000Z"
+  },
+  {
+    "id": "a20d45d4-d083-46d8-8d3c-f4b56e91e417",
+    "name": "David Brown",
+    "email": "david@example.com",
+    "avatar": "/placeholder.svg?height=40&width=40",
+    "points": 40,
+    "tier": "Gold",
+    "createdAt": "2024-04-27T00:00:00.000Z"
+  },
+  {
+    "id": "b623c2af-3c80-47fe-8bcd-3923bbe80f99",
+    "name": "Lisa Anderson",
+    "email": "lisa@example.com",
+    "avatar": "/placeholder.svg?height=40&width=40",
+    "points": 80,
+    "tier": "Gold",
+    "createdAt": "2024-04-12T00:00:00.000Z"
+  }
+]
