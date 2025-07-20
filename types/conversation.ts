@@ -5,5 +5,6 @@ export interface Conversation {
   lastMessage: string
   tags: string[]
   rating?: number
+  agentId?: string
   updatedAt: string
 }

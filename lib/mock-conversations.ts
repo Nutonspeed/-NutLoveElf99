@@ -1,4 +1,5 @@
 import type { Conversation } from '@/types/conversation'
+import { findNextAvailableAgent, getAgent } from '@/lib/mock-chat-agents'
 
 export let conversations: Conversation[] = [
   {
@@ -7,6 +8,7 @@ export let conversations: Conversation[] = [
     customerName: 'John Doe',
     lastMessage: 'สอบถามราคาเบาะโซฟา',
     tags: ['ถามราคา'],
+    agentId: 'agent1',
     updatedAt: new Date().toISOString(),
   },
   {
@@ -15,6 +17,7 @@ export let conversations: Conversation[] = [
     customerName: 'Jane Smith',
     lastMessage: 'จะโอนพรุ่งนี้',
     tags: ['รอโอน'],
+    agentId: 'agent2',
     updatedAt: new Date().toISOString(),
   },
 ]
@@ -33,6 +36,7 @@ function save() {
 }
 
 export function listConversations() {
+  ensureAssignments()
   return conversations
 }
 
@@ -64,4 +68,24 @@ export function setRating(id: string, rating: number) {
     convo.rating = rating
     save()
   }
+}
+
+export function assignAgent(id: string, agentId: string) {
+  const convo = conversations.find((c) => c.id === id)
+  if (convo) {
+    convo.agentId = agentId
+    save()
+  }
+}
+
+function ensureAssignments() {
+  const next = findNextAvailableAgent()
+  if (!next) return
+  conversations.forEach((c) => {
+    const assigned = c.agentId ? getAgent(c.agentId) : undefined
+    if (!assigned || !assigned.online) {
+      c.agentId = next.id
+    }
+  })
+  save()
 }
