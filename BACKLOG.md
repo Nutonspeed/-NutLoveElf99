@@ -9,3 +9,13 @@
 5. Add automation log UI with timestamp, status, rule name
 
 Status: in progress
+
+## Block 321–325 | Print & Export System | route: /admin/print, /admin/bill/:id/print
+
+1. Create /admin/print settings page for configuring templates (invoice, shipping label)
+2. Add /admin/bill/:id/print route to show printable version of the bill
+3. Support PDF export with proper layout and mock customer/order data
+4. Add buttons: “Print”, “Download PDF”, and “Copy for LINE”
+5. Style print layout to fit A4 + sticker label size
+
+Status: done
