@@ -12,6 +12,7 @@ export interface AdminBill {
   items: BillItem[]
   shipping: number
   note: string
+  tags?: string[]
   status: 'pending' | 'unpaid' | 'paid' | 'cancelled'
   createdAt: string
 }
@@ -26,6 +27,7 @@ export const mockBills: AdminBill[] = [
     ],
     shipping: 50,
     note: '',
+    tags: ['ทั่วไป'],
     status: 'pending',
     createdAt: new Date().toISOString(),
   },

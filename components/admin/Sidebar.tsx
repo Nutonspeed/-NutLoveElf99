@@ -21,6 +21,7 @@ import {
   Percent,
   Settings,
   Target,
+  Printer,
   Users,
 } from "lucide-react"
 import clsx from "clsx"
@@ -33,6 +34,7 @@ const groups = [
     items: [
       { href: "/admin/bills", label: "บิลทั้งหมด", icon: FileText, feature: "bills" },
       { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "bills" },
+      { href: "/admin/bills/batch-print", label: "พิมพ์หลายบิล", icon: Printer, feature: "bills" },
     ],
   },
   {
