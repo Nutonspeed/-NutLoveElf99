@@ -4,80 +4,50 @@ import { useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import Image from "next/image"
-import Link from "next/link"
-import { getCollections } from "@/lib/mock-collections"
-import type { Collection } from "@/types/collection"
+import type { Fabric } from "@/mock/fabrics"
+import { fabrics as mockFabrics } from "@/mock/fabrics"
 
 
 export default function CollectionsPage() {
-  const [collections, setCollections] = useState<Collection[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [items, setItems] = useState<Fabric[]>([])
 
   useEffect(() => {
-    const fetchCollections = async () => {
-      try {
-        const data = await getCollections()
-        setCollections(data.slice(0))
-      } catch (err) {
-        setError("ไม่สามารถโหลดข้อมูลคอลเลกชันได้")
-      }
-      setLoading(false)
-    }
-
-    fetchCollections()
+    setItems([...mockFabrics])
   }, [])
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
+  const grouped = items.reduce<Record<string, Fabric[]>>((acc, fabric) => {
+    const key = fabric.collectionId || "unknown"
+    acc[key] = acc[key] ? [...acc[key], fabric] : [fabric]
+    return acc
+  }, {})
 
-  if (error) {
-    return (
-      <div className="min-h-screen">
-        <Navbar />
-        <div className="container mx-auto px-4 py-8 text-red-500">{error}</div>
-        <Footer />
-      </div>
-    )
-  }
+  const collectionIds = Object.keys(grouped).slice(0, 15)
 
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="container mx-auto px-4 py-8 flex-1">
-        <h1 className="text-3xl font-bold mb-6">คอลเลกชันลายผ้า</h1>
-        {collections.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-            {collections.map((collection: Collection) => (
-              <Link
-                key={collection.slug}
-                href={`/collections/${collection.slug}`}
-                className="border rounded-lg overflow-hidden hover:shadow transition bg-white"
-              >
-                <div className="grid grid-cols-2 gap-0 border-b">
-                  {collection.images.slice(0, 4).map((img, idx) => (
-                    <div key={idx} className="relative aspect-square">
-                      <Image src={img || "/placeholder.svg"} alt={collection.name} fill className="object-cover" />
-                    </div>
-                  ))}
-                </div>
-                <div className="p-3 md:p-4">
-                  <h3 className="font-semibold text-sm md:text-base truncate">
-                    {collection.name}
-                  </h3>
-                  <p className="text-xs text-gray-600 mt-1">{collection.priceRange}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-600">ไม่มีคอลเลกชันให้แสดง</p>
+      <div className="container mx-auto px-4 py-8 flex-1 space-y-8">
+        <h1 className="text-3xl font-bold">คอลเลกชันลายผ้า</h1>
+        {collectionIds.length === 0 && (
+          <p className="text-center text-gray-600">ไม่มีลายผ้าให้แสดง</p>
         )}
+        {collectionIds.map((cid) => (
+          <section key={cid} className="space-y-4">
+            <h2 className="text-xl font-semibold">หมวด {cid}</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {grouped[cid].map((fabric) => (
+                <div key={fabric.id} className="border rounded-lg overflow-hidden bg-white">
+                  <div className="relative aspect-square">
+                    <Image src={fabric.imageUrl} alt={fabric.name} fill className="object-cover" />
+                  </div>
+                  <div className="p-2 text-center text-sm font-medium truncate">
+                    {fabric.name}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
       <Footer />
     </div>
