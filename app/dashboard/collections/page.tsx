@@ -3,7 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { collections, softDeleteCollection, reorderCollections } from '@/mock/collections'
-import { fabrics } from '@/mock/fabrics'
+import { getFabrics } from '@/core/mock/store'
 import { Button } from '@/components/ui/buttons/button'
 import ModalWrapper from '@/components/ui/ModalWrapper'
 
@@ -38,7 +38,7 @@ export default function DashboardCollectionsPage() {
       </div>
       <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {items.map(col => {
-          const count = fabrics.filter(f => f.collectionId === col.id).length
+          const count = getFabrics().filter(f => f.collectionId === col.id).length
           return (
             <div
               key={col.id}
@@ -63,8 +63,8 @@ export default function DashboardCollectionsPage() {
       </div>
       <ModalWrapper open={!!preview} onClose={() => setPreview(null)}>
         <div className="w-80 space-y-4">
-          {preview && fabrics.filter(f => f.collectionId === preview).length > 0 ? (
-            fabrics
+          {preview && getFabrics().filter(f => f.collectionId === preview).length > 0 ? (
+            getFabrics()
               .filter(f => f.collectionId === preview)
               .map(f => (
                 <div key={f.id} className="relative aspect-square w-full border rounded overflow-hidden">

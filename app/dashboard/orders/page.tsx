@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import Link from 'next/link'
-import { orders as mockOrders, type SimpleOrder } from '@/mock/orders'
+import { getSimpleOrders, type SimpleOrder } from '@/core/mock/store'
 import {
   Table,
   TableBody,
@@ -21,7 +21,7 @@ const statusLabel = Object.fromEntries(
 export default function DashboardOrdersPage() {
   const [status, setStatus] = useState<'all' | OrderStatus>('all')
 
-  const filtered = mockOrders.filter(
+  const filtered = getSimpleOrders().filter(
     (o) => status === 'all' || o.status === status,
   )
 

@@ -3,16 +3,14 @@ import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/buttons/button"
-import { fabrics } from "@/mock/fabrics"
-import { orders } from "@/mock/orders"
-import { mockBills } from "@/mock/bills"
+import { getFabrics, getSimpleOrders, getBills } from "@/core/mock/store"
 import { mockCustomers } from "@/lib/mock-customers"
 import { billNotifySettings, setBillNotifySettings, validateBillNotifySettings } from "@/lib/mock-bill-notify"
 
 const defaults = {
-  fabrics,
-  orders,
-  bills: mockBills,
+  fabrics: getFabrics(),
+  orders: getSimpleOrders(),
+  bills: getBills(),
   customers: mockCustomers,
   billNotifySettings,
 } as const

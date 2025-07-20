@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts"
-import { mockBills, type AdminBill } from "@/mock/bills"
+import { getBills, type AdminBill } from "@/core/mock/store"
 import { mockCustomers } from "@/lib/mock-customers"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 
@@ -28,7 +28,7 @@ export default function BillingReportPage() {
   const [end, setEnd] = useState("")
 
   const bills = useMemo(() => {
-    return mockBills.filter((b) => {
+    return getBills().filter((b) => {
       const c = mockCustomers.find((c) => c.name === b.customer)
       if (tag !== "all" && !c?.tags?.includes(tag)) return false
       if (group !== "all" && c?.tier !== group) return false

@@ -3,9 +3,8 @@ import { useMemo, useState } from "react"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts"
 import { Input } from "@/components/ui/inputs/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { mockBills } from "@/mock/bills"
+import { getBills, getSimpleOrders } from "@/core/mock/store"
 import { mockCustomers } from "@/lib/mock-customers"
-import { orders as mockOrders } from "@/mock/orders"
 import { formatCurrency } from "@/lib/utils"
 
 export default function PerformanceDashboard() {
@@ -18,11 +17,11 @@ export default function PerformanceDashboard() {
   }, [range])
 
   const kpi = useMemo(() => {
-    const sales = mockBills
+    const sales = getBills()
       .filter(b => b.status === 'paid' && new Date(b.createdAt) >= start)
       .reduce((s, b) => s + b.items.reduce((n, i) => n + i.price * i.quantity, 0) + b.shipping, 0)
     const customers = mockCustomers.filter(c => new Date(c.createdAt) >= start).length
-    const orders = mockOrders.filter(o => new Date(o.date) >= start).length
+    const orders = getSimpleOrders().filter(o => new Date(o.date) >= start).length
     return { sales, customers, orders }
   }, [start])
 
@@ -32,7 +31,7 @@ export default function PerformanceDashboard() {
       const d = new Date(start)
       d.setDate(d.getDate() + i)
       const key = d.toISOString().slice(5,10)
-      const count = mockOrders.filter(o => o.date.slice(0,10) === d.toISOString().slice(0,10)).length
+      const count = getSimpleOrders().filter(o => o.date.slice(0,10) === d.toISOString().slice(0,10)).length
       arr.push({ day: key, orders: count })
     }
     return arr
