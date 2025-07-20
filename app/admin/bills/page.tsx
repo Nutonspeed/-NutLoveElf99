@@ -1,403 +1,182 @@
 "use client"
-import { useState } from 'react'
-import { Plus, Search } from 'lucide-react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
-import { Button } from '@/components/ui/buttons/button'
-import Link from 'next/link'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Dialog, DialogContent, DialogFooter, DialogHeader as DHeader, DialogTitle, DialogTrigger } from '@/components/ui/modals/dialog'
-import { Input } from '@/components/ui/inputs/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { AdminBill, BillItem } from '@/mock/bills'
-import { mockBills, addBill, updateBillStatus, updateBill } from '@/mock/bills'
-import { toast } from 'sonner'
+import { useState } from "react"
+import Link from "next/link"
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/cards/card"
+import { Input } from "@/components/ui/inputs/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { mockBills } from "@/lib/mock-bills"
+import { mockOrders } from "@/lib/mock-orders"
 
 export default function AdminBillsPage() {
-  const [bills, setBills] = useState<AdminBill[]>([...mockBills])
-  const [open, setOpen] = useState(false)
-  const [customer, setCustomer] = useState('')
-  const [items, setItems] = useState<BillItem[]>([])
-  const [shipping, setShipping] = useState(50)
-  const subtotal = items.reduce((s, it) => s + it.price * it.quantity, 0)
-  const total = subtotal + shipping
-  const [note, setNote] = useState('')
-  const [edit, setEdit] = useState<string | null>(null)
-  const [editData, setEditData] = useState<{
-    customer: string
-    items: BillItem[]
-    shipping: number
-    note: string
-  } | null>(null)
-  const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
+  const [search, setSearch] = useState("")
+  const [status, setStatus] = useState("all")
+  const [sort, setSort] = useState("date")
 
-  const handleCreate = () => {
-    if (items.length === 0) {
-      toast.error('ต้องมีสินค้าอย่างน้อย 1 รายการ')
-      return
+  const filtered = mockBills
+    .filter((b) => {
+      const order = mockOrders.find((o) => o.id === b.orderId)
+      const term = search.toLowerCase()
+      const name = order?.customerName.toLowerCase() || ""
+      return (
+        b.id.toLowerCase().includes(term) ||
+        b.orderId.toLowerCase().includes(term) ||
+        name.includes(term)
+      )
+    })
+    .filter((b) => {
+      if (status === "all") return true
+      const overdue =
+        b.status === "unpaid" &&
+        b.dueDate &&
+        new Date(b.dueDate).getTime() < Date.now()
+      if (status === "overdue") return overdue
+      return b.status === status
+    })
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (sort === "amount") {
+      const aAmt = mockOrders.find((o) => o.id === a.orderId)?.total || 0
+      const bAmt = mockOrders.find((o) => o.id === b.orderId)?.total || 0
+      return bAmt - aAmt
     }
-    const bill = addBill({ customer, items, shipping, note })
-    setBills([bill, ...bills])
-    setCustomer('')
-    setItems([])
-    setNote('')
-    setShipping(50)
-    setOpen(false)
-  }
-
-  const getStatusClass = (status: AdminBill['status']) => {
-    if (status === 'paid') return 'bg-green-500 text-white'
-    if (status === 'cancelled') return 'bg-red-500 text-white'
-    if (status === 'pending') return 'bg-blue-500 text-white'
-    return 'bg-yellow-500 text-white'
-  }
-
-  const getStatusText = (status: AdminBill['status']) => {
-    if (status === 'paid') return 'ชำระแล้ว'
-    if (status === 'cancelled') return 'ยกเลิก'
-    if (status === 'pending') return 'รอตรวจสอบ'
-    return 'รอชำระ'
-  }
-
-  const filteredBills = bills
-    .filter(
-      (b) =>
-        b.customer.toLowerCase().includes(search.toLowerCase()) ||
-        b.id.toLowerCase().includes(search.toLowerCase()),
+    if (sort === "dueDate") {
+      const aDue = a.dueDate ? new Date(a.dueDate).getTime() : 0
+      const bDue = b.dueDate ? new Date(b.dueDate).getTime() : 0
+      return aDue - bDue
+    }
+    return (
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     )
-    .filter((b) => (statusFilter === 'all' ? true : b.status === statusFilter))
+  })
+
+  const getStatusBadge = (b: (typeof mockBills)[number]) => {
+    const overdue =
+      b.status === "unpaid" &&
+      b.dueDate &&
+      new Date(b.dueDate).getTime() < Date.now()
+    if (overdue)
+      return <Badge className="bg-red-500 text-white">ค้างชำระ</Badge>
+    if (b.status === "paid")
+      return <Badge className="bg-green-500 text-white">ชำระแล้ว</Badge>
+    return <Badge className="bg-yellow-500 text-white">รอชำระ</Badge>
+  }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">บิล</h1>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              สร้างบิลใหม่
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DHeader>
-              <DialogTitle>สร้างบิล</DialogTitle>
-            </DHeader>
-            <div className="space-y-4">
-              <Input placeholder="ชื่อลูกค้า" value={customer} onChange={(e) => setCustomer(e.target.value)} />
-              <Textarea placeholder="หมายเหตุ" value={note} onChange={(e) => setNote(e.target.value)} />
-              <div className="space-y-2">
-                {items.map((it, idx) => (
-                  <div key={idx} className="flex space-x-2 items-end">
-                    <Input
-                      placeholder="สินค้า"
-                      value={it.name}
-                      onChange={(e) =>
-                        setItems(
-                          items.map((item, i) =>
-                            i === idx ? { ...item, name: e.target.value } : item,
-                          ),
-                        )
-                      }
-                    />
-                    <Input
-                      type="number"
-                      className="w-20"
-                      value={it.quantity}
-                      onChange={(e) =>
-                        setItems(
-                          items.map((item, i) =>
-                            i === idx
-                              ? { ...item, quantity: parseInt(e.target.value) || 1 }
-                              : item,
-                          ),
-                        )
-                      }
-                    />
-                    <Input
-                      type="number"
-                      className="w-24"
-                      value={it.price}
-                      onChange={(e) =>
-                        setItems(
-                          items.map((item, i) =>
-                            i === idx
-                              ? { ...item, price: parseFloat(e.target.value) || 0 }
-                              : item,
-                          ),
-                        )
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setItems(items.filter((_, i) => i !== idx))}
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setItems([...items, { name: '', quantity: 1, price: 0 }])}
-                >
-                  เพิ่มสินค้า
-                </Button>
-              </div>
-              <div className="space-y-2 pt-2 border-t">
-                <div className="flex justify-between">
-                  <span>ยอดสินค้า</span>
-                  <span>฿{subtotal.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>ค่าจัดส่ง</span>
-                  <Input
-                    type="number"
-                    className="w-24"
-                    value={shipping}
-                    onChange={(e) => setShipping(parseFloat(e.target.value) || 0)}
-                  />
-                </div>
-                <div className="flex justify-between font-semibold">
-                  <span>ยอดรวม</span>
-                  <span>฿{total.toLocaleString()}</span>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8 space-y-6">
+        <h1 className="text-3xl font-bold">บิลทั้งหมด</h1>
+        <Card>
+          <CardHeader>
+            <CardTitle>รายการบิล</CardTitle>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Input
+                placeholder="ค้นหาเลขบิล ลูกค้า หรือ Order"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-64"
+              />
+              <Select value={status} onValueChange={setStatus}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="สถานะ" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">ทั้งหมด</SelectItem>
+                  <SelectItem value="unpaid">รอชำระ</SelectItem>
+                  <SelectItem value="paid">ชำระแล้ว</SelectItem>
+                  <SelectItem value="overdue">ค้างชำระ</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={sort} onValueChange={setSort}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="เรียงตาม" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">วันที่</SelectItem>
+                  <SelectItem value="amount">ยอดเงิน</SelectItem>
+                  <SelectItem value="dueDate">กำหนดชำระ</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <DialogFooter>
-              <Button onClick={handleCreate}>บันทึกบิล (mock)</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <CardTitle>รายการบิล ({filteredBills.length})</CardTitle>
-            <div className="flex items-center space-x-2">
-              <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="ค้นหาด้วยชื่อ/เลขบิล"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-8 w-64"
-                />
-              </div>
-            </div>
-          </div>
-          <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
-            <TabsList>
-              <TabsTrigger value="all">ทั้งหมด</TabsTrigger>
-              <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
-              <TabsTrigger value="unpaid">รอชำระ</TabsTrigger>
-              <TabsTrigger value="paid">ชำระแล้ว</TabsTrigger>
-              <TabsTrigger value="cancelled">ยกเลิก</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </CardHeader>
-        <CardContent>
-          {filteredBills.length ? (
+          </CardHeader>
+          <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>เลขบิล</TableHead>
-                  <TableHead>ชื่อลูกค้า</TableHead>
+                  <TableHead>Order</TableHead>
+                  <TableHead>ลูกค้า</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>วันที่</TableHead>
-                  <TableHead className="w-24" />
+                  <TableHead>ครบกำหนด</TableHead>
+                  <TableHead className="text-right">ยอดรวม</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredBills.map((b) => (
-                  <TableRow key={b.id}>
-                    <TableCell>{b.id}</TableCell>
-                    <TableCell>{b.customer}</TableCell>
-                    <TableCell>
-                      <Select
-                        value={b.status}
-                        onValueChange={(v) => {
-                          updateBillStatus(b.id, v as AdminBill['status'])
-                          setBills([...mockBills])
-                        }}
-                      >
-                        <SelectTrigger className="w-28">
-                          <Badge className={getStatusClass(b.status)}>
-                            {getStatusText(b.status)}
-                          </Badge>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unpaid">รอชำระ</SelectItem>
-                          <SelectItem value="paid">ชำระแล้ว</SelectItem>
-                          <SelectItem value="cancelled">ยกเลิก</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>{new Date(b.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell className="space-x-2">
-                      <Link href={`/bill/${b.id}`} className="underline text-sm">
-                        ดูบิล
-                      </Link>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setEdit(b.id)
-                          setEditData({
-                            customer: b.customer,
-                            items: b.items,
-                            shipping: b.shipping,
-                            note: b.note,
-                          })
-                        }}
-                      >
-                        แก้ไข
-                      </Button>
+                {sorted.map((b) => {
+                  const order = mockOrders.find((o) => o.id === b.orderId)
+                  const amount = order?.total || 0
+                  return (
+                    <TableRow
+                      key={b.id}
+                      className="hover:bg-muted transition-colors"
+                    >
+                      <TableCell>
+                        <Link
+                          className="underline"
+                          href={`/bill/${b.id}`}
+                        >
+                          {b.id}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{b.orderId}</TableCell>
+                      <TableCell>{order?.customerName || "-"}</TableCell>
+                      <TableCell>{getStatusBadge(b)}</TableCell>
+                      <TableCell>
+                        {new Date(b.createdAt).toLocaleDateString("th-TH")}
+                      </TableCell>
+                      <TableCell>
+                        {b.dueDate
+                          ? new Date(b.dueDate).toLocaleDateString("th-TH")
+                          : "-"}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        ฿{amount.toLocaleString()}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+                {sorted.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={7} className="text-center py-8 text-sm">
+                      ไม่พบข้อมูล
                     </TableCell>
                   </TableRow>
-                ))}
+                )}
               </TableBody>
             </Table>
-          ) : (
-            <div className="text-center text-muted text-sm">
-              {bills.length === 0 ? 'ยังไม่มีบิลในระบบ' : 'ไม่พบบิลที่ค้นหา'}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      <Dialog open={!!edit} onOpenChange={() => setEdit(null)}>
-        <DialogContent className="max-w-lg">
-          <DHeader>
-            <DialogTitle>แก้ไขบิล</DialogTitle>
-          </DHeader>
-          {editData && (
-            <div className="space-y-4">
-              <Input
-                placeholder="ชื่อลูกค้า"
-                value={editData.customer}
-                onChange={(e) =>
-                  setEditData({ ...editData, customer: e.target.value })
-                }
-              />
-              <div className="space-y-2">
-                {editData.items.map((it, idx) => (
-                  <div key={idx} className="flex space-x-2 items-end">
-                    <Input
-                      placeholder="สินค้า"
-                      value={it.name}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          items: editData.items.map((item, i) =>
-                            i === idx ? { ...item, name: e.target.value } : item,
-                          ),
-                        })
-                      }
-                    />
-                    <Input
-                      type="number"
-                      className="w-20"
-                      value={it.quantity}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          items: editData.items.map((item, i) =>
-                            i === idx
-                              ? { ...item, quantity: parseInt(e.target.value) || 1 }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                    <Input
-                      type="number"
-                      className="w-24"
-                      value={it.price}
-                      onChange={(e) =>
-                        setEditData({
-                          ...editData,
-                          items: editData.items.map((item, i) =>
-                            i === idx
-                              ? { ...item, price: parseFloat(e.target.value) || 0 }
-                              : item,
-                          ),
-                        })
-                      }
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="icon"
-                      onClick={() =>
-                        setEditData({
-                          ...editData,
-                          items: editData.items.filter((_, i) => i !== idx),
-                        })
-                      }
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() =>
-                    setEditData({
-                      ...editData,
-                      items: [...editData.items, { name: '', quantity: 1, price: 0 }],
-                    })
-                  }
-                >
-                  เพิ่มสินค้า
-                </Button>
-              </div>
-              <div className="space-y-2 pt-2 border-t">
-                <div className="flex justify-between">
-                  <span>ยอดสินค้า</span>
-                  <span>
-                    ฿{editData.items.reduce((s, it) => s + it.price * it.quantity, 0).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span>ค่าจัดส่ง</span>
-                  <Input
-                    type="number"
-                    className="w-24"
-                    value={editData.shipping}
-                    onChange={(e) =>
-                      setEditData({ ...editData, shipping: parseFloat(e.target.value) || 0 })
-                    }
-                  />
-                </div>
-                <Textarea
-                  placeholder="หมายเหตุ"
-                  value={editData.note}
-                  onChange={(e) => setEditData({ ...editData, note: e.target.value })}
-                />
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                if (edit && editData) {
-                  updateBill(edit, editData)
-                  setBills([...mockBills])
-                  toast.success('บันทึกแล้ว (mock)')
-                }
-                setEdit(null)
-              }}
-            >
-              บันทึก
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
