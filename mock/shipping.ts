@@ -1,6 +1,7 @@
 import type {
   ShippingOrderStatus,
   DeliveryStatus,
+  ShippingProvider,
 } from '@/types/shipping'
 
 export interface ShippingOrder {
@@ -11,6 +12,7 @@ export interface ShippingOrder {
   tracking: string
   status: ShippingOrderStatus
   deliveryStatus: DeliveryStatus
+  provider?: ShippingProvider
 }
 
 export const shippingOrders: ShippingOrder[] = [
@@ -22,6 +24,7 @@ export const shippingOrders: ShippingOrder[] = [
     tracking: 'TH1234567890',
     status: 'shipped',
     deliveryStatus: 'delivered',
+    provider: 'Kerry',
   },
   {
     id: 'SHIP-002',
@@ -31,6 +34,7 @@ export const shippingOrders: ShippingOrder[] = [
     tracking: '',
     status: 'pendingPrint',
     deliveryStatus: 'shipping',
+    provider: 'Kerry',
   },
   {
     id: 'SHIP-003',
@@ -40,6 +44,7 @@ export const shippingOrders: ShippingOrder[] = [
     tracking: 'TH5555555555',
     status: 'returned',
     deliveryStatus: 'shipping',
+    provider: 'Flash',
   },
 ]
 
@@ -53,6 +58,29 @@ export function addTrackingNumber(
     if (order.status === 'pendingPrint') order.status = 'shipped'
   }
   return order
+}
+
+export function setShippingInfo(
+  id: string,
+  tracking: string,
+  provider: ShippingProvider,
+) {
+  const order = shippingOrders.find((o) => o.id === id)
+  if (order) {
+    order.tracking = tracking
+    order.provider = provider
+    if (order.status === 'pendingPrint' && tracking) order.status = 'shipped'
+  }
+}
+
+export function updateShippingOrderStatus(id: string, status: ShippingOrderStatus) {
+  const order = shippingOrders.find((o) => o.id === id)
+  if (order) order.status = status
+}
+
+export function updateDeliveryStatus(id: string, status: DeliveryStatus) {
+  const order = shippingOrders.find((o) => o.id === id)
+  if (order) order.deliveryStatus = status
 }
 
 export function getShippingOrder(id: string) {
