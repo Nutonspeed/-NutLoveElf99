@@ -22,6 +22,9 @@ import {
 import { loadCustomerTags, listCustomerTags } from "@/lib/mock-customer-tags"
 import { loadFlaggedUsers, getFlagStatus } from "@/lib/mock-flagged-users"
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip"
+import CustomerPopup from "@/components/admin/customers/CustomerPopup"
+import { useCustomerStore } from "@/lib/useCustomerStore"
 
 
 export default function AdminCustomersPage() {
@@ -33,6 +36,7 @@ export default function AdminCustomersPage() {
   const [showAdd, setShowAdd] = useState(false)
   const [newName, setNewName] = useState("")
   const [newEmail, setNewEmail] = useState("")
+  const { selected, setSelected } = useCustomerStore()
 
   useEffect(() => {
     loadCustomerNotes()
@@ -273,7 +277,19 @@ export default function AdminCustomersPage() {
                           <span className="text-sm font-medium">{customer.name.charAt(0).toUpperCase()}</span>
                         </div>
                         <div>
-                          <p className="font-medium">{customer.name}</p>
+                          <TooltipProvider delayDuration={0}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <button
+                                  onClick={() => setSelected(customer)}
+                                  className="text-base font-semibold tracking-wide truncate max-w-[150px] hover:underline"
+                                >
+                                  {customer.name}
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent>{customer.name}</TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                           <p className="text-sm text-gray-500">ID: {customer.id}</p>
                         </div>
                       </div>
@@ -345,6 +361,7 @@ export default function AdminCustomersPage() {
           </CardContent>
         </Card>
       </div>
+      <CustomerPopup customer={selected} onClose={() => setSelected(null)} />
     </div>
   )
 }
