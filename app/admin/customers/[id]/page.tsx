@@ -24,6 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { listCustomerBills, type AdminBill } from "@/mock/bills"
 import {
   mockCustomers,
   getCustomerOrders,
@@ -77,12 +78,27 @@ export default function CustomerDetailPage({
 
   const orders = getCustomerOrders(customer.id)
   const stats = getCustomerStats(customer.id)
+  const bills: AdminBill[] = listCustomerBills(customer.name)
   const [pointDelta, setPointDelta] = useState(0)
   const [tierValue, setTierValue] = useState<string>(customer.tier || "Silver")
   const [muted, setMuted] = useState<boolean>(customer.muted ?? false)
   const [noteInput, setNoteInput] = useState("")
   const [tagInput, setTagInput] = useState("")
   const latestMessage = getLatestChatMessage(customer.id)
+
+  const billStatusClass = (status: AdminBill['status']) => {
+    if (status === 'paid') return 'bg-green-500 text-white'
+    if (status === 'cancelled') return 'bg-red-500 text-white'
+    if (status === 'pending') return 'bg-blue-500 text-white'
+    return 'bg-yellow-500 text-white'
+  }
+
+  const billStatusText = (status: AdminBill['status']) => {
+    if (status === 'paid') return 'ชำระแล้ว'
+    if (status === 'cancelled') return 'ยกเลิก'
+    if (status === 'pending') return 'รอตรวจสอบ'
+    return 'รอชำระ'
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -242,6 +258,7 @@ export default function CustomerDetailPage({
         <Tabs defaultValue="orders" className="space-y-4">
           <TabsList>
             <TabsTrigger value="orders">ประวัติการซื้อ</TabsTrigger>
+            <TabsTrigger value="bills">บิล</TabsTrigger>
             <TabsTrigger value="stats">สถิติ</TabsTrigger>
           </TabsList>
 
@@ -290,6 +307,44 @@ export default function CustomerDetailPage({
               <div className="text-center py-8 text-gray-500">
                 ยังไม่มีประวัติการซื้อ
               </div>
+            )}
+          </TabsContent>
+
+          <TabsContent value="bills">
+            {bills.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>เลขบิล</TableHead>
+                    <TableHead>ยอดรวม</TableHead>
+                    <TableHead>สถานะ</TableHead>
+                    <TableHead>วันที่</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {bills.map((b) => {
+                    const total =
+                      b.items.reduce((s, it) => s + it.price * it.quantity, 0) +
+                      b.shipping
+                    return (
+                      <TableRow key={b.id}>
+                        <TableCell>{b.id}</TableCell>
+                        <TableCell>฿{total.toLocaleString()}</TableCell>
+                        <TableCell>
+                          <Badge className={billStatusClass(b.status)}>
+                            {billStatusText(b.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          {new Date(b.createdAt).toLocaleDateString('th-TH')}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-8 text-gray-500">ยังไม่มีบิล</div>
             )}
           </TabsContent>
 
