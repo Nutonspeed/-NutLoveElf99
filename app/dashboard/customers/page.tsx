@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/inputs/input"
 import { Button } from "@/components/ui/buttons/button"
 import EmptyState from "@/components/EmptyState"
 import CustomerCard from "@/components/customers/CustomerCard"
-import { mockCustomers, type Customer } from "@/lib/mock-customers"
+import { mockCustomers, type Customer } from "@/core/mock/customers"
 
 export default function DashboardCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([...mockCustomers])

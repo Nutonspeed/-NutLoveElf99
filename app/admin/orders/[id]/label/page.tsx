@@ -3,7 +3,7 @@ import Link from "next/link"
 import { ArrowLeft, PrinterIcon as Print } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent } from "@/components/ui/cards/card"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 
 export default function AdminOrderLabelPage({ params }: { params: { id: string } }) {
   const order = mockOrders.find((o) => o.id === params.id)

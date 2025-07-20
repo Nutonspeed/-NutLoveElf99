@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { mockProducts } from "@/lib/mock-products"
 
 export default function AdminDashboardBasic() {

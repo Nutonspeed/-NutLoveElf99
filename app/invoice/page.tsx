@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { mockBills } from "@/lib/mock-bills"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 import { loadAutoArchive, autoArchive } from "@/lib/mock-settings"
 import { format } from "date-fns"
 

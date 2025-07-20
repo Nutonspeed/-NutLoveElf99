@@ -1,5 +1,5 @@
 import { mockClaims } from './mock-claims'
-import { mockOrders } from './mock-orders'
+import { mockOrders } from '@/core/mock/orders'
 
 export function getGlobalAlertCount(): number {
   const claimCount = mockClaims.filter(

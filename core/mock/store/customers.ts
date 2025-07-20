@@ -1,8 +1,8 @@
-import type { Customer } from '@/lib/mock-customers'
+import type { Customer } from '@/core/mock/customers'
 import {
   mockCustomers as seedCustomers,
   regenerateMockCustomers,
-} from '@/lib/mock-customers'
+} from '@/core/mock/customers'
 import { loadFromStorage, saveToStorage } from './persist'
 
 const KEY = 'mockStore_customers'

@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer"
-import { mockCustomers } from "./mock-customers"
-import { mockOrders } from "./mock-orders"
-import type { Customer } from "./mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
+import { mockOrders } from "@/core/mock/orders"
+import type { Customer } from "@/core/mock/customers"
 
 function warnMissing(varName: string) {
   if (!process.env[varName]) {

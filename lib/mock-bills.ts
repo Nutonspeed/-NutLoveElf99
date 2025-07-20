@@ -1,6 +1,6 @@
 import type { Bill, BillPayment, BillStatus } from "@/types/bill"
-import { mockOrders } from "./mock-orders"
-import { mockCustomers } from "./mock-customers"
+import { mockOrders } from "@/core/mock/orders"
+import { mockCustomers } from "@/core/mock/customers"
 import { addAdminLog } from "./mock-admin-logs"
 import { addChatMessage } from "./mock-chat-messages"
 import { mockBills } from "./bills"

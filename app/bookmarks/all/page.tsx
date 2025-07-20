@@ -6,7 +6,7 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import { mockBookmarks, Bookmark } from '@/lib/mock-bookmark'
 import { fabrics } from '@/lib/mock-fabrics'
-import { mockOrders } from '@/lib/mock-orders'
+import { mockOrders } from '@/core/mock/orders'
 
 interface BookmarkView {
   href: string

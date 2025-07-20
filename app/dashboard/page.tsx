@@ -3,7 +3,7 @@
 import DashboardQuickCard from '@/components/dashboard/DashboardQuickCard'
 import OrderCard from '@/components/orders/OrderCard'
 import { fabrics } from '@/mock/fabrics'
-import { orders } from '@/mock/orders'
+import { orders } from '@/core/mock/orders'
 import { mockBills } from '@/mock/bills'
 import SectionHeader from '@/components/ui/SectionHeader'
 

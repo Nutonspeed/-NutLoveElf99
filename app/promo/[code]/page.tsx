@@ -3,7 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/buttons/button"
 import { getPromoByCode } from "@/lib/mock-promos"
 import { getMockNow } from "@/lib/mock-date"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
 
 export default function PromoPage({ params }: { params: { code: string } }) {
   const promo = getPromoByCode(params.code)

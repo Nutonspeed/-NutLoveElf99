@@ -3,7 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Badge } from "@/components/ui/badge"
 import { Mail, Phone } from "lucide-react"
-import type { Customer } from "@/lib/mock-customers"
+import type { Customer } from "@/core/mock/customers"
 
 export default function CustomerCard({ customer, className = "" }: { customer: Customer; className?: string }) {
   return (

@@ -26,79 +26,9 @@ export interface PointLog {
   reason?: string
 }
 
-import { mockOrders } from "./mock-orders"
+import { mockCustomers as initialMockCustomers } from "@/core/mock/customers"
+import { mockOrders } from "@/core/mock/orders"
 
-const initialMockCustomers: Customer[] = [
-  {
-    id: "2",
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "081-234-5678",
-    address: "123 ถนนสุขุมวิท",
-    city: "กรุงเทพฯ",
-    postalCode: "10110",
-    avatar: "/placeholder.svg?height=40&width=40",
-    tags: ["ลูกค้าประจำ"],
-    note: "ชอบผ้ากำมะหยี่",
-    points: 120,
-    tier: "Gold",
-    pointHistory: [
-      { timestamp: new Date().toISOString(), change: 120, reason: "สมัครสมาชิก" },
-    ],
-    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "3",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    phone: "082-345-6789",
-    address: "456 ถนนพหลโยธิน",
-    city: "กรุงเทพฯ",
-    postalCode: "10400",
-    avatar: "/placeholder.svg?height=40&width=40",
-    tags: ["COD"],
-    note: "เก็บเงินปลายทาง",
-    points: 60,
-    tier: "Silver",
-    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "4",
-    name: "Mike Johnson",
-    email: "mike@example.com",
-    avatar: "/placeholder.svg?height=40&width=40",
-    points: 200,
-    tier: "VIP",
-    createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "5",
-    name: "Sarah Wilson",
-    email: "sarah@example.com",
-    avatar: "/placeholder.svg?height=40&width=40",
-    points: 10,
-    tier: "Silver",
-    createdAt: new Date(Date.now() - 20 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "6",
-    name: "David Brown",
-    email: "david@example.com",
-    avatar: "/placeholder.svg?height=40&width=40",
-    points: 40,
-    tier: "Gold",
-    createdAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "7",
-    name: "Lisa Anderson",
-    email: "lisa@example.com",
-    avatar: "/placeholder.svg?height=40&width=40",
-    points: 80,
-    tier: "Gold",
-    createdAt: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-]
 
 export let mockCustomers: Customer[] = [...initialMockCustomers]
 

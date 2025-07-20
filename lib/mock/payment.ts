@@ -6,7 +6,7 @@ export interface Payment {
   verified?: boolean
 }
 
-const payments: Payment[] = []
+import { mockPayments as payments } from '@/core/mock/payments'
 
 export function getPayment(orderId: string): Payment | undefined {
   return payments.find(p => p.orderId === orderId)

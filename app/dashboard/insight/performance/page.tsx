@@ -4,8 +4,8 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, 
 import { Input } from "@/components/ui/inputs/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { mockBills } from "@/mock/bills"
-import { mockCustomers } from "@/lib/mock-customers"
-import { orders as mockOrders } from "@/mock/orders"
+import { mockCustomers } from "@/core/mock/customers"
+import { orders as mockOrders } from "@/core/mock/orders"
 import { formatCurrency } from "@/lib/utils"
 
 export default function PerformanceDashboard() {

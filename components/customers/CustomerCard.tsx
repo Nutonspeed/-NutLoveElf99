@@ -2,7 +2,7 @@
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import type { Customer } from "@/lib/mock-customers"
+import type { Customer } from "@/core/mock/customers"
 import { useDemo } from "@/contexts/demo-context"
 
 function statusColor(status: string) {

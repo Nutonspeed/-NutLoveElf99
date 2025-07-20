@@ -1,6 +1,6 @@
 "use client"
-import { mockCustomers } from "@/lib/mock-customers"
-import { orders as mockOrders } from "@/mock/orders"
+import { mockCustomers } from "@/core/mock/customers"
+import { orders as mockOrders } from "@/core/mock/orders"
 import { Button } from "@/components/ui/buttons/button"
 import { useState } from "react"
 import { toast } from "sonner"

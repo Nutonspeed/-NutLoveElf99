@@ -1,5 +1,5 @@
 import QRCode from "react-qr-code"
-import { mockOrders } from "@/lib/mock-orders"
+import { mockOrders } from "@/core/mock/orders"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const order = mockOrders.find(o => o.id === params.id)

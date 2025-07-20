@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Separator } from "@/components/ui/separator"
 import OrderStatusDropdown from "@/components/admin/orders/OrderStatusDropdown"
 import { OrderTimeline, type TimelineEntry } from "@/components/order/OrderTimeline"
-import { mockOrders, setPackingStatus, setOrderStatus } from "@/lib/mock-orders"
+import { mockOrders, setPackingStatus, setOrderStatus } from "@/core/mock/orders"
 import { mockProducts } from "@/lib/mock-products"
 import { useCart } from "@/contexts/cart-context"
 import type { Order } from "@/types/order"
@@ -20,7 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
 import { getBillLink } from "@/lib/mock-quick-bills"
-import { getPayment, verifyPayment } from "@/lib/mock/payment"
+import { getPayment, verifyPayment } from "@/core/mock/payments"
 import { mockChatStatus, loadChatStatus, markChatSent } from "@/lib/mock/chat"
 
 const statusTag = (o: Order) => {

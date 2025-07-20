@@ -2,7 +2,7 @@ import type { Order } from '@/types/order'
 import {
   mockOrders as seedOrders,
   regenerateMockOrders,
-} from '@/lib/mock-orders'
+} from '@/core/mock/orders'
 import { loadFromStorage, saveToStorage } from './persist'
 
 const KEY = 'mockStore_orders'

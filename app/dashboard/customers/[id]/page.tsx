@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Input } from "@/components/ui/inputs/input"
 import { Button } from "@/components/ui/buttons/button"
 import { Textarea } from "@/components/ui/textarea"
-import { mockCustomers, updateCustomer, removeCustomer } from "@/lib/mock-customers"
+import { mockCustomers, updateCustomer, removeCustomer } from "@/core/mock/customers"
 import { toast } from "sonner"
 
 export default function CustomerDetailPage() {

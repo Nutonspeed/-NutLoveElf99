@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
-import type { SimpleOrder } from '@/mock/orders'
+import type { SimpleOrder } from '@/core/mock/orders'
 import InlineStatusBadge from '@/components/ui/InlineStatusBadge'
 
 export default function OrderCard({ order, onCancel }: { order: SimpleOrder; onCancel?: (id: string) => void }) {

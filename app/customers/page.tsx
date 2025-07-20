@@ -1,7 +1,7 @@
 "use client"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { mockCustomers } from "@/lib/mock-customers"
+import { mockCustomers } from "@/core/mock/customers"
 
 export default function CustomersPage() {
   return (

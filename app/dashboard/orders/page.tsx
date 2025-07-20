@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import Link from 'next/link'
-import { orders as mockOrders, type SimpleOrder } from '@/mock/orders'
+import { orders as mockOrders, type SimpleOrder } from '@/core/mock/orders'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/buttons/button'
 import EmptyState from '@/components/EmptyState'
