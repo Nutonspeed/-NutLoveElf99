@@ -19,3 +19,13 @@ Status: in progress
 5. Log all external accesses to bill with timestamp and IP (mock)
 
 Status: planned
+
+## Block 361–365 | Billing Role Permissions & Restrictions | route: /admin/settings/roles
+
+1. Add role-based permissions for billing features (view, edit, delete, export)
+2. Extend existing role system to support bill-level control granularity
+3. Prevent unauthorized access to sensitive actions (e.g. resend, mark paid)
+4. Add UI indicators and disabled states based on permission
+5. Log blocked actions with reason for audit visibility
+
+Status: planned
