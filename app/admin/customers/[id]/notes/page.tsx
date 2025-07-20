@@ -28,7 +28,7 @@ export default function CustomerNotesPage({ params }: { params: { id: string } }
   }
 
   const submit = () => {
-    if (!input || input.length >= 300) return
+    if (!input || input.length >= 300 || !user) return
     addCustomerNote(id, input, user.id)
     setInput('')
     setNotes(listCustomerNotes(id, user.id))
