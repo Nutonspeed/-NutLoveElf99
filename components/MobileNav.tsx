@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Menu, Search } from "lucide-react"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/modals/sheet"
 import { Input } from "@/components/ui/inputs/input"
@@ -10,6 +11,7 @@ import { useAuth } from "@/contexts/auth-context"
 export default function MobileNav() {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState("")
+  const router = useRouter()
   const { isAuthenticated, user, logout } = useAuth()
   const navigation = [
     { name: "หน้าแรก", href: "/" },
@@ -36,7 +38,13 @@ export default function MobileNav() {
           </div>
         </SheetContent>
       </Sheet>
-      <form onSubmit={(e) => { e.preventDefault(); if (search) window.location.href=`/search?q=${search}` }} className="flex-1 mx-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (search) router.push(`/search?q=${encodeURIComponent(search)}`)
+        }}
+        className="flex-1 mx-4"
+      >
         <div className="relative">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
