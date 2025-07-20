@@ -2,7 +2,7 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { orderStatusOptions, type OrderStatus } from "@/types/order"
+import { orderStatusOptions, type OrderStatus } from "@/types/order-status"
 import {
   getOrderStatusBadgeVariant,
   getOrderStatusText,

@@ -1,4 +1,5 @@
-import type { OrderStatus, ShippingStatus, Order, PackingStatus } from "@/types/order"
+import type { ShippingStatus, Order } from "@/types/order"
+import type { OrderStatus, PackingStatus } from "@/types/order-status"
 
 import { supabase } from "./supabase"
 import { addChatMessage } from "./mock-chat-messages"
@@ -7,7 +8,9 @@ import { addAdminLog } from "./mock-admin-logs"
 const initialMockOrders: Order[] = [
   {
     id: "ORD-001",
+    orderNumber: "ORD-001",
     customerId: "2",
+    customerInfo: { id: "2", name: "John Doe", email: "john@example.com" },
     customerName: "John Doe",
     customerEmail: "john@example.com",
     items: [
@@ -21,6 +24,7 @@ const initialMockOrders: Order[] = [
       },
     ],
     total: 2990,
+    totalAmount: 2990,
     status: "depositPaid",
     depositPercent: 50,
     note: "Deposit received",
@@ -60,7 +64,9 @@ const initialMockOrders: Order[] = [
   },
   {
     id: "ORD-002",
+    orderNumber: "ORD-002",
     customerId: "3",
+    customerInfo: { id: "3", name: "Jane Smith", email: "jane@example.com" },
     customerName: "Jane Smith",
     customerEmail: "jane@example.com",
     items: [
@@ -74,6 +80,7 @@ const initialMockOrders: Order[] = [
       },
     ],
     total: 3980,
+    totalAmount: 3980,
     status: "paid",
     depositPercent: 100,
     chatNote: "",

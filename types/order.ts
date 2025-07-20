@@ -12,23 +12,12 @@ export interface OrderItem {
   image?: string
 }
 
-export type OrderStatus =
-  | "draft"
-  | "pending"
-  | "confirmed"
-  | "processing"
-  | "producing"
-  | "done"
-  | "packed"
-  | "shipped"
-  | "delivered"
-  | "cancelled"
-  | "pendingPayment"
-  | "depositPaid"
-  | "paid"
-  | "completed"
-  | "archived"
-
+import type { OrderStatus, PackingStatus } from './order-status'
+import { orderStatusOptions, packingStatusOptions } from './order-status'
+import type { Address } from './address'
+import type { CustomerInfo } from './customer-info'
+import type { Payment } from './payment'
+export type { OrderStatus, PackingStatus } from './order-status'
 export type ShippingStatus = "pending" | "shipped" | "delivered"
 
 export const shippingStatusOptions: { value: ShippingStatus; label: string }[] = [
@@ -37,58 +26,23 @@ export const shippingStatusOptions: { value: ShippingStatus; label: string }[] =
   { value: "delivered", label: "ส่งมอบแล้ว" },
 ]
 
-export type PackingStatus = "packing" | "done" | "ready"
-
-export const packingStatusOptions: { value: PackingStatus; label: string }[] = [
-  { value: "packing", label: "กำลังแพ็ก" },
-  { value: "done", label: "แพ็กเสร็จ" },
-  { value: "ready", label: "พร้อมส่ง" },
-]
-
-export const orderStatusOptions: { value: OrderStatus; label: string }[] = [
-  { value: "draft", label: "ร่าง" },
-  { value: "pending", label: "รอยืนยัน" },
-  { value: "confirmed", label: "ยืนยันแล้ว" },
-  { value: "processing", label: "กำลังดำเนินการ" },
-  { value: "producing", label: "กำลังผลิต" },
-  { value: "done", label: "ผลิตเสร็จแล้ว" },
-  { value: "packed", label: "แพ็กของแล้ว" },
-  { value: "shipped", label: "จัดส่งแล้ว" },
-  { value: "delivered", label: "ส่งมอบแล้ว" },
-  { value: "cancelled", label: "ยกเลิก" },
-  { value: "pendingPayment", label: "รอชำระเงิน" },
-  { value: "depositPaid", label: "มัดจำแล้ว" },
-  { value: "paid", label: "ชำระแล้ว" },
-  { value: "completed", label: "เสร็จสิ้น" },
-  { value: "archived", label: "เก็บถาวร" },
-]
-
 export interface Order {
   id: string
+  orderNumber: string
   customerId: string
+  customerInfo: CustomerInfo
   customerName: string
   customerEmail: string
-  items: Array<{
-    productId: string
-    productName: string
-    quantity: number
-    price: number
-    size?: string
-    color?: string
-  }>
+  items: OrderItem[]
   total: number
+  /** duplicate of total for new structure */
+  totalAmount?: number
   status: OrderStatus
   depositPercent?: number
   note?: string
   chatNote?: string
   createdAt: string
-  shippingAddress: {
-    name: string
-    address: string
-    city: string
-    postalCode: string
-    phone: string
-  }
+  shippingAddress: Address
   delivery_method: string
   tracking_number: string
   shipping_fee: number
@@ -133,13 +87,7 @@ export interface ManualOrder {
   total: number
   status: OrderStatus
   paymentStatus: "unpaid" | "partial" | "paid" | "refunded"
-  payments?: Array<{
-    id: string
-    date: string
-    amount: number
-    bank: string
-    confirmed?: boolean
-  }>
+  payments?: Payment[]
   notes?: string
   attachments: string[]
   publicLink: string
