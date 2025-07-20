@@ -19,3 +19,13 @@ Status: in progress
 5. Log all external accesses to bill with timestamp and IP (mock)
 
 Status: planned
+
+## Block 376–380 | Billing Performance Reports & Export | route: /admin/reports/billing
+
+1. Create /admin/reports/billing page to show billing performance summary
+2. Add chart widgets: total billed, paid rate, avg time to pay
+3. Enable filter by tag, customer group, or time range
+4. Export report as PDF or CSV
+5. Auto-generate monthly reports with mock scheduler
+
+Status: planned
