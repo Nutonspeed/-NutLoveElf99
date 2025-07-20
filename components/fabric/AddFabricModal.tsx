@@ -4,7 +4,7 @@ import ModalWrapper from '@/components/ui/ModalWrapper'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
 import type { Fabric } from '@/mock/fabrics'
-import { addFabric } from '@/mock/fabrics'
+import { addFabric } from '@/core/mock/store'
 
 export default function AddFabricModal({
   open,

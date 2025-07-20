@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import { fabrics, updateFabric } from '@/mock/fabrics'
+import { getFabrics, updateFabric } from '@/core/mock/store'
 import { collections } from '@/mock/collections'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/inputs/input'
 export default function EditFabricPage() {
   const params = useParams<{ id: string }>()
   const router = useRouter()
-  const fabric = fabrics.find(f => f.id === params.id)
+  const fabric = getFabrics().find(f => f.id === params.id)
   const [name, setName] = useState(fabric?.name || '')
   const [imageUrl, setImageUrl] = useState(fabric?.imageUrl || '')
   const [collectionId, setCollectionId] = useState(fabric?.collectionId || '')

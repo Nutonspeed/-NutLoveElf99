@@ -1,25 +1,24 @@
 "use client"
 import { useMemo, useState } from "react"
 import SalesChart from "@/components/dashboard/SalesChart"
-import { orders as ordersMock } from "@/mock/orders"
-import { mockBills as billsMock } from "@/mock/bills"
+import { getSimpleOrders, getBills } from "@/core/mock/store"
 import { formatCurrency } from "@/lib/utils"
 
 export default function DashboardAnalyticsPage() {
   const [range, setRange] = useState(7)
-  const paidOrders = ordersMock.filter(o => o.status === "paid").length
-  const totalOrders = ordersMock.length
+  const paidOrders = getSimpleOrders().filter(o => o.status === "paid").length
+  const totalOrders = getSimpleOrders().length
 
   const salesToday = useMemo(() => {
     const today = new Date().toISOString().slice(0, 10)
-    return billsMock
+    return getBills()
       .filter(b => b.status === "paid" && b.createdAt.slice(0, 10) === today)
       .reduce((s, b) => s + b.items.reduce((n, i) => n + i.price * i.quantity, 0) + b.shipping, 0)
   }, [])
 
   const salesMonth = useMemo(() => {
     const month = new Date().toISOString().slice(0, 7)
-    return billsMock
+    return getBills()
       .filter(b => b.status === "paid" && b.createdAt.slice(0, 7) === month)
       .reduce((s, b) => s + b.items.reduce((n, i) => n + i.price * i.quantity, 0) + b.shipping, 0)
   }, [])
@@ -31,7 +30,7 @@ export default function DashboardAnalyticsPage() {
     const days: { date: string; total: number }[] = []
     for (let d = new Date(start); d <= now; d.setDate(d.getDate() + 1)) {
       const dateStr = d.toISOString().slice(5, 10)
-      const total = billsMock
+      const total = getBills()
         .filter(b => b.status === "paid" && b.createdAt.slice(0, 10) === d.toISOString().slice(0, 10))
         .reduce((s, b) => s + b.items.reduce((n, i) => n + i.price * i.quantity, 0) + b.shipping, 0)
       days.push({ date: dateStr, total })
@@ -39,7 +38,7 @@ export default function DashboardAnalyticsPage() {
     return days
   }, [range])
 
-  if (ordersMock.length === 0 && billsMock.length === 0) {
+  if (getSimpleOrders().length === 0 && getBills().length === 0) {
     return (
       <div className="container mx-auto py-8">
         <p className="text-center text-muted-foreground">ไม่มีข้อมูลในช่วงเวลานี้</p>

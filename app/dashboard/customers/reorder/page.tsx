@@ -1,6 +1,6 @@
 "use client"
 import { mockCustomers } from "@/lib/mock-customers"
-import { orders as mockOrders } from "@/mock/orders"
+import { getSimpleOrders } from "@/core/mock/store"
 import { Button } from "@/components/ui/buttons/button"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -8,7 +8,7 @@ import { toast } from "sonner"
 export default function ReorderCustomersPage() {
   const [customers, setCustomers] = useState([...mockCustomers])
   const ordersByCustomer: Record<string, number> = {}
-  mockOrders.forEach(o => {
+  getSimpleOrders().forEach(o => {
     ordersByCustomer[o.customer] = (ordersByCustomer[o.customer] || 0) + 1
   })
   const handleSuggest = (name: string) => {

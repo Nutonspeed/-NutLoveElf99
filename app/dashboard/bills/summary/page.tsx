@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import { mockBills, type AdminBill } from "@/mock/bills"
+import { getBills, type AdminBill } from "@/core/mock/store"
 import { Button } from "@/components/ui/buttons/button"
 import { Input } from "@/components/ui/inputs/input"
 import EmptyState from "@/components/EmptyState"
@@ -10,7 +10,7 @@ export default function BillSummaryPage() {
   const [status, setStatus] = useState("all")
   const [sort, setSort] = useState("newest")
 
-  const filtered = mockBills.filter(b => status === "all" || b.status === status)
+  const filtered = getBills().filter(b => status === "all" || b.status === status)
 
   const sorted = [...filtered].sort((a,b)=>{
     if (sort === "high") return getTotal(b) - getTotal(a)
@@ -19,8 +19,8 @@ export default function BillSummaryPage() {
     return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   })
 
-  const totalPaid = mockBills.filter(b=>b.status === "paid").length
-  const totalUnpaid = mockBills.filter(b=>b.status !== "paid").length
+  const totalPaid = getBills().filter(b=>b.status === "paid").length
+  const totalUnpaid = getBills().filter(b=>b.status !== "paid").length
 
   return (
     <div className="container mx-auto space-y-4 py-8">
@@ -39,7 +39,7 @@ export default function BillSummaryPage() {
           <option value="high">High Total</option>
           <option value="low">Low Total</option>
         </select>
-        <Button onClick={()=>downloadCSV(mockBills, 'bills.csv')}>Export CSV</Button>
+        <Button onClick={()=>downloadCSV(getBills(), 'bills.csv')}>Export CSV</Button>
       </div>
       <div className="text-sm text-muted-foreground">ชำระแล้ว {totalPaid} | ค้าง {totalUnpaid}</div>
       {sorted.length > 0 ? (

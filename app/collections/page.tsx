@@ -5,14 +5,14 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import Image from "next/image"
 import type { Fabric } from "@/mock/fabrics"
-import { fabrics as mockFabrics } from "@/mock/fabrics"
+import { getFabrics } from "@/core/mock/store"
 
 
 export default function CollectionsPage() {
   const [items, setItems] = useState<Fabric[]>([])
 
   useEffect(() => {
-    setItems([...mockFabrics])
+    setItems([...getFabrics()])
   }, [])
 
   const grouped = items.reduce<Record<string, Fabric[]>>((acc, fabric) => {

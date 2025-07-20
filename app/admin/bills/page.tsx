@@ -12,11 +12,11 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { AdminBill, BillItem } from '@/mock/bills'
-import { mockBills, addBill, updateBillStatus, updateBill } from '@/mock/bills'
+import { getBills, addBill, updateBillStatus, updateBill } from '@/core/mock/store'
 import { toast } from 'sonner'
 
 export default function AdminBillsPage() {
-  const [bills, setBills] = useState<AdminBill[]>([...mockBills])
+  const [bills, setBills] = useState<AdminBill[]>([...getBills()])
   const [open, setOpen] = useState(false)
   const [customer, setCustomer] = useState('')
   const [items, setItems] = useState<BillItem[]>([])
@@ -222,7 +222,7 @@ export default function AdminBillsPage() {
                         value={b.status}
                         onValueChange={(v) => {
                           updateBillStatus(b.id, v as AdminBill['status'])
-                          setBills([...mockBills])
+                          setBills([...getBills()])
                         }}
                       >
                         <SelectTrigger className="w-28">
@@ -387,7 +387,7 @@ export default function AdminBillsPage() {
               onClick={() => {
                 if (edit && editData) {
                   updateBill(edit, editData)
-                  setBills([...mockBills])
+                  setBills([...getBills()])
                   toast.success('บันทึกแล้ว (mock)')
                 }
                 setEdit(null)

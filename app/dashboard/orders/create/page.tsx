@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { orders as mockOrders } from '@/mock/orders'
+import { getSimpleOrders, addSimpleOrder } from '@/core/mock/store'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -21,8 +21,8 @@ export default function CreateOrderPage() {
       setError('กรุณากรอกข้อมูลที่จำเป็น')
       return
     }
-    mockOrders.unshift({
-      id: `ORD-${String(mockOrders.length + 1).padStart(3, '0')}`,
+    addSimpleOrder({
+      id: `ORD-${String(getSimpleOrders().length + 1).padStart(3, '0')}`,
       customer,
       status: 'pendingPayment',
       total: Math.max(0, 1000 - discount),

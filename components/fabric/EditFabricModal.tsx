@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
 import ModalWrapper from '@/components/ui/ModalWrapper'
 import type { Fabric } from '@/mock/fabrics'
-import { updateFabric } from '@/mock/fabrics'
+import { updateFabric } from '@/core/mock/store'
 
 interface Props {
   fabric: Fabric
