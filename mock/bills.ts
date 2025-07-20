@@ -14,6 +14,7 @@ export interface AdminBill {
   note: string
   status: 'pending' | 'unpaid' | 'paid' | 'cancelled'
   createdAt: string
+  archived?: boolean
 }
 
 export const mockBills: AdminBill[] = [
@@ -28,6 +29,7 @@ export const mockBills: AdminBill[] = [
     note: '',
     status: 'pending',
     createdAt: new Date().toISOString(),
+    archived: false,
   },
 ]
 
@@ -37,6 +39,7 @@ export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): A
     status: 'unpaid',
     createdAt: new Date().toISOString(),
     ...data,
+    archived: false,
   }
   mockBills.unshift(bill)
   return bill
@@ -45,6 +48,20 @@ export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): A
 export function updateBillStatus(id: string, status: AdminBill['status']) {
   const bill = mockBills.find((b) => b.id === id)
   if (bill) bill.status = status
+}
+
+export function archiveBill(id: string) {
+  const bill = mockBills.find((b) => b.id === id)
+  if (bill) bill.archived = true
+}
+
+export function restoreBill(id: string) {
+  const bill = mockBills.find((b) => b.id === id)
+  if (bill) bill.archived = false
+}
+
+export function getArchivedBills() {
+  return mockBills.filter((b) => b.archived)
 }
 
 export function getBill(id: string): AdminBill | undefined {
