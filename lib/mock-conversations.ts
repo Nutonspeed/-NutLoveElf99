@@ -65,3 +65,13 @@ export function setRating(id: string, rating: number) {
     save()
   }
 }
+
+export let activeConversationId: string | null = null
+
+export function setActiveConversation(id: string) {
+  activeConversationId = id
+}
+
+export function getActiveConversation(): string | null {
+  return activeConversationId
+}

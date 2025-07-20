@@ -35,3 +35,15 @@ export function getLatestChatMessage(conversationId: string): ChatMessageEntry |
   return msgs[msgs.length - 1]
 }
 
+export function addCustomChatMessage(conversationId: string, text: string): ChatMessageEntry {
+  const msg: ChatMessageEntry = {
+    id: Date.now().toString(),
+    conversationId,
+    templateId: 'custom',
+    text,
+    createdAt: new Date().toISOString(),
+  }
+  if (!chatMessages[conversationId]) chatMessages[conversationId] = []
+  chatMessages[conversationId].push(msg)
+  return msg
+}
