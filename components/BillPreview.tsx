@@ -64,6 +64,7 @@ export default function BillPreview({ order }: BillPreviewProps) {
             <p>
               {order.shippingAddress.city} {order.shippingAddress.postalCode}
             </p>
+            <p>วิธีจัดส่ง: {order.delivery_method || '-'}</p>
           </div>
         </div>
       </div>
@@ -113,7 +114,7 @@ export default function BillPreview({ order }: BillPreviewProps) {
               <span>฿{tax.toLocaleString()}</span>
             </div>
             <div className="flex justify-between">
-              <span>ค่าจัดส่ง:</span>
+              <span>ค่าจัดส่ง ({order.delivery_method || '-'}):</span>
               <span>฿{order.shipping_fee.toLocaleString()}</span>
             </div>
             {depositPercent < 100 && (

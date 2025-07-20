@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { useToast } from "@/hooks/use-toast"
 import { addOrder } from "@/core/mock/store"
 import type { OrderStatus, ShippingStatus } from "@/types/order"
+import { getShippingMethods, type ShippingMethod } from "@/mock/shippingMethods"
 import { db } from "@/lib/database"
 import { SuggestedExtras } from "@/components/SuggestedExtras"
 
@@ -57,7 +58,10 @@ export default function CheckoutPage() {
   const [checklist, setChecklist] = useState({ confirmSize: false, confirmColor: false })
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const shipping = state.total >= 1500 ? 0 : 100
+  const shippingMethods = getShippingMethods()
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>(shippingMethods[0])
+
+  const shipping = state.total >= 1500 ? 0 : shippingMethod.fee
   const tax = Math.round(state.total * 0.07)
   const discountAmount = appliedCoupon
     ? appliedCoupon.type === "percentage"
@@ -136,7 +140,7 @@ export default function CheckoutPage() {
           postalCode: shippingInfo.postalCode,
           phone: shippingInfo.phone,
         },
-        delivery_method: "",
+        delivery_method: shippingMethod.name,
         tracking_number: "",
         shipping_fee: shipping,
         shipping_status: "pending" as ShippingStatus,
@@ -306,6 +310,27 @@ export default function CheckoutPage() {
                     onChange={(e) => setDeliveryDate(e.target.value)}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shippingMethod">วิธีจัดส่ง</Label>
+                  <Select
+                    value={shippingMethod.id}
+                    onValueChange={(v) => {
+                      const m = shippingMethods.find((m) => m.id === v)
+                      if (m) setShippingMethod(m)
+                    }}
+                  >
+                    <SelectTrigger id="shippingMethod">
+                      <SelectValue placeholder="เลือกวิธีจัดส่ง" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {shippingMethods.map((m) => (
+                        <SelectItem key={m.id} value={m.id}>
+                          {m.name} {m.fee === 0 ? '(ฟรี)' : `(+฿${m.fee})`}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </CardContent>
             </Card>
 
@@ -437,7 +462,7 @@ export default function CheckoutPage() {
                       <span>฿{state.total.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>ค่าจัดส่ง</span>
+                      <span>ค่าจัดส่ง ({shippingMethod.name})</span>
                       <span>{shipping === 0 ? "ฟรี" : `฿${shipping}`}</span>
                     </div>
                     <div className="flex justify-between">
