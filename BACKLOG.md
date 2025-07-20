@@ -8,4 +8,4 @@
 4. Trigger webhook/LINE when bill is auto-created (mock only)
 5. Add automation log UI with timestamp, status, rule name
 
-Status: planned
+Status: in progress
