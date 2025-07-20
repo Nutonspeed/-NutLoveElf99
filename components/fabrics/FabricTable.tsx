@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import { Search } from "lucide-react"
+import { Input } from "@/components/ui/inputs/input"
 import {
   Table,
   TableHeader,
@@ -27,12 +29,28 @@ interface FabricTableProps {
 export default function FabricTable({ items }: FabricTableProps) {
   const [status, setStatus] = useState<"all" | "active" | "archived">("all")
   const [selected, setSelected] = useState<AdminFabric | null>(null)
+  const [query, setQuery] = useState("")
 
-  const filtered = items.filter((f) => status === "all" || f.status === status)
+  const filtered = items
+    .filter((f) => status === "all" || f.status === status)
+    .filter(
+      (f) =>
+        f.name.toLowerCase().includes(query.toLowerCase()) ||
+        f.code.toLowerCase().includes(query.toLowerCase()),
+    )
 
   return (
     <>
-      <div className="flex justify-end pb-4">
+      <div className="flex items-center justify-between pb-4">
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search fabrics..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="pl-8 w-64"
+          />
+        </div>
         <Select value={status} onValueChange={(v) => setStatus(v as any)}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Status" />
