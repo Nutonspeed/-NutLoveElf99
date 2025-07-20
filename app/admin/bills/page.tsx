@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import BillItemActions from '@/components/admin/BillItemActions'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
 import { toast } from 'sonner'
@@ -272,14 +273,10 @@ export default function AdminBillsPage() {
                       </Select>
                     </TableCell>
                     <TableCell>{new Date(b.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell className="space-x-2">
-                      <Link href={`/bill/${b.id}`} className="underline text-sm">
-                        ดูบิล
-                      </Link>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
+                    <TableCell>
+                      <BillItemActions
+                        bill={b}
+                        onEdit={() => {
                           setEdit(b.id)
                           setEditData({
                             customer: b.customer,
@@ -288,9 +285,7 @@ export default function AdminBillsPage() {
                             note: b.note,
                           })
                         }}
-                      >
-                        แก้ไข
-                      </Button>
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
