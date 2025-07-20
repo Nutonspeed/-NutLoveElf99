@@ -9,3 +9,13 @@
 5. Add automation log UI with timestamp, status, rule name
 
 Status: in progress
+
+## Block 346–350 | Bill Access Control & Share Permissions | route: /admin/bill/:id/share
+
+1. Add /admin/bill/:id/share page to manage bill sharing permissions
+2. Generate secure, token-based public link (mock logic)
+3. Add option to set link expiration or access count limit
+4. Toggle allow-download / view-only access per bill
+5. Log all external accesses to bill with timestamp and IP (mock)
+
+Status: planned
