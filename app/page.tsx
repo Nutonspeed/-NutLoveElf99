@@ -11,6 +11,7 @@ import { HeroBannerSection } from "@/components/HeroBannerSection"
 import { mockProducts } from "@/lib/mock-products"
 import { getCollections } from "@/lib/mock-collections"
 import type { Collection } from "@/types/collection"
+import { RecentProductsSection } from "@/components/RecentProductsSection"
 
 export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)
@@ -216,6 +217,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <RecentProductsSection />
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">

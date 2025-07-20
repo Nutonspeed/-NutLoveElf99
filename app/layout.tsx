@@ -11,6 +11,7 @@ import { WishlistProvider } from "@/contexts/wishlist-context"
 import { CompareProvider } from "@/contexts/compare-context"
 import { ReviewImagesProvider } from "@/contexts/review-images-context"
 import { FavoritesProvider } from "@/contexts/favorites-context"
+import { RecentProductsProvider } from "@/contexts/recent-products-context"
 import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
 import { validateMockData } from "@/lib/mock-validator"
 import RedirectMobileHome from "@/components/RedirectMobileHome"
@@ -41,19 +42,21 @@ export default function RootLayout({
             <AuthProvider>
               <CartProvider>
                 <WishlistProvider>
-                  <CompareProvider>
-                    <FavoritesProvider>
-                      <AdminProductGroupsProvider>
-                        <ReviewImagesProvider>
+                  <RecentProductsProvider>
+                    <CompareProvider>
+                      <FavoritesProvider>
+                        <AdminProductGroupsProvider>
+                          <ReviewImagesProvider>
                           <RedirectMobileHome />
                           {children}
                           <StoreBottomNav />
                           <DevBar />
                           <Toaster />
-                        </ReviewImagesProvider>
-                      </AdminProductGroupsProvider>
-                    </FavoritesProvider>
-                  </CompareProvider>
+                          </ReviewImagesProvider>
+                        </AdminProductGroupsProvider>
+                      </FavoritesProvider>
+                    </CompareProvider>
+                  </RecentProductsProvider>
                 </WishlistProvider>
               </CartProvider>
             </AuthProvider>

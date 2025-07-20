@@ -22,6 +22,7 @@ import { useAuth } from "@/contexts/auth-context"
 import type { ShippingStatus } from "@/types/order"
 import { loadSocialLinks, socialLinks } from "@/lib/mock-settings"
 import { RecommendedAddons } from "@/components/RecommendedAddons"
+import { useRecentProducts } from "@/contexts/recent-products-context"
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
   const { slug } = params
@@ -40,11 +41,16 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     (img) => img.productId === product?.id && img.active,
   )
   const [zoomImg, setZoomImg] = useState<string | null>(null)
+  const { addRecent } = useRecentProducts()
 
   useEffect(() => {
     loadSocialLinks()
     setLinks(socialLinks)
   }, [])
+
+  useEffect(() => {
+    addRecent(slug)
+  }, [addRecent, slug])
 
   if (!product) {
     return (
