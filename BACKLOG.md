@@ -29,3 +29,13 @@ Status: planned
 5. Auto-generate monthly reports with mock scheduler
 
 Status: planned
+
+## Block 386–390 | Billing Archive System & Clean-up Policy | route: /admin/billing/archive
+
+1. Add /admin/billing/archive to manage archived/expired bills
+2. Allow admin to manually archive or restore bills
+3. Auto-archive unpaid bills older than X days (configurable)
+4. Add cleanup policy UI: how long to retain audit/log data
+5. Show archive status clearly in bill list and detail view
+
+Status: planned
