@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
@@ -10,6 +10,7 @@ import BillPreview from "@/components/BillPreview"
 import { OrderTimeline } from "@/components/order/OrderTimeline"
 import { mockOrders } from "@/lib/mock-orders"
 import { getBill, addBillPayment } from "@/lib/mock-bills"
+import { logBillAction } from "@/lib/mock-bill-audit"
 import { getBill as getAdminBill } from "@/mock/bills"
 import { getQuickBill, getBillLink } from "@/lib/mock-quick-bills"
 import { billSecurity } from "@/lib/mock-settings"
@@ -29,6 +30,16 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+
+  useEffect(() => {
+    if (bill) {
+      logBillAction(bill.id, 'view', {
+        ip: '127.0.0.1',
+        device: 'browser',
+        role: 'user',
+      })
+    }
+  }, [bill])
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
