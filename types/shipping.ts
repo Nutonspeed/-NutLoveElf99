@@ -10,3 +10,5 @@ export const deliveryStatusLabel: Record<DeliveryStatus, string> = {
   shipping: 'กำลังจัดส่ง',
   delivered: 'ถึงแล้ว',
 }
+
+export type ShippingProvider = 'Kerry' | 'Flash' | 'ปณ.'

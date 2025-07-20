@@ -147,6 +147,25 @@ export function setOrderStatus(orderId: string, status: OrderStatus) {
   }
 }
 
+export function setOrderShippingInfo(
+  orderId: string,
+  tracking: string,
+  provider: string,
+  status?: ShippingStatus,
+) {
+  const order = mockOrders.find((o) => o.id === orderId)
+  if (!order) return
+  order.tracking_number = tracking
+  order.delivery_method = provider
+  if (status) {
+    order.shipping_status = status
+    order.shipping_date = new Date().toISOString()
+  } else if (tracking && order.shipping_status === 'pending') {
+    order.shipping_status = 'shipped'
+    order.shipping_date = new Date().toISOString()
+  }
+}
+
 export async function fetchOrders(): Promise<Order[]> {
   if (!supabase) {
     return Promise.resolve(mockOrders)

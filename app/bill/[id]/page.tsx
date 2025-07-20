@@ -3,7 +3,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download, PrinterIcon as Print, Copy } from "lucide-react"
 import { Button } from "@/components/ui/buttons/button"
-import { Card, CardContent } from "@/components/ui/cards/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Input } from "@/components/ui/inputs/input"
 import { Label } from "@/components/ui/label"
 import BillPreview from "@/components/BillPreview"
@@ -203,6 +203,16 @@ export default function BillPage({ params }: { params: { id: string } }) {
             <div className="flex justify-center">
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
             </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>สถานะการจัดส่ง</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <p>ผู้ให้บริการ: {order.delivery_method || '-'}</p>
+                <p>เลขติดตามพัสดุ: {order.tracking_number || '-'}</p>
+                <p>สถานะ: {order.shipping_status}</p>
+              </CardContent>
+            </Card>
             <OrderTimeline timeline={order.timeline} />
             <div className="space-y-2">
               <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
