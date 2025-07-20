@@ -7,12 +7,14 @@ import { fabrics } from "@/mock/fabrics"
 import { orders } from "@/mock/orders"
 import { mockBills } from "@/mock/bills"
 import { mockCustomers } from "@/lib/mock-customers"
+import { billNotifySettings, setBillNotifySettings, validateBillNotifySettings } from "@/lib/mock-bill-notify"
 
 const defaults = {
   fabrics,
   orders,
   bills: mockBills,
   customers: mockCustomers,
+  billNotifySettings,
 } as const
 
 export default function MockEditorPage() {
@@ -27,8 +29,16 @@ export default function MockEditorPage() {
   const handleSave = () => {
     try {
       const parsed = JSON.parse(data[tab])
-      ;(defaults as any)[tab].length = 0
-      ;(defaults as any)[tab].push(...parsed)
+      if (tab === 'billNotifySettings') {
+        if (!validateBillNotifySettings(parsed)) {
+          setError('Invalid BillNotifySettings structure')
+          return
+        }
+        setBillNotifySettings(parsed)
+      } else {
+        ;(defaults as any)[tab].length = 0
+        ;(defaults as any)[tab].push(...parsed)
+      }
       setError('')
       alert('saved')
     } catch (e) {
