@@ -9,3 +9,13 @@
 5. Add automation log UI with timestamp, status, rule name
 
 Status: in progress
+
+## Block 326–330 | PDF Template & Branding Config | route: /admin/print/templates
+
+1. Create /admin/print/templates for managing printable template presets
+2. Allow editing header, footer, logo, watermark, and signature image
+3. Support multiple template types: invoice, tax invoice, shipping label
+4. Add live preview of PDF with mock data before saving
+5. Save template config to mockStore and apply when generating documents
+
+Status: planned
