@@ -19,6 +19,7 @@ export default function AdminBillCreatePage() {
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
@@ -56,8 +57,14 @@ export default function AdminBillCreatePage() {
 
   const copyLink = () => {
     if (billLink) {
-      navigator.clipboard.writeText(window.location.origin + billLink)
-      toast.success("คัดลอกลิงก์แล้ว")
+      navigator.clipboard
+        .writeText(window.location.origin + billLink)
+        .then(() => {
+          setCopied(true)
+          toast.success("คัดลอกลิงก์แล้ว")
+          setTimeout(() => setCopied(false), 1000)
+        })
+        .catch(() => toast.error("ไม่สามารถคัดลอกลิงก์ได้"))
     }
   }
 
@@ -102,7 +109,11 @@ export default function AdminBillCreatePage() {
                       src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${window.location.origin + billLink}`}
                       alt="QR"
                     />
-                    <Button variant="outline" className="w-full" onClick={copyLink}>
+                    <Button
+                      variant="outline"
+                      className={`w-full ${copied ? 'animate-pulse' : ''}`}
+                      onClick={copyLink}
+                    >
                       คัดลอกลิงก์บิล
                     </Button>
                   </div>

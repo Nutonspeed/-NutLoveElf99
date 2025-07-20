@@ -17,6 +17,7 @@ import ErrorBoundary from "@/components/ErrorBoundary"
 import EmptyState from "@/components/EmptyState"
 import { Badge } from "@/components/ui/badge"
 import { getMockNow } from "@/lib/mock-date"
+import { toast } from "sonner"
 
 export default function BillPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -29,6 +30,8 @@ export default function BillPage({ params }: { params: { id: string } }) {
   const [amount, setAmount] = useState("")
   const [slip, setSlip] = useState<File | null>(null)
   const [reason, setReason] = useState(bill?.abandonReason || "")
+  const [uploaded, setUploaded] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   if (simpleBill) {
     const sum = simpleBill.items.reduce(
@@ -86,7 +89,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
       setTimeout(() => window.location.replace('/chat'), 3000)
     }
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center animate-in fade-in slide-in-from-bottom-2">
         <div className="text-center space-y-4">
           <p>ไม่พบข้อมูลบิล อาจถูกลบหรือหมดอายุ</p>
           <Link href="/chat" className="text-primary underline">
@@ -109,7 +112,16 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   const handleCopy = () => {
     if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href)
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(() => {
+          setCopied(true)
+          toast.success("คัดลอกลิงก์แล้ว")
+          setTimeout(() => setCopied(false), 1000)
+        })
+        .catch(() => {
+          toast.error("คัดลอกลิงก์ไม่สำเร็จ")
+        })
     }
   }
 
@@ -117,7 +129,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
     if (code === billSecurity.phone || code === billSecurity.pin) {
       setAccess(true)
     } else {
-      alert("ข้อมูลไม่ถูกต้อง")
+      toast.error("ข้อมูลไม่ถูกต้อง")
     }
   }
 
@@ -130,12 +142,13 @@ export default function BillPage({ params }: { params: { id: string } }) {
     })
     setAmount("")
     setSlip(null)
-    alert("ส่งข้อมูลแล้ว")
+    setUploaded(true)
+    toast.success("ส่งข้อมูลแล้ว")
   }
 
   if (!access) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center animate-in fade-in slide-in-from-bottom-2">
         <div className="space-y-4">
           <div>
             <Label htmlFor="code">เบอร์โทรหรือ PIN</Label>
@@ -149,7 +162,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   if (quickBill && !bill) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center space-y-4 animate-in fade-in slide-in-from-bottom-2">
         <h1 className="text-2xl font-bold">บิล {quickBill.id}</h1>
         <p>{quickBill.customerName}</p>
         <img src="/placeholder.svg" alt="QR" className="w-40 h-40" />
@@ -164,7 +177,7 @@ export default function BillPage({ params }: { params: { id: string } }) {
 
   return (
     <ErrorBoundary>
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 animate-in fade-in slide-in-from-bottom-2">
       <div className="print:hidden bg-white border-b px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -181,7 +194,11 @@ export default function BillPage({ params }: { params: { id: string } }) {
               <Print className="mr-2 h-4 w-4" />
               พิมพ์
             </Button>
-            <Button variant="outline" onClick={handleCopy}>
+            <Button
+              variant="outline"
+              onClick={handleCopy}
+              className={copied ? "animate-pulse" : ""}
+            >
               <Copy className="mr-2 h-4 w-4" />
               คัดลอกลิงก์
             </Button>
@@ -209,6 +226,9 @@ export default function BillPage({ params }: { params: { id: string } }) {
               <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
               <Input type="file" onChange={(e) => setSlip(e.target.files?.[0] ?? null)} />
               <Button onClick={handleSendSlip}>ส่งหลักฐานโอน</Button>
+              {uploaded && (
+                <p className="text-green-600 text-sm">ส่งสลิปเรียบร้อย</p>
+              )}
               {expired && !reason && (
                 <Button
                   variant="outline"

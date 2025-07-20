@@ -1,9 +1,25 @@
 import { useState } from "react"
 import { logEvent } from "@/lib/logs"
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/modals/dialog"
+import { Button } from "@/components/ui/buttons/button"
+import { toast } from "sonner"
 
 export function SendToChatModal({ orderId, onClose }: { orderId: string; onClose: () => void }) {
   const [message, setMessage] = useState(`📦 รายการคำสั่งซื้อ #${orderId}\nยอดรวม: 999 บาท`)
   const [customer, setCustomer] = useState("ลูกค้า A (Facebook)")
+  const [confirmOpen, setConfirmOpen] = useState(false)
+
+  const sendBill = () => {
+    logEvent('send_bill_chat', { orderId, customer })
+    toast.success('ส่งข้อความไปยังแชทแล้ว')
+    onClose()
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -24,19 +40,31 @@ export function SendToChatModal({ orderId, onClose }: { orderId: string; onClose
           className="w-full h-32 border p-2 rounded"
         />
         <div className="flex justify-end gap-2">
-          <button className="text-gray-500" onClick={onClose}>ยกเลิก</button>
-          <button
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-            onClick={() => {
-              logEvent('send_bill_chat', { orderId, customer })
-              alert(`✅ ส่งข้อความไปยังแชทแล้ว:\n\n${message}`)
-              onClose()
-            }}
-          >
-            ส่งบิล
-          </button>
+          <Button variant="ghost" onClick={onClose}>ยกเลิก</Button>
+          <Button onClick={() => setConfirmOpen(true)}>ส่งบิล</Button>
         </div>
       </div>
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>ยืนยันการส่งบิล?</DialogTitle>
+          </DialogHeader>
+          <p>คุณต้องการส่งบิลนี้ให้ลูกค้าใช่หรือไม่</p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={() => {
+                setConfirmOpen(false)
+                sendBill()
+              }}
+            >
+              ส่งเลย
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
