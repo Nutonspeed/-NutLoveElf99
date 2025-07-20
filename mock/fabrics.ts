@@ -39,3 +39,46 @@ export function removeFabric(id: string) {
   const idx = fabrics.findIndex(f => f.id === id)
   if (idx !== -1) fabrics.splice(idx, 1)
 }
+
+export interface AdminFabric {
+  id: string
+  name: string
+  code: string
+  image: string
+  status: 'active' | 'archived'
+}
+
+export const adminFabrics: AdminFabric[] = [
+  {
+    id: 'af-1',
+    name: 'Soft Linen',
+    code: 'SL-001',
+    image: '/images/039.jpg',
+    status: 'active',
+  },
+  {
+    id: 'af-2',
+    name: 'Cozy Cotton',
+    code: 'CC-002',
+    image: '/images/041.jpg',
+    status: 'archived',
+  },
+  {
+    id: 'af-3',
+    name: 'Velvet Dream',
+    code: 'VD-003',
+    image: '/images/043.jpg',
+    status: 'active',
+  },
+  {
+    id: 'af-4',
+    name: 'Classic Stripe',
+    code: 'CS-004',
+    image: '/images/045.jpg',
+    status: 'archived',
+  },
+]
+
+export function getAdminFabrics() {
+  return adminFabrics
+}
