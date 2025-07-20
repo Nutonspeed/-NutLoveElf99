@@ -1,6 +1,8 @@
-import type { Task } from "@/types/task"
+import type { Task, TaskStatus } from "@/types/task"
 
-export const mockTasks: Task[] = [
+const STORAGE_KEY = "tasks"
+
+const initialTasks: Task[] = [
   {
     id: "TASK-001",
     role: "production",
@@ -33,3 +35,54 @@ export const mockTasks: Task[] = [
     status: "pending",
   },
 ]
+
+export let mockTasks: Task[] = [...initialTasks]
+
+function saveTasks() {
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(mockTasks))
+  }
+}
+
+export function loadTasks() {
+  if (typeof window === "undefined") return
+  const raw = localStorage.getItem(STORAGE_KEY)
+  if (raw) {
+    try {
+      mockTasks = JSON.parse(raw) as Task[]
+    } catch {
+      mockTasks = [...initialTasks]
+    }
+  } else {
+    saveTasks()
+  }
+}
+
+export function getTasks() {
+  if (typeof window !== "undefined") loadTasks()
+  return mockTasks
+}
+
+export function addTask(task: Omit<Task, "id"> & { id?: string }) {
+  const newTask: Task = {
+    id: task.id || Date.now().toString(),
+    status: "pending",
+    ...task,
+  }
+  mockTasks.push(newTask)
+  saveTasks()
+  return newTask
+}
+
+export function updateTaskStatus(id: string, status: TaskStatus) {
+  const t = mockTasks.find((task) => task.id === id)
+  if (t) {
+    t.status = status
+    saveTasks()
+  }
+}
+
+export function deleteTask(id: string) {
+  mockTasks = mockTasks.filter((t) => t.id !== id)
+  saveTasks()
+}
