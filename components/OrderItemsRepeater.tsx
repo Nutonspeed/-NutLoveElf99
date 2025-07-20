@@ -4,6 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/buttons/button"
 import { Input } from "@/components/ui/inputs/input"
+import { Dialog, DialogContent } from "@/components/ui/modals/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -65,6 +66,7 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
     notes: "",
     image: "",
   })
+  const [compressOpen, setCompressOpen] = useState(false)
 
   const addItem = () => {
     if (!newItem.size || !newItem.pattern || !newItem.color || !newItem.price) {
@@ -113,6 +115,7 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
     if (file) {
       const imageUrl = URL.createObjectURL(file)
       setNewItem({ ...newItem, image: imageUrl })
+      setCompressOpen(true)
     }
   }
 
@@ -376,12 +379,18 @@ export function OrderItemsRepeater({ items, onItemsChange }: OrderItemsRepeaterP
             )}
           </div>
 
-          <Button onClick={addItem} className="w-full">
-            <Plus className="h-4 w-4 mr-2" />
-            เพิ่มสินค้า
-          </Button>
-        </CardContent>
+      <Button onClick={addItem} className="w-full">
+        <Plus className="h-4 w-4 mr-2" />
+        เพิ่มสินค้า
+      </Button>
+      </CardContent>
       </Card>
+    <Dialog open={compressOpen} onOpenChange={setCompressOpen}>
+      <DialogContent className="text-center">
+        <p className="mb-4">กำลังบีบอัดและย่อขนาดรูป (mock)</p>
+        <Button onClick={() => setCompressOpen(false)}>ตกลง</Button>
+      </DialogContent>
+    </Dialog>
     </div>
   )
 }

@@ -13,6 +13,7 @@ import { AnalyticsTracker } from "@/components/analytics-tracker"
 import { MessageSquare, Share2, Receipt } from "lucide-react"
 import { CopyToClipboardButton } from "@/components/CopyToClipboardButton"
 import { FabricSuggestions } from "@/components/FabricSuggestions"
+import { FabricImages } from "@/components/FabricImages"
 
 interface Fabric {
   id: string
@@ -114,14 +115,14 @@ export default async function FabricDetailPage({ params }: { params: { slug: str
           </Link>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="relative w-full aspect-square">
-            <Image
-              src={fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"}
-              alt={fabric.name}
-              fill
-              className="object-cover rounded-lg"
-            />
-          </div>
+          <FabricImages
+            images={
+              fabric.image_urls?.length
+                ? (fabric.image_urls as string[])
+                : [fabric.image_url || "/placeholder.svg"]
+            }
+            slug={fabric.slug || fabric.id}
+          />
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <h1 className="text-3xl font-bold">{fabric.name}</h1>
