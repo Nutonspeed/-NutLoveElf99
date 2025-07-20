@@ -12,8 +12,10 @@ import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import BillItemActions from '@/components/admin/BillItemActions'
+import CustomerPopup from '@/components/admin/CustomerPopup'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
+import { mockCustomers } from '@/lib/mock-customers'
 import { toast } from 'sonner'
 
 export default function AdminBillsPage() {
@@ -243,7 +245,20 @@ export default function AdminBillsPage() {
                 {filteredBills.map((b) => (
                   <TableRow key={b.id}>
                   <TableCell>{b.id}</TableCell>
-                  <TableCell>{b.customer}</TableCell>
+                  <TableCell>
+                    {(() => {
+                      const c = mockCustomers.find((m) => m.name === b.customer)
+                      return c ? (
+                        <CustomerPopup customer={c}>
+                          <span className="cursor-pointer underline">
+                            {b.customer}
+                          </span>
+                        </CustomerPopup>
+                      ) : (
+                        b.customer
+                      )
+                    })()}
+                  </TableCell>
                   <TableCell className="space-x-1">
                     {b.tags.map((t) => (
                       <Badge key={t} variant="secondary">
