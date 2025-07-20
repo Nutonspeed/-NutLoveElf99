@@ -26,6 +26,7 @@ import {
 } from "@/mock/mock-db"
 import { conversations } from "@/lib/mock-conversations"
 import { useAuth } from "@/contexts/auth-context"
+import PageWrapper from "@/components/admin/PageWrapper"
 
 interface OrderData {
   id: string
@@ -81,10 +82,10 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="p-4 space-y-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">แดชบอร์ดแอดมินหลัก</h1>
-      </header>
+    <PageWrapper
+      title="แดชบอร์ดแอดมินหลัก"
+      breadcrumb={[{ title: "แดชบอร์ด" }]}
+    >
 
       <section className="space-y-2">
         <div className="flex items-center justify-between">
@@ -243,7 +244,7 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
       </section>
-    </div>
+    </PageWrapper>
   )
 }
 
