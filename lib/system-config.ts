@@ -2,10 +2,12 @@ export type EnvMode = 'development' | 'preview' | 'production'
 
 interface Config {
   env: EnvMode
+  pixelEnabled: boolean
 }
 
 const defaultConfig: Config = {
   env: 'development',
+  pixelEnabled: false,
 }
 
 let config: Config = { ...defaultConfig }
@@ -34,4 +36,12 @@ export function getEnv() {
 
 export function setEnv(env: EnvMode) {
   saveConfig({ env })
+}
+
+export function isPixelEnabled() {
+  return loadConfig().pixelEnabled
+}
+
+export function setPixelEnabled(enabled: boolean) {
+  saveConfig({ pixelEnabled: enabled })
 }
