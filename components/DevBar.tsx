@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/auth-context'
 import { setEnv, getEnv, EnvMode } from '@/lib/system-config'
 import { useFeatureFlags } from '@/contexts/feature-flag-context'
@@ -13,6 +14,19 @@ export default function DevBar() {
   const { toggle } = useFeatureFlags()
   const { toggle: toggleDemo } = useDemo()
   const [env, setEnvState] = useState<EnvMode>(getEnv())
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const grouped = searchParams.get('preview') === 'grouped'
+
+  const toggleGrouped = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (grouped) {
+      params.delete('preview')
+    } else {
+      params.set('preview', 'grouped')
+    }
+    router.replace(`?${params.toString()}`)
+  }
 
   useEffect(() => {
     setEnv(env)
@@ -28,6 +42,7 @@ export default function DevBar() {
       <button onClick={() => setTheme(resolvedTheme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
       <button onClick={() => toggle('review')}>Toggle Review</button>
       <button onClick={toggleDemo}>Demo Mode</button>
+      <button onClick={toggleGrouped}>{grouped ? 'Ungroup' : 'Group'} View</button>
       <select value={env} onChange={e => setEnvState(e.target.value as EnvMode)} className="border ml-2">
         <option value="development">dev</option>
         <option value="preview">preview</option>
