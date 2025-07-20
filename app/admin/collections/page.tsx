@@ -8,11 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 import { ArrowLeft, Plus, Edit, Trash2, Search } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import type { Collection } from "@/types/collection"
+import { CollectionForm } from "@/components/collection/CollectionForm"
 
 interface CollectionWithFabrics extends Collection {
   fabrics: { id: string; name: string }[]
@@ -119,73 +120,7 @@ export default function AdminCollectionsPage() {
                 </DialogTitle>
               </DialogHeader>
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-                  <FormField
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>ชื่อคอลเลกชัน</FormLabel>
-                        <FormControl>
-                          <Input placeholder="ชื่อคอลเลกชัน" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="slug"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                          <Input placeholder="slug" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>คำอธิบาย</FormLabel>
-                        <FormControl>
-                          <Input placeholder="คำอธิบาย" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="priceRange"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>ช่วงราคา</FormLabel>
-                        <FormControl>
-                          <Input placeholder="เช่น ฿100 - ฿300" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    name="images"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>รูปทั้งหมด (คั่นด้วย comma)</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="url1,url2"
-                            value={field.value.join(',')}
-                            onChange={(e) => field.onChange(e.target.value.split(','))}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  <div className="flex justify-end space-x-2 pt-4">
-                    <Button variant="outline" onClick={() => setIsDialogOpen(false)} type="button">
-                      ยกเลิก
-                    </Button>
-                    <Button type="submit">บันทึก</Button>
-                  </div>
-                </form>
+                <CollectionForm form={form} onSubmit={handleSubmit} />
               </Form>
             </DialogContent>
           </Dialog>
