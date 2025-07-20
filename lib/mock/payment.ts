@@ -1,4 +1,6 @@
 import type { Payment } from '@/types/payment'
+import { isPixelEnabled } from '@/lib/system-config'
+import { trackFb } from '@/lib/analytics'
 
 const payments: Payment[] = []
 
@@ -10,6 +12,9 @@ export function addPayment(orderId: string, data: Omit<Payment, 'orderId' | 'ver
   if (!orderId) return null
   const payment: Payment = { orderId, verified: false, ...data }
   payments.push(payment)
+  if (isPixelEnabled()) {
+    trackFb('Purchase', { value: data.amount, currency: 'THB' })
+  }
   return payment
 }
 

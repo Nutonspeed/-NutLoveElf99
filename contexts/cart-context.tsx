@@ -3,6 +3,8 @@
 import type React from "react"
 import { createContext, useContext, useReducer, type ReactNode } from "react"
 import { calculateTotal } from "@/lib/utils"
+import { isPixelEnabled } from "@/lib/system-config"
+import { trackFb } from "@/lib/analytics"
 
 interface CartItem {
   id: string
@@ -37,6 +39,7 @@ export const cartReducer = (
 ): CartState => {
   switch (action.type) {
     case "ADD_ITEM": {
+      if (isPixelEnabled()) trackFb("AddToCart")
       const existingItem = state.items.find((item) => item.id === action.payload.id)
       if (existingItem) {
         const updatedItems = state.items.map((item) =>

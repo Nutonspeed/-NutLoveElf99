@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import { useSearchParams } from "next/navigation"
+import { isPixelEnabled } from "@/lib/system-config"
 
 export function AnalyticsTracker({ event = "PageView" }: { event?: string }) {
   const searchParams = useSearchParams()
@@ -14,7 +15,11 @@ export function AnalyticsTracker({ event = "PageView" }: { event?: string }) {
     // Placeholder for sending UTM data to analytics service
     console.debug("UTM", utm)
 
-    if (typeof window !== "undefined" && typeof (window as any).fbq === "function") {
+    if (
+      isPixelEnabled() &&
+      typeof window !== "undefined" &&
+      typeof (window as any).fbq === "function"
+    ) {
       ;(window as any).fbq("track", event)
     }
   }, [searchParams, event])

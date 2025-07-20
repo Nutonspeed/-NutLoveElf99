@@ -17,6 +17,7 @@ import { validateMockData } from "@/lib/mock-validator"
 import RedirectMobileHome from "@/components/RedirectMobileHome"
 import DevBar from "@/components/DevBar"
 import StoreBottomNav from "@/components/StoreBottomNav"
+import FacebookPixel from "@/components/FacebookPixel"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -49,8 +50,9 @@ export default function RootLayout({
                           <ReviewImagesProvider>
                           <RedirectMobileHome />
                           {children}
-                          <StoreBottomNav />
-                          <DevBar />
+                         <StoreBottomNav />
+                         <DevBar />
+                          <FacebookPixel />
                           <Toaster />
                           </ReviewImagesProvider>
                         </AdminProductGroupsProvider>
