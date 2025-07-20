@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { orders as mockOrders } from '@/mock/orders'
+import { sendLineNotify } from '@/lib/mock-line-notify'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -28,6 +29,7 @@ export default function CreateOrderPage() {
       total: Math.max(0, 1000 - discount),
       date: new Date().toISOString(),
     })
+    sendLineNotify(`มีออเดอร์ใหม่จาก ${customer}`)
     router.push('/dashboard/orders')
   }
 
