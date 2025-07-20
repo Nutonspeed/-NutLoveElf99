@@ -3,6 +3,8 @@ export interface Fabric {
   name: string
   imageUrl: string
   collectionId?: string
+  category?: string
+  tags?: string[]
 }
 
 export const fabrics: Fabric[] = [
@@ -11,12 +13,16 @@ export const fabrics: Fabric[] = [
     name: 'Soft Linen',
     imageUrl: '/images/039.jpg',
     collectionId: 'col-1',
+    category: 'Classic',
+    tags: ['linen', 'soft']
   },
   {
     id: 'fab-2',
     name: 'Cozy Cotton',
     imageUrl: '/images/041.jpg',
     collectionId: 'col-2',
+    category: 'Modern',
+    tags: ['cotton']
   },
 ]
 
@@ -40,12 +46,23 @@ export function removeFabric(id: string) {
   if (idx !== -1) fabrics.splice(idx, 1)
 }
 
+export function reduceStock(code: string, qty: number) {
+  const fab = adminFabrics.find(f => f.code === code)
+  if (fab) fab.stock = Math.max(0, fab.stock - qty)
+}
+
+export function increaseStock(code: string, qty: number) {
+  const fab = adminFabrics.find(f => f.code === code)
+  if (fab) fab.stock += qty
+}
+
 export interface AdminFabric {
   id: string
   name: string
   code: string
   image: string
   status: 'active' | 'archived'
+  stock: number
 }
 
 export const adminFabrics: AdminFabric[] = [
@@ -55,6 +72,7 @@ export const adminFabrics: AdminFabric[] = [
     code: 'SL-001',
     image: '/images/039.jpg',
     status: 'active',
+    stock: 50,
   },
   {
     id: 'af-2',
@@ -62,6 +80,7 @@ export const adminFabrics: AdminFabric[] = [
     code: 'CC-002',
     image: '/images/041.jpg',
     status: 'archived',
+    stock: 0,
   },
   {
     id: 'af-3',
@@ -69,6 +88,7 @@ export const adminFabrics: AdminFabric[] = [
     code: 'VD-003',
     image: '/images/043.jpg',
     status: 'active',
+    stock: 20,
   },
   {
     id: 'af-4',
@@ -76,6 +96,7 @@ export const adminFabrics: AdminFabric[] = [
     code: 'CS-004',
     image: '/images/045.jpg',
     status: 'archived',
+    stock: 5,
   },
 ]
 

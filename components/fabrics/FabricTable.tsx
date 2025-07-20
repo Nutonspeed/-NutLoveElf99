@@ -56,6 +56,7 @@ export default function FabricTable({ items }: FabricTableProps) {
               <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Code</TableHead>
+              <TableHead>Stock</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -78,6 +79,7 @@ export default function FabricTable({ items }: FabricTableProps) {
                 </TableCell>
                 <TableCell>{f.name}</TableCell>
                 <TableCell>{f.code}</TableCell>
+                <TableCell>{f.stock}</TableCell>
                 <TableCell>{f.status}</TableCell>
               </TableRow>
             ))}
