@@ -2,7 +2,6 @@
 
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import { mockUsers } from "@/lib/mock-users"
 import { addAccessLog } from "@/lib/mock-access-logs"
 import type { Role } from "@/lib/mock-roles"
 
@@ -31,25 +30,31 @@ export const useAuthStore = create<AuthStore>()(
       isLoading: false,
       async login(email, password) {
         set({ isLoading: true })
-        const foundUser = mockUsers.find((u) => u.email === email)
-        if (foundUser && password === "password") {
-          set({ user: foundUser, guestId: null, isLoading: false })
-          if (typeof window !== "undefined") {
-            const ip = Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join(".")
-            addAccessLog(ip, navigator.userAgent)
+        try {
+          const res = await fetch('/api/mock/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          })
+          const result = await res.json()
+          if (result.success) {
+            set({ user: result.user, guestId: null, isLoading: false })
+            if (typeof window !== 'undefined') {
+              const ip = Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join('.')
+              addAccessLog(ip, navigator.userAgent)
+            }
+            return true
           }
-          if (typeof document !== "undefined") {
-            document.cookie = "elf_admin_session=1; path=/"
-          }
-          return true
+        } catch (e) {
+          console.error('Login error', e)
         }
         set({ isLoading: false })
         return false
       },
-      logout() {
-        if (typeof document !== "undefined") {
-          document.cookie = "elf_admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
-        }
+      async logout() {
+        try {
+          await fetch('/api/mock/logout', { method: 'POST' })
+        } catch {}
         set({ user: null, guestId: `guest-${crypto.randomUUID()}` })
       },
       setUser(u) {
