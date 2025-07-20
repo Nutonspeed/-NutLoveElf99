@@ -5,17 +5,19 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { mockBills } from "@/lib/mock-bills"
+import { useBillStore } from "@/core/store"
 import { mockOrders } from "@/lib/mock-orders"
 import { loadAutoArchive, autoArchive } from "@/lib/mock-settings"
 import { format } from "date-fns"
 
 export default function InvoiceListPage() {
-  const [bills, setBills] = useState(mockBills)
+  const store = useBillStore()
+  const [bills, setBills] = useState(store.bills)
 
   useEffect(() => {
     loadAutoArchive()
-    setBills([...mockBills])
+    store.refresh()
+    setBills([...store.bills])
   }, [])
 
   const filtered = bills.filter((b) => {

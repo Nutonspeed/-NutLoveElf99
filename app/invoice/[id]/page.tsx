@@ -8,7 +8,7 @@ import Link from "next/link"
 import { useOrder } from "@/lib/hooks/useOrder"
 import { Badge } from "@/components/ui/badge"
 import { packingStatusOptions } from "@/types/order"
-import { mockBills } from "@/lib/mock-bills"
+import { useBillStore } from "@/core/store"
 import { loadAutoReminder, autoReminder } from "@/lib/mock-settings"
 import { createClaim } from "@/lib/mock-claims"
 import { toast } from "sonner"
@@ -17,6 +17,7 @@ import { formatDate } from "@/lib/utils"
 export default function InvoicePage({ params }: { params: { id: string } }) {
   const { id } = params
   const { order } = useOrder(id)
+  const store = useBillStore()
 
   if (!order) {
     return (
@@ -53,7 +54,8 @@ export default function InvoicePage({ params }: { params: { id: string } }) {
   useEffect(() => {
     loadAutoReminder()
     if (autoReminder) {
-      const bill = mockBills.find((b) => b.orderId === order.id)
+      store.refresh()
+      const bill = store.bills.find((b) => b.orderId === order.id)
       if (
         bill &&
         (bill.status === "unpaid" || bill.status === "pending") &&
