@@ -1,12 +1,10 @@
 "use client"
 
-import Image from "next/image"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
-import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
+import FabricItem from "./FabricItem"
+import { useCompare } from "@/contexts/compare-context"
 
 interface Fabric {
   id: string
@@ -18,7 +16,7 @@ interface Fabric {
 }
 
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
-  const { items, toggleCompare } = useCompare()
+  const { items } = useCompare()
   const router = useRouter()
 
   const handleCompare = () => {
@@ -28,41 +26,16 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
   return (
     <>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {fabrics.map((fabric) => {
+        {fabrics.map((fabric, idx) => {
           const slug = fabric.slug || fabric.id
-          const checked = items.includes(slug)
           const coViewed = mockCoViewLog[slug]?.length
           return (
-            <div
+            <FabricItem
               key={slug}
-              className="border rounded-lg overflow-hidden bg-white hover:shadow transition relative"
-            >
-              {coViewed && (
-                <span className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-1 rounded">
-                  ดูด้วยกันบ่อย
-                </span>
-              )}
-              <Checkbox
-                checked={checked}
-                onCheckedChange={() => toggleCompare(slug)}
-                className="absolute top-2 left-2 z-10 bg-white/80"
-              />
-              <Link href={`/fabrics/${slug}`}>
-                <div className="relative aspect-square">
-                  <Image
-                    src={
-                      fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
-                    }
-                    alt={fabric.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-2 text-center">
-                  <p className="font-medium line-clamp-2">{fabric.name}</p>
-                </div>
-              </Link>
-            </div>
+              fabric={fabric}
+              index={idx}
+              coViewed={coViewed}
+            />
           )
         })}
       </div>
