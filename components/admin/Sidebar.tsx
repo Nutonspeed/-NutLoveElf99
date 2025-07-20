@@ -19,6 +19,7 @@ import {
   Megaphone,
   MessageCircle,
   Percent,
+  Database,
   Settings,
   Target,
   Users,
@@ -75,6 +76,7 @@ const groups = [
       { href: "/admin/feature-map", label: "แผนที่ฟีเจอร์", icon: Settings, feature: "settings" },
       { href: "/admin/faq", label: "คำถามพบบ่อย", icon: HelpCircle, feature: "settings" },
       { href: "/admin/feedback", label: "ความคิดเห็น", icon: MailQuestion, feature: "settings" },
+      { href: "/admin/settings/backup", label: "Backup", icon: Database, feature: "settings" },
     ],
   },
 ]
