@@ -55,7 +55,10 @@ export function cancelBill(id: string) {
 
 export function addBillPayment(id: string, payment: BillPayment) {
   const b = getBill(id)
-  if (b) b.payments.push(payment)
+  if (b) {
+    b.payments.push(payment)
+    b.status = "paid"
+  }
 }
 
 export function cleanupOldBills(days: number) {
