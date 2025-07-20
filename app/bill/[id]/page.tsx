@@ -97,6 +97,32 @@ export default function BillPage({ params }: { params: { id: string } }) {
     )
   }
 
+  if (bill?.status === "paid") {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-bold">บิลนี้ชำระแล้ว</h2>
+          <Link href="/chat" className="text-primary underline">
+            ติดต่อร้าน
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (expired) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h2 className="text-xl font-bold">บิลนี้หมดอายุแล้ว</h2>
+          <Link href="/chat" className="text-primary underline">
+            ติดต่อร้าน
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   const handlePrint = () => {
     if (typeof window !== "undefined") {
       window.print()
@@ -204,6 +230,11 @@ export default function BillPage({ params }: { params: { id: string } }) {
               <div className="w-40 h-40 bg-gray-200 flex items-center justify-center">QR</div>
             </div>
             <OrderTimeline timeline={order.timeline} />
+            <div className="space-y-1 text-sm">
+              <p>วิธีชำระ: โอนผ่านธนาคาร</p>
+              <p>ยอดที่ต้องชำระ: ฿{order.total.toLocaleString()}</p>
+              <p>กำหนดชำระ: {baseDate.toLocaleDateString('th-TH')}</p>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="amt">จำนวนเงินที่โอน</Label>
               <Input id="amt" value={amount} onChange={(e) => setAmount(e.target.value)} />
