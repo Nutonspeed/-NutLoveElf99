@@ -12,7 +12,8 @@ export interface AdminBill {
   items: BillItem[]
   shipping: number
   note: string
-  status: 'pending' | 'unpaid' | 'paid' | 'cancelled'
+  status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'
+  tags: string[]
   createdAt: string
   archived?: boolean
 }
@@ -28,6 +29,7 @@ export const mockBills: AdminBill[] = [
     shipping: 50,
     note: '',
     status: 'pending',
+    tags: ['COD', 'VIP'],
     createdAt: new Date().toISOString(),
     archived: false,
   },

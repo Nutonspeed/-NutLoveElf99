@@ -38,14 +38,16 @@ export default function AdminBillsPage() {
     note: string
   } | null>(null)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'cancelled'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'>('all')
+  const [tagFilter, setTagFilter] = useState('all')
+  const allTags = Array.from(new Set(bills.flatMap((b) => b.tags)))
 
   const handleCreate = () => {
     if (items.length === 0) {
       toast.error('ต้องมีสินค้าอย่างน้อย 1 รายการ')
       return
     }
-    store.addBill({ customer, items, shipping, note } as any)
+    store.addBill({ customer, items, shipping, note, tags: [] } as any)
     setBills([...store.bills])
     setCustomer('')
     setItems([])
@@ -57,6 +59,7 @@ export default function AdminBillsPage() {
   const getStatusClass = (status: AdminBill['status']) => {
     if (status === 'paid') return 'bg-green-500 text-white'
     if (status === 'cancelled') return 'bg-red-500 text-white'
+    if (status === 'shipped') return 'bg-purple-500 text-white'
     if (status === 'pending') return 'bg-blue-500 text-white'
     return 'bg-yellow-500 text-white'
   }
@@ -64,6 +67,7 @@ export default function AdminBillsPage() {
   const getStatusText = (status: AdminBill['status']) => {
     if (status === 'paid') return 'ชำระแล้ว'
     if (status === 'cancelled') return 'ยกเลิก'
+    if (status === 'shipped') return 'จัดส่งแล้ว'
     if (status === 'pending') return 'รอตรวจสอบ'
     return 'รอชำระ'
   }
@@ -75,6 +79,7 @@ export default function AdminBillsPage() {
         b.id.toLowerCase().includes(search.toLowerCase()),
     )
     .filter((b) => (statusFilter === 'all' ? true : b.status === statusFilter))
+    .filter((b) => (tagFilter === 'all' ? true : b.tags.includes(tagFilter)))
 
   return (
     <div className="space-y-6">
@@ -194,6 +199,19 @@ export default function AdminBillsPage() {
                   className="pl-8 w-64"
                 />
               </div>
+              <Select value={tagFilter} onValueChange={setTagFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="Tag" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">ทั้งหมด</SelectItem>
+                  {allTags.map((tag) => (
+                    <SelectItem key={tag} value={tag}>
+                      {tag}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
@@ -202,6 +220,7 @@ export default function AdminBillsPage() {
               <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
               <TabsTrigger value="unpaid">รอชำระ</TabsTrigger>
               <TabsTrigger value="paid">ชำระแล้ว</TabsTrigger>
+              <TabsTrigger value="shipped">จัดส่งแล้ว</TabsTrigger>
               <TabsTrigger value="cancelled">ยกเลิก</TabsTrigger>
             </TabsList>
           </Tabs>
@@ -213,6 +232,7 @@ export default function AdminBillsPage() {
                 <TableRow>
                   <TableHead>เลขบิล</TableHead>
                   <TableHead>ชื่อลูกค้า</TableHead>
+                  <TableHead>แท็ก</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>วันที่</TableHead>
                   <TableHead className="w-24" />
@@ -221,14 +241,21 @@ export default function AdminBillsPage() {
               <TableBody>
                 {filteredBills.map((b) => (
                   <TableRow key={b.id}>
-                    <TableCell>{b.id}</TableCell>
-                    <TableCell>{b.customer}</TableCell>
-                    <TableCell>
-                      <Select
-                        value={b.status}
-                        onValueChange={(v) => {
-                          store.updateStatus(b.id, v as AdminBill['status'])
-                          setBills([...store.bills])
+                  <TableCell>{b.id}</TableCell>
+                  <TableCell>{b.customer}</TableCell>
+                  <TableCell className="space-x-1">
+                    {b.tags.map((t) => (
+                      <Badge key={t} variant="secondary">
+                        {t}
+                      </Badge>
+                    ))}
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={b.status}
+                      onValueChange={(v) => {
+                        store.updateStatus(b.id, v as AdminBill['status'])
+                        setBills([...store.bills])
                         }}
                       >
                         <SelectTrigger className="w-28">
@@ -239,6 +266,7 @@ export default function AdminBillsPage() {
                         <SelectContent>
                           <SelectItem value="unpaid">รอชำระ</SelectItem>
                           <SelectItem value="paid">ชำระแล้ว</SelectItem>
+                          <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
                           <SelectItem value="cancelled">ยกเลิก</SelectItem>
                         </SelectContent>
                       </Select>
