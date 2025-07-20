@@ -92,6 +92,7 @@ export function generateMockBills(count = 3) {
       items: [{ name: 'Service Fee', quantity: 1, price: 100 }],
       shipping: 0,
       note: 'mock',
+      tags: [],
     })
   }
 }
