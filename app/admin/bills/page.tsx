@@ -276,6 +276,9 @@ export default function AdminBillsPage() {
                       <Link href={`/bill/${b.id}`} className="underline text-sm">
                         ดูบิล
                       </Link>
+                      <Link href={`/admin/bill/print/${b.id}`} target="_blank">
+                        <Button variant="outline" size="sm">📄 พิมพ์ใบแจ้งหนี้</Button>
+                      </Link>
                       <Button
                         variant="outline"
                         size="sm"
