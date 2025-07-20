@@ -33,6 +33,7 @@ const groups = [
     items: [
       { href: "/admin/bills", label: "บิลทั้งหมด", icon: FileText, feature: "bills" },
       { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "bills" },
+      { href: "/admin/bills/analytics", label: "สถิติบิล", icon: BarChart3, feature: "bills" },
     ],
   },
   {
