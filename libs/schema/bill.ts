@@ -12,6 +12,8 @@ export const BillSchema = z.object({
   items: z.array(BillItemSchema),
   note: z.string().optional(),
   paymentMethod: z.enum(['cash', 'promptpay', 'transfer']),
+  shippingMethod: z.enum(['flash', 'kerry', 'ems', 'other']),
+  trackingNumber: z.string().optional(),
   total: z.number(),
 })
 

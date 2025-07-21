@@ -11,6 +11,8 @@ export interface AdminBill {
   customer: string
   items: BillItem[]
   shipping: number
+  shippingMethod?: 'flash' | 'kerry' | 'ems' | 'other'
+  trackingNumber?: string
   note: string
   status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'
   tags: string[]
@@ -27,6 +29,8 @@ export const mockBills: AdminBill[] = [
       { name: 'ปลอกหมอน', quantity: 2, price: 59 },
     ],
     shipping: 50,
+    shippingMethod: 'flash',
+    trackingNumber: 'TH0000000001',
     note: '',
     status: 'pending',
     tags: ['COD', 'VIP'],
@@ -36,6 +40,14 @@ export const mockBills: AdminBill[] = [
 ]
 
 export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): AdminBill {
+  if (
+    data.shippingMethod &&
+    data.shippingMethod !== 'other' &&
+    data.trackingNumber &&
+    !/^[A-Z0-9-]+$/i.test(data.trackingNumber)
+  ) {
+    throw new Error('invalid tracking')
+  }
   const bill: AdminBill = {
     id: generateMockId('bill'),
     status: 'unpaid',
@@ -75,6 +87,16 @@ export function updateBill(
   data: Partial<Omit<AdminBill, 'id' | 'createdAt'>>,
 ): AdminBill | undefined {
   const bill = mockBills.find((b) => b.id === id)
-  if (bill) Object.assign(bill, data)
+  if (bill) {
+    if (
+      data.shippingMethod &&
+      data.shippingMethod !== 'other' &&
+      data.trackingNumber &&
+      !/^[A-Z0-9-]+$/i.test(data.trackingNumber)
+    ) {
+      throw new Error('invalid tracking')
+    }
+    Object.assign(bill, data)
+  }
   return bill
 }

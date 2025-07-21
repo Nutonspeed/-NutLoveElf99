@@ -13,6 +13,8 @@ export interface Bill {
   orderId: string
   phone?: string
   pin?: string
+  shippingMethod?: 'flash' | 'kerry' | 'ems' | 'other'
+  trackingNumber?: string
   status: BillStatus
   payments: BillPayment[]
   createdAt: string
