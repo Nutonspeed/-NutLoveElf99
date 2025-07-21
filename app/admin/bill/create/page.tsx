@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
+import CustomerSelector from "@/components/CustomerSelector"
 import { orderDb } from "@/lib/order-database"
 import { createBill } from "@/lib/mock-bills"
 import type { OrderItem } from "@/types/order"
+import type { Customer } from "@/types/customer"
 import { toast } from "sonner"
 
 export default function AdminBillCreatePage() {
@@ -19,6 +21,7 @@ export default function AdminBillCreatePage() {
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
+  const [customer, setCustomer] = useState<Customer | null>(null)
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
@@ -29,6 +32,10 @@ export default function AdminBillCreatePage() {
   const create = async () => {
     if (items.length === 0) {
       toast.error("ต้องมีสินค้าอย่างน้อย 1 รายการ")
+      return
+    }
+    if (!customer) {
+      toast.error("กรุณาเลือกลูกค้า")
       return
     }
     setLoading(true)
@@ -78,6 +85,7 @@ export default function AdminBillCreatePage() {
             <OrderItemsRepeater items={items} onItemsChange={setItems} />
           </div>
           <div className="space-y-6">
+            <CustomerSelector onSelect={setCustomer} />
             <OrderSummary
               items={items}
               discount={discount}
