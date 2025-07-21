@@ -3,6 +3,8 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/buttons/button"
+import BillFooterActions from "@/components/admin/bill/BillFooterActions"
+import { useBillStore } from "@/core/store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
@@ -14,12 +16,29 @@ import { toast } from "sonner"
 
 export default function AdminBillCreatePage() {
   const router = useRouter()
+  const store = useBillStore()
   const [items, setItems] = useState<OrderItem[]>([])
   const [discount, setDiscount] = useState(0)
   const [shippingCost, setShippingCost] = useState(0)
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
+
+  const validate = () => {
+    if (items.length === 0) {
+      toast.error("ต้องมีสินค้าอย่างน้อย 1 รายการ")
+      return false
+    }
+    return true
+  }
+
+  const clearForm = () => {
+    setItems([])
+    setDiscount(0)
+    setShippingCost(0)
+    setTax(0)
+    setBillLink(null)
+  }
 
   const subtotal = getSubtotal(items)
   const total = calculateTotal(items, shippingCost, discount) + tax
@@ -44,6 +63,7 @@ export default function AdminBillCreatePage() {
       const bill = createBill(order.id)
       const link = `/bill/${bill.id}`
       setBillLink(link)
+      store.refresh()
       toast.success("สร้างบิลแล้ว")
     } catch (e) {
       toast.error("เกิดข้อผิดพลาด")
@@ -90,9 +110,12 @@ export default function AdminBillCreatePage() {
                 <CardTitle>สร้างบิล</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
-                <Button className="w-full hidden sm:block" onClick={create} disabled={loading}>
-                  บันทึกบิล
-                </Button>
+                <BillFooterActions
+                  validate={validate}
+                  onSubmit={create}
+                  onClear={clearForm}
+                  submitting={loading}
+                />
                 {billLink && (
                   <div className="space-y-2 text-center">
                     <img
@@ -113,9 +136,12 @@ export default function AdminBillCreatePage() {
         <BillSummary items={items} discount={discount} shipping={shippingCost} />
       </div>
       <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
-        <Button className="w-full" onClick={create} disabled={loading}>
-          บันทึกบิล
-        </Button>
+        <BillFooterActions
+          validate={validate}
+          onSubmit={create}
+          onClear={clearForm}
+          submitting={loading}
+        />
       </div>
       </div>
     </div>
