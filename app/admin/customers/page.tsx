@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import CustomerPopup from "@/core/ui/CustomerPopup"
 import { useCustomerGroups, CustomerGroup } from "@/hooks/useCustomerGroups"
+import CustomerListEmptyState from "@/components/admin/customers/CustomerListEmptyState"
 
 export default function AdminCustomersPage() {
   const { groups, topTags } = useCustomerGroups()
@@ -12,6 +13,10 @@ export default function AdminCustomersPage() {
   const filtered = groups.filter(g =>
     !filter || g.tags.some(t => t.tag === filter)
   )
+
+  if (groups.length === 0) {
+    return <CustomerListEmptyState />
+  }
 
   return (
     <div className="p-4">

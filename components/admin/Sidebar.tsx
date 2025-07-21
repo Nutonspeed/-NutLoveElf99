@@ -18,6 +18,7 @@ import {
   MailQuestion,
   Megaphone,
   MessageCircle,
+  UserPlus,
   Percent,
   Settings,
   Target,
@@ -46,6 +47,7 @@ const groups = [
     label: "Customers",
     items: [
       { href: "/admin/customers", label: "ลูกค้า", icon: Users, feature: "customers" },
+      { href: "/admin/customers/create", label: "เพิ่มลูกค้าใหม่", icon: UserPlus, feature: "customers" },
     ],
   },
   {
