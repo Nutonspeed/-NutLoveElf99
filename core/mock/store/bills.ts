@@ -23,6 +23,10 @@ export function getBills() {
   return bills
 }
 
+export function getBill(id: string) {
+  return bills.find((b) => b.id === id)
+}
+
 export function getArchivedBills() {
   return bills.filter((b) => b.archived)
 }

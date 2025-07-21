@@ -1,32 +1,23 @@
 "use client"
-import BillPrintLayout from '@/components/bill/BillPrintLayout'
-import BillHeader from '@/components/bill/BillHeader'
-import BillItemTable from '@/components/bill/BillItemTable'
-import BillSummaryTotals from '@/components/bill/BillSummaryTotals'
-import BillPaymentQR from '@/components/bill/BillPaymentQR'
-import BillNoteBox from '@/components/bill/BillNoteBox'
-import BillPrintDate from '@/components/bill/BillPrintDate'
-import BillPrintActions from '@/components/bill/BillPrintActions'
-import { useBillData } from '@/lib/hooks/useBillData'
+import ReceiptLayout from '@/components/bill/ReceiptLayout'
+import PrintToolbar from '@/components/bill/PrintToolbar'
+import { useBillById } from '@/hooks/useBillById'
 
 export default function BillPrintPage({ params }: { params: { id: string } }) {
-  const bill = useBillData(params.id)
+  const bill = useBillById(params.id)
+
+  if (bill === undefined) {
+    return <div className="p-4 text-center">ไม่พบบิล</div>
+  }
 
   if (!bill) {
     return <div className="p-4 text-center">Loading...</div>
   }
 
-  const subtotal = bill.items.reduce((s, it) => s + it.price * it.quantity, 0)
-
   return (
-    <BillPrintLayout>
-      <BillPrintActions />
-      <BillHeader />
-      <BillPrintDate id={bill.id} />
-      <BillItemTable items={bill.items} />
-      <BillSummaryTotals subtotal={subtotal} discount={bill.discount} shipping={bill.shipping} />
-      <BillPaymentQR value={bill.id} />
-      <BillNoteBox note={bill.note} />
-    </BillPrintLayout>
+    <div className="relative p-4 print:p-0">
+      <PrintToolbar />
+      <ReceiptLayout bill={bill} />
+    </div>
   )
 }
