@@ -43,6 +43,14 @@ export const mockBills: AdminBill[] = [
   },
 ]
 
+export function listBills() {
+  return mockBills
+}
+
+export function listCustomerBills(name: string) {
+  return mockBills.filter((b) => b.customer === name)
+}
+
 export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): AdminBill {
   const bill: AdminBill = {
     id: generateMockId('bill'),
