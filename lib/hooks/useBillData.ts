@@ -9,6 +9,7 @@ export interface BillData {
   discount?: number
   shipping?: number
   note?: string
+  feedback?: { rating?: number; message?: string; date?: string }
 }
 
 export function useBillData(id: string) {

@@ -82,3 +82,11 @@ export function regenerateBills() {
   bills = [...seedBills]
   persist()
 }
+
+export function setBillFeedback(id: string, feedback: AdminBill['feedback']) {
+  const idx = bills.findIndex(b => b.id === id)
+  if (idx !== -1) {
+    bills[idx] = { ...bills[idx], feedback }
+    persist()
+  }
+}
