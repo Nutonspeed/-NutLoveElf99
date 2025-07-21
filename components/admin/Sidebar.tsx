@@ -21,6 +21,8 @@ import {
   UserPlus,
   Percent,
   Settings,
+  Truck,
+  RefreshCcw,
   Target,
   Users,
 } from "lucide-react"
@@ -48,6 +50,14 @@ const groups = [
     items: [
       { href: "/admin/customers", label: "ลูกค้า", icon: Users, feature: "customers" },
       { href: "/admin/customers/create", label: "เพิ่มลูกค้าใหม่", icon: UserPlus, feature: "customers" },
+    ],
+  },
+  {
+    label: "Shipping",
+    items: [
+      { href: "/admin/shipping/dashboard", label: "Dashboard", icon: Truck, feature: "orders" },
+      { href: "/admin/shipping/orders", label: "Orders", icon: FileText, feature: "orders" },
+      { href: "/admin/shipping/sync", label: "Sync", icon: RefreshCcw, feature: "orders" },
     ],
   },
   {
