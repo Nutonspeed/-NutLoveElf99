@@ -7,14 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { getBillAuditLogs, loadBillAuditLogs, exportBillAuditCsv, BillAuditLog } from '@/lib/mock-bill-audit'
 
-export default function BillAuditPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default function BillAuditPage({ params }: { params: { billId: string } }) {
+  const { billId } = params
   const [logs, setLogs] = useState<BillAuditLog[]>([])
 
   useEffect(() => {
     loadBillAuditLogs()
-    setLogs(getBillAuditLogs(id))
-  }, [id])
+    setLogs(getBillAuditLogs(billId))
+  }, [billId])
 
   const risky = (idx: number) => {
     const current = logs[idx]
@@ -34,8 +34,8 @@ export default function BillAuditPage({ params }: { params: { id: string } }) {
               <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold">Audit Bill {id}</h1>
-          <Button className="ml-auto" variant="outline" onClick={() => exportBillAuditCsv(logs, `bill-${id}-audit.csv`)}>
+          <h1 className="text-3xl font-bold">Audit Bill {billId}</h1>
+          <Button className="ml-auto" variant="outline" onClick={() => exportBillAuditCsv(logs, `bill-${billId}-audit.csv`)}>
             Export CSV
           </Button>
         </div>
