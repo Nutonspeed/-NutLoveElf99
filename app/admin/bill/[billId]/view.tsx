@@ -4,7 +4,11 @@ import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Button } from "@/components/ui/buttons/button"
 import { Badge } from "@/components/ui/badge"
+import ModalWrapper from "@/components/ui/ModalWrapper"
+import LazyImage from "@/components/LazyImage"
+import { toast } from "sonner"
 import type { AdminBill } from "@/mock/bills"
+import { paymentConfirmations, type PaymentConfirmation } from "@/mock/paymentConfirmations"
 import { useBillStore } from "@/core/store"
 
 export default function AdminBillViewPage({ params }: { params: { billId: string } }) {
@@ -12,6 +16,10 @@ export default function AdminBillViewPage({ params }: { params: { billId: string
   const [bill, setBill] = useState<AdminBill | undefined>(() =>
     store.bills.find((b) => b.id === params.billId),
   )
+  const [confirmations, setConfirmations] = useState<PaymentConfirmation[]>(() =>
+    [...(paymentConfirmations[params.billId] || [])],
+  )
+  const [slip, setSlip] = useState<string | null>(null)
 
   useEffect(() => {
     store.refresh()
@@ -25,6 +33,23 @@ export default function AdminBillViewPage({ params }: { params: { billId: string
   const subtotal = bill.items.reduce((sum, it) => sum + it.price * it.quantity, 0)
   const discount = (bill as any).discount || 0
   const total = subtotal - discount + bill.shipping
+
+  const handleConfirm = (id: string) => {
+    setConfirmations((prev) =>
+      prev.map((c) =>
+        c.id === id
+          ? {
+              ...c,
+              status: 'confirmed',
+              verifiedBy: 'Admin User',
+              verifiedAt: new Date().toISOString(),
+            }
+          : c,
+      ),
+    )
+    store.updateStatus(bill.id, 'paid')
+    toast.success('อัปเดตสถานะบิลเรียบร้อย')
+  }
 
   return (
     <div className="space-y-6" data-testid="bill-detail">
@@ -114,6 +139,50 @@ export default function AdminBillViewPage({ params }: { params: { billId: string
           ))}
         </CardContent>
       </Card>
+
+      <div>
+        <h2 className="text-lg font-bold">แจ้งชำระเงินจากลูกค้า</h2>
+        <div className="space-y-4 mt-2">
+          {[...confirmations]
+            .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            .map((c) => (
+              <Card key={c.id} className="space-y-2 p-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-1 text-sm">
+                    <div>วันที่แจ้ง: {new Date(c.date).toLocaleString()}</div>
+                    <div>จำนวนเงิน: ฿{c.amount.toLocaleString()}</div>
+                    <div>ช่องทาง: {c.method}</div>
+                    {c.verifiedBy && (
+                      <div>
+                        ยืนยันโดย {c.verifiedBy} เมื่อ{' '}
+                        {c.verifiedAt && new Date(c.verifiedAt).toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                  <Badge className={c.status === 'confirmed' ? 'bg-green-500 text-white' : 'bg-yellow-500 text-white'}>
+                    {c.status === 'confirmed' ? 'ยืนยันแล้ว' : 'รอตรวจสอบ'}
+                  </Badge>
+                </div>
+                <div className="flex gap-2">
+                  {c.slip && (
+                    <Button variant="outline" size="sm" onClick={() => setSlip(c.slip!)}>
+                      ดูสลิป
+                    </Button>
+                  )}
+                  {c.status === 'pending' && (
+                    <Button size="sm" onClick={() => handleConfirm(c.id)}>
+                      ยืนยันการชำระเงิน
+                    </Button>
+                  )}
+                </div>
+              </Card>
+            ))}
+        </div>
+      </div>
+
+      <ModalWrapper open={!!slip} onClose={() => setSlip(null)}>
+        {slip && <LazyImage src={slip} alt="slip" width={400} height={400} />}
+      </ModalWrapper>
     </div>
   )
 }
