@@ -9,7 +9,11 @@ export async function generateMetadata({ params }: { params: { billId: string } 
   return {
     title,
     description,
-    openGraph: { title, description },
+    openGraph: {
+      title,
+      description,
+      images: [{ url: `/api/receipt/${params.billId}/og` }],
+    },
     robots: { index: false },
   }
 }
