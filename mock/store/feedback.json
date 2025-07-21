@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "fb-001",
+    "billId": "BILL-001",
+    "rating": 5,
+    "message": "great service! love it",
+    "timestamp": "2024-06-01T10:00:00.000Z"
+  },
+  {
+    "id": "fb-002",
+    "billId": "BILL-002",
+    "rating": 3,
+    "message": "ok",
+    "timestamp": "2024-06-02T12:00:00.000Z"
+  }
+]
