@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
+import BillSummary, { getSubtotal, calculateTotal } from "@/components/admin/bill/BillSummary"
 import BillFooterActions from "@/components/bill/BillFooterActions"
 import { useBillStore } from "@/core/store/bills"
+import { orderDb } from "@/lib/order-database"
+import { createBill } from "@/lib/mock-bills"
 import type { OrderItem } from "@/types/order"
 import { toast } from "sonner"
 
@@ -20,11 +23,8 @@ export default function AdminBillCreatePage() {
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
-    0,
-  )
-  const total = subtotal - discount + shippingCost + tax
+  const subtotal = getSubtotal(items)
+  const total = calculateTotal(items, shippingCost, discount) + tax
 
   const validate = () => {
     if (items.length === 0) {
@@ -37,7 +37,19 @@ export default function AdminBillCreatePage() {
   const create = async () => {
     setLoading(true)
     try {
+      const order = await orderDb.createManualOrder({
+        items,
+        subtotal,
+        discount,
+        shippingCost,
+        tax,
+        total,
+        status: "pending",
+        paymentStatus: "unpaid",
+      })
+      const bill = createBill(order.id)
       store.addBill({
+        id: bill.id,
         customer: "ลูกค้าทั่วไป",
         items: items.map((it) => ({
           name: it.productName,
@@ -62,7 +74,6 @@ export default function AdminBillCreatePage() {
     setDiscount(0)
     setShippingCost(0)
     setTax(0)
-    setBillLink(null)
   }
 
 
@@ -96,21 +107,21 @@ export default function AdminBillCreatePage() {
               <CardHeader>
                 <CardTitle>สร้างบิล</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <Button className="w-full hidden sm:block" onClick={create} disabled={loading}>
-                  บันทึกบิล
-                </Button>
+              <CardContent>
+                <BillFooterActions
+                  validate={validate}
+                  onSubmit={create}
+                  onClear={clearForm}
+                  submitting={loading}
+                />
               </CardContent>
             </Card>
           </div>
         </div>
-        <BillFooterActions
-          validate={validate}
-          onSubmit={create}
-          onClear={clearForm}
-          submitting={loading}
-        />
+        <div className="max-w-md mx-auto lg:max-w-none">
+          <BillSummary items={items} discount={discount} shipping={shippingCost} />
+        </div>
+        </div>
       </div>
-    </div>
   )
 }
