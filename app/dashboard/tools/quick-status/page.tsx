@@ -16,7 +16,7 @@ export default function QuickStatusPage() {
   const links = [
     { link: '/dashboard/orders', title: 'Orders', icon: '📦', count: getSimpleOrders().length },
     { link: '/dashboard/bill/BILL-001', title: 'Bills', icon: '🧾', count: getBills().length },
-    { link: '/dashboard/fabrics', title: 'Fabrics', icon: '🧵', count: fabrics.length },
+    { link: '/dashboard/fabrics', title: 'Fabrics', icon: '🧵', count: getFabrics().length },
   ]
 
   const noData = getSimpleOrders().length === 0 && getBills().length === 0
