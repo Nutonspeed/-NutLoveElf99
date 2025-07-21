@@ -17,7 +17,13 @@ export default function FeedbackForm({ billId, onSubmitted }: { billId: string; 
       message: msg || undefined,
       date: new Date().toISOString(),
     })
-    if (onSubmitted) onSubmitted()
+    fetch('/api/feedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ billId, rating, message: msg || undefined }),
+    }).finally(() => {
+      if (onSubmitted) onSubmitted()
+    })
   }
 
   return (
