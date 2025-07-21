@@ -22,6 +22,17 @@ Continue building your app on:
 
 **[https://v0.dev/chat/projects/C3QiCxGkPjB](https://v0.dev/chat/projects/C3QiCxGkPjB)**
 
+## Package Manager
+
+This project uses [pnpm](https://pnpm.io/) for dependency management. Install
+packages with:
+
+```bash
+pnpm install
+```
+
+Use `pnpm` for all other package-related scripts.
+
 ## How It Works
 
 1. Create and modify your project using [v0.dev](https://v0.dev)
