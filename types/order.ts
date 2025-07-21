@@ -14,6 +14,8 @@ export interface OrderItem {
 
 import type { OrderStatus, PackingStatus } from './order-status'
 import { orderStatusOptions, packingStatusOptions } from './order-status'
+
+export { orderStatusOptions, packingStatusOptions } from './order-status'
 import type { Address } from './address'
 import type { CustomerInfo } from './customer-info'
 import type { Payment } from './payment'
