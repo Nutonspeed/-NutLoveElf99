@@ -8,6 +8,7 @@ import type { AdminBill } from "@/mock/bills"
 import { useBillStore } from "@/core/store"
 import { generateReceiptPDF } from "@/lib/pdf/receipt"
 import { exportPDF } from "@/lib/pdf/export"
+import { Star } from "lucide-react"
 
 export default function AdminBillViewPage({ params }: { params: { billId: string } }) {
   const store = useBillStore()
@@ -135,6 +136,29 @@ export default function AdminBillViewPage({ params }: { params: { billId: string
           ))}
         </CardContent>
       </Card>
+      {bill.feedback && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Feedback</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-1">
+            <div className="flex items-center space-x-1">
+              {[...Array(5)].map((_, i) => (
+                <Star
+                  key={i}
+                  className={`h-4 w-4 ${bill.feedback?.rating && i < bill.feedback.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                />
+              ))}
+              {bill.feedback.date && (
+                <span className="ml-2 text-xs text-gray-500">
+                  {new Date(bill.feedback.date).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            {bill.feedback.message && <p className="text-sm">{bill.feedback.message}</p>}
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

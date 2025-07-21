@@ -45,7 +45,10 @@ The notification service uses additional variables:
 
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` – SMTP settings for email
 - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` – Twilio SMS credentials
+- `SMS_API_KEY`, `SMS_SENDER_ID` – optional SMS provider credentials
 - `LINE_NOTIFY_TOKEN` – token for sending Line notifications
+- `LINE_CHANNEL_ACCESS_TOKEN`, `LINE_DEFAULT_RECIPIENT_ID` – credentials for LINE OA messaging
+- `NOTIFY_MODE` – choose `line`, `sms` or leave blank for mock notifications
 
 ## Chatwoot
 

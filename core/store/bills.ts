@@ -6,6 +6,7 @@ import {
   addBill as add,
   updateBill as update,
   updateBillStatus as setStatus,
+  setBillFeedback as setFb,
   archiveBill as archive,
   restoreBill as restore,
   autoArchiveBills,
@@ -20,6 +21,7 @@ interface BillStore {
   updateStatus: (id: string, status: AdminBill['status']) => void
   archive: (id: string) => void
   restore: (id: string) => void
+  setFeedback: (id: string, fb: AdminBill['feedback']) => void
 }
 
 export const useBillStore = create<BillStore>((set) => ({
@@ -48,5 +50,9 @@ export const useBillStore = create<BillStore>((set) => ({
   restore: (id) => {
     restore(id)
     set({ bills: getBills(), archived: getArchivedBills() })
+  },
+  setFeedback: (id, fb) => {
+    setFb(id, fb)
+    set({ bills: getBills() })
   },
 }))

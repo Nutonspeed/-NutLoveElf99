@@ -1,3 +1,5 @@
+import { mockNotificationService } from './mock-notification-service'
+import { sendSms } from './smsNotify'
 import { sendLineMessage } from './lineNotify'
 
 export interface NotifyCustomerOptions {
@@ -9,7 +11,6 @@ export interface NotifyCustomerOptions {
 
 export async function notifyCustomer(opts: NotifyCustomerOptions): Promise<boolean> {
   const recipient = opts.to || process.env.LINE_DEFAULT_RECIPIENT_ID || ''
-
   const parts = [
     '📦 แจ้งเตือนสถานะคำสั่งซื้อ',
     `สถานะ: ${opts.status}`,
@@ -27,11 +28,18 @@ export async function notifyCustomer(opts: NotifyCustomerOptions): Promise<boole
   }
 
   const message = parts.join('\n')
-
-  if (process.env.NOTIFY_MODE === 'line') {
+  const mode = process.env.NOTIFY_MODE
+  if (mode === 'line') {
     return sendLineMessage(recipient, message)
   }
+  if (mode === 'sms') {
+    return sendSms(opts.to || '', message)
+  }
 
-  console.log('notifyCustomer mock', { to: recipient, message })
-  return true
+  return mockNotificationService.sendNotification({
+    type: 'order_updated',
+    recipient: { phone: opts.to },
+    data: { trackingNumber: opts.tracking },
+    priority: 'normal',
+  })
 }

@@ -4,19 +4,24 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { Button } from "@/components/ui/buttons/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { loadFeedbacks, mockFeedbacks } from "@/lib/mock-feedback";
-import FeedbackCard from "@/components/FeedbackCard";
+import { useBillStore } from "@/core/store";
+import BillFeedbackCard from "@/components/BillFeedbackCard";
 
 export default function FeedbackListPage() {
-  const [items, setItems] = useState(mockFeedbacks);
+  const store = useBillStore()
+  const [rating, setRating] = useState('all')
+  const [keyword, setKeyword] = useState('')
+  const [date, setDate] = useState('')
   useEffect(() => {
-    loadFeedbacks();
-    const filtered = mockFeedbacks.filter((fb) => {
-      if (typeof window === "undefined") return true;
-      return !localStorage.getItem("fb-" + fb.orderId);
-    });
-    setItems(filtered);
-  }, []);
+    store.refresh()
+  }, [store])
+  const items = store.bills.filter(b => b.feedback).filter(b => {
+    const fb = b.feedback!
+    const rOk = rating === 'all' || fb.rating === Number(rating)
+    const kOk = keyword === '' || b.customer.includes(keyword) || (fb.message || '').includes(keyword)
+    const dOk = date === '' || (fb.date || '').startsWith(date)
+    return rOk && kOk && dOk
+  })
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -34,8 +39,30 @@ export default function FeedbackListPage() {
             <CardTitle>รายการความคิดเห็น ({items.length})</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {items.map((fb, idx) => (
-              <FeedbackCard key={idx} fb={fb} />
+            <div className="flex flex-wrap gap-2 mb-4">
+              <select value={rating} onChange={e => setRating(e.target.value)} className="border rounded p-1 text-sm">
+                <option value="all">ทุกคะแนน</option>
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+              </select>
+              <input
+                value={keyword}
+                onChange={e => setKeyword(e.target.value)}
+                placeholder="keyword"
+                className="border rounded p-1 text-sm"
+              />
+              <input
+                type="date"
+                value={date}
+                onChange={e => setDate(e.target.value)}
+                className="border rounded p-1 text-sm"
+              />
+            </div>
+            {items.map((b, idx) => (
+              <BillFeedbackCard key={idx} bill={b} />
             ))}
             {items.length === 0 && (
               <p className="text-center text-sm text-gray-500">ไม่มีข้อมูล</p>
