@@ -83,7 +83,7 @@ export function setReadyTimestamp() {
   }
 }
 
-import { addBill } from '@/mock/bills'
+import { addBill } from '@/core/mock/store'
 
 export function generateMockBills(count = 3) {
   for (let i = 0; i < count; i++) {

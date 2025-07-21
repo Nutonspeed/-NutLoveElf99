@@ -4,6 +4,7 @@ import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
 import { addChatMessage } from "./mock-chat-messages"
 import { mockBills } from "./bills"
+import { logBillAction } from "./mock-bill-audit"
 import { generateMockId } from "./mock-uid"
 export { mockBills } from "./bills"
 
@@ -30,6 +31,7 @@ export function createBill(
   }
   mockBills.push(bill)
   addAdminLog(`create bill ${bill.id}`, 'mockAdminId')
+  logBillAction(bill.id, 'create', { ip: '127.0.0.1', device: 'browser', role: 'admin' })
   addChatMessage(orderId, 'bill_created')
   return bill
 }
@@ -43,6 +45,7 @@ export function confirmBill(id: string) {
   if (b) {
     b.status = "paid"
     addAdminLog(`confirm bill ${id}`, 'mockAdminId')
+    logBillAction(id, 'confirm', { ip: '127.0.0.1', device: 'browser', role: 'admin' })
   }
 }
 
@@ -51,12 +54,16 @@ export function cancelBill(id: string) {
   if (b) {
     b.status = "cancelled"
     addAdminLog(`cancel bill ${id}`, 'mockAdminId')
+    logBillAction(id, 'cancel', { ip: '127.0.0.1', device: 'browser', role: 'admin' })
   }
 }
 
 export function addBillPayment(id: string, payment: BillPayment) {
   const b = getBill(id)
-  if (b) b.payments.push(payment)
+  if (b) {
+    b.payments.push(payment)
+    logBillAction(id, 'pay', { ip: '127.0.0.1', device: 'browser', role: 'user' })
+  }
 }
 
 export function markReminderSent(id: string) {

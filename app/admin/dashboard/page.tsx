@@ -14,7 +14,9 @@ import {
   Users as UsersIcon,
   Inbox,
 } from "lucide-react"
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from "recharts"
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts"
+import DashboardCard from "@/components/admin/dashboard/DashboardCard"
+import { useBillInsights } from "@/hooks/useBillInsights"
 import { mockCustomers, type Customer } from "@/lib/mock-customers"
 import {
   mockDB,
@@ -26,6 +28,7 @@ import {
 } from "@/mock/mock-db"
 import { conversations } from "@/lib/mock-conversations"
 import { useAuth } from "@/contexts/auth-context"
+import PageWrapper from "@/components/admin/PageWrapper"
 
 interface OrderData {
   id: string
@@ -37,6 +40,7 @@ interface OrderData {
 export default function AdminDashboard() {
   const { user } = useAuth()
   const router = useRouter()
+  const insights = useBillInsights()
   const [range, setRange] = useState<'1' | '7' | '30' | 'all'>('7')
   const [orders, setOrders] = useState<OrderData[] | null>(null)
   const [customers, setCustomers] = useState<Customer[] | null>(null)
@@ -62,16 +66,7 @@ export default function AdminDashboard() {
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
     .slice(0, 3)
 
-  const dailyData = Array.from({ length: 7 }).map((_, i) => {
-    const d = new Date()
-    d.setDate(d.getDate() - (6 - i))
-    const value = orders
-      ? orders
-          .filter(o => new Date(o.createdAt).toDateString() === d.toDateString())
-          .reduce((s, o) => s + o.total, 0)
-      : 0
-    return { name: d.toLocaleDateString('th-TH', { month: 'short', day: 'numeric' }), value }
-  })
+  const dailyData = insights.daily.map(d => ({ name: d.date, value: d.amount }))
 
   const Fallback = () => (
     <div className="flex flex-col items-center justify-center py-6 text-sm text-muted-foreground">
@@ -81,10 +76,35 @@ export default function AdminDashboard() {
   )
 
   return (
-    <div className="p-4 space-y-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">แดชบอร์ดแอดมินหลัก</h1>
-      </header>
+    <PageWrapper
+      title="แดชบอร์ดแอดมินหลัก"
+      breadcrumb={[{ title: "แดชบอร์ด" }]}
+    >
+
+      <section className="space-y-2">
+        <h2 className="text-lg font-semibold">สรุปยอดขายวันนี้</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <DashboardCard title="ยอดขายวันนี้" value={`฿${insights.todayTotal.toLocaleString()}`} icon={Wallet} />
+          <DashboardCard title="จำนวนบิล" value={insights.todayCount} icon={ShoppingCart} />
+          {insights.highestBill && (
+            <DashboardCard
+              title="ยอดขายสูงสุด"
+              subtext={insights.highestBill.id}
+              value={`฿${insights.highestBill.total.toLocaleString()}`}
+              icon={Wallet}
+            />
+          )}
+        </div>
+        {insights.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {insights.tags.slice(0, 3).map(t => (
+              <span key={t.tag} className="text-xs bg-muted rounded px-2 py-1">
+                {t.tag} ({t.count})
+              </span>
+            ))}
+          </div>
+        )}
+      </section>
 
       <section className="space-y-2">
         <div className="flex items-center justify-between">
@@ -111,19 +131,19 @@ export default function AdminDashboard() {
             Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-24" />)
           ) : (
             <>
-              <SummaryCard
+              <DashboardCard
                 title="ยอดขายทั้งหมด"
                 value={`฿${totalSales.toLocaleString()}`}
                 icon={Wallet}
                 onClick={() => router.push('/admin/bills')}
               />
-              <SummaryCard
+              <DashboardCard
                 title="จำนวนออเดอร์"
                 value={orders!.length}
                 icon={ShoppingCart}
                 onClick={() => router.push('/admin/bills/fast')}
               />
-              <SummaryCard
+              <DashboardCard
                 title="คะแนน feedback"
                 value={feedbackScore ?? 0}
                 icon={MessageSquare}
@@ -178,6 +198,15 @@ export default function AdminDashboard() {
             ดูทั้งหมด
           </Button>
         </div>
+        {insights.newCustomerTags.length > 0 && (
+          <div className="flex flex-wrap gap-2 pb-2">
+            {insights.newCustomerTags.map(t => (
+              <span key={t.tag} className="text-xs bg-muted rounded px-2 py-1">
+                {t.tag} ({t.count})
+              </span>
+            ))}
+          </div>
+        )}
         <Card>
           <CardContent className="p-0">
             {loading ? (
@@ -232,42 +261,18 @@ export default function AdminDashboard() {
               <Skeleton className="h-full w-full" />
             ) : (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={dailyData} margin={{ left: 0, right: 0 }}>
-                  <Line type="monotone" dataKey="value" stroke="#0ea5e9" />
+                <BarChart data={dailyData} margin={{ left: 0, right: 0 }}>
+                  <Bar dataKey="value" fill="#0ea5e9" />
                   <XAxis dataKey="name" />
                   <YAxis hide />
                   <Tooltip />
-                </LineChart>
+                </BarChart>
               </ResponsiveContainer>
             )}
           </CardContent>
         </Card>
       </section>
-    </div>
+    </PageWrapper>
   )
 }
 
-function SummaryCard({
-  title,
-  value,
-  icon: Icon,
-  onClick,
-}: {
-  title: string
-  value: string | number
-  icon: any
-  onClick?: () => void
-}) {
-  return (
-    <div
-      onClick={onClick}
-      className="rounded border p-4 flex cursor-pointer items-center justify-between bg-card"
-    >
-      <div>
-        <p className="text-sm text-muted-foreground">{title}</p>
-        <p className="text-2xl font-bold">{value}</p>
-      </div>
-      <Icon className="h-6 w-6 text-muted-foreground" />
-    </div>
-  )
-}

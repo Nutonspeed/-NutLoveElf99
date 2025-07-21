@@ -29,7 +29,10 @@ export function runShippingSync(): ShippingSyncLog {
   shippingOrders.forEach(o => {
     if (o.deliveryStatus === 'shipping' && Math.random() > 0.6) {
       updateDeliveryStatus(o.id, 'delivered')
-      notifyCustomer(o.phone, o.tracking)
+      notifyCustomer({
+        status: 'จัดส่งสำเร็จ',
+        tracking: o.tracking,
+      })
       updated++
     }
   })

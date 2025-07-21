@@ -2,9 +2,7 @@
 
 import DashboardQuickCard from '@/components/dashboard/DashboardQuickCard'
 import OrderCard from '@/components/orders/OrderCard'
-import { fabrics } from '@/mock/fabrics'
-import { orders } from '@/mock/orders'
-import { mockBills } from '@/mock/bills'
+import { getFabrics, getSimpleOrders, getBills } from '@/core/mock/store'
 import SectionHeader from '@/components/ui/SectionHeader'
 
 export default function DashboardPage() {
@@ -14,13 +12,13 @@ export default function DashboardPage() {
       link: '/dashboard/fabrics',
       title: 'Fabrics',
       icon: '🧵',
-      count: fabrics.length,
+      count: getFabrics().length,
     },
     {
       link: '/dashboard/orders',
       title: 'Orders',
       icon: '📦',
-      count: orders.length,
+      count: getSimpleOrders().length,
     },
     {
       link: '/dashboard/collections',
@@ -32,10 +30,10 @@ export default function DashboardPage() {
       link: '/dashboard/bill/BILL-001',
       title: 'Bills',
       icon: '🧾',
-      count: mockBills.length,
+      count: getBills().length,
     },
   ]
-  const latest = orders.slice(0, 3)
+  const latest = getSimpleOrders().slice(0, 3)
   return (
     <div className="container mx-auto space-y-6 py-8">
       <div>

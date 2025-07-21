@@ -47,6 +47,8 @@ The notification service uses additional variables:
 - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM_NUMBER` – Twilio SMS credentials
 - `SMS_API_KEY`, `SMS_SENDER_ID` – optional SMS provider credentials
 - `LINE_NOTIFY_TOKEN` – token for sending Line notifications
+- `LINE_CHANNEL_ACCESS_TOKEN`, `LINE_DEFAULT_RECIPIENT_ID` – credentials for LINE OA messaging
+- `NOTIFY_MODE` – choose `line`, `sms` or leave blank for mock notifications
 
 ## Chatwoot
 
@@ -87,3 +89,35 @@ pnpm test:watch
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 🧱 Block-Based Dev Flow Guideline (SYSTEM_NOTES.md)
+
+This project uses block-based feature development.
+
+Each feature must be tracked in `SYSTEM_NOTES.md` using the Dev Block format:
+
+### Block XXX–XXX | [Feature Name] | route: /your/feature/path
+
+1. Clear task description  
+2. ...  
+3. ...  
+4. ...  
+5. ...
+
+Status: planned | in progress | done
+
+### 🔒 Required Before PR
+
+Before submitting any PR:
+
+✅ Update `SYSTEM_NOTES.md` with the Block(s) you worked on  
+✅ Follow the format exactly  
+✅ Commit the file with your code
+
+Failure to do so may result in PR rejection or rework request.
+
+---
+
+Status: planned

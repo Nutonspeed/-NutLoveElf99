@@ -1,7 +1,7 @@
 import CopyLinkButton from '@/components/bills/CopyLinkButton'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
 import PaidStatusToggle from '@/components/bills/PaidStatusToggle'
-import { getBill, updateBillStatus } from '@/mock/bills'
+import { getBill, updateBillStatus } from '@/core/mock/store'
 
 interface Props {
   params: { id: string }

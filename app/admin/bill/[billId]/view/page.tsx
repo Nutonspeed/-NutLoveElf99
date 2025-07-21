@@ -20,9 +20,14 @@ export default function AdminBillView({ params }: { params: { billId: string } }
     <div className="p-4 space-y-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">บิล {bill.id}</h1>
-        <Button variant="outline" onClick={() => window.open(`/admin/bill/${bill.id}/print`, '_blank')}>
-          พิมพ์ใบเสร็จ
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => window.open(`/admin/bill/${bill.id}/print`, '_blank')}>
+            พิมพ์ใบเสร็จ
+          </Button>
+          <Button variant="outline" onClick={() => window.open(`/admin/bill/${bill.id}/label`, '_blank')}>
+            พิมพ์ใบปะหน้า
+          </Button>
+        </div>
       </div>
       <BillHeader />
       <BillItemTable items={bill.items} />

@@ -1,18 +1,45 @@
 import { mockNotificationService } from './mock-notification-service'
 import { sendSms } from './smsNotify'
+import { sendLineMessage } from './lineNotify'
 
-export async function notifyCustomer(phone: string, trackingNumber: string): Promise<boolean> {
+export interface NotifyCustomerOptions {
+  to?: string
+  status: string
+  tracking?: string
+  provider?: 'Flash' | 'Kerry'
+}
+
+export async function notifyCustomer(opts: NotifyCustomerOptions): Promise<boolean> {
+  const recipient = opts.to || process.env.LINE_DEFAULT_RECIPIENT_ID || ''
+  const parts = [
+    '📦 แจ้งเตือนสถานะคำสั่งซื้อ',
+    `สถานะ: ${opts.status}`,
+  ]
+
+  if (opts.tracking) {
+    parts.push(`🔎 Tracking: ${opts.tracking}`)
+    if (opts.provider) {
+      const url =
+        opts.provider === 'Flash'
+          ? `https://www.flashexpress.com/fle/tracking/${opts.tracking}`
+          : `https://th.kerryexpress.com/th/track/?track=${opts.tracking}`
+      parts.push(url)
+    }
+  }
+
+  const message = parts.join('\n')
   const mode = process.env.NOTIFY_MODE
-  const message = `\ud83d\ude9a \u0e1e\u0e31\u0e2a\u0e14\u0e38\u0e02\u0e2d\u0e07\u0e04\u0e38\u0e13\u0e16\u0e39\u0e01\u0e08\u0e31\u0e14\u0e2a\u0e48\u0e07\u0e41\u0e25\u0e49\u0e27 Tracking: ${trackingNumber} \u2013 \u0e02\u0e2d\u0e1a\u0e04\u0e38\u0e13\u0e04\u0e48\u0e30`
-
+  if (mode === 'line') {
+    return sendLineMessage(recipient, message)
+  }
   if (mode === 'sms') {
-    return sendSms(phone, message)
+    return sendSms(opts.to || '', message)
   }
 
   return mockNotificationService.sendNotification({
     type: 'order_updated',
-    recipient: { phone },
-    data: { trackingNumber },
+    recipient: { phone: opts.to },
+    data: { trackingNumber: opts.tracking },
     priority: 'normal',
   })
 }

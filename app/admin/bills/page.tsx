@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader as DHeader, DialogTit
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import BillItemActions from '@/components/admin/BillItemActions'
@@ -42,6 +43,16 @@ export default function AdminBillsPage() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'>('all')
   const [tagFilter, setTagFilter] = useState('all')
   const allTags = Array.from(new Set(bills.flatMap((b) => b.tags)))
+  const [selected, setSelected] = useState<string[]>([])
+
+  const toggle = (id: string) => {
+    setSelected((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
+    )
+  }
+
+  const selectAll = () => setSelected(filteredBills.map((b) => b.id))
+  const clearAll = () => setSelected([])
 
   const handleCreate = () => {
     if (items.length === 0) {
@@ -213,6 +224,24 @@ export default function AdminBillsPage() {
                   ))}
                 </SelectContent>
               </Select>
+              {selected.length > 0 && (
+                <Link
+                  href={`/admin/bills/label-batch?ids=${selected.join(',')}`}
+                  className="no-underline"
+                >
+                  <Button size="sm">พิมพ์ใบปะหน้าหลายรายการ</Button>
+                </Link>
+              )}
+              {filteredBills.length > 0 && (
+                <>
+                  <Button variant="outline" size="sm" onClick={selectAll}>
+                    เลือกทั้งหมดในหน้า
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={clearAll}>
+                    ยกเลิกเลือกทั้งหมด
+                  </Button>
+                </>
+              )}
             </div>
           </div>
           <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
@@ -231,6 +260,13 @@ export default function AdminBillsPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>
+                    <Checkbox
+                      checked={selected.length === filteredBills.length && filteredBills.length > 0}
+                      indeterminate={selected.length > 0 && selected.length < filteredBills.length}
+                      onCheckedChange={(v) => (v ? selectAll() : clearAll())}
+                    />
+                  </TableHead>
                   <TableHead>เลขบิล</TableHead>
                   <TableHead>ชื่อลูกค้า</TableHead>
                   <TableHead>แท็ก</TableHead>
@@ -242,7 +278,13 @@ export default function AdminBillsPage() {
               <TableBody>
                 {filteredBills.map((b) => (
                   <TableRow key={b.id}>
-                  <TableCell>{b.id}</TableCell>
+                    <TableCell>
+                      <Checkbox
+                        checked={selected.includes(b.id)}
+                        onCheckedChange={() => toggle(b.id)}
+                      />
+                    </TableCell>
+                    <TableCell>{b.id}</TableCell>
                   <TableCell>{b.customer}</TableCell>
                   <TableCell className="space-x-1">
                     {b.tags.map((t) => (
@@ -250,6 +292,11 @@ export default function AdminBillsPage() {
                         {t}
                       </Badge>
                     ))}
+                    {b.tags.includes('flash-submitted') && (
+                      <Badge variant="outline" className="border-green-600 text-green-600">
+                        ส่งแล้ว
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Select
