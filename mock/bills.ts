@@ -12,6 +12,7 @@ export interface AdminBill {
   items: BillItem[]
   shipping: number
   note: string
+  paymentMethod: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'
   tags: string[]
   createdAt: string
@@ -28,6 +29,7 @@ export const mockBills: AdminBill[] = [
     ],
     shipping: 50,
     note: '',
+    paymentMethod: 'bank_transfer',
     status: 'pending',
     tags: ['COD', 'VIP'],
     createdAt: new Date().toISOString(),

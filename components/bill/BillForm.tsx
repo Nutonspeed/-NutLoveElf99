@@ -9,7 +9,7 @@ export default function BillForm() {
     customerName: '',
     customerPhone: '',
     note: '',
-    paymentMethod: 'cash',
+    paymentMethod: 'bank_transfer',
     total: 0,
     items: [{ name: '', quantity: 1, price: 0 }],
   })

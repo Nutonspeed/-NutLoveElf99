@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
+import PaymentMethodSelector, { type PaymentMethod } from "@/components/PaymentMethodSelector"
 import { orderDb } from "@/lib/order-database"
 import { createBill } from "@/lib/mock-bills"
 import type { OrderItem } from "@/types/order"
@@ -19,6 +20,7 @@ export default function AdminBillCreatePage() {
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null)
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
@@ -30,6 +32,13 @@ export default function AdminBillCreatePage() {
     if (items.length === 0) {
       toast.error("ต้องมีสินค้าอย่างน้อย 1 รายการ")
       return
+    }
+    if (!paymentMethod) {
+      toast.error("กรุณาเลือกวิธีชำระเงิน")
+      return
+    }
+    if (paymentMethod === 'cod' && shippingCost === 0) {
+      toast.warning('COD ควรมีค่าจัดส่งกำหนดไว้')
     }
     setLoading(true)
     try {
@@ -43,7 +52,7 @@ export default function AdminBillCreatePage() {
         status: "pending",
         paymentStatus: "unpaid",
       })
-      const bill = createBill(order.id)
+      const bill = createBill(order.id, 'unpaid', undefined, paymentMethod)
       const link = `/bill/${bill.id}`
       setBillLink(link)
       toast.success("สร้างบิลแล้ว")
@@ -76,6 +85,10 @@ export default function AdminBillCreatePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-20 lg:pb-0">
           <div className="lg:col-span-2 space-y-6 overflow-y-auto max-h-[60vh]">
             <OrderItemsRepeater items={items} onItemsChange={setItems} />
+            <div>
+              <h3 className="font-medium mb-2">วิธีชำระเงิน</h3>
+              <PaymentMethodSelector value={paymentMethod} onChange={setPaymentMethod} />
+            </div>
           </div>
           <div className="space-y-6">
             <OrderSummary
