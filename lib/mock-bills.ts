@@ -12,6 +12,7 @@ export function createBill(
   orderId: string,
   status: BillStatus = "unpaid",
   dueDate?: string,
+  paymentMethod: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card' = 'bank_transfer',
 ): Bill {
   const order = mockOrders.find((o) => o.id === orderId)
   const customer = order && mockCustomers.find((c) => c.id === order.customerId)
@@ -23,6 +24,7 @@ export function createBill(
     payments: [],
     createdAt: new Date().toISOString(),
     dueDate,
+    paymentMethod,
   }
   if (customer?.muted) {
     bill.hidden = true
