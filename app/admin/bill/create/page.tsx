@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
+import BillSummary, { getSubtotal, calculateTotal } from "@/components/admin/bill/BillSummary"
 import { orderDb } from "@/lib/order-database"
 import { createBill } from "@/lib/mock-bills"
 import type { OrderItem } from "@/types/order"
@@ -20,11 +21,8 @@ export default function AdminBillCreatePage() {
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
 
-  const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
-    0,
-  )
-  const total = subtotal - discount + shippingCost + tax
+  const subtotal = getSubtotal(items)
+  const total = calculateTotal(items, shippingCost, discount) + tax
 
   const create = async () => {
     if (items.length === 0) {
@@ -109,13 +107,16 @@ export default function AdminBillCreatePage() {
                 )}
               </CardContent>
             </Card>
-          </div>
         </div>
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
-          <Button className="w-full" onClick={create} disabled={loading}>
-            บันทึกบิล
-          </Button>
-        </div>
+      </div>
+      <div className="max-w-md mx-auto lg:max-w-none">
+        <BillSummary items={items} discount={discount} shipping={shippingCost} />
+      </div>
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
+        <Button className="w-full" onClick={create} disabled={loading}>
+          บันทึกบิล
+        </Button>
+      </div>
       </div>
     </div>
   )
