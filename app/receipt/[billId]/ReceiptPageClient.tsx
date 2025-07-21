@@ -4,12 +4,11 @@ import type { BillData } from '@/lib/hooks/useBillData'
 import { Button } from '@/components/ui/buttons/button'
 import { Copy, Download } from 'lucide-react'
 import PaymentConfirmModal from '@/components/receipt/PaymentConfirmModal'
-import FeedbackForm from '@/components/FeedbackForm'
-import { useState } from 'react'
+import Link from 'next/link'
 import Head from 'next/head'
+import { useState } from 'react'
 
 export default function ReceiptPageClient({ bill, meta }: { bill: BillData; meta: { title: string; description: string; image: string } }) {
-  const [showFb, setShowFb] = useState(false)
   const [openPay, setOpenPay] = useState(false)
   const copyLink = () => {
     if (typeof window !== 'undefined') {
@@ -62,14 +61,10 @@ export default function ReceiptPageClient({ bill, meta }: { bill: BillData; meta
       <div className="w-full max-w-xl">
         <ReceiptLayout bill={bill} />
         {!bill.feedback && bill.status === 'delivered' && (
-          <div id="feedback" className="mt-4 print:hidden">
-            {showFb ? (
-              <FeedbackForm billId={bill.id} onSubmitted={() => setShowFb(false)} />
-            ) : (
-              <Button onClick={() => setShowFb(true)} className="w-full">
-                ให้คะแนนความพึงพอใจ
-              </Button>
-            )}
+          <div id="feedback" className="mt-4 print:hidden text-center">
+            <Link href={`/receipt/${bill.id}/feedback`} className="underline text-blue-600">
+              ให้คะแนนความพึงพอใจ
+            </Link>
           </div>
         )}
       </div>
