@@ -121,7 +121,7 @@ export default function AdminBillCreatePage() {
         <div className="max-w-md mx-auto lg:max-w-none">
           <BillSummary items={items} discount={discount} shipping={shippingCost} />
         </div>
-        </div>
       </div>
+    </div>
   )
 }
