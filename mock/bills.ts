@@ -35,3 +35,44 @@ export const mockBills: AdminBill[] = [
     createdAt: new Date().toISOString(),
   },
 ]
+
+export function addBill(
+  data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>,
+): AdminBill {
+  const bill: AdminBill = {
+    id: `bill-${Date.now()}`,
+    status: 'unpaid',
+    createdAt: new Date().toISOString(),
+    ...data,
+  }
+  mockBills.unshift(bill)
+  return bill
+}
+
+export function updateBill(
+  id: string,
+  data: Partial<Omit<AdminBill, 'id' | 'createdAt'>>,
+): AdminBill | undefined {
+  const bill = mockBills.find(b => b.id === id)
+  if (bill) Object.assign(bill, data)
+  return bill
+}
+
+export function updateBillStatus(id: string, status: AdminBill['status']) {
+  const bill = mockBills.find(b => b.id === id)
+  if (bill) bill.status = status
+}
+
+export function archiveBill(id: string) {
+  const bill = mockBills.find(b => b.id === id)
+  if (bill) bill.archived = true
+}
+
+export function restoreBill(id: string) {
+  const bill = mockBills.find(b => b.id === id)
+  if (bill) bill.archived = false
+}
+
+export function getArchivedBills() {
+  return mockBills.filter(b => b.archived)
+}
