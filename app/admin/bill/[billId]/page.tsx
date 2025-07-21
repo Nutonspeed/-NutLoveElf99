@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/
 import { Badge } from '@/components/ui/badge'
 import { useBillById } from '@/hooks/useBillById'
 
-export default function AdminBillDetailPage({ params }: { params: { id: string } }) {
-  const bill = useBillById(params.id)
+export default function AdminBillDetailPage({ params }: { params: { billId: string } }) {
+  const bill = useBillById(params.billId)
 
   if (bill === undefined) {
     return <div className="p-4 text-center">Loading...</div>
