@@ -11,7 +11,7 @@ export const BillSchema = z.object({
   customerPhone: z.string().optional(),
   items: z.array(BillItemSchema),
   note: z.string().optional(),
-  paymentMethod: z.enum(['cash', 'promptpay', 'transfer']),
+  paymentMethod: z.enum(['cod', 'bank_transfer', 'promptpay', 'credit_card']),
   total: z.number(),
 })
 

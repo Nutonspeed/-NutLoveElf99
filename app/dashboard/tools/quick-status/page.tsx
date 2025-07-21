@@ -1,27 +1,25 @@
 import DashboardQuickCard from '@/components/dashboard/DashboardQuickCard'
 import SectionHeader from '@/components/ui/SectionHeader'
-import { orders as ordersMock } from '@/mock/orders'
-import { mockBills as billsMock } from '@/mock/bills'
-import { fabrics } from '@/mock/fabrics'
+import { getSimpleOrders, getBills, getFabrics } from '@/core/mock/store'
 import { formatCurrency, formatDate } from '@/lib/utils'
 
 export default function QuickStatusPage() {
-  const latestOrder = ordersMock[0]
-  const latestBill = billsMock[0]
+  const latestOrder = getSimpleOrders()[0]
+  const latestBill = getBills()[0]
   const today = new Date().toISOString().slice(0, 10)
-  const totalToday = billsMock
+  const totalToday = getBills()
     .filter(b => b.status === 'paid' && b.createdAt.slice(0, 10) === today)
     .reduce((s, b) =>
       s + b.items.reduce((n, i) => n + i.price * i.quantity, 0) + b.shipping,
     0)
 
   const links = [
-    { link: '/dashboard/orders', title: 'Orders', icon: '📦', count: ordersMock.length },
-    { link: '/dashboard/bill/BILL-001', title: 'Bills', icon: '🧾', count: billsMock.length },
+    { link: '/dashboard/orders', title: 'Orders', icon: '📦', count: getSimpleOrders().length },
+    { link: '/dashboard/bill/BILL-001', title: 'Bills', icon: '🧾', count: getBills().length },
     { link: '/dashboard/fabrics', title: 'Fabrics', icon: '🧵', count: fabrics.length },
   ]
 
-  const noData = ordersMock.length === 0 && billsMock.length === 0
+  const noData = getSimpleOrders().length === 0 && getBills().length === 0
 
   return (
     <div className="container mx-auto space-y-4 py-8">

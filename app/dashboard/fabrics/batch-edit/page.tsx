@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { fabrics, updateFabric } from '@/mock/fabrics'
+import { getFabrics, updateFabric } from '@/core/mock/store'
 import { collections } from '@/mock/collections'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Button } from '@/components/ui/buttons/button'
@@ -31,7 +31,7 @@ export default function BatchEditFabricPage() {
     <div className="container mx-auto py-8 space-y-4">
       <h1 className="text-2xl font-bold">แก้ไขคอลเลกชันผ้าหลายรายการ</h1>
       <div className="space-y-2">
-        {fabrics.map(f => (
+        {getFabrics().map(f => (
           <label key={f.id} className="flex items-center gap-2">
             <Checkbox
               checked={selectedIds.includes(f.id)}

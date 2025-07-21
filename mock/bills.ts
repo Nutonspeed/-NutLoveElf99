@@ -1,16 +1,4 @@
-import { generateMockId } from '../lib/mock-uid'
-
-export interface BillItem {
-  name: string
-  quantity: number
-  price: number
-}
-
-export interface BillFeedback {
-  rating?: number
-  message?: string
-  date?: string
-}
+import type { BillFeedback, BillItem } from '@/types/bill'
 
 export interface AdminBill {
   id: string
@@ -19,7 +7,11 @@ export interface AdminBill {
   shipping: number
   note: string
   status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
+  paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
+  trackingNumber?: string
+  shippingMethod?: string
+  shippingStatus?: 'shipped' | 'delivered' | 'returned' | 'cancelled'
   createdAt: string
   feedback?: BillFeedback
   archived?: boolean
@@ -35,54 +27,11 @@ export const mockBills: AdminBill[] = [
     ],
     shipping: 50,
     note: '',
-    status: 'pending',
-    tags: ['COD', 'VIP'],
+    status: 'paid',
+    tags: ['flash'],
+    trackingNumber: 'TH1234567890',
+    shippingMethod: 'Flash',
+    shippingStatus: 'shipped',
     createdAt: new Date().toISOString(),
-    feedback: undefined,
-    archived: false,
   },
 ]
-
-export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>): AdminBill {
-  const bill: AdminBill = {
-    id: generateMockId('bill'),
-    status: 'unpaid',
-    createdAt: new Date().toISOString(),
-    ...data,
-    archived: false,
-  }
-  mockBills.unshift(bill)
-  return bill
-}
-
-export function updateBillStatus(id: string, status: AdminBill['status']) {
-  const bill = mockBills.find((b) => b.id === id)
-  if (bill) bill.status = status
-}
-
-export function archiveBill(id: string) {
-  const bill = mockBills.find((b) => b.id === id)
-  if (bill) bill.archived = true
-}
-
-export function restoreBill(id: string) {
-  const bill = mockBills.find((b) => b.id === id)
-  if (bill) bill.archived = false
-}
-
-export function getArchivedBills() {
-  return mockBills.filter((b) => b.archived)
-}
-
-export function getBill(id: string): AdminBill | undefined {
-  return mockBills.find((b) => b.id === id)
-}
-
-export function updateBill(
-  id: string,
-  data: Partial<Omit<AdminBill, 'id' | 'createdAt'>>,
-): AdminBill | undefined {
-  const bill = mockBills.find((b) => b.id === id)
-  if (bill) Object.assign(bill, data)
-  return bill
-}

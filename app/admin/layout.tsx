@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <div className="flex flex-1 flex-col">
               <Topbar onMenuClick={() => setSidebarOpen(true)} />
-              <main className="flex-1 p-4 pb-20 md:pb-4">{children}</main>
+              <main className="flex-1 pb-20 md:pb-4">{children}</main>
               <AdminToast />
               <QuickActionBar />
             </div>

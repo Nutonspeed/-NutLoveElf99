@@ -39,3 +39,13 @@ Status: planned
 5. Show archive status clearly in bill list and detail view
 
 Status: planned
+
+## Block 401–405 | System Transition — Post-Billing Integration Phase | route: /admin/dashboard, /core/system
+
+1. Audit all existing billing flows for integration compatibility (e.g., dashboard, report, roles)
+2. Refactor route structure and system registry for modular billing blocks
+3. Sync billing insights to core dashboard summary (total, due, overdue)
+4. Identify redundant mock stores or duplicated state across billing submodules
+5. Plan branching path: connect to real database or maintain long-term mock infrastructure
+
+Status: planned

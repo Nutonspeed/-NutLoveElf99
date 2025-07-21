@@ -20,7 +20,10 @@ import {
   MessageCircle,
   UserPlus,
   Percent,
+  Database,
   Settings,
+  Truck,
+  RefreshCcw,
   Target,
   Users,
 } from "lucide-react"
@@ -51,6 +54,14 @@ const groups = [
     ],
   },
   {
+    label: "Shipping",
+    items: [
+      { href: "/admin/shipping/dashboard", label: "Dashboard", icon: Truck, feature: "orders" },
+      { href: "/admin/shipping/orders", label: "Orders", icon: FileText, feature: "orders" },
+      { href: "/admin/shipping/sync", label: "Sync", icon: RefreshCcw, feature: "orders" },
+    ],
+  },
+  {
     label: "Analytics",
     items: [
       { href: "/admin/dashboard", label: "แดชบอร์ด", icon: BarChart3, feature: "dashboard" },
@@ -77,6 +88,7 @@ const groups = [
       { href: "/admin/feature-map", label: "แผนที่ฟีเจอร์", icon: Settings, feature: "settings" },
       { href: "/admin/faq", label: "คำถามพบบ่อย", icon: HelpCircle, feature: "settings" },
       { href: "/admin/feedback", label: "ความคิดเห็น", icon: MailQuestion, feature: "settings" },
+      { href: "/admin/settings/backup", label: "Backup", icon: Database, feature: "settings" },
     ],
   },
 ]

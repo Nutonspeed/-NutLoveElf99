@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/buttons/button'
 import { Edit, Trash2 } from 'lucide-react'
 import EditFabricModal from './EditFabricModal'
 import type { Fabric } from '@/mock/fabrics'
-import { removeFabric } from '@/mock/fabrics'
+import { removeFabric } from '@/core/mock/store'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 export default function FabricCard({

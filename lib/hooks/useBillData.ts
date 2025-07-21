@@ -13,12 +13,16 @@ export interface BillData {
 }
 
 export function useBillData(id: string) {
-  const [bill, setBill] = useState<BillData | null>(null)
+  const [bill, setBill] = useState<BillData | null | undefined>(undefined)
 
   useEffect(() => {
+    setBill(undefined)
     fetch(`/api/mock/bill/${id}`)
       .then((r) => r.json())
-      .then(setBill)
+      .then((data) => {
+        if (data && data.id) setBill(data)
+        else setBill(null)
+      })
       .catch(() => setBill(null))
   }, [id])
 

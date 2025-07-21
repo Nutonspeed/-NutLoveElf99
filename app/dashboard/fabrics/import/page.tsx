@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import JSZip from 'jszip'
-import { addFabric } from '@/mock/fabrics'
+import { addFabric } from '@/core/mock/store'
 import { Button } from '@/components/ui/buttons/button'
 
 export default function ImportFabricPage() {

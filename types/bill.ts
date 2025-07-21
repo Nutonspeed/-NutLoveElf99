@@ -13,6 +13,7 @@ export interface Bill {
   orderId: string
   phone?: string
   pin?: string
+  paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   status: BillStatus
   payments: BillPayment[]
   createdAt: string
