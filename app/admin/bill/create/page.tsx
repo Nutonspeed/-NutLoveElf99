@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/buttons/button"
@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
 import { orderDb } from "@/lib/order-database"
-import { createBill } from "@/lib/mock-bills"
+import { createBill, mockBills } from "@/lib/mock-bills"
+import ShippingMethodSelector, { ShippingMethod } from "@/components/ShippingMethodSelector"
 import type { OrderItem } from "@/types/order"
 import { toast } from "sonner"
 
@@ -19,6 +20,8 @@ export default function AdminBillCreatePage() {
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
   const [billLink, setBillLink] = useState<string | null>(null)
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod | null>(null)
+  const [trackingNumber, setTrackingNumber] = useState("")
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
@@ -26,9 +29,19 @@ export default function AdminBillCreatePage() {
   )
   const total = subtotal - discount + shippingCost + tax
 
+  useEffect(() => {
+    if (mockBills.length > 0) {
+      setShippingMethod(mockBills[0].shippingMethod ?? null)
+    }
+  }, [])
+
   const create = async () => {
     if (items.length === 0) {
       toast.error("ต้องมีสินค้าอย่างน้อย 1 รายการ")
+      return
+    }
+    if (!shippingMethod) {
+      toast.warning("โปรดเลือกวิธีขนส่ง")
       return
     }
     setLoading(true)
@@ -43,7 +56,7 @@ export default function AdminBillCreatePage() {
         status: "pending",
         paymentStatus: "unpaid",
       })
-      const bill = createBill(order.id)
+      const bill = createBill(order.id, "unpaid", undefined, shippingMethod, trackingNumber)
       const link = `/bill/${bill.id}`
       setBillLink(link)
       toast.success("สร้างบิลแล้ว")
@@ -86,6 +99,15 @@ export default function AdminBillCreatePage() {
               onDiscountChange={setDiscount}
               onShippingCostChange={setShippingCost}
               onTaxChange={setTax}
+            />
+            <ShippingMethodSelector
+              value={shippingMethod}
+              tracking={trackingNumber}
+              onChange={(m) => {
+                setShippingMethod(m)
+                setTrackingNumber("")
+              }}
+              onTrackingChange={setTrackingNumber}
             />
             <Card>
               <CardHeader>
