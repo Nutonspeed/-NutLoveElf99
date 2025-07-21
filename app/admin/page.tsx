@@ -9,6 +9,7 @@ import { mockOrders, updateOrderStatus } from "@/lib/mock/orders";
 import { mockNotifications } from "@/lib/mock-notifications";
 import { chatNotifications } from "@/lib/mock/chat-notify";
 import DebugPanel from "@/components/admin/DebugPanel";
+import PageWrapper from "@/components/admin/PageWrapper";
 import { logEvent } from "@/lib/logs";
 import type { Order } from "@/types/order";
 import { toast } from "sonner";
@@ -77,7 +78,10 @@ export default function AdminIndex() {
   };
 
   return (
-    <div className="p-4 space-y-6">
+    <PageWrapper
+      title="แดชบอร์ด"
+      breadcrumb={[{ title: "แดชบอร์ด" }]}
+    >
       <div className="flex flex-col gap-4 mb-4">
         <Button
           variant="default"
@@ -214,6 +218,6 @@ export default function AdminIndex() {
       </CardContent>
       </Card>
       {debugOpen && <DebugPanel />}
-    </div>
+    </PageWrapper>
   );
 }
