@@ -6,15 +6,22 @@ export interface BillItem {
   price: number
 }
 
+export interface BillFeedback {
+  rating?: number
+  message?: string
+  date?: string
+}
+
 export interface AdminBill {
   id: string
   customer: string
   items: BillItem[]
   shipping: number
   note: string
-  status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'
+  status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
   tags: string[]
   createdAt: string
+  feedback?: BillFeedback
   archived?: boolean
 }
 
@@ -31,6 +38,7 @@ export const mockBills: AdminBill[] = [
     status: 'pending',
     tags: ['COD', 'VIP'],
     createdAt: new Date().toISOString(),
+    feedback: undefined,
     archived: false,
   },
 ]
