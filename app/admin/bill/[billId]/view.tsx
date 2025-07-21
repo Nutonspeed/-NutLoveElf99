@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/buttons/button"
 import { Badge } from "@/components/ui/badge"
 import type { AdminBill } from "@/mock/bills"
 import { useBillStore } from "@/core/store"
+import { generateReceiptPDF } from "@/lib/pdf/receipt"
+import { exportPDF } from "@/lib/pdf/export"
 
 export default function AdminBillViewPage({ params }: { params: { billId: string } }) {
   const store = useBillStore()
@@ -26,13 +28,32 @@ export default function AdminBillViewPage({ params }: { params: { billId: string
   const discount = (bill as any).discount || 0
   const total = subtotal - discount + bill.shipping
 
+  const handleDownload = async () => {
+    const data = {
+      id: bill.id,
+      customer: { name: bill.customer, address: '-', phone: '-' },
+      items: bill.items,
+      shipping: bill.shipping,
+      discount,
+      note: bill.note,
+    }
+    const qr = `${window.location.origin}/receipt/${bill.id}`
+    const blob = await generateReceiptPDF(data as any, { mock: true, qr })
+    exportPDF(blob, `receipt-${bill.id}.pdf`)
+  }
+
   return (
     <div className="space-y-6" data-testid="bill-detail">
-      <div className="flex items-center space-x-2">
+      <div className="flex flex-wrap items-center gap-2">
         <Link href="/admin/bills">
           <Button variant="outline">← กลับ</Button>
         </Link>
         <h1 className="text-2xl font-bold">บิล {bill.id}</h1>
+        {bill.status === 'paid' && (
+          <Button onClick={handleDownload}>
+            ดาวน์โหลดใบเสร็จ/ใบกำกับภาษี (PDF)
+          </Button>
+        )}
       </div>
 
       <Card data-testid="customer-info">
