@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 
-const dbPath = join(process.cwd(), 'db', 'payments.json')
+const dbPath = join(process.cwd(), 'mock', 'store', 'payments.json')
 
 function load() {
   if (!existsSync(dbPath)) return [] as any[]

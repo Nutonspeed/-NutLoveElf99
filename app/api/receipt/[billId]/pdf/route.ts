@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server'
+import React from 'react'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import { getBills } from '@/core/mock/store'
-import { generateReceiptPDF } from '@/lib/pdf/receipt'
+import ReceiptLayout from '@/components/receipt/ReceiptLayout'
+import { componentToPDF } from '@/lib/pdf/from-html'
 
-const logPath = join(process.cwd(), 'db', 'pdf-log.json')
+const logPath = join(process.cwd(), 'mock', 'store', 'pdf-log.json')
 
 function loadLog() {
   if (!existsSync(logPath)) return [] as any[]
@@ -16,7 +18,7 @@ function loadLog() {
 export async function GET(_req: Request, { params }: { params: { billId: string } }) {
   const bill = getBills().find(b => b.id === params.billId)
   if (!bill) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  const blob = await generateReceiptPDF(bill as any, { mock: true })
+  const blob = await componentToPDF(<ReceiptLayout bill={bill as any} />)
   const buffer = Buffer.from(await blob.arrayBuffer())
   const log = loadLog()
   log.push({ billId: params.billId, date: new Date().toISOString() })

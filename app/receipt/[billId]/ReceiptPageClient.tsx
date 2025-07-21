@@ -6,8 +6,9 @@ import { Copy, Download } from 'lucide-react'
 import PaymentConfirmModal from '@/components/receipt/PaymentConfirmModal'
 import FeedbackForm from '@/components/FeedbackForm'
 import { useState } from 'react'
+import Head from 'next/head'
 
-export default function ReceiptPageClient({ bill }: { bill: BillData }) {
+export default function ReceiptPageClient({ bill, meta }: { bill: BillData; meta: { title: string; description: string; image: string } }) {
   const [showFb, setShowFb] = useState(false)
   const [openPay, setOpenPay] = useState(false)
   const copyLink = () => {
@@ -35,8 +36,16 @@ export default function ReceiptPageClient({ bill }: { bill: BillData }) {
   }
 
   return (
-    <div className="min-h-screen p-4 flex flex-col items-center space-y-4">
-      <h1 className="text-lg font-semibold">ใบเสร็จคำสั่งซื้อของคุณ</h1>
+    <>
+      <Head>
+        <title>{meta.title}</title>
+        <meta name="description" content={meta.description} />
+        <meta property="og:title" content={meta.title} />
+        <meta property="og:description" content={meta.description} />
+        <meta property="og:image" content={meta.image} />
+      </Head>
+      <div className="min-h-screen p-4 flex flex-col items-center space-y-4">
+        <h1 className="text-lg font-semibold">ใบเสร็จคำสั่งซื้อของคุณ</h1>
       <div className="flex gap-2 print:hidden">
         <Button variant="outline" size="sm" onClick={copyLink}>
           <Copy className="w-4 h-4 mr-2" /> คัดลอกลิงก์
@@ -66,5 +75,6 @@ export default function ReceiptPageClient({ bill }: { bill: BillData }) {
       </div>
       <PaymentConfirmModal billId={bill.id} open={openPay} onClose={() => setOpenPay(false)} />
     </div>
+    </>
   )
 }

@@ -20,14 +20,17 @@ export default function AdminBillDetail({ params }: { params: { id: string } }) 
   return (
     <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold">บิล {bill.id}</h1>
+      <p className="text-sm">สถานะ: {bill.status}</p>
       <div className="space-y-2">
         <h2 className="font-semibold">แจ้งโอน</h2>
         {payments.length === 0 && <p className="text-sm">ไม่มีข้อมูล</p>}
         {payments.map(p => (
-          <div key={p.id} className="border p-2 rounded">
+          <div key={p.id} className="border p-2 rounded space-y-1">
             <p>เวลา: {p.datetime}</p>
             <p>ช่องทาง: {p.method}</p>
-            {p.slip && <p className="text-sm text-gray-600">{p.slip}</p>}
+            {p.slip && (
+              <img src="/placeholder.jpg" alt="slip" className="w-32 border" />
+            )}
           </div>
         ))}
         {bill.status !== 'paid' && payments.length > 0 && (
