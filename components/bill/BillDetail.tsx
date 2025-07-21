@@ -1,3 +1,4 @@
+"use client"
 import { useBill } from '@/libs/hooks/useBill'
 
 export default function BillDetail({ id }: { id: string }) {
