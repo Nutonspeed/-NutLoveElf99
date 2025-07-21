@@ -14,6 +14,9 @@ export interface AdminBill {
   note: string
   status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'
   tags: string[]
+  trackingNumber?: string
+  shippingMethod?: string
+  shippingStatus?: 'shipped' | 'delivered' | 'returned' | 'cancelled'
   createdAt: string
   archived?: boolean
 }
@@ -29,7 +32,10 @@ export const mockBills: AdminBill[] = [
     shipping: 50,
     note: '',
     status: 'pending',
-    tags: ['COD', 'VIP'],
+    tags: ['COD', 'VIP', 'flash-status:shipped'],
+    trackingNumber: 'TH123456789012',
+    shippingMethod: 'flash',
+    shippingStatus: 'shipped',
     createdAt: new Date().toISOString(),
     archived: false,
   },
