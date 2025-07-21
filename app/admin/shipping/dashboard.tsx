@@ -3,8 +3,10 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/buttons/button'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table'
 import { toast } from 'sonner'
-import { mockBills } from '@/lib/mock-bills'
+import { mockBills, markReminderSent } from '@/lib/mock-bills'
 import { syncKerryStatuses } from '@/lib/kerryApi'
+import { mockNotificationService } from '@/lib/mock-notification-service'
+import { addNotification } from '@/lib/mock-notifications'
 
 export default function ShippingDashboard() {
   const [bills, setBills] = useState(() => mockBills.map(b => ({ ...b })))
@@ -13,6 +15,26 @@ export default function ShippingDashboard() {
     const res = await syncKerryStatuses(bills as any)
     setBills(mockBills.map(b => ({ ...b })))
     toast.success(`สำเร็จ ${res.success} ไม่พบเลข ${res.missing} ล้มเหลว ${res.failed}`)
+  }
+
+  const handleRemind = async (id: string) => {
+    const bill = mockBills.find(b => b.id === id)
+    if (!bill) return
+    await mockNotificationService.sendNotification({
+      type: 'order_updated',
+      recipient: { phone: bill.phone },
+      data: { billId: id },
+      priority: 'normal',
+    })
+    addNotification({
+      id: `remind-${id}-${Date.now()}`,
+      type: 'order',
+      message: `ติดตามพัสดุสำหรับบิล ${id}`,
+      link: `/admin/bill/${id}`,
+    })
+    markReminderSent(id)
+    setBills(mockBills.map(b => ({ ...b })))
+    toast.success('ส่งแจ้งเตือนแล้ว')
   }
 
   return (
@@ -28,6 +50,8 @@ export default function ShippingDashboard() {
             <TableHead>Method</TableHead>
             <TableHead>Tracking</TableHead>
             <TableHead>Tags</TableHead>
+            <TableHead>แจ้งเตือนแล้วหรือยัง</TableHead>
+            <TableHead />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,6 +71,10 @@ export default function ShippingDashboard() {
                     {t}
                   </span>
                 ))}
+              </TableCell>
+              <TableCell>{b.reminderSent ? '✅' : '❌'}</TableCell>
+              <TableCell>
+                <Button size="sm" onClick={() => handleRemind(b.id)}>ส่งแจ้งเตือนทันที</Button>
               </TableCell>
             </TableRow>
           ))}

@@ -19,4 +19,6 @@ export interface Bill {
   dueDate?: string
   hidden?: boolean
   abandonReason?: string
+  /** notification for delivery reminder sent */
+  reminderSent?: boolean
 }

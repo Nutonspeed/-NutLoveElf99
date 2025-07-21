@@ -23,6 +23,7 @@ export function createBill(
     payments: [],
     createdAt: new Date().toISOString(),
     dueDate,
+    reminderSent: false,
   }
   if (customer?.muted) {
     bill.hidden = true
@@ -56,6 +57,11 @@ export function cancelBill(id: string) {
 export function addBillPayment(id: string, payment: BillPayment) {
   const b = getBill(id)
   if (b) b.payments.push(payment)
+}
+
+export function markReminderSent(id: string) {
+  const b = getBill(id)
+  if (b) b.reminderSent = true
 }
 
 export function cleanupOldBills(days: number) {
