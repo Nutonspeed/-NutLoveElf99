@@ -250,6 +250,11 @@ export default function AdminBillsPage() {
                         {t}
                       </Badge>
                     ))}
+                    {b.tags.includes('flash-submitted') && (
+                      <Badge variant="outline" className="border-green-600 text-green-600">
+                        ส่งแล้ว
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Select
