@@ -8,17 +8,29 @@ import type { AdminBill } from "@/mock/bills"
 import { useBillStore } from "@/core/store"
 import { generateReceiptPDF } from "@/lib/pdf/receipt"
 import { exportPDF } from "@/lib/pdf/export"
+import { loadNotificationLogs, notifications } from "@/mock/notifications"
 
 export default function AdminBillViewPage({ params }: { params: { billId: string } }) {
   const store = useBillStore()
   const [bill, setBill] = useState<AdminBill | undefined>(() =>
     store.bills.find((b) => b.id === params.billId),
   )
+  const [logs, setLogs] = useState(() => {
+    loadNotificationLogs()
+    return notifications[params.billId] || []
+  })
 
   useEffect(() => {
     store.refresh()
     setBill(store.bills.find((b) => b.id === params.billId))
+    setLogs(notifications[params.billId] || [])
   }, [params.billId, store])
+
+  useEffect(() => {
+    const handler = () => setLogs(notifications[params.billId] || [])
+    window.addEventListener('storage', handler)
+    return () => window.removeEventListener('storage', handler)
+  }, [params.billId])
 
   if (!bill) {
     return <div className="p-4">ไม่พบข้อมูลบิล</div>
@@ -133,6 +145,23 @@ export default function AdminBillViewPage({ params }: { params: { billId: string
               {tag}
             </Badge>
           ))}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Notification Log</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1 text-sm">
+          {logs.length ? (
+            logs.map((l, i) => (
+              <div key={i}>
+                {new Date(l.timestamp).toLocaleString()} - {l.message}
+              </div>
+            ))
+          ) : (
+            <p>ไม่มีประวัติการแจ้งเตือน</p>
+          )}
         </CardContent>
       </Card>
     </div>

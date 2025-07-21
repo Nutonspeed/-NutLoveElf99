@@ -1,5 +1,6 @@
 import { shippingOrders, updateDeliveryStatus } from '@/mock/shipping'
 import { mockNotificationService } from './mock-notification-service'
+import { notifyCustomer } from './notifyCustomer'
 
 export interface ShippingSyncLog {
   id: string
@@ -35,6 +36,7 @@ export function runShippingSync(): ShippingSyncLog {
         data: { orderId: o.id, status: 'delivered' },
         priority: 'normal',
       })
+      notifyCustomer(o, 'delivered')
       updated++
     }
   })
@@ -46,4 +48,22 @@ export function runShippingSync(): ShippingSyncLog {
   shippingSyncLogs.unshift(log)
   saveLogs()
   return log
+}
+
+export function syncKerryStatuses() {
+  shippingOrders.forEach(o => {
+    if (o.provider === 'Kerry' && o.deliveryStatus === 'shipping') {
+      updateDeliveryStatus(o.id, 'delivered')
+      notifyCustomer(o, 'delivered')
+    }
+  })
+}
+
+export function syncFlashStatuses() {
+  shippingOrders.forEach(o => {
+    if (o.provider === 'Flash' && o.deliveryStatus === 'shipping') {
+      updateDeliveryStatus(o.id, 'delivered')
+      notifyCustomer(o, 'delivered')
+    }
+  })
 }
