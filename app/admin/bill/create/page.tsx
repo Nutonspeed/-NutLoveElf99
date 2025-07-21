@@ -6,19 +6,19 @@ import { Button } from "@/components/ui/buttons/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { OrderItemsRepeater } from "@/components/OrderItemsRepeater"
 import { OrderSummary } from "@/components/order/order-summary"
-import { orderDb } from "@/lib/order-database"
-import { createBill } from "@/lib/mock-bills"
+import BillFooterActions from "@/components/bill/BillFooterActions"
+import { useBillStore } from "@/core/store/bills"
 import type { OrderItem } from "@/types/order"
 import { toast } from "sonner"
 
 export default function AdminBillCreatePage() {
   const router = useRouter()
+  const store = useBillStore()
   const [items, setItems] = useState<OrderItem[]>([])
   const [discount, setDiscount] = useState(0)
   const [shippingCost, setShippingCost] = useState(0)
   const [tax, setTax] = useState(0)
   const [loading, setLoading] = useState(false)
-  const [billLink, setBillLink] = useState<string | null>(null)
 
   const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity * (1 - (item.discount ?? 0) / 100),
@@ -26,40 +26,45 @@ export default function AdminBillCreatePage() {
   )
   const total = subtotal - discount + shippingCost + tax
 
-  const create = async () => {
+  const validate = () => {
     if (items.length === 0) {
       toast.error("ต้องมีสินค้าอย่างน้อย 1 รายการ")
-      return
+      return false
     }
+    return true
+  }
+
+  const create = async () => {
     setLoading(true)
     try {
-      const order = await orderDb.createManualOrder({
-        items,
-        subtotal,
-        discount,
-        shippingCost,
-        tax,
-        total,
-        status: "pending",
-        paymentStatus: "unpaid",
+      store.addBill({
+        customer: "ลูกค้าทั่วไป",
+        items: items.map((it) => ({
+          name: it.productName,
+          quantity: it.quantity,
+          price: it.price,
+        })),
+        shipping: shippingCost,
+        note: "",
+        tags: [],
       })
-      const bill = createBill(order.id)
-      const link = `/bill/${bill.id}`
-      setBillLink(link)
-      toast.success("สร้างบิลแล้ว")
+      toast.success("สร้างบิลสำเร็จ")
+      router.push("/admin/bills")
     } catch (e) {
       toast.error("เกิดข้อผิดพลาด")
     } finally {
-      setTimeout(() => setLoading(false), 3000)
+      setLoading(false)
     }
   }
 
-  const copyLink = () => {
-    if (billLink) {
-      navigator.clipboard.writeText(window.location.origin + billLink)
-      toast.success("คัดลอกลิงก์แล้ว")
-    }
+  const clearForm = () => {
+    setItems([])
+    setDiscount(0)
+    setShippingCost(0)
+    setTax(0)
+    setBillLink(null)
   }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -95,27 +100,16 @@ export default function AdminBillCreatePage() {
                 <Button className="w-full hidden sm:block" onClick={create} disabled={loading}>
                   บันทึกบิล
                 </Button>
-                {billLink && (
-                  <div className="space-y-2 text-center">
-                    <img
-                      className="mx-auto"
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${window.location.origin + billLink}`}
-                      alt="QR"
-                    />
-                    <Button variant="outline" className="w-full" onClick={copyLink}>
-                      คัดลอกลิงก์บิล
-                    </Button>
-                  </div>
-                )}
               </CardContent>
             </Card>
           </div>
         </div>
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t">
-          <Button className="w-full" onClick={create} disabled={loading}>
-            บันทึกบิล
-          </Button>
-        </div>
+        <BillFooterActions
+          validate={validate}
+          onSubmit={create}
+          onClear={clearForm}
+          submitting={loading}
+        />
       </div>
     </div>
   )
