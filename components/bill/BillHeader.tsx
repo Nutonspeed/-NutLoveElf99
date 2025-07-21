@@ -8,7 +8,8 @@ export default function BillHeader() {
         <img src={company.logo} alt={company.name} className="w-12 h-12" />
       )}
       <div className="text-sm">
-        <h1 className="text-xl font-bold leading-none">{company.name}</h1>
+        <h1 className="text-2xl font-bold mb-1">ใบเสร็จรับเงิน</h1>
+        <h2 className="text-xl font-semibold leading-none">{company.name}</h2>
         <p className="whitespace-pre-line">{formatAddress(company.address)}</p>
         <p>โทร: {company.phone}</p>
       </div>

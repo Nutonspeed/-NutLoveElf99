@@ -23,7 +23,7 @@ export default function ReceiptPageClient({ bill }: { bill: BillData }) {
       <div className="w-full max-w-xl">
         <ReceiptLayout bill={bill} />
         {!bill.feedback && bill.status === 'delivered' && (
-          <div id="feedback" className="mt-4">
+          <div id="feedback" className="mt-4 print:hidden">
             {showFb ? (
               <FeedbackForm billId={bill.id} onSubmitted={() => setShowFb(false)} />
             ) : (
