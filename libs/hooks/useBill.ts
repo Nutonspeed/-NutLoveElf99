@@ -1,4 +1,4 @@
-import useSWR from 'swr'
+import useSWR from 'swr/immutable'
 
 const fetcher = (url: string) => fetch(url).then(res => res.json())
 
