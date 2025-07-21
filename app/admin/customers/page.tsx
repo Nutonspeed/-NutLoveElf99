@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/buttons/button"
+import { Edit, Plus } from "lucide-react"
 import CustomerPopup from "@/core/ui/CustomerPopup"
 import { useCustomerGroups, CustomerGroup } from "@/hooks/useCustomerGroups"
 
@@ -15,7 +18,14 @@ export default function AdminCustomersPage() {
 
   return (
     <div className="p-4">
-      <h1 className="text-lg font-bold mb-4">กลุ่มลูกค้าตามแท็ก</h1>
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-lg font-bold">กลุ่มลูกค้าตามแท็ก</h1>
+        <Link href="/admin/customers/edit/new">
+          <Button size="sm">
+            <Plus className="w-4 h-4 mr-1" /> สร้างลูกค้าใหม่
+          </Button>
+        </Link>
+      </div>
       <div className="mb-4">
         <select
           className="border rounded px-2 py-1 text-sm"
@@ -34,6 +44,7 @@ export default function AdminCustomersPage() {
             <th className="text-left font-medium p-2">ชื่อลูกค้า</th>
             <th className="text-left font-medium p-2">แท็กยอดนิยม</th>
             <th className="text-left font-medium p-2">จำนวนบิล</th>
+            <th className="text-left font-medium p-2">การจัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -68,6 +79,13 @@ function CustomerRow({ group }: { group: CustomerGroup }) {
         ))}
       </td>
       <td className="p-2">{group.totalBills}</td>
+      <td className="p-2">
+        <Link href={`/admin/customers/edit/${group.customer.id}`}>
+          <Button variant="outline" size="icon">
+            <Edit className="w-4 h-4" />
+          </Button>
+        </Link>
+      </td>
     </tr>
   )
 }
