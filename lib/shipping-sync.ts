@@ -1,5 +1,5 @@
 import { shippingOrders, updateDeliveryStatus } from '@/mock/shipping'
-import { mockNotificationService } from './mock-notification-service'
+import { notifyCustomer } from './notifyCustomer'
 
 export interface ShippingSyncLog {
   id: string
@@ -29,12 +29,7 @@ export function runShippingSync(): ShippingSyncLog {
   shippingOrders.forEach(o => {
     if (o.deliveryStatus === 'shipping' && Math.random() > 0.6) {
       updateDeliveryStatus(o.id, 'delivered')
-      mockNotificationService.sendNotification({
-        type: 'order_updated',
-        recipient: { phone: o.phone },
-        data: { orderId: o.id, status: 'delivered' },
-        priority: 'normal',
-      })
+      notifyCustomer(o.phone, o.tracking)
       updated++
     }
   })
