@@ -65,7 +65,14 @@ export default function AdminBillsPage() {
       toast.error('ต้องมีสินค้าอย่างน้อย 1 รายการ')
       return
     }
-    store.addBill({ customer, items, shipping, note, tags: [] } as any)
+    store.addBill({
+      customer,
+      items,
+      shipping,
+      note,
+      tags: [],
+      paymentStatus: 'unpaid',
+    } as any)
     setBills([...store.bills])
     setCustomer('')
     setItems([])
@@ -88,6 +95,18 @@ export default function AdminBillsPage() {
     if (status === 'shipped') return 'จัดส่งแล้ว'
     if (status === 'pending') return 'รอตรวจสอบ'
     return 'รอชำระ'
+  }
+
+  const getPaymentStatusClass = (status: AdminBill['paymentStatus']) => {
+    if (status === 'paid') return 'bg-green-500 text-white'
+    if (status === 'partial') return 'bg-yellow-500 text-white'
+    return 'bg-red-500 text-white'
+  }
+
+  const getPaymentStatusText = (status: AdminBill['paymentStatus']) => {
+    if (status === 'paid') return 'ชำระแล้ว'
+    if (status === 'partial') return 'ชำระบางส่วน'
+    return 'ยังไม่ชำระ'
   }
 
   const filteredBills = bills
@@ -279,6 +298,7 @@ export default function AdminBillsPage() {
                   <TableHead>ชื่อลูกค้า</TableHead>
                   <TableHead>แท็ก</TableHead>
                   <TableHead>สถานะ</TableHead>
+                  <TableHead>ชำระเงิน</TableHead>
                   <TableHead>วันที่</TableHead>
                   <TableHead className="w-24" />
                 </TableRow>
@@ -306,12 +326,12 @@ export default function AdminBillsPage() {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <Select
-                      value={b.status}
-                      onValueChange={(v) => {
-                        store.updateStatus(b.id, v as AdminBill['status'])
-                        setBills([...store.bills])
+                    <TableCell>
+                      <Select
+                        value={b.status}
+                        onValueChange={(v) => {
+                          store.updateStatus(b.id, v as AdminBill['status'])
+                          setBills([...store.bills])
                         }}
                       >
                         <SelectTrigger className="w-28">
@@ -324,6 +344,29 @@ export default function AdminBillsPage() {
                           <SelectItem value="paid">ชำระแล้ว</SelectItem>
                           <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
                           <SelectItem value="cancelled">ยกเลิก</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        value={b.paymentStatus}
+                        onValueChange={(v) => {
+                          store.updatePaymentStatus(
+                            b.id,
+                            v as AdminBill['paymentStatus'],
+                          )
+                          setBills([...store.bills])
+                        }}
+                      >
+                        <SelectTrigger className="w-28">
+                          <Badge className={getPaymentStatusClass(b.paymentStatus)}>
+                            {getPaymentStatusText(b.paymentStatus)}
+                          </Badge>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="unpaid">ยังไม่ชำระ</SelectItem>
+                          <SelectItem value="partial">ชำระบางส่วน</SelectItem>
+                          <SelectItem value="paid">ชำระแล้ว</SelectItem>
                         </SelectContent>
                       </Select>
                     </TableCell>

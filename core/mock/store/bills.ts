@@ -4,6 +4,7 @@ import {
   addBill as baseAdd,
   updateBill as baseUpdate,
   updateBillStatus as baseStatus,
+  updatePaymentStatus as basePayStatus,
   archiveBill as baseArchive,
   restoreBill as baseRestore,
   getArchivedBills as baseGetArchived,
@@ -31,7 +32,9 @@ export function getArchivedBills() {
   return bills.filter((b) => b.archived)
 }
 
-export function addBill(data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>) {
+export function addBill(
+  data: Omit<AdminBill, 'id' | 'status' | 'paymentStatus' | 'createdAt'>,
+) {
   const bill = baseAdd(data)
   bills = [...seedBills]
   persist()
@@ -46,6 +49,15 @@ export function updateBill(id: string, data: Partial<Omit<AdminBill, 'id' | 'cre
 
 export function updateBillStatus(id: string, status: AdminBill['status']) {
   baseStatus(id, status)
+  bills = [...seedBills]
+  persist()
+}
+
+export function updatePaymentStatus(
+  id: string,
+  status: AdminBill['paymentStatus'],
+) {
+  basePayStatus(id, status)
   bills = [...seedBills]
   persist()
 }
