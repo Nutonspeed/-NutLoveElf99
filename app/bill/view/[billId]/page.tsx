@@ -2,6 +2,7 @@ import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
 import BillProgress from '@/components/BillProgress'
 import { getBillById, type FakeBill, updateBillAddress } from '@/core/mock/fakeBillDB'
 import { useState } from 'react'
+import Image from 'next/image'
 
 const steps = ['กำลังตัดผ้า', 'รอเย็บ', 'กำลังแพ็ค', 'จัดส่งแล้ว']
 
@@ -46,13 +47,29 @@ function BillClient({ bill }: { bill: FakeBill }) {
       </section>
       <section className="space-y-2">
         <h2 className="font-semibold">รายการสินค้า</h2>
-        <ul className="space-y-1">
+        <ul className="space-y-2">
           {bill.items.map((it, i) => (
-            <li key={i} className="flex justify-between text-sm">
-              <span>
+            <li
+              key={i}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm"
+            >
+              {it.image && (
+                <div className="relative w-12 h-12 flex-shrink-0">
+                  <Image
+                    src={it.image}
+                    alt={it.fabricName}
+                    fill
+                    sizes="48px"
+                    className="object-cover rounded"
+                  />
+                </div>
+              )}
+              <span className="flex-1">
                 {it.fabricName} {it.sofaType} × {it.quantity}
               </span>
-              <span>฿{(it.unitPrice * it.quantity).toLocaleString()}</span>
+              <span className="sm:ml-2 whitespace-nowrap">
+                ฿{(it.unitPrice * it.quantity).toLocaleString()}
+              </span>
             </li>
           ))}
         </ul>
