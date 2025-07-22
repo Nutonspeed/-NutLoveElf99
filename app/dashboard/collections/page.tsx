@@ -6,15 +6,20 @@ import { collections, softDeleteCollection, reorderCollections } from '@/mock/co
 import { getFabrics } from '@/core/mock/store'
 import { Button } from '@/components/ui/buttons/button'
 import ModalWrapper from '@/components/ui/ModalWrapper'
+import ConfirmDialog from '@/components/ui/ConfirmDialog'
 
 export default function DashboardCollectionsPage() {
   const [items, setItems] = useState(() => collections.filter(c => !c.isDeleted).sort((a,b) => a.order - b.order))
   const [preview, setPreview] = useState<string | null>(null)
   const [dragId, setDragId] = useState<string | null>(null)
+  const [deleteId, setDeleteId] = useState<string | null>(null)
 
-  const handleDelete = (id: string) => {
-    softDeleteCollection(id)
+  const handleDelete = () => {
+    if (!deleteId) return
+    const ok = softDeleteCollection(deleteId)
+    if (!ok) alert('เกิดข้อผิดพลาดในการลบ')
     setItems(collections.filter(c => !c.isDeleted).sort((a,b) => a.order - b.order))
+    setDeleteId(null)
   }
 
   const handleDragStart = (id: string) => setDragId(id)
@@ -55,7 +60,7 @@ export default function DashboardCollectionsPage() {
                 <Link href={`/dashboard/fabrics?collection=${col.id}`} className="flex-1">
                   <Button size="sm" variant="outline" className="w-full">ดูผ้า</Button>
                 </Link>
-                <Button size="sm" variant="outline" onClick={() => handleDelete(col.id)}>ลบคอลเลกชัน</Button>
+                <Button size="sm" variant="outline" onClick={() => setDeleteId(col.id)}>ลบคอลเลกชัน</Button>
               </div>
             </div>
           )
@@ -68,7 +73,7 @@ export default function DashboardCollectionsPage() {
               .filter(f => f.collectionId === preview)
               .map(f => (
                 <div key={f.id} className="relative aspect-square w-full border rounded overflow-hidden">
-                  <Image src={f.imageUrl} alt={f.name} fill className="object-cover" />
+                  <Image src={f.imageUrl} alt={f.name} fill className="object-cover" onError={e => { (e.currentTarget as HTMLImageElement).src = '/placeholder.jpg' }} />
                 </div>
               ))
           ) : (
@@ -76,6 +81,12 @@ export default function DashboardCollectionsPage() {
           )}
         </div>
       </ModalWrapper>
+      <ConfirmDialog
+        open={!!deleteId}
+        message="ลบคอลเลกชันนี้?"
+        onCancel={() => setDeleteId(null)}
+        onConfirm={handleDelete}
+      />
     </div>
   )
 }
