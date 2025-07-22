@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
 import { Plus, Search, Edit, Trash2, ArrowLeft, Eye } from "lucide-react"
-import { canAccess } from "@/lib/mock-roles"
+import { canAccess, hasPermission } from "@/lib/mock-roles"
 import Link from "next/link"
 import Image from "next/image"
 import { type Product } from "@/types/product"
@@ -247,14 +247,16 @@ export default function AdminProductsPage() {
                           <Edit className="h-4 w-4" />
                         </Button>
 
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleDeleteProduct(product.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        {hasPermission(user?.role, 'delete') && (
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => handleDeleteProduct(product.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </TableCell>
                   </TableRow>
