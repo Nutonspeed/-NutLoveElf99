@@ -1,5 +1,15 @@
 # Backlog
 
+## Block 276–280 | Order Management & Reporting | various routes
+
+1. Auto Order Status Update (route: /api/orders/update-status) - Run every X mins in dev to sync mock delivery status; mark delivered orders as completed and save to mock/store/orders.json
+2. Admin Order Activity Log (route: /admin/logs/orders) - Show all actions such as bill created, payment confirmed and shipped; track by admin user (mock session) and store in mock/store/activity-log.json
+3. Export Accounting Summary (route: /admin/export/accounting) - Export monthly revenue per bill as CSV with date, bill ID, total and payment status; log all exports to mock/store/export-log.json
+4. Customer Summary Dashboard (route: /admin/customers/summary) - Display total customers, repeat rate and average spend with a chart of top 5 customers from customers.json and bills.json
+5. Daily Report Print (route: /admin/reports/daily/print) - Printable summary of orders and revenue with auto layout (A4 or thermal) based on selected date
+
+Status: planned
+
 ## Block 296–300 | Billing Automation & Triggers | route: /automation/billing
 
 1. Create rule builder to define billing automation rules (if condition → then create/send bill)
