@@ -16,6 +16,7 @@ export interface AdminBill {
     | 'delivered'
     | 'failed'
     | 'cancelled'
+  paymentStatus: 'unpaid' | 'paid' | 'partial'
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
   trackingNumber?: string
@@ -37,6 +38,7 @@ export const mockBills: AdminBill[] = [
     shipping: 50,
     note: '',
     status: 'paid',
+    paymentStatus: 'paid',
     tags: ['flash'],
     trackingNumber: 'TH1234567890',
     shippingMethod: 'Flash',
@@ -46,11 +48,12 @@ export const mockBills: AdminBill[] = [
 ]
 
 export function addBill(
-  data: Omit<AdminBill, 'id' | 'status' | 'createdAt'>,
+  data: Omit<AdminBill, 'id' | 'status' | 'paymentStatus' | 'createdAt'>,
 ): AdminBill {
   const bill: AdminBill = {
     id: `bill-${Date.now()}`,
     status: 'unpaid',
+    paymentStatus: 'unpaid',
     createdAt: new Date().toISOString(),
     ...data,
   }
@@ -70,6 +73,14 @@ export function updateBill(
 export function updateBillStatus(id: string, status: AdminBill['status']) {
   const bill = mockBills.find(b => b.id === id)
   if (bill) bill.status = status
+}
+
+export function updatePaymentStatus(
+  id: string,
+  status: AdminBill['paymentStatus'],
+) {
+  const bill = mockBills.find(b => b.id === id)
+  if (bill) bill.paymentStatus = status
 }
 
 export function archiveBill(id: string) {
