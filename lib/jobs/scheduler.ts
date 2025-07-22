@@ -2,6 +2,8 @@ import { mockBills } from '../mock-bills'
 import { markReminderSent } from '../mock-bills'
 import { mockNotificationService } from '../mock-notification-service'
 import { addNotification } from '../mock-notifications'
+import { readJson } from '../jsonStore'
+import path from 'path'
 
 export type Job = () => Promise<void> | void
 
@@ -41,7 +43,33 @@ export async function remindUnreceivedParcels() {
   }
 }
 
+export async function alertUnfollowedUnpaidBills() {
+  const file = path.join(process.cwd(), 'mock/store/bills.json')
+  const bills = await readJson<any[]>(file, [])
+  const now = Date.now()
+  const overdue = bills.filter(b => {
+    if (b.status !== 'unpaid') return false
+    const last = b.followup_log?.[b.followup_log.length - 1]
+    return !last || now - new Date(last).getTime() > 2 * 86400000
+  })
+  if (overdue.length > 0) {
+    try {
+      await fetch(
+        `${process.env.APP_URL || 'http://localhost:3000'}/api/notify/followup/alert`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ count: overdue.length }),
+        },
+      )
+    } catch {
+      // ignore network errors
+    }
+  }
+}
+
 registerJob(remindUnreceivedParcels)
+registerJob(alertUnfollowedUnpaidBills)
 
 // mock interval trigger
 if (typeof window !== 'undefined') {
