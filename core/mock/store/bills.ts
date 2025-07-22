@@ -56,6 +56,14 @@ export function archiveBill(id: string) {
   persist()
 }
 
+export function deleteBill(id: string) {
+  const idx = bills.findIndex((b) => b.id === id)
+  if (idx !== -1) {
+    bills.splice(idx, 1)
+    persist()
+  }
+}
+
 export function restoreBill(id: string) {
   baseRestore(id)
   bills = [...seedBills]
