@@ -17,6 +17,9 @@ import { validateMockData } from "@/lib/mock-validator";
 import RedirectMobileHome from "@/components/RedirectMobileHome";
 import DevBar from "@/components/DevBar";
 import StoreBottomNav from "@/components/StoreBottomNav";
+import AnalyticsScripts from "@/components/AnalyticsScripts";
+import LanguageSetter from "@/components/LanguageSetter";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -37,6 +40,8 @@ export default function RootLayout({
   return (
     <html lang="th">
       <body className={`${inter.className} px-4 sm:px-6 overflow-x-hidden`}>
+        <LanguageSetter />
+        <AnalyticsScripts />
         <FeatureFlagProvider>
           <DemoProvider>
             <AuthProvider>
@@ -52,6 +57,7 @@ export default function RootLayout({
                             <StoreBottomNav className="print:hidden" />
                             <DevBar className="print:hidden" />
                             <Toaster />
+                            <LanguageSwitcher />
                           </ReviewImagesProvider>
                         </AdminProductGroupsProvider>
                       </FavoritesProvider>
