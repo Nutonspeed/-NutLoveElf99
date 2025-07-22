@@ -1,4 +1,5 @@
-import { ImageResponse, NextResponse } from "next/server";
+import { ImageResponse } from "next/og";
+import { NextResponse } from "next/server";
 import { getBills } from "@/core/mock/store";
 
 export const runtime = "edge";
