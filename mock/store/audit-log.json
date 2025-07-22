@@ -1,0 +1,5 @@
+[
+  {"id":"1","user":"admin","action":"deleted bill BILL-001","timestamp":"2024-01-02T12:00:00Z"},
+  {"id":"2","user":"staff","action":"export bills csv","timestamp":"2024-01-03T09:30:00Z"},
+  {"id":"3","user":"owner","action":"changed role of staff to admin","timestamp":"2024-01-04T16:45:00Z"}
+]
