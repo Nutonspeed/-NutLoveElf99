@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { shippingOrders } from "@/mock/shipping"
 import { shippingOrderStatusLabel, type ShippingOrderStatus } from "@/types/shipping"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -7,8 +7,18 @@ import EmptyState from "@/components/EmptyState"
 
 export default function ShippingListPage() {
   const [status, setStatus] = useState<"all" | ShippingOrderStatus>("all")
+  const [loading, setLoading] = useState(true)
+  const [orders, setOrders] = useState(shippingOrders)
 
-  const filtered = shippingOrders.filter(
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setOrders([...shippingOrders])
+      setLoading(false)
+    }, 300)
+    return () => clearTimeout(t)
+  }, [])
+
+  const filtered = orders.filter(
     (o) => status === "all" || o.status === status,
   )
 
@@ -27,7 +37,13 @@ export default function ShippingListPage() {
           </option>
         ))}
       </select>
-      {filtered.length > 0 ? (
+      {loading ? (
+        <div className="space-y-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-10 bg-gray-200 animate-pulse rounded" />
+          ))}
+        </div>
+      ) : filtered.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow>
