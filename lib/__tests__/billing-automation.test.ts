@@ -17,6 +17,7 @@ describe('billing-automation', () => {
     billingRules.length = 0
     billingLogs.length = 0
     mockOrders.splice(0, mockOrders.length)
+    mockBills.setMockBills([])
     localStorage.clear()
     vi.restoreAllMocks()
   })

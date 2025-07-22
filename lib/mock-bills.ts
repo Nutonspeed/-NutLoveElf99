@@ -3,10 +3,10 @@ import { mockOrders } from "./mock-orders"
 import { mockCustomers } from "./mock-customers"
 import { addAdminLog } from "./mock-admin-logs"
 import { addChatMessage } from "./mock-chat-messages"
-import { mockBills } from "./bills"
+import { mockBills, setMockBills } from "./bills"
 import { logBillAction } from "./mock-bill-audit"
 import { generateMockId } from "./mock-uid"
-export { mockBills } from "./bills"
+export { mockBills, setMockBills } from "./bills"
 
 
 export function createBill(
@@ -73,9 +73,10 @@ export function markReminderSent(id: string) {
 
 export function cleanupOldBills(days: number) {
   const cutoff = Date.now() - days * 24 * 60 * 60 * 1000
-  mockBills = mockBills.filter(
+  const filtered = mockBills.filter(
     (b) =>
       new Date(b.createdAt).getTime() >= cutoff ||
       (b.status !== "cancelled" && b.status !== "paid"),
   )
+  setMockBills(filtered)
 }
