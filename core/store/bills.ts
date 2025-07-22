@@ -9,6 +9,7 @@ import {
   setBillFeedback as setFb,
   archiveBill as archive,
   restoreBill as restore,
+  deleteBill,
   autoArchiveBills,
 } from '@/core/mock/store'
 
@@ -21,6 +22,7 @@ interface BillStore {
   updateStatus: (id: string, status: AdminBill['status']) => void
   archive: (id: string) => void
   restore: (id: string) => void
+  remove: (id: string) => void
   setFeedback: (id: string, fb: AdminBill['feedback']) => void
 }
 
@@ -50,6 +52,10 @@ export const useBillStore = create<BillStore>((set) => ({
   restore: (id) => {
     restore(id)
     set({ bills: getBills(), archived: getArchivedBills() })
+  },
+  remove: (id) => {
+    deleteBill(id)
+    set({ bills: getBills() })
   },
   setFeedback: (id, fb) => {
     setFb(id, fb)
