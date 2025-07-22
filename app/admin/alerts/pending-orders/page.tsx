@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/
 import { ArrowLeft } from "lucide-react"
 import { mockOrders } from "@/lib/mock-orders"
 import { getMockNow } from "@/lib/mock-date"
+import { mockBills } from "@/mock/bills"
 
 export default function PendingOrderAlerts() {
   const now = getMockNow().getTime()
@@ -13,6 +14,11 @@ export default function PendingOrderAlerts() {
     const entry = [...o.timeline].reverse().find(t => t.status === "packed")
     if (!entry) return false
     return now - new Date(entry.timestamp).getTime() > 3 * 24 * 60 * 60 * 1000
+  })
+  const overdueBills = mockBills.filter(b => {
+    if (b.status !== 'unpaid') return false
+    const last = b.followup_log?.[b.followup_log.length - 1]
+    return !last || now - new Date(last).getTime() > 2 * 24 * 60 * 60 * 1000
   })
   return (
     <div className="min-h-screen bg-gray-50">
@@ -39,6 +45,33 @@ export default function PendingOrderAlerts() {
               </div>
             ))}
             {overdue.length === 0 && (
+              <p className="text-center text-sm text-gray-500">ไม่มีรายการ</p>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>
+              บิลค้างจ่ายไม่ได้ติดตาม 48 ชม. ({overdueBills.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {overdueBills.map(b => (
+              <div
+                key={b.id}
+                className="flex justify-between items-center border-b pb-2 last:border-b-0 text-orange-600"
+              >
+                <span>
+                  {b.id} - {b.customer}
+                </span>
+                <Link href={`/admin/bills/${b.id}`}>
+                  <Button variant="outline" size="sm">
+                    ติดตาม
+                  </Button>
+                </Link>
+              </div>
+            ))}
+            {overdueBills.length === 0 && (
               <p className="text-center text-sm text-gray-500">ไม่มีรายการ</p>
             )}
           </CardContent>
