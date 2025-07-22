@@ -16,6 +16,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import EmptyState from '@/components/ui/EmptyState'
 import BillRow from '@/components/admin/bills/BillRow'
 import { formatCurrency } from '@/lib/utils'
+import { formatDateThai } from '@/lib/formatDateThai'
+import { filterBillsByDate } from '@/lib/filterBillsByDate'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
 import { getBillActivity } from '@/core/mock/store'
@@ -54,6 +56,7 @@ export default function AdminBillsPage() {
   const [dateFilter, setDateFilter] = useState<'today' | '7d' | 'all'>('today')
   const [tagFilter, setTagFilter] = useState('all')
   const allTags = Array.from(new Set(bills.flatMap((b) => b.tags)))
+  const [sortDesc, setSortDesc] = useState(true)
   const [selected, setSelected] = useState<string[]>([])
   const followupSuccess = searchParams.get('filter') === 'followup-success'
 
@@ -110,7 +113,7 @@ export default function AdminBillsPage() {
   }
 
 
-  const filteredBills = bills
+  const filteredBills = filterBillsByDate(bills, dateFilter)
     .filter(
       (b) =>
         b.customer.toLowerCase().includes(search.toLowerCase()) ||
@@ -118,23 +121,19 @@ export default function AdminBillsPage() {
     )
     .filter((b) => (statusFilter === 'all' ? true : b.status === statusFilter))
     .filter((b) => (tagFilter === 'all' ? true : b.tags.includes(tagFilter)))
-    .filter(b => {
-      if (dateFilter === 'all') return true
-      const created = new Date(b.createdAt)
-      const today = new Date()
-      if (dateFilter === 'today') {
-        return created.toDateString() === today.toDateString()
-      }
-      if (dateFilter === '7d') {
-        return created.getTime() >= today.getTime() - 7 * 86400000
-      }
-      return true
-    })
     .filter(b => (followupSuccess ? (b.status === 'paid' && (b.followup_log?.length || 0) > 0) : true))
+    .sort((a, b) =>
+      sortDesc
+        ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+    )
 
-  const todayTotal = bills
-    .filter(b => new Date(b.createdAt).toDateString() === new Date().toDateString())
-    .reduce((sum, b) => sum + b.items.reduce((s, it) => s + it.price * it.quantity, 0) + b.shipping, 0)
+  const todayTotal = filterBillsByDate(bills, 'today')
+    .reduce(
+      (sum, b) =>
+        sum + b.items.reduce((s, it) => s + it.price * it.quantity, 0) + b.shipping,
+      0,
+    )
 
   return (
     <div className="space-y-6">
@@ -329,7 +328,12 @@ export default function AdminBillsPage() {
                   <TableHead>แท็ก</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>Last Follow-up</TableHead>
-                  <TableHead>วันที่</TableHead>
+                  <TableHead
+                    className="cursor-pointer select-none"
+                    onClick={() => setSortDesc(!sortDesc)}
+                  >
+                    วันที่ {sortDesc ? '↓' : '↑'}
+                  </TableHead>
                   <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
@@ -347,7 +351,7 @@ export default function AdminBillsPage() {
                       onStatusChange={(v) => {
                         store.updateStatus(b.id, v)
                         setBills([...store.bills])
-                        toast.success('อัปเดตสถานะแล้ว')
+                        toast.success('สถานะบิลอัปเดตแล้ว ✅')
                       }}
                       onEdit={() => {
                         setEdit(b.id)
@@ -370,7 +374,7 @@ export default function AdminBillsPage() {
             />
           )}
           <div className="mt-4 text-right font-semibold">
-            ยอดรวมวันนี้: {formatCurrency(todayTotal)}
+            ยอดรวมบิลวันนี้: {formatCurrency(todayTotal)}
           </div>
         </CardContent>
       </Card>

@@ -8,6 +8,7 @@
     ],
     "shipping": 50,
     "status": "paid",
+    "phone": "0812345678",
     "paymentStatus": "paid",
     "createdAt": "2024-01-15T08:00:00Z",
     "followup_log": []

@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { formatDateThai as formatThai } from "./formatDateThai"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -9,7 +10,7 @@ export function formatCurrency(amount: number) {
   return `฿${amount.toLocaleString()}`
 }
 
-export const formatDateThai = formatThaiDate
+export const formatDateThai = formatThai
 
 export function formatThaiDate(date: string | number | Date) {
   return new Date(date).toLocaleDateString('th-TH')

@@ -4,7 +4,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Copy } from 'lucide-react'
 import BillItemActions from '@/components/admin/BillItemActions'
 import BillStatusDropdown from './BillStatusDropdown'
-import { formatCurrency, formatDateThai } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
+import { formatDateThai } from '@/lib/formatDateThai'
 import { copyToClipboard } from '@/helpers/clipboard'
 import type { AdminBill } from '@/mock/bills'
 
@@ -20,7 +21,12 @@ interface BillRowProps {
 
 export default function BillRow({ bill, selected, onSelect, onStatusChange, onEdit, paidDate, highlightPayment }: BillRowProps) {
   const total = bill.items.reduce((s, it) => s + it.price * it.quantity, 0) + bill.shipping
-  const phone = (bill as any).phone ?? (bill as any).customer?.phone ?? '-'
+  const contact =
+    (bill as any).customerPhone ??
+    (bill as any).contactChannel ??
+    (bill as any).phone ??
+    (bill as any).customer?.phone ??
+    '-'
   const lastFollow = bill.followup_log?.[bill.followup_log.length - 1]
   const diffDays = lastFollow && paidDate
     ? Math.round(
@@ -36,7 +42,7 @@ export default function BillRow({ bill, selected, onSelect, onStatusChange, onEd
       <TableCell>{bill.id}</TableCell>
       <TableCell>{bill.customer}</TableCell>
       <TableCell className="text-right">{formatCurrency(total)}</TableCell>
-      <TableCell>{phone}</TableCell>
+      <TableCell>{contact}</TableCell>
       <TableCell>
         <BillStatusDropdown status={bill.status} onChange={onStatusChange} />
       </TableCell>
