@@ -1,4 +1,5 @@
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
+import BillProgress from '@/components/BillProgress'
 import { getBillById, type FakeBill, updateBillAddress } from '@/core/mock/fakeBillDB'
 import { useState } from 'react'
 
@@ -58,17 +59,7 @@ function BillClient({ bill }: { bill: FakeBill }) {
       </section>
       <section className="space-y-2">
         <h2 className="font-semibold">สถานะการผลิต</h2>
-        <ol className="flex justify-between text-sm">
-          {steps.map((s, i) => (
-            <li
-              key={s}
-              className={i === bill.statusStep ? 'font-bold text-primary' : 'text-gray-500'}
-            >
-              {s}
-            </li>
-          ))}
-        </ol>
-        <p className="text-xs text-gray-500">อัปเดตล่าสุด: {bill.lastUpdated}</p>
+        <BillProgress steps={steps} current={bill.statusStep} updatedAt={bill.lastUpdated} />
       </section>
       <section className="space-y-2">
         <h2 className="font-semibold">สอบถามเพิ่มเติม</h2>
