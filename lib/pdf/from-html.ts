@@ -1,8 +1,9 @@
+import 'server-only'
 import { PDFDocument, StandardFonts } from 'pdf-lib'
-import { renderToStaticMarkup } from 'react-dom/server'
 import type { ReactElement } from 'react'
 
 export async function componentToPDF(element: ReactElement) {
+  const { renderToStaticMarkup } = await import('react-dom/server')
   const html = renderToStaticMarkup(element)
   const doc = await PDFDocument.create()
   const page = doc.addPage()
