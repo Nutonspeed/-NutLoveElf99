@@ -16,6 +16,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import EmptyState from '@/components/ui/EmptyState'
 import BillRow from '@/components/admin/bills/BillRow'
 import { formatCurrency } from '@/lib/utils'
+import { sumRevenueByDateRange } from '@/lib/sumRevenueByDateRange'
+import { highlightDiff } from '@/lib/highlightDiff'
 import { formatDateThai } from '@/lib/formatDateThai'
 import { filterBillsByDate } from '@/lib/filterBillsByDate'
 import type { AdminBill, BillItem } from '@/mock/bills'
@@ -129,16 +131,35 @@ export default function AdminBillsPage() {
     )
 
   const todayTotal = filterBillsByDate(bills, 'today')
+    .filter(b => b.status !== 'cancelled')
     .reduce(
       (sum, b) =>
         sum + b.items.reduce((s, it) => s + it.price * it.quantity, 0) + b.shipping,
       0,
     )
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  const yesterdayStart = new Date(yesterday.toDateString())
+  const yesterdayEnd = new Date(yesterdayStart)
+  yesterdayEnd.setDate(yesterdayEnd.getDate() + 1)
+  const yesterdayTotal = sumRevenueByDateRange(bills, yesterdayStart, yesterdayEnd)
+  const weekStart = new Date()
+  weekStart.setDate(weekStart.getDate() - 6)
+  const weekTotal = sumRevenueByDateRange(bills, weekStart, new Date())
+  const diff = highlightDiff(todayTotal, yesterdayTotal)
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">บิล</h1>
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+        <div>
+          <h1 className="text-3xl font-bold">บิล</h1>
+          <p className="text-sm text-muted-foreground">
+            ยอดรวม 7 วันล่าสุด: {formatCurrency(weekTotal)}{' '}
+            <span className={diff.trend === 'up' ? 'text-green-600' : 'text-red-600'}>
+              {diff.trend === 'up' ? '▲' : '▼'} {Math.abs(diff.diff).toFixed(0)}%
+            </span>
+          </p>
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button>

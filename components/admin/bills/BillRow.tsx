@@ -35,11 +35,20 @@ export default function BillRow({ bill, selected, onSelect, onStatusChange, onEd
     : null
 
   return (
-    <TableRow>
+    <TableRow className={bill.status === 'cancelled' ? 'line-through text-gray-400' : ''}>
       <TableCell>
         <Checkbox checked={selected} onCheckedChange={onSelect} />
       </TableCell>
-      <TableCell>{bill.id}</TableCell>
+      <TableCell className="flex items-center gap-1">
+        {bill.id}
+        <button
+          type="button"
+          onClick={() => copyToClipboard(`${window.location.origin}/bill/${bill.id}`)}
+          title="คัดลอกลิงก์"
+        >
+          🔗
+        </button>
+      </TableCell>
       <TableCell>{bill.customer}</TableCell>
       <TableCell className="text-right">{formatCurrency(total)}</TableCell>
       <TableCell>{contact}</TableCell>

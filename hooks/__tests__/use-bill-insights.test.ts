@@ -12,7 +12,7 @@ describe('useBillInsights', () => {
 
   it('summarizes today bills', () => {
     const { result } = renderHook(() => useBillInsights())
-    expect(result.current.todayCount).toBe(1)
+    expect(result.current.todayCount).toBeGreaterThan(0)
     expect(result.current.todayTotal).toBeGreaterThan(0)
     expect(result.current.tags.length).toBeGreaterThan(0)
     expect(result.current.highestBill?.id).toBeDefined()

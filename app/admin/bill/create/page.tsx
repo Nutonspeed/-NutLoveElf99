@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import PageWrapper from '@/components/admin/PageWrapper'
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -14,11 +14,12 @@ import { useToast } from '@/hooks/use-toast'
 import { useBillStore } from '@/stores/billStore'
 import { genBillId } from '@/lib/genBillId'
 import type { Fabric } from '@/mock/fabrics'
-import { getFabrics } from '@/core/mock/store'
+import { getFabrics, getBills } from '@/core/mock/store'
 import { copyToClipboard } from '@/helpers/clipboard'
 
 export default function AdminBillCreatePage() {
   const router = useRouter()
+  const params = useSearchParams()
   const { toast } = useToast()
   const addBill = useBillStore(s => s.addBill)
 
@@ -36,6 +37,27 @@ export default function AdminBillCreatePage() {
   useEffect(() => {
     setFabrics(getFabrics())
   }, [])
+
+  useEffect(() => {
+    const from = params.get('from')
+    if (from) {
+      const b = getBills().find(x => x.id === from)
+      if (b) {
+        setCustomerName(b.customer)
+        const parts = Object.fromEntries(
+          String(b.items).split(';').map(p => {
+            const [k, v] = p.split(':')
+            return [k, v]
+          }),
+        ) as Record<string, string>
+        setFabricId(parts['fabric'] || '')
+        setSofaType(parts['sofa'] || '1-seater')
+        setCustomSizeNote(parts['note'] || '')
+        setCustomerAddress(parts['addr'] || '')
+        setDeliveryNote(parts['delivery'] || '')
+      }
+    }
+  }, [params])
 
   const selectedFabric = fabrics.find(f => f.id === fabricId) || null
   const pricePerItem = selectedFabric?.price ?? 0
