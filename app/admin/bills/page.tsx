@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Plus, Search } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Button } from '@/components/ui/buttons/button'
@@ -17,10 +18,12 @@ import BillRow from '@/components/admin/bills/BillRow'
 import { formatCurrency } from '@/lib/utils'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
+import { getBillActivity } from '@/core/mock/store'
 import { toast } from 'sonner'
 
 export default function AdminBillsPage() {
   const store = useBillStore()
+  const searchParams = useSearchParams()
   const [bills, setBills] = useState<AdminBill[]>(store.bills)
 
   useEffect(() => {
@@ -52,6 +55,13 @@ export default function AdminBillsPage() {
   const [tagFilter, setTagFilter] = useState('all')
   const allTags = Array.from(new Set(bills.flatMap((b) => b.tags)))
   const [selected, setSelected] = useState<string[]>([])
+  const followupSuccess = searchParams.get('filter') === 'followup-success'
+
+  useEffect(() => {
+    if (followupSuccess) {
+      setStatusFilter('paid')
+    }
+  }, [followupSuccess])
 
   const toggle = (id: string) => {
     setSelected((prev) =>
@@ -120,6 +130,7 @@ export default function AdminBillsPage() {
       }
       return true
     })
+    .filter(b => (followupSuccess ? (b.status === 'paid' && (b.followup_log?.length || 0) > 0) : true))
 
   const todayTotal = bills
     .filter(b => new Date(b.createdAt).toDateString() === new Date().toDateString())
@@ -323,28 +334,33 @@ export default function AdminBillsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredBills.map((b) => (
-                  <BillRow
-                    key={b.id}
-                    bill={b}
-                    selected={selected.includes(b.id)}
-                    onSelect={() => toggle(b.id)}
-                    onStatusChange={(v) => {
-                      store.updateStatus(b.id, v)
-                      setBills([...store.bills])
-                      toast.success('อัปเดตสถานะแล้ว')
-                    }}
-                    onEdit={() => {
-                      setEdit(b.id)
-                      setEditData({
-                        customer: b.customer,
-                        items: b.items,
-                        shipping: b.shipping,
-                        note: b.note,
-                      })
-                    }}
-                  />
-                ))}
+                {filteredBills.map((b) => {
+                  const paidAt = getBillActivity(b.id).find(a => a.action === 'paid')?.timestamp
+                  return (
+                    <BillRow
+                      key={b.id}
+                      bill={b}
+                      selected={selected.includes(b.id)}
+                      paidDate={paidAt}
+                      highlightPayment={followupSuccess}
+                      onSelect={() => toggle(b.id)}
+                      onStatusChange={(v) => {
+                        store.updateStatus(b.id, v)
+                        setBills([...store.bills])
+                        toast.success('อัปเดตสถานะแล้ว')
+                      }}
+                      onEdit={() => {
+                        setEdit(b.id)
+                        setEditData({
+                          customer: b.customer,
+                          items: b.items,
+                          shipping: b.shipping,
+                          note: b.note,
+                        })
+                      }}
+                    />
+                  )
+                })}
               </TableBody>
             </Table>
           ) : (
