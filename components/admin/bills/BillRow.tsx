@@ -19,6 +19,7 @@ interface BillRowProps {
 export default function BillRow({ bill, selected, onSelect, onStatusChange, onEdit }: BillRowProps) {
   const total = bill.items.reduce((s, it) => s + it.price * it.quantity, 0) + bill.shipping
   const phone = (bill as any).phone ?? (bill as any).customer?.phone ?? '-'
+  const lastFollow = bill.followup_log?.[bill.followup_log.length - 1]
 
   return (
     <TableRow>
@@ -32,6 +33,7 @@ export default function BillRow({ bill, selected, onSelect, onStatusChange, onEd
       <TableCell>
         <BillStatusDropdown status={bill.status} onChange={onStatusChange} />
       </TableCell>
+      <TableCell>{lastFollow ? formatDateThai(lastFollow) : '-'}</TableCell>
       <TableCell>{formatDateThai(bill.createdAt)}</TableCell>
       <TableCell className="flex gap-2">
         <button

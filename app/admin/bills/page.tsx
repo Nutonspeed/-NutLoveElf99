@@ -317,6 +317,7 @@ export default function AdminBillsPage() {
                   <TableHead>ติดต่อ</TableHead>
                   <TableHead>แท็ก</TableHead>
                   <TableHead>สถานะ</TableHead>
+                  <TableHead>Last Follow-up</TableHead>
                   <TableHead>วันที่</TableHead>
                   <TableHead className="w-24" />
                 </TableRow>
