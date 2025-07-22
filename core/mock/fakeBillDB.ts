@@ -82,3 +82,10 @@ const fakeBills: FakeBill[] = [
 export async function getBillById(id: string): Promise<FakeBill | undefined> {
   return fakeBills.find(b => b.id === id)
 }
+
+export async function updateBillAddress(id: string, address: string) {
+  const idx = fakeBills.findIndex(b => b.id === id)
+  if (idx === -1) return
+  fakeBills[idx] = { ...fakeBills[idx], customerAddress: address }
+  await writeJson(file, fakeBills as any)
+}
