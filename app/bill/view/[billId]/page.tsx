@@ -1,5 +1,5 @@
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
-import { getBillById, type FakeBill } from '@/core/mock/fakeBillDB'
+import { getBillById, type FakeBill, updateBillAddress } from '@/core/mock/fakeBillDB'
 import { useState } from 'react'
 
 const steps = ['กำลังตัดผ้า', 'รอเย็บ', 'กำลังแพ็ค', 'จัดส่งแล้ว']
@@ -16,8 +16,9 @@ function BillClient({ bill }: { bill: FakeBill }) {
   'use client'
   const [address, setAddress] = useState(bill.customerAddress)
   const [question, setQuestion] = useState('')
-  const handleSave = () => {
-    alert('บันทึกที่อยู่แล้ว (mock)')
+  const handleSave = async () => {
+    await updateBillAddress(bill.id, address)
+    alert('บันทึกที่อยู่แล้ว')
   }
   const handleQuestion = () => {
     alert('ส่งคำถาม: ' + question)
