@@ -22,3 +22,8 @@ export async function createFastBill(
   await writeJson(file, bills)
   return bill
 }
+
+export async function getFastBill(id: string): Promise<FastBill | undefined> {
+  const bills = await listFastBills()
+  return bills.find(b => b.id === id)
+}
