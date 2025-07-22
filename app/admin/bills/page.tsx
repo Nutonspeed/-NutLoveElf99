@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import EmptyState from '@/components/ui/EmptyState'
 import BillItemActions from '@/components/admin/BillItemActions'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
@@ -22,10 +23,15 @@ export default function AdminBillsPage() {
   const [bills, setBills] = useState<AdminBill[]>(store.bills)
 
   useEffect(() => {
-    store.refresh()
-    setBills([...store.bills])
+    try {
+      store.refresh()
+      setBills([...store.bills])
+    } catch (e) {
+      setError(true)
+    }
   }, [])
   const [open, setOpen] = useState(false)
+  const [error, setError] = useState(false)
   const [customer, setCustomer] = useState('')
   const [items, setItems] = useState<BillItem[]>([])
   const [shipping, setShipping] = useState(50)
@@ -256,7 +262,9 @@ export default function AdminBillsPage() {
           </Tabs>
         </CardHeader>
         <CardContent className="overflow-x-auto">
-          {filteredBills.length ? (
+          {error ? (
+            <EmptyState icon="⚠️" title="โหลดข้อมูลไม่สำเร็จ" />
+          ) : filteredBills.length ? (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -339,9 +347,10 @@ export default function AdminBillsPage() {
               </TableBody>
             </Table>
           ) : (
-            <div className="text-center text-muted text-sm">
-              {bills.length === 0 ? 'ยังไม่มีบิลในระบบ' : 'ไม่พบบิลที่ค้นหา'}
-            </div>
+            <EmptyState
+              icon="🗒️"
+              title={bills.length === 0 ? 'ยังไม่มีบิลในระบบ' : 'ไม่พบบิลที่ค้นหา'}
+            />
           )}
         </CardContent>
       </Card>
