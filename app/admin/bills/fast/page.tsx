@@ -42,7 +42,7 @@ export default function AdminFastBillPage() {
   }, [])
 
   const create = async () => {
-    const res = await fetch("/api/bills/fast/create", {
+    const res = await fetch("/api/bills/create", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
