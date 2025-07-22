@@ -255,7 +255,7 @@ export default function AdminBillsPage() {
             </TabsList>
           </Tabs>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           {filteredBills.length ? (
             <Table>
               <TableHeader>
