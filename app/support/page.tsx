@@ -2,6 +2,17 @@ import { promises as fs } from 'fs'
 import { join } from 'path'
 import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
+import { headers } from 'next/headers'
+import type { Metadata } from 'next'
+
+export function generateMetadata(): Metadata {
+  const lang = headers().get('accept-language') || ''
+  const th = lang.includes('th')
+  const title = th ? 'ศูนย์ช่วยเหลือ' : 'Customer Support'
+  const description = th ? 'คำถามที่พบบ่อยและช่องทางติดต่อเรา' : 'FAQ and contact information'
+  const image = '/og-support.png'
+  return { title, description, openGraph: { title, description, images: [{ url: image }] } }
+}
 
 async function loadFaqs() {
   try {
