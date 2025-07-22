@@ -6,6 +6,12 @@ export interface FastBill {
   total: number
   deposit: number
   days: number
+  fabricName: string
+  fabricImage: string
+  sofaType: string
+  sofaSize: string
+  quantity: number
+  tags: string[]
   depositPaid: boolean
   createdAt: string
 }
