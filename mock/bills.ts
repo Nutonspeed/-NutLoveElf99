@@ -6,7 +6,16 @@ export interface AdminBill {
   items: BillItem[]
   shipping: number
   note: string
-  status: 'pending' | 'unpaid' | 'paid' | 'shipped' | 'delivered' | 'cancelled'
+  status:
+    | 'draft'
+    | 'pending'
+    | 'unpaid'
+    | 'paid'
+    | 'packed'
+    | 'shipped'
+    | 'delivered'
+    | 'failed'
+    | 'cancelled'
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
   trackingNumber?: string
