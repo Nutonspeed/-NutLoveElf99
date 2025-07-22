@@ -1,11 +1,13 @@
-import FallbackCenter from "@/components/FallbackCenter"
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
+import Loading from './loading'
+
+const AnalyticsContent = dynamic(() => import('./content'), { suspense: true })
 
 export default function AdminAnalyticsPage() {
   return (
-    <FallbackCenter
-      icon="📊"
-      title="Analytics ยังไม่พร้อม"
-      subtitle="อยู่ระหว่างการพัฒนา เตรียมพบกันเร็ว ๆ นี้"
-    />
+    <Suspense fallback={<Loading />}> 
+      <AnalyticsContent />
+    </Suspense>
   )
 }

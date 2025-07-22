@@ -7,6 +7,7 @@ export default function AdminDevToolsPage() {
         <li><a href="/admin/dev/flags" className="text-blue-600 underline">Hidden Flags</a></li>
         <li><a href="/admin/wife" className="text-blue-600 underline">WifeMode Dashboard</a></li>
         <li><a href="/admin/checkin" className="text-blue-600 underline">Daily Check-in</a></li>
+        <li><a href="/admin/dev/deploy-preview" className="text-blue-600 underline">Deploy Preview</a></li>
       </ul>
     </div>
   )

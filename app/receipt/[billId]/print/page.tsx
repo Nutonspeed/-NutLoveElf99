@@ -12,7 +12,7 @@ export default function ReceiptPrintPage({
     return <div className="p-4 text-center">ไม่พบใบเสร็จ</div>;
   }
   return (
-    <div className="p-4 print:p-0">
+    <div className="theme-soft-blush p-4 print:p-0">
       <ReceiptPrintLayout>
         <ReceiptLayout bill={bill as any} />
       </ReceiptPrintLayout>
