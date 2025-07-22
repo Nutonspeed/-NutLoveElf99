@@ -1,25 +1,56 @@
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/buttons/button"
-import { Card, CardContent } from "@/components/ui/cards/card"
-import { Badge } from "@/components/ui/badge"
-import { Star, Shield, Truck, Headphones, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import LazyImage from "@/components/LazyImage"
-import PrefetchLink from "@/components/PrefetchLink"
-import { HeroBannerSection } from "@/components/HeroBannerSection"
-import { mockProducts } from "@/lib/mock-products"
-import { getCollections } from "@/lib/mock-collections"
-import type { Collection } from "@/types/collection"
-import { RecentProductsSection } from "@/components/RecentProductsSection"
+import { Navbar } from "@/components/navbar";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/buttons/button";
+import { Card, CardContent } from "@/components/ui/cards/card";
+import { Badge } from "@/components/ui/badge";
+import { Star, Shield, Truck, Headphones, ArrowRight } from "lucide-react";
+import Link from "next/link";
+import LazyImage from "@/components/LazyImage";
+import PrefetchLink from "@/components/PrefetchLink";
+import { HeroBannerSection } from "@/components/HeroBannerSection";
+import { mockProducts } from "@/lib/mock-products";
+import { getCollections } from "@/lib/mock-collections";
+import type { Collection } from "@/types/collection";
+import { RecentProductsSection } from "@/components/RecentProductsSection";
+import { promises as fs } from "fs";
+import { join } from "path";
+import type { Metadata } from "next";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "SofaCover Pro - ผ้าคลุมโซฟาคุณภาพพรีเมียม";
+  const description = "ซื้อผ้าคลุมโซฟาออนไลน์และอุปกรณ์เสริม";
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: "/placeholder.jpg" }],
+    },
+  };
+}
 
 export default async function HomePage() {
-  const featuredProducts = mockProducts.slice(0, 4)
-  const curatedProducts = mockProducts.filter((p) => p.curated).slice(0, 4)
-  const collections: Collection[] = (await getCollections()).slice(0, 4)
+  const featuredProducts = mockProducts.slice(0, 4);
+  const curatedProducts = mockProducts.filter((p) => p.curated).slice(0, 4);
+  const collections: Collection[] = (await getCollections()).slice(0, 4);
+  let reviews: any[] = [];
+  try {
+    const txt = await fs.readFile(
+      join(process.cwd(), "mock/store/feedback.json"),
+      "utf8",
+    );
+    reviews = JSON.parse(txt).slice(0, 3);
+  } catch {}
+  const ld = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "SofaCover Pro",
+    url: "https://example.com",
+  };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen theme-soft-blush">
       <Navbar />
 
       <HeroBannerSection />
@@ -29,11 +60,16 @@ export default async function HomePage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Curated Picks</h2>
-              <p className="text-gray-600">สินค้าที่คัดสรรมาเป็นพิเศษสำหรับคุณ</p>
+              <p className="text-gray-600">
+                สินค้าที่คัดสรรมาเป็นพิเศษสำหรับคุณ
+              </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {curatedProducts.map((product) => (
-                <Card key={product.id} className="group hover:shadow-lg transition-shadow">
+                <Card
+                  key={product.id}
+                  className="group hover:shadow-lg transition-shadow"
+                >
                   <CardContent className="p-0">
                     <PrefetchLink href={`/products/${product.slug}`}>
                       <div className="relative overflow-hidden rounded-t-lg">
@@ -46,11 +82,17 @@ export default async function HomePage() {
                         />
                       </div>
                       <div className="p-4 space-y-2">
-                        <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
+                        <h3 className="font-semibold text-lg line-clamp-2">
+                          {product.name}
+                        </h3>
                         <div className="flex items-center space-x-2">
-                          <span className="text-xl font-bold text-primary">฿{product.price.toLocaleString()}</span>
+                          <span className="text-xl font-bold text-primary">
+                            ฿{product.price.toLocaleString()}
+                          </span>
                           {product.originalPrice && (
-                            <span className="text-sm text-gray-500 line-through">฿{product.originalPrice.toLocaleString()}</span>
+                            <span className="text-sm text-gray-500 line-through">
+                              ฿{product.originalPrice.toLocaleString()}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -68,7 +110,9 @@ export default async function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">ทำไมต้องเลือกเรา?</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">เราให้บริการที่ดีที่สุดและผลิตภัณฑ์คุณภาพสูงเพื่อความพึงพอใจของลูกค้า</p>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              เราให้บริการที่ดีที่สุดและผลิตภัณฑ์คุณภาพสูงเพื่อความพึงพอใจของลูกค้า
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -77,7 +121,9 @@ export default async function HomePage() {
                 <Shield className="h-8 w-8 text-blue-600" />
               </div>
               <h3 className="font-semibold text-lg">คุณภาพรับประกัน</h3>
-              <p className="text-gray-600 text-sm">ผลิตภัณฑ์คุณภาพสูง รับประกัน 2 ปี</p>
+              <p className="text-gray-600 text-sm">
+                ผลิตภัณฑ์คุณภาพสูง รับประกัน 2 ปี
+              </p>
             </div>
 
             <div className="text-center space-y-4">
@@ -85,7 +131,9 @@ export default async function HomePage() {
                 <Truck className="h-8 w-8 text-green-600" />
               </div>
               <h3 className="font-semibold text-lg">จัดส่งฟรี</h3>
-              <p className="text-gray-600 text-sm">จัดส่งฟรีทั่วประเทศ สั่งซื้อขั้นต่ำ 1,500 บาท</p>
+              <p className="text-gray-600 text-sm">
+                จัดส่งฟรีทั่วประเทศ สั่งซื้อขั้นต่ำ 1,500 บาท
+              </p>
             </div>
 
             <div className="text-center space-y-4">
@@ -93,7 +141,9 @@ export default async function HomePage() {
                 <Headphones className="h-8 w-8 text-purple-600" />
               </div>
               <h3 className="font-semibold text-lg">บริการ 24/7</h3>
-              <p className="text-gray-600 text-sm">ทีมงานพร้อมให้คำปรึกษาตลอด 24 ชั่วโมง</p>
+              <p className="text-gray-600 text-sm">
+                ทีมงานพร้อมให้คำปรึกษาตลอด 24 ชั่วโมง
+              </p>
             </div>
 
             <div className="text-center space-y-4">
@@ -101,7 +151,9 @@ export default async function HomePage() {
                 <Star className="h-8 w-8 text-orange-600" />
               </div>
               <h3 className="font-semibold text-lg">รีวิว 5 ดาว</h3>
-              <p className="text-gray-600 text-sm">ความพึงพอใจของลูกค้ามากกว่า 98%</p>
+              <p className="text-gray-600 text-sm">
+                ความพึงพอใจของลูกค้ามากกว่า 98%
+              </p>
             </div>
           </div>
         </div>
@@ -129,7 +181,9 @@ export default async function HomePage() {
                   />
                 </div>
                 <div className="p-4">
-                  <h3 className="font-semibold text-base truncate">{col.name}</h3>
+                  <h3 className="font-semibold text-base truncate">
+                    {col.name}
+                  </h3>
                   <p className="text-sm text-gray-600 mt-1">{col.priceRange}</p>
                 </div>
               </Link>
@@ -151,12 +205,17 @@ export default async function HomePage() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">สินค้าแนะนำ</h2>
-            <p className="text-gray-600">สินค้าคุณภาพสูงที่ได้รับความนิยมจากลูกค้า</p>
+            <p className="text-gray-600">
+              สินค้าคุณภาพสูงที่ได้รับความนิยมจากลูกค้า
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {featuredProducts.map((product) => (
-              <Card key={product.id} className="group hover:shadow-lg transition-shadow">
+              <Card
+                key={product.id}
+                className="group hover:shadow-lg transition-shadow"
+              >
                 <CardContent className="p-0">
                   <div className="relative overflow-hidden rounded-t-lg">
                     <LazyImage
@@ -166,31 +225,45 @@ export default async function HomePage() {
                       height={300}
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                  {product.originalPrice && (
+                    {product.originalPrice && (
                       <Badge className="absolute top-2 left-2 bg-red-500">
-                        ลด {Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                        ลด{" "}
+                        {Math.round(
+                          ((product.originalPrice - product.price) /
+                            product.originalPrice) *
+                            100,
+                        )}
+                        %
                       </Badge>
                     )}
                   </div>
 
                   <div className="p-4 space-y-2">
-                    <h3 className="font-semibold text-lg line-clamp-2">{product.name}</h3>
+                    <h3 className="font-semibold text-lg line-clamp-2">
+                      {product.name}
+                    </h3>
                     <div className="flex items-center space-x-1">
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
                           <Star
                             key={i}
                             className={`h-4 w-4 ${
-                              i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-gray-300"
+                              i < Math.floor(product.rating)
+                                ? "text-yellow-400 fill-current"
+                                : "text-gray-300"
                             }`}
                           />
                         ))}
                       </div>
-                      <span className="text-sm text-gray-600">({product.reviews})</span>
+                      <span className="text-sm text-gray-600">
+                        ({product.reviews})
+                      </span>
                     </div>
 
                     <div className="flex items-center space-x-2">
-                      <span className="text-xl font-bold text-primary">฿{product.price.toLocaleString()}</span>
+                      <span className="text-xl font-bold text-primary">
+                        ฿{product.price.toLocaleString()}
+                      </span>
                       {product.originalPrice && (
                         <span className="text-sm text-gray-500 line-through">
                           ฿{product.originalPrice.toLocaleString()}
@@ -220,14 +293,43 @@ export default async function HomePage() {
 
       <RecentProductsSection />
 
+      {reviews.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-6">รีวิวจากลูกค้า</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {reviews.map((r) => (
+                <div key={r.id} className="border rounded-lg p-4 bg-white shadow-sm">
+                  <p className="mb-2 text-sm">"{r.message}"</p>
+                  <p className="text-yellow-500">{'★'.repeat(r.rating)}</p>
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link href="/reviews" className="text-blue-600 underline">
+                ดูรีวิวทั้งหมด
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">พร้อมที่จะเปลี่ยนโฉมโซฟาของคุณแล้วหรือยัง?</h2>
-          <p className="text-xl mb-8 text-white/90">เริ่มต้นการช้อปปิ้งกับเราวันนี้ และรับส่วนลด 10% สำหรับการสั่งซื้อครั้งแรก</p>
+          <h2 className="text-3xl font-bold mb-4">
+            พร้อมที่จะเปลี่ยนโฉมโซฟาของคุณแล้วหรือยัง?
+          </h2>
+          <p className="text-xl mb-8 text-white/90">
+            เริ่มต้นการช้อปปิ้งกับเราวันนี้ และรับส่วนลด 10%
+            สำหรับการสั่งซื้อครั้งแรก
+          </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/products">
-              <Button size="lg" className="bg-white text-gray-900 hover:bg-gray-100">
+              <Button
+                size="lg"
+                className="bg-white text-gray-900 hover:bg-gray-100"
+              >
                 เริ่มช้อปปิ้ง
               </Button>
             </Link>
@@ -244,7 +346,11 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
+      />
       <Footer />
     </div>
-  )
+  );
 }
