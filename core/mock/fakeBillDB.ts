@@ -27,3 +27,11 @@ export async function getFastBill(id: string): Promise<FastBill | undefined> {
   const bills = await listFastBills()
   return bills.find(b => b.id === id)
 }
+
+export async function getTodayTotal(): Promise<number> {
+  const bills = await listFastBills()
+  const today = new Date().toISOString().slice(0, 10)
+  return bills
+    .filter(b => b.createdAt.slice(0, 10) === today)
+    .reduce((sum, b) => sum + b.total, 0)
+}
