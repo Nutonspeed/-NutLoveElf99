@@ -1,0 +1,4 @@
+[
+  {"id":"1","billId":"BILL-001","action":"created","timestamp":"2024-01-15T08:00:00Z","note":""},
+  {"id":"2","billId":"BILL-001","action":"paid","timestamp":"2024-01-16T09:00:00Z","note":"โอนแล้ว"}
+]
