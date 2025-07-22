@@ -25,6 +25,8 @@ export interface AdminBill {
   createdAt: string
   feedback?: BillFeedback
   archived?: boolean
+  /** timestamps for follow up contact */
+  followup_log?: string[]
 }
 
 export const mockBills: AdminBill[] = [
@@ -44,6 +46,7 @@ export const mockBills: AdminBill[] = [
     shippingMethod: 'Flash',
     shippingStatus: 'shipped',
     createdAt: new Date().toISOString(),
+    followup_log: [],
   },
 ]
 
@@ -55,6 +58,7 @@ export function addBill(
     status: 'unpaid',
     paymentStatus: 'unpaid',
     createdAt: new Date().toISOString(),
+    followup_log: [],
     ...data,
   }
   mockBills.unshift(bill)
