@@ -1,11 +1,13 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/buttons/button"
 import { Input } from "@/components/ui/inputs/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/modals/dialog"
-import { addFastBill } from "@/lib/mock-fast-bills"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import EmptyState from "@/components/ui/EmptyState"
+import type { FastBill } from "@/lib/mock-fast-bills"
 
 export default function AdminFastBillPage() {
   const [customer, setCustomer] = useState("")
@@ -15,20 +17,43 @@ export default function AdminFastBillPage() {
   const [deposit, setDeposit] = useState(0)
   const [days, setDays] = useState(10)
   const [billLink, setBillLink] = useState<string | null>(null)
+  const [bills, setBills] = useState<FastBill[]>([])
+  const [search, setSearch] = useState("")
+  const [loading, setLoading] = useState(true)
 
   const remaining = total && total > deposit ? total - deposit : 0
 
-  const create = () => {
-    const bill = addFastBill({
-      customerName: customer,
-      phone,
-      items,
-      total,
-      deposit,
-      days: days > 0 ? days : 10,
+  useEffect(() => {
+    fetch("/api/bills/fast")
+      .then(r => r.json())
+      .then(setBills)
+      .finally(() => setLoading(false))
+  }, [])
+
+  const create = async () => {
+    const res = await fetch("/api/bills/fast/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        customerName: customer,
+        phone,
+        items,
+        total,
+        deposit,
+        days: days > 0 ? days : 10,
+      }),
     })
-    setBillLink(`/b/${bill.id}`)
+    if (res.ok) {
+      const bill: FastBill = await res.json()
+      setBills([bill, ...bills])
+      setBillLink(`/b/${bill.id}`)
+    }
   }
+
+  const filtered = bills.filter(b =>
+    b.customerName.toLowerCase().includes(search.toLowerCase()) ||
+    b.id.toLowerCase().includes(search.toLowerCase())
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -67,6 +92,40 @@ export default function AdminFastBillPage() {
                 </DialogContent>
               )}
             </Dialog>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>รายการบิลด่วน</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Input placeholder="ค้นหา" value={search} onChange={(e) => setSearch(e.target.value)} className="mb-4" />
+            {loading ? (
+              <p>Loading...</p>
+            ) : filtered.length ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>เลขบิล</TableHead>
+                    <TableHead>ชื่อลูกค้า</TableHead>
+                    <TableHead>ยอดรวม</TableHead>
+                    <TableHead>วันที่</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map(b => (
+                    <TableRow key={b.id}>
+                      <TableCell>{b.id}</TableCell>
+                      <TableCell>{b.customerName}</TableCell>
+                      <TableCell>{b.total.toLocaleString()}</TableCell>
+                      <TableCell>{new Date(b.createdAt).toLocaleDateString()}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <EmptyState title="ไม่พบบิล" />
+            )}
           </CardContent>
         </Card>
       </div>
