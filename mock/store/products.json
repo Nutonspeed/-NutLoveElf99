@@ -1,0 +1,29 @@
+[
+  {
+    "id": "1",
+    "name": "ผ้าคลุมโซฟา Premium Velvet",
+    "type": "Premium",
+    "colors": ["Navy Blue", "Charcoal Gray"],
+    "material": "Velvet",
+    "image": "/placeholder.svg?height=400&width=400",
+    "description": "ผ้ากำมะหยี่คุณภาพสูง นุ่มสบาย กันน้ำ"
+  },
+  {
+    "id": "2",
+    "name": "ผ้าคลุมโซฟา Cotton Blend",
+    "type": "Standard",
+    "colors": ["Cream", "Beige"],
+    "material": "Cotton",
+    "image": "/placeholder.svg?height=400&width=400",
+    "description": "ระบายอากาศได้ดี เหมาะกับอากาศร้อน"
+  },
+  {
+    "id": "3",
+    "name": "ผ้าคลุมโซฟา Waterproof Pro",
+    "type": "Waterproof",
+    "colors": ["Black", "Brown"],
+    "material": "Polyester",
+    "image": "/placeholder.svg?height=400&width=400",
+    "description": "กันน้ำ 100% เหมาะสำหรับบ้านที่มีสัตว์เลี้ยง"
+  }
+]

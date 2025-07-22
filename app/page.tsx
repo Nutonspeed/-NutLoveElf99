@@ -12,11 +12,18 @@ import { mockProducts } from "@/lib/mock-products"
 import { getCollections } from "@/lib/mock-collections"
 import type { Collection } from "@/types/collection"
 import { RecentProductsSection } from "@/components/RecentProductsSection"
+import { promises as fs } from "fs"
+import { join } from "path"
 
 export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)
   const curatedProducts = mockProducts.filter((p) => p.curated).slice(0, 4)
   const collections: Collection[] = (await getCollections()).slice(0, 4)
+  let reviews: any[] = []
+  try {
+    const txt = await fs.readFile(join(process.cwd(), 'mock/store/feedback.json'), 'utf8')
+    reviews = JSON.parse(txt).slice(0, 3)
+  } catch {}
 
   return (
     <div className="min-h-screen">
@@ -219,6 +226,27 @@ export default async function HomePage() {
       </section>
 
       <RecentProductsSection />
+
+      {reviews.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="container mx-auto px-4">
+            <h2 className="text-3xl font-bold text-center mb-6">รีวิวจากลูกค้า</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {reviews.map((r) => (
+                <div key={r.id} className="border rounded-lg p-4 bg-white shadow-sm">
+                  <p className="mb-2 text-sm">"{r.message}"</p>
+                  <p className="text-yellow-500">{'★'.repeat(r.rating)}</p>
+                </div>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link href="/reviews" className="text-blue-600 underline">
+                ดูรีวิวทั้งหมด
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA Section */}
       <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">

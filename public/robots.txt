@@ -1,2 +1,2 @@
 User-agent: *
-Disallow: /admin/dev-only/
+Disallow: /admin/
