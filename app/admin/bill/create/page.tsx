@@ -15,6 +15,7 @@ import { useBillStore } from '@/stores/billStore'
 import { genBillId } from '@/lib/genBillId'
 import type { Fabric } from '@/mock/fabrics'
 import { getFabrics } from '@/core/mock/store'
+import { copyToClipboard } from '@/helpers/clipboard'
 
 export default function AdminBillCreatePage() {
   const router = useRouter()
@@ -28,28 +29,37 @@ export default function AdminBillCreatePage() {
   const [customSizeNote, setCustomSizeNote] = useState('')
   const [quantity, setQuantity] = useState(1)
   const [tag, setTag] = useState('ด่วน')
+  const [customerAddress, setCustomerAddress] = useState('')
+  const [deliveryNote, setDeliveryNote] = useState('')
+  const [billLink, setBillLink] = useState<string | null>(null)
 
   useEffect(() => {
     setFabrics(getFabrics())
   }, [])
 
-  const pricePerItem = 299
+  const selectedFabric = fabrics.find(f => f.id === fabricId) || null
+  const pricePerItem = selectedFabric?.price ?? 0
   const total = quantity * pricePerItem
+
+  const isValid = customerName.trim() !== '' && fabricId !== '' && quantity > 0
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!customerName || !fabricId || quantity <= 0) return
+    if (!isValid) {
+      toast({ title: 'บอกฟอร์มพัง', variant: 'destructive' })
+      return
+    }
 
     const id = genBillId()
     addBill({
       id,
       customer: customerName,
-      items: `fabric:${fabricId};sofa:${sofaType};note:${customSizeNote}`,
+      items: `fabric:${fabricId};sofa:${sofaType};note:${customSizeNote};addr:${customerAddress};delivery:${deliveryNote}`,
       amount: total,
       status: 'draft',
     })
-    toast({ title: 'สร้างบิลสำเร็จ' })
-    router.push(`/admin/bill/${id}`)
+    toast({ title: 'สร้างบิลแล้ว! พร้อมส่งลูกค้า' })
+    setBillLink(`/bill/${id}`)
   }
 
   return (
@@ -83,6 +93,17 @@ export default function AdminBillCreatePage() {
               ))}
             </SelectContent>
           </Select>
+          {selectedFabric && (
+            <div className="mt-2">
+              <Image
+                src={selectedFabric.imageUrl}
+                alt={selectedFabric.name}
+                width={200}
+                height={200}
+                className="rounded"
+              />
+            </div>
+          )}
         </div>
         <div className="space-y-2">
           <label className="text-sm">ประเภทโซฟา</label>
@@ -107,6 +128,14 @@ export default function AdminBillCreatePage() {
         <div className="space-y-2">
           <label className="text-sm">จำนวน</label>
           <Input type="number" min={1} value={quantity} onChange={e => setQuantity(Number(e.target.value))} />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm">ที่อยู่ลูกค้า</label>
+          <Input value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} />
+        </div>
+        <div className="space-y-2">
+          <label className="text-sm">หมายเหตุการส่ง</label>
+          <Textarea value={deliveryNote} onChange={e => setDeliveryNote(e.target.value)} />
         </div>
         <div className="space-y-2">
           <label className="text-sm">แท็ก</label>
@@ -142,7 +171,15 @@ export default function AdminBillCreatePage() {
           </CardContent>
         </Card>
 
-        <Button type="submit" className="w-full">สร้างบิล</Button>
+        <Button type="submit" className="w-full" disabled={!isValid}>สร้างบิล</Button>
+        {billLink && (
+          <div className="space-y-2 text-center border p-4 rounded-md">
+            <p>{billLink}</p>
+            <Button variant="outline" onClick={() => copyToClipboard(window.location.origin + billLink)}>
+              คัดลอกลิงก์
+            </Button>
+          </div>
+        )}
         <Link href="/admin/bills" className="text-sm text-primary underline block text-center">
           กลับไปหน้าบิล
         </Link>
