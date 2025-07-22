@@ -12,5 +12,29 @@
     "paymentStatus": "paid",
     "createdAt": "2024-01-15T08:00:00Z",
     "followup_log": []
+  },
+  {
+    "id": "BILL-002",
+    "customer": "ทดสอบ ยกเลิก",
+    "items": [
+      { "name": "ชุดโซฟา", "quantity": 1, "price": 500 }
+    ],
+    "shipping": 50,
+    "status": "cancelled",
+    "paymentStatus": "unpaid",
+    "createdAt": "2024-01-16T08:00:00Z",
+    "followup_log": []
+  },
+  {
+    "id": "BILL-003",
+    "customer": "Cancelled Order",
+    "items": [
+      { "name": "ปลอกหมอน", "quantity": 4, "price": 59 }
+    ],
+    "shipping": 30,
+    "status": "cancelled",
+    "paymentStatus": "unpaid",
+    "createdAt": "2024-01-17T08:00:00Z",
+    "followup_log": []
   }
 ]

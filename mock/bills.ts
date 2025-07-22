@@ -51,6 +51,34 @@ export const mockBills: AdminBill[] = [
     createdAt: new Date().toISOString(),
     followup_log: [],
   },
+  {
+    id: 'BILL-002',
+    customer: 'ทดสอบ ยกเลิก',
+    items: [
+      { name: 'ชุดโซฟา', quantity: 1, price: 500 },
+    ],
+    shipping: 50,
+    note: 'ลูกค้าขอยกเลิก',
+    status: 'cancelled',
+    paymentStatus: 'unpaid',
+    tags: [],
+    createdAt: new Date().toISOString(),
+    followup_log: [],
+  },
+  {
+    id: 'BILL-003',
+    customer: 'Cancelled Order',
+    items: [
+      { name: 'ปลอกหมอน', quantity: 4, price: 59 },
+    ],
+    shipping: 30,
+    note: 'cancel due to duplicate',
+    status: 'cancelled',
+    paymentStatus: 'unpaid',
+    tags: ['test'],
+    createdAt: new Date().toISOString(),
+    followup_log: [],
+  },
 ]
 
 export function addBill(

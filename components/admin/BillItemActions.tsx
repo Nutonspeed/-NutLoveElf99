@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import { Badge } from '@/components/ui/badge'
-import { FileText, Gift, Check, Eye, Edit, Printer } from 'lucide-react'
+import { FileText, Gift, Check, Eye, Edit, Printer, Copy } from 'lucide-react'
 import { toast } from 'sonner'
 import type { AdminBill } from '@/mock/bills'
 
@@ -32,6 +32,11 @@ export default function BillItemActions({ bill, onEdit }: BillItemActionsProps) 
       <Link href={`/receipt/${bill.id}/print`} className="no-underline" title="พิมพ์ใบเสร็จ">
         <Button variant="outline" size="sm">
           <Printer className="h-4 w-4" />
+        </Button>
+      </Link>
+      <Link href={`/admin/bill/create?from=${bill.id}`} className="no-underline" title="ทำซ้ำบิล">
+        <Button variant="outline" size="sm">
+          <Copy className="h-4 w-4" />
         </Button>
       </Link>
       <Button variant="outline" size="sm" onClick={onEdit}>
