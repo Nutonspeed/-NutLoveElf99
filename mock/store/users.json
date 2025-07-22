@@ -1,0 +1,5 @@
+[
+  {"id":"1","name":"Admin User","email":"admin@sofacover.com","role":"admin"},
+  {"id":"2","name":"Staff User","email":"staff@sofacover.com","role":"staff"},
+  {"id":"0","name":"Super Admin","email":"root@sofacover.com","role":"superadmin"}
+]
