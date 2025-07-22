@@ -14,7 +14,7 @@ export default async function BillViewPage({ params }: { params: { billId: strin
   return <BillClient bill={bill} />
 }
 
-function BillClient({ bill }: { bill: FakeBill }) {
+export function BillClient({ bill }: { bill: FakeBill }) {
   'use client'
   const [address, setAddress] = useState(bill.customerAddress)
   const [question, setQuestion] = useState('')
