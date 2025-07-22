@@ -1,0 +1,24 @@
+[
+  {
+    "billId": "BILL-001",
+    "date": "2024-06-01T10:00:00Z",
+    "customerName": "สมชาย ใจดี",
+    "items": [
+      { "name": "ผ้าคลุมโซฟา", "quantity": 1, "price": 299 },
+      { "name": "ปลอกหมอน", "quantity": 2, "price": 59 }
+    ],
+    "total": 417,
+    "status": "paid"
+  },
+  {
+    "billId": "BILL-002",
+    "date": "2024-06-05T09:00:00Z",
+    "customerName": "John Doe",
+    "items": [
+      { "name": "ชุดเครื่องนอน", "quantity": 1, "price": 999 },
+      { "name": "ปลอกหมอน", "quantity": 2, "price": 59 }
+    ],
+    "total": 1117,
+    "status": "unpaid"
+  }
+]
