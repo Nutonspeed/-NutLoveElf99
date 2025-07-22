@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import EmptyState from '@/components/ui/EmptyState'
 
 interface Feedback {
   id: string
@@ -20,11 +21,13 @@ export default function AdminReviewsPage() {
   const [list, setList] = useState<Feedback[]>([])
   const [rating, setRating] = useState('all')
   const [sort, setSort] = useState<'date' | 'rating'>('date')
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     fetch('/api/feedback')
       .then((r) => r.json())
       .then((d) => setList(d.feedback || []))
+      .catch(() => setError(true))
   }, [])
 
   const items = list
@@ -73,6 +76,11 @@ export default function AdminReviewsPage() {
             <CardTitle>Feedback List ({items.length})</CardTitle>
           </CardHeader>
           <CardContent>
+            {error ? (
+              <EmptyState icon="⚠️" title="โหลดข้อมูลไม่สำเร็จ" />
+            ) : items.length === 0 ? (
+              <EmptyState icon="💬" title="No feedback" />
+            ) : (
             <Table>
               <TableHeader>
                 <TableRow>
@@ -102,6 +110,7 @@ export default function AdminReviewsPage() {
                 ))}
               </TableBody>
             </Table>
+            )}
           </CardContent>
         </Card>
       </div>

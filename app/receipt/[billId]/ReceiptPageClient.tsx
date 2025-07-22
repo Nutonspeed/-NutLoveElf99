@@ -45,12 +45,14 @@ export default function ReceiptPageClient({ bill, meta }: { bill: BillData; meta
       </Head>
       <div className="min-h-screen p-4 flex flex-col items-center space-y-4">
         <h1 className="text-lg font-semibold">ใบเสร็จคำสั่งซื้อของคุณ</h1>
+        <p className="text-sm">
+          {bill.status === 'paid' ? '✔️ ชำระแล้ว' : '🧾 ยังไม่ชำระ'}
+        </p>
       <div className="flex gap-2 print:hidden">
         <Button variant="outline" size="sm" onClick={copyLink}>
           <Copy className="w-4 h-4 mr-2" /> คัดลอกลิงก์
         </Button>
-        <Button variant="outline" size="sm" onClick={shareLine}>LINE</Button>
-        <Button variant="outline" size="sm" onClick={shareFacebook}>Facebook</Button>
+        <Button variant="outline" size="sm" onClick={shareLine}>Share Receipt</Button>
         <Button size="sm" onClick={downloadPdf}>
           <Download className="w-4 h-4 mr-2" /> PDF
         </Button>

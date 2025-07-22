@@ -7,14 +7,20 @@ import { mockBills, markReminderSent } from '@/lib/mock-bills'
 import { syncKerryStatuses } from '@/lib/kerryApi'
 import { mockNotificationService } from '@/lib/mock-notification-service'
 import { addNotification } from '@/lib/mock-notifications'
+import EmptyState from '@/components/ui/EmptyState'
 
 export default function ShippingDashboard() {
   const [bills, setBills] = useState(() => mockBills.map(b => ({ ...b })))
+  const [error, setError] = useState(false)
 
   const handleSync = async () => {
-    const res = await syncKerryStatuses(bills as any)
-    setBills(mockBills.map(b => ({ ...b })))
-    toast.success(`สำเร็จ ${res.success} ไม่พบเลข ${res.missing} ล้มเหลว ${res.failed}`)
+    try {
+      const res = await syncKerryStatuses(bills as any)
+      setBills(mockBills.map(b => ({ ...b })))
+      toast.success(`สำเร็จ ${res.success} ไม่พบเลข ${res.missing} ล้มเหลว ${res.failed}`)
+    } catch (e) {
+      setError(true)
+    }
   }
 
   const handleRemind = async (id: string) => {
@@ -43,6 +49,11 @@ export default function ShippingDashboard() {
         <h1 className="text-2xl font-bold">Shipping Dashboard</h1>
         <Button onClick={handleSync}>เช็คสถานะ Kerry Express</Button>
       </div>
+      {error ? (
+        <EmptyState icon="⚠️" title="โหลดข้อมูลไม่สำเร็จ" />
+      ) : bills.length === 0 ? (
+        <EmptyState icon="📦" title="ยังไม่มีข้อมูล" />
+      ) : (
       <Table>
         <TableHeader>
           <TableRow>
@@ -80,6 +91,7 @@ export default function ShippingDashboard() {
           ))}
         </TableBody>
       </Table>
+      )}
     </div>
   )
 }
