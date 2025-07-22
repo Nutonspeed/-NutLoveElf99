@@ -22,6 +22,8 @@ export interface AdminBill {
   trackingNumber?: string
   shippingMethod?: string
   shippingStatus?: 'shipped' | 'delivered' | 'returned' | 'cancelled'
+  phone?: string
+  contactChannel?: string
   createdAt: string
   feedback?: BillFeedback
   archived?: boolean
@@ -45,6 +47,7 @@ export const mockBills: AdminBill[] = [
     trackingNumber: 'TH1234567890',
     shippingMethod: 'Flash',
     shippingStatus: 'shipped',
+    phone: '0812345678',
     createdAt: new Date().toISOString(),
     followup_log: [],
   },
