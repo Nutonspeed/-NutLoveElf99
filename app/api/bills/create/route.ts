@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createFastBill } from '@/core/mock/fakeBillDB'
+import { getFabrics } from '@/core/mock/store'
 
 const required = ['customerName', 'fabricName', 'sofaType', 'quantity', 'tags'] as const
 
@@ -21,6 +22,10 @@ export async function POST(req: Request) {
     }
   }
 
-  const bill = await createFastBill(data)
+  const fabric = getFabrics().find(
+    f => f.name === data.fabricName || f.id === data.fabricId,
+  )
+  const price = fabric?.price ?? 0
+  const bill = await createFastBill({ ...data, total: price * Number(data.quantity || 1) })
   return NextResponse.json(bill)
 }

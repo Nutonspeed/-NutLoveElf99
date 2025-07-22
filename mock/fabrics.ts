@@ -2,6 +2,7 @@ export interface Fabric {
   id: string
   name: string
   imageUrl: string
+  price: number
   collectionId?: string
 }
 
@@ -10,12 +11,14 @@ export const fabrics: Fabric[] = [
     id: 'fab-1',
     name: 'Soft Linen',
     imageUrl: '/images/039.jpg',
+    price: 299,
     collectionId: 'col-1',
   },
   {
     id: 'fab-2',
     name: 'Cozy Cotton',
     imageUrl: '/images/041.jpg',
+    price: 399,
     collectionId: 'col-2',
   },
 ]
