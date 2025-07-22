@@ -107,6 +107,31 @@ export default function AdminDashboard() {
       </section>
 
       <section className="space-y-2">
+        <h2 className="text-lg font-semibold">สรุปยอดขายวันนี้</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <DashboardCard title="ยอดขายวันนี้" value={`฿${insights.todayTotal.toLocaleString()}`} icon={Wallet} />
+          <DashboardCard title="จำนวนบิล" value={insights.todayCount} icon={ShoppingCart} />
+          {insights.highestBill && (
+            <DashboardCard
+              title="ยอดขายสูงสุด"
+              subtext={insights.highestBill.id}
+              value={`฿${insights.highestBill.total.toLocaleString()}`}
+              icon={Wallet}
+            />
+          )}
+        </div>
+        {insights.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {insights.tags.slice(0, 3).map(t => (
+              <span key={t.tag} className="text-xs bg-muted rounded px-2 py-1">
+                {t.tag} ({t.count})
+              </span>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold">สถิติอย่างย่อ</h2>
           <Select
