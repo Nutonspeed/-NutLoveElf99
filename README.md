@@ -1,13 +1,54 @@
+
 # Sofa Store Billing Demo
 
-This repo is a Next.js project demonstrating a simple billing workflow. All data is stored in JSON files through the mock store under `core/mock/store` so it can run without a real database.
+This repo is a Next.js project powering a custom-made backend and storefront for a sofa cover business driven by Facebook Ads.  
+It is inspired by Page365's workflow, tailored for internal use by the store's admin team.
 
-## Features
+---
 
-- **Admin bills** — manage bills at `/admin/bills` and print receipts.
-- **Receipt pages** — view a receipt at `/receipt/[billId]` and use `/print` for a printer‑friendly layout.
-- **DevTools** — `/dashboard/devtools` provides tools to reset mock data and switch environment modes. A floating `DevBar` is also available during development.
-- **Block‑based dev flow** — development notes are recorded in `public/SYSTEM_NOTES_MERGED_001-400.md` using numbered blocks.
+## 🛋️ Business Context: Sofa Cover Retail
+
+This platform is for a sofa cover store that does not use live selling or shopping carts.  
+Instead, customers message via Facebook/LINE, view fabric collections via links, and receive personalized bills from staff.
+
+- No Add to Cart
+- No online checkout
+- Admins manage chats, send links, and issue bills manually
+- Focused on 40–50 real fabric collections, each with 1–20 fabric designs
+
+---
+
+## 📁 System Notes
+
+This project uses a single source of truth for all development progress:
+
+👉 `public/SYSTEM_NOTES_FINAL.md`
+
+Do NOT use legacy files like:
+- BACKLOG.md
+- SYSTEM_NOTES_MERGED_001-400.md
+- BLOCK_*.md
+
+---
+
+## ✅ Current Features (Summary)
+
+- `/admin/bill/create` — Create new bills with print-ready layout
+- `/admin/customers/[id]/notes` — Add private notes to customer profile
+- `/admin/settings/team` — Role-based team access
+- `/admin/dev/summary` — Developer tools panel
+- `/collections/[slug]` — Public fabric collection pages (real data)
+- `/fabrics/[slug]` — Individual fabric details (WIP)
+
+---
+
+## 🧵 Product Collections
+
+All collections and fabrics shown on the storefront are real.  
+This replaces prior Google Photos workflow.  
+Customers can click on a fabric to send feedback directly into chat (WIP).
+
+---
 
 ## Getting Started
 
@@ -16,21 +57,13 @@ pnpm install
 pnpm dev
 ```
 
-This starts the Next.js development server on <http://localhost:3000>.
+---
 
 ## Testing
-
-Vitest is configured but only contains minimal dummy tests at the moment.
-Run all tests with:
 
 ```bash
 pnpm test
 ```
 
-## Mock Store
+Vitest is configured with minimal sample tests.
 
-To generate or reset mock data visit `/dashboard/devtools/mock` or use the floating DevBar. All mock operations load and persist data to `localStorage`.
-
----
-
-MIT License. See `LICENSE` for details.
