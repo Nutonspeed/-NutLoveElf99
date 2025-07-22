@@ -7,6 +7,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/cards/card"
+import Link from "next/link"
 import { getBills } from "@/core/mock/store"
 
 export default function UnpaidFollowupAnalytics() {
@@ -74,14 +75,16 @@ export default function UnpaidFollowupAnalytics() {
           </CardHeader>
           <CardContent>{followupsToday}</CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>ชำระหลังติดตาม</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {paidAfterFollowup} / {followupBills.length} ({conversionRate}%)
-          </CardContent>
-        </Card>
+        <Link href="/admin/bills?filter=followup-success" className="no-underline">
+          <Card className="cursor-pointer hover:bg-accent/50">
+            <CardHeader>
+              <CardTitle>ชำระหลังติดตาม</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {paidAfterFollowup} / {followupBills.length} ({conversionRate}%)
+            </CardContent>
+          </Card>
+        </Link>
       </div>
       {chartData.some(d => d.count > 0) ? (
         <ChartContainer className="h-60" config={{ follow: { color: "hsl(10,80%,50%)" } }}>

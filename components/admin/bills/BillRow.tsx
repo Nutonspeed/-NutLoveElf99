@@ -14,12 +14,19 @@ interface BillRowProps {
   onSelect: () => void
   onStatusChange: (s: AdminBill['status']) => void
   onEdit: () => void
+  paidDate?: string | null
+  highlightPayment?: boolean
 }
 
-export default function BillRow({ bill, selected, onSelect, onStatusChange, onEdit }: BillRowProps) {
+export default function BillRow({ bill, selected, onSelect, onStatusChange, onEdit, paidDate, highlightPayment }: BillRowProps) {
   const total = bill.items.reduce((s, it) => s + it.price * it.quantity, 0) + bill.shipping
   const phone = (bill as any).phone ?? (bill as any).customer?.phone ?? '-'
   const lastFollow = bill.followup_log?.[bill.followup_log.length - 1]
+  const diffDays = lastFollow && paidDate
+    ? Math.round(
+        (new Date(paidDate).getTime() - new Date(lastFollow).getTime()) / 86400000,
+      )
+    : null
 
   return (
     <TableRow>
@@ -33,7 +40,14 @@ export default function BillRow({ bill, selected, onSelect, onStatusChange, onEd
       <TableCell>
         <BillStatusDropdown status={bill.status} onChange={onStatusChange} />
       </TableCell>
-      <TableCell>{lastFollow ? formatDateThai(lastFollow) : '-'}</TableCell>
+      <TableCell>
+        {lastFollow ? formatDateThai(lastFollow) : '-'}
+        {highlightPayment && paidDate && (
+          <span className="block text-xs text-green-600">
+            → {formatDateThai(paidDate)}{diffDays !== null ? ` (+${diffDays}d)` : ''}
+          </span>
+        )}
+      </TableCell>
       <TableCell>{formatDateThai(bill.createdAt)}</TableCell>
       <TableCell className="flex gap-2">
         <button
