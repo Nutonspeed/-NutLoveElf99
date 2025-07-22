@@ -13,7 +13,8 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import EmptyState from '@/components/ui/EmptyState'
-import BillItemActions from '@/components/admin/BillItemActions'
+import BillRow from '@/components/admin/bills/BillRow'
+import { formatCurrency } from '@/lib/utils'
 import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
 import { toast } from 'sonner'
@@ -47,6 +48,7 @@ export default function AdminBillsPage() {
   } | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'>('all')
+  const [dateFilter, setDateFilter] = useState<'today' | '7d' | 'all'>('today')
   const [tagFilter, setTagFilter] = useState('all')
   const allTags = Array.from(new Set(bills.flatMap((b) => b.tags)))
   const [selected, setSelected] = useState<string[]>([])
@@ -97,17 +99,6 @@ export default function AdminBillsPage() {
     return 'รอชำระ'
   }
 
-  const getPaymentStatusClass = (status: AdminBill['paymentStatus']) => {
-    if (status === 'paid') return 'bg-green-500 text-white'
-    if (status === 'partial') return 'bg-yellow-500 text-white'
-    return 'bg-red-500 text-white'
-  }
-
-  const getPaymentStatusText = (status: AdminBill['paymentStatus']) => {
-    if (status === 'paid') return 'ชำระแล้ว'
-    if (status === 'partial') return 'ชำระบางส่วน'
-    return 'ยังไม่ชำระ'
-  }
 
   const filteredBills = bills
     .filter(
@@ -117,6 +108,22 @@ export default function AdminBillsPage() {
     )
     .filter((b) => (statusFilter === 'all' ? true : b.status === statusFilter))
     .filter((b) => (tagFilter === 'all' ? true : b.tags.includes(tagFilter)))
+    .filter(b => {
+      if (dateFilter === 'all') return true
+      const created = new Date(b.createdAt)
+      const today = new Date()
+      if (dateFilter === 'today') {
+        return created.toDateString() === today.toDateString()
+      }
+      if (dateFilter === '7d') {
+        return created.getTime() >= today.getTime() - 7 * 86400000
+      }
+      return true
+    })
+
+  const todayTotal = bills
+    .filter(b => new Date(b.createdAt).toDateString() === new Date().toDateString())
+    .reduce((sum, b) => sum + b.items.reduce((s, it) => s + it.price * it.quantity, 0) + b.shipping, 0)
 
   return (
     <div className="space-y-6">
@@ -249,6 +256,16 @@ export default function AdminBillsPage() {
                   ))}
                 </SelectContent>
               </Select>
+              <Select value={dateFilter} onValueChange={setDateFilter}>
+                <SelectTrigger className="w-32">
+                  <SelectValue placeholder="ช่วงเวลา" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">วันนี้</SelectItem>
+                  <SelectItem value="7d">7 วันล่าสุด</SelectItem>
+                  <SelectItem value="all">ทั้งหมด</SelectItem>
+                </SelectContent>
+              </Select>
               {selected.length > 0 && (
                 <Link
                   href={`/admin/bills/label-batch?ids=${selected.join(',')}`}
@@ -296,96 +313,36 @@ export default function AdminBillsPage() {
                   </TableHead>
                   <TableHead>เลขบิล</TableHead>
                   <TableHead>ชื่อลูกค้า</TableHead>
+                  <TableHead className="text-right">ยอดรวม</TableHead>
+                  <TableHead>ติดต่อ</TableHead>
                   <TableHead>แท็ก</TableHead>
                   <TableHead>สถานะ</TableHead>
-                  <TableHead>ชำระเงิน</TableHead>
                   <TableHead>วันที่</TableHead>
                   <TableHead className="w-24" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredBills.map((b) => (
-                  <TableRow key={b.id}>
-                    <TableCell>
-                      <Checkbox
-                        checked={selected.includes(b.id)}
-                        onCheckedChange={() => toggle(b.id)}
-                      />
-                    </TableCell>
-                    <TableCell>{b.id}</TableCell>
-                  <TableCell>{b.customer}</TableCell>
-                  <TableCell className="space-x-1">
-                    {b.tags.map((t) => (
-                      <Badge key={t} variant="secondary">
-                        {t}
-                      </Badge>
-                    ))}
-                    {b.tags.includes('flash-submitted') && (
-                      <Badge variant="outline" className="border-green-600 text-green-600">
-                        ส่งแล้ว
-                      </Badge>
-                    )}
-                  </TableCell>
-                    <TableCell>
-                      <Select
-                        value={b.status}
-                        onValueChange={(v) => {
-                          store.updateStatus(b.id, v as AdminBill['status'])
-                          setBills([...store.bills])
-                        }}
-                      >
-                        <SelectTrigger className="w-28">
-                          <Badge className={getStatusClass(b.status)}>
-                            {getStatusText(b.status)}
-                          </Badge>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unpaid">รอชำระ</SelectItem>
-                          <SelectItem value="paid">ชำระแล้ว</SelectItem>
-                          <SelectItem value="shipped">จัดส่งแล้ว</SelectItem>
-                          <SelectItem value="cancelled">ยกเลิก</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>
-                      <Select
-                        value={b.paymentStatus}
-                        onValueChange={(v) => {
-                          store.updatePaymentStatus(
-                            b.id,
-                            v as AdminBill['paymentStatus'],
-                          )
-                          setBills([...store.bills])
-                        }}
-                      >
-                        <SelectTrigger className="w-28">
-                          <Badge className={getPaymentStatusClass(b.paymentStatus)}>
-                            {getPaymentStatusText(b.paymentStatus)}
-                          </Badge>
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unpaid">ยังไม่ชำระ</SelectItem>
-                          <SelectItem value="partial">ชำระบางส่วน</SelectItem>
-                          <SelectItem value="paid">ชำระแล้ว</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                    <TableCell>{new Date(b.createdAt).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <BillItemActions
-                        bill={b}
-                        onEdit={() => {
-                          setEdit(b.id)
-                          setEditData({
-                            customer: b.customer,
-                            items: b.items,
-                            shipping: b.shipping,
-                            note: b.note,
-                          })
-                        }}
-                      />
-                    </TableCell>
-                  </TableRow>
+                  <BillRow
+                    key={b.id}
+                    bill={b}
+                    selected={selected.includes(b.id)}
+                    onSelect={() => toggle(b.id)}
+                    onStatusChange={(v) => {
+                      store.updateStatus(b.id, v)
+                      setBills([...store.bills])
+                      toast.success('อัปเดตสถานะแล้ว')
+                    }}
+                    onEdit={() => {
+                      setEdit(b.id)
+                      setEditData({
+                        customer: b.customer,
+                        items: b.items,
+                        shipping: b.shipping,
+                        note: b.note,
+                      })
+                    }}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -395,6 +352,9 @@ export default function AdminBillsPage() {
               title={bills.length === 0 ? 'ยังไม่มีบิลในระบบ' : 'ไม่พบบิลที่ค้นหา'}
             />
           )}
+          <div className="mt-4 text-right font-semibold">
+            ยอดรวมวันนี้: {formatCurrency(todayTotal)}
+          </div>
         </CardContent>
       </Card>
       <Dialog open={!!edit} onOpenChange={() => setEdit(null)}>

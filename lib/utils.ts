@@ -9,6 +9,8 @@ export function formatCurrency(amount: number) {
   return `฿${amount.toLocaleString()}`
 }
 
+export const formatDateThai = formatThaiDate
+
 export function formatThaiDate(date: string | number | Date) {
   return new Date(date).toLocaleDateString('th-TH')
 }
