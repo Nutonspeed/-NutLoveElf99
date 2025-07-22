@@ -1,0 +1,5 @@
+[
+  {"id":"1","role":"admin","modules":{"bills":true,"shipping":true,"reviews":true}},
+  {"id":"2","role":"staff","modules":{"bills":true,"shipping":true,"reviews":false}},
+  {"id":"3","role":"viewer","modules":{"bills":false,"shipping":false,"reviews":true}}
+]
