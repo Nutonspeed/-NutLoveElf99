@@ -14,6 +14,25 @@ import type { Collection } from "@/types/collection"
 import { RecentProductsSection } from "@/components/RecentProductsSection"
 import { promises as fs } from "fs"
 import { join } from "path"
+import { headers } from "next/headers"
+import type { Metadata } from "next"
+
+export async function generateMetadata(): Promise<Metadata> {
+  const lang = headers().get("accept-language") || ""
+  const th = lang.includes("th")
+  const title = th
+    ? "โซฟาคัฟเวอร์ โปร ร้านผ้าคลุมโซฟา"
+    : "SofaCover Pro Premium Sofa Covers"
+  const description = th
+    ? "ซื้อผ้าคลุมโซฟาคุณภาพและบริการครบวงจร"
+    : "Premium sofa covers with great service."
+  const image = "/og-home.png"
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: [{ url: image }] },
+  }
+}
 
 export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)
@@ -272,6 +291,44 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'SofaCover Pro',
+            url: 'https://example.com',
+          }),
+        }}
+      />
+      {curatedProducts[0] && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Product',
+              name: curatedProducts[0].name,
+              image: curatedProducts[0].images?.[0] || '/placeholder.svg',
+              offers: { '@type': 'Offer', price: curatedProducts[0].price },
+            }),
+          }}
+        />
+      )}
+      {reviews[0] && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Review',
+              reviewRating: { '@type': 'Rating', ratingValue: reviews[0].rating },
+              author: { '@type': 'Person', name: reviews[0].customer || 'user' },
+            }),
+          }}
+        />
+      )}
       <Footer />
     </div>
   )

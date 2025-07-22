@@ -4,6 +4,17 @@ import { Navbar } from '@/components/navbar'
 import { Footer } from '@/components/footer'
 import Image from 'next/image'
 import ModalWrapper from '@/components/ui/ModalWrapper'
+import { headers } from 'next/headers'
+import type { Metadata } from 'next'
+
+export function generateMetadata(): Metadata {
+  const lang = headers().get('accept-language') || ''
+  const th = lang.includes('th')
+  const title = th ? 'แกลเลอรีสินค้า' : 'Product Gallery'
+  const description = th ? 'เลือกชมสินค้าทั้งหมดของเรา' : 'Browse all our products.'
+  const image = '/og-gallery.png'
+  return { title, description, openGraph: { title, description, images: [{ url: image }] } }
+}
 
 interface Prod {id:string;name:string;type:string;colors:string[];material:string;image:string;description:string}
 
@@ -49,6 +60,29 @@ export default function GalleryPage() {
           ))}
         </div>
       </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'SofaCover Pro',
+          }),
+        }}
+      />
+      {filtered[0] && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Product',
+              name: filtered[0].name,
+              image: filtered[0].image,
+            }),
+          }}
+        />
+      )}
       <Footer />
       <ModalWrapper open={!!view} onClose={()=>setView(null)}>
         {view && (
