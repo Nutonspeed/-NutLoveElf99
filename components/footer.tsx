@@ -1,8 +1,13 @@
+"use client"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from "lucide-react"
 import { APP_VERSION, GIT_BRANCH, GIT_COMMIT } from "@/lib/version"
+import { getEnv } from "@/lib/system-config"
 
 export function Footer() {
+  const [mode, setMode] = useState(getEnv())
+  useEffect(() => setMode(getEnv()), [])
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-12">
@@ -90,6 +95,7 @@ export function Footer() {
           <p className="text-gray-500 text-xs">
             Version {APP_VERSION} ({GIT_BRANCH}@{GIT_COMMIT})
           </p>
+          <p className="text-gray-500 text-xs">Mode {mode}</p>
         </div>
       </div>
     </footer>

@@ -487,3 +487,11 @@ Status: planned
 5. Plan branching path: connect to real database or maintain long-term mock infrastructure
 
 Status: planned
+### Block 306–310 | Post-Production Setup & Team Ready
+1. /admin/settings/team - configure module access per mock user
+2. /admin/analytics/staff-activity - visualize staff log heatmap
+3. /admin/analytics/store-kpi - show store performance index with colors
+4. /admin/notes - private notes for orders, bills and customers
+5. /admin/settings/mode - toggle dev/prod mode and show status in footer
+
+Status: mock implemented

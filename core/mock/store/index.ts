@@ -7,6 +7,8 @@ export * from './config'
 export * from './bills'
 export * from './paymentConfirmations'
 export * from './roles'
+export * from './team-access'
+export * from './notes'
 
 import { resetOrders, regenerateOrders } from './orders'
 import { resetSimpleOrders, regenerateSimpleOrders } from './simple-orders'
