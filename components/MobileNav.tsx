@@ -29,7 +29,12 @@ export default function MobileNav() {
         <SheetContent side="left" className="w-64">
           <div className="p-4 space-y-4">
             {navigation.map((item) => (
-              <Link key={item.name} href={item.href} onClick={() => setOpen(false)} className="block">
+              <Link
+                key={item.name}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="block py-3 min-h-[44px]"
+              >
                 {item.name}
               </Link>
             ))}
