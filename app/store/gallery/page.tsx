@@ -3,10 +3,15 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { mockProducts } from "@/lib/mock-products";
 
-export const metadata: Metadata = {
-  title: "แกลเลอรี่สินค้า | SofaCover Pro",
-  description: "รวมตัวอย่างสินค้าผ้าคลุมโซฟาของเรา",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "แกลเลอรี่สินค้า | SofaCover Pro";
+  const description = "รวมตัวอย่างสินค้าผ้าคลุมโซฟาของเรา";
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: [{ url: "/placeholder.jpg" }] },
+  };
+}
 
 export default function GalleryPage() {
   const data = mockProducts.slice(0, 8);
@@ -22,7 +27,7 @@ export default function GalleryPage() {
     })),
   };
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen theme-soft-blush">
       <Navbar />
       <main className="container mx-auto p-4">
         <h1 className="text-2xl font-bold mb-4">แกลเลอรี่สินค้า</h1>

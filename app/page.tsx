@@ -14,14 +14,19 @@ import type { Collection } from "@/types/collection";
 import { RecentProductsSection } from "@/components/RecentProductsSection";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "SofaCover Pro - ผ้าคลุมโซฟาคุณภาพพรีเมียม",
-  description: "ซื้อผ้าคลุมโซฟาออนไลน์และอุปกรณ์เสริม",
-  openGraph: {
-    title: "SofaCover Pro",
-    description: "ซื้อผ้าคลุมโซฟาออนไลน์และอุปกรณ์เสริม",
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "SofaCover Pro - ผ้าคลุมโซฟาคุณภาพพรีเมียม";
+  const description = "ซื้อผ้าคลุมโซฟาออนไลน์และอุปกรณ์เสริม";
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [{ url: "/placeholder.jpg" }],
+    },
+  };
+}
 
 export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4);
@@ -35,7 +40,7 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen theme-soft-blush">
       <Navbar />
 
       <HeroBannerSection />

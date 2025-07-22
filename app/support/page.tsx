@@ -2,14 +2,19 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
-export const metadata: Metadata = {
-  title: "ศูนย์ช่วยเหลือ | SofaCover Pro",
-  description: "ติดต่อสอบถามปัญหาการสั่งซื้อและการใช้งาน",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const title = "ศูนย์ช่วยเหลือ | SofaCover Pro";
+  const description = "ติดต่อสอบถามปัญหาการสั่งซื้อและการใช้งาน";
+  return {
+    title,
+    description,
+    openGraph: { title, description, images: [{ url: "/placeholder.jpg" }] },
+  };
+}
 
 export default function SupportPage() {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col theme-soft-blush">
       <Navbar />
       <main className="flex-1 container mx-auto p-4 space-y-4">
         <h1 className="text-2xl font-bold">ศูนย์ช่วยเหลือ</h1>
