@@ -1,38 +1,38 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
-import "./globals.css"
-import { Toaster } from "@/components/ui/toaster"
-import { CartProvider } from "@/contexts/cart-context"
-import { AuthProvider } from "@/contexts/auth-context"
-import { FeatureFlagProvider } from "@/contexts/feature-flag-context"
-import { DemoProvider } from "@/contexts/demo-context"
-import { WishlistProvider } from "@/contexts/wishlist-context"
-import { CompareProvider } from "@/contexts/compare-context"
-import { ReviewImagesProvider } from "@/contexts/review-images-context"
-import { FavoritesProvider } from "@/contexts/favorites-context"
-import { RecentProductsProvider } from "@/contexts/recent-products-context"
-import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context"
-import { validateMockData } from "@/lib/mock-validator"
-import RedirectMobileHome from "@/components/RedirectMobileHome"
-import DevBar from "@/components/DevBar"
-import StoreBottomNav from "@/components/StoreBottomNav"
+import type React from "react";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
+import { CartProvider } from "@/contexts/cart-context";
+import { AuthProvider } from "@/contexts/auth-context";
+import { FeatureFlagProvider } from "@/contexts/feature-flag-context";
+import { DemoProvider } from "@/contexts/demo-context";
+import { WishlistProvider } from "@/contexts/wishlist-context";
+import { CompareProvider } from "@/contexts/compare-context";
+import { ReviewImagesProvider } from "@/contexts/review-images-context";
+import { FavoritesProvider } from "@/contexts/favorites-context";
+import { RecentProductsProvider } from "@/contexts/recent-products-context";
+import { AdminProductGroupsProvider } from "@/contexts/admin-product-groups-context";
+import { validateMockData } from "@/lib/mock-validator";
+import RedirectMobileHome from "@/components/RedirectMobileHome";
+import DevBar from "@/components/DevBar";
+import StoreBottomNav from "@/components/StoreBottomNav";
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "SofaCover Pro - ผ้าคลุมโซฟาคุณภาพพรีเมียม",
   description: "ระบบขายผ้าคลุมโซฟาออนไลน์ที่ทันสมัยและครบครัน",
-    generator: 'v0.dev'
-}
+  generator: "v0.dev",
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   if (process.env.NODE_ENV === "development") {
-    validateMockData()
+    validateMockData();
   }
   return (
     <html lang="th">
@@ -47,11 +47,11 @@ export default function RootLayout({
                       <FavoritesProvider>
                         <AdminProductGroupsProvider>
                           <ReviewImagesProvider>
-                          <RedirectMobileHome />
-                          {children}
-                          <StoreBottomNav />
-                          <DevBar />
-                          <Toaster />
+                            <RedirectMobileHome />
+                            {children}
+                            <StoreBottomNav className="print:hidden" />
+                            <DevBar className="print:hidden" />
+                            <Toaster />
                           </ReviewImagesProvider>
                         </AdminProductGroupsProvider>
                       </FavoritesProvider>
@@ -64,5 +64,5 @@ export default function RootLayout({
         </FeatureFlagProvider>
       </body>
     </html>
-  )
+  );
 }

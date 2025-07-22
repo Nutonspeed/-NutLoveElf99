@@ -1,62 +1,69 @@
-"use client"
-import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/buttons/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { toast } from "sonner"
-import { mockBills } from "@/lib/mock-bills"
+"use client";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/buttons/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { toast } from "sonner";
+import { mockBills } from "@/lib/mock-bills";
 
 type Record = {
-  billId: string
-  status: string
-  provider: string
-  lastSynced: string
-}
+  billId: string;
+  status: string;
+  provider: string;
+  lastSynced: string;
+};
 
-const LS_KEY = "shipping_status_cache"
+const LS_KEY = "shipping_status_cache";
 
 export default function ShippingStatusPage() {
-  const [records, setRecords] = useState<Record[]>([])
+  const [records, setRecords] = useState<Record[]>([]);
 
-  const billIds = mockBills.map(b => b.id)
+  const billIds = mockBills.map((b) => b.id);
 
   const loadCache = () => {
-    if (typeof window === "undefined") return
-    const stored = localStorage.getItem(LS_KEY)
-    if (stored) setRecords(JSON.parse(stored))
-  }
+    if (typeof window === "undefined") return;
+    const stored = localStorage.getItem(LS_KEY);
+    if (stored) setRecords(JSON.parse(stored));
+  };
 
   const saveCache = (data: Record[]) => {
-    if (typeof window === "undefined") return
-    localStorage.setItem(LS_KEY, JSON.stringify(data))
-  }
+    if (typeof window === "undefined") return;
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+  };
 
   const sync = async () => {
-    const res = await fetch("/api/shipping/flash/sync", {
+    const res = await fetch("/api/shipping/sync/auto", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids: billIds }),
-    }).then(r => r.json())
-    const newRecords: Record[] = res.statuses
-    newRecords.forEach(n => {
-      const prev = records.find(r => r.billId === n.billId)
+    }).then((r) => r.json());
+    const newRecords: Record[] = res.statuses;
+    newRecords.forEach((n) => {
+      const prev = records.find((r) => r.billId === n.billId);
       if (prev && prev.status !== n.status) {
-        toast.message(`Bill ${n.billId} ${n.status}`)
+        toast.message(`Bill ${n.billId} ${n.status}`);
       }
-    })
-    setRecords(newRecords)
-    saveCache(newRecords)
-  }
+    });
+    setRecords(newRecords);
+    saveCache(newRecords);
+  };
 
   useEffect(() => {
-    loadCache()
-  }, [])
+    loadCache();
+  }, []);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
-      const t = setInterval(sync, 300000)
-      return () => clearInterval(t)
+      const t = setInterval(sync, 300000);
+      return () => clearInterval(t);
     }
-  })
+  });
 
   return (
     <div className="container mx-auto space-y-4 py-8">
@@ -74,7 +81,7 @@ export default function ShippingStatusPage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {records.map(r => (
+          {records.map((r) => (
             <TableRow key={r.billId}>
               <TableCell>{r.billId}</TableCell>
               <TableCell>{r.status}</TableCell>
@@ -85,5 +92,5 @@ export default function ShippingStatusPage() {
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
