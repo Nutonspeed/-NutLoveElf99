@@ -1,0 +1,20 @@
+[
+  {
+    "id": "ORD-001",
+    "orderNumber": "ORD-001",
+    "customerId": "2",
+    "customerName": "John Doe",
+    "total": 2990,
+    "status": "depositPaid",
+    "createdAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "id": "ORD-002",
+    "orderNumber": "ORD-002",
+    "customerId": "3",
+    "customerName": "Jane Smith",
+    "total": 3980,
+    "status": "paid",
+    "createdAt": "2024-01-14T14:20:00Z"
+  }
+]

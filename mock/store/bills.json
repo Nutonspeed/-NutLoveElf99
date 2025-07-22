@@ -1,0 +1,13 @@
+[
+  {
+    "id": "BILL-001",
+    "customer": "สมชาย ใจดี",
+    "items": [
+      { "name": "ผ้าคลุมโซฟา", "quantity": 1, "price": 299 },
+      { "name": "ปลอกหมอน", "quantity": 2, "price": 59 }
+    ],
+    "shipping": 50,
+    "status": "paid",
+    "createdAt": "2024-01-15T08:00:00Z"
+  }
+]
