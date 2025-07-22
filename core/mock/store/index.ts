@@ -6,6 +6,7 @@ export * from './products'
 export * from './config'
 export * from './bills'
 export * from './paymentConfirmations'
+export * from './roles'
 
 import { resetOrders, regenerateOrders } from './orders'
 import { resetSimpleOrders, regenerateSimpleOrders } from './simple-orders'

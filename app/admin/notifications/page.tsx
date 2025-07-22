@@ -1,112 +1,74 @@
 "use client"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/buttons/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
-import { Badge } from "@/components/ui/badge"
-import { Pin, Eye, ArrowLeft, Settings } from "lucide-react"
-import {
-  mockNotifications,
-  type Notification,
-} from "@/lib/mock-notifications"
-import {
-  loadNotificationStatus,
-  getStatus,
-  markRead,
-  togglePin,
-  markAllRead,
-} from "@/lib/mock-read-status"
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { Button } from '@/components/ui/buttons/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
+import { Badge } from '@/components/ui/badge'
+import { Eye, ArrowLeft } from 'lucide-react'
+import { loadNotificationStatus, getStatus, markRead } from '@/lib/mock-read-status'
+
+interface Log {
+  id: string
+  type?: string
+  message: string
+  time: string
+}
 
 export default function AdminNotificationsPage() {
-  const [items, setItems] = useState<Notification[]>([])
+  const [items, setItems] = useState<Log[]>([])
+  const [filter, setFilter] = useState('all')
 
   useEffect(() => {
     loadNotificationStatus()
-    setItems([...mockNotifications])
-    markAllRead(mockNotifications.map((n) => n.id))
+    fetch('/api/admin/notifications').then(r => r.json()).then(setItems)
   }, [])
 
   const handleRead = (id: string) => {
     markRead(id)
-    setItems([...mockNotifications])
+    setItems([...items])
   }
 
-  const handlePin = (id: string) => {
-    togglePin(id)
-    setItems([...mockNotifications])
-  }
-
-  const sorted = [...items].sort((a, b) => {
-    const sa = getStatus(a.id)
-    const sb = getStatus(b.id)
-    if (sa.pinned && !sb.pinned) return -1
-    if (!sa.pinned && sb.pinned) return 1
-    return 0
-  })
+  const filtered = items.filter(i => filter === 'all' || i.type === filter)
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Link href="/admin/dashboard">
-              <Button variant="outline" size="icon">
-                <ArrowLeft className="h-4 w-4" />
-              </Button>
-            </Link>
-            <h1 className="text-3xl font-bold">ศูนย์รวมแจ้งเตือน</h1>
-          </div>
-          <Link href="/admin/notifications/settings">
-            <Button variant="outline">
-              <Settings className="mr-2 h-4 w-4" />
-              ตั้งค่า
+        <div className="flex items-center space-x-4">
+          <Link href="/admin/dashboard">
+            <Button variant="outline" size="icon">
+              <ArrowLeft className="h-4 w-4" />
             </Button>
           </Link>
+          <h1 className="text-3xl font-bold">Notifications</h1>
         </div>
-
+        <select value={filter} onChange={e => setFilter(e.target.value)} className="border p-1">
+          <option value="all">all</option>
+          <option value="line">line</option>
+          <option value="sms">sms</option>
+        </select>
         <Card>
           <CardHeader>
-            <CardTitle>แจ้งเตือนทั้งหมด</CardTitle>
+            <CardTitle>Logs</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {sorted.map((n) => {
+            {filtered.map(n => {
               const s = getStatus(n.id)
               return (
-                <div
-                  key={n.id}
-                  className="flex items-start justify-between border-b pb-2 last:border-b-0"
-                >
-                  <div className="space-y-1">
-                    <Link href={n.link} className="font-medium hover:underline">
-                      {n.message}
-                    </Link>
-                    {!s.read && <Badge variant="destructive">ใหม่</Badge>}
+                <div key={n.id} className="flex items-center justify-between border-b pb-2 last:border-b-0">
+                  <div>
+                    <p className="font-medium">{n.message}</p>
+                    <p className="text-xs text-gray-500">{n.time}</p>
+                    {!s.read && <Badge variant="destructive">new</Badge>}
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => handlePin(n.id)}
-                    >
-                      <Pin
-                        className={
-                          s.pinned ? "fill-current h-4 w-4" : "h-4 w-4"
-                        }
-                      />
+                  {!s.read && (
+                    <Button variant="outline" size="icon" onClick={() => handleRead(n.id)}>
+                      <Eye className="h-4 w-4" />
                     </Button>
-                    {!s.read && (
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        onClick={() => handleRead(n.id)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
+                  )}
                 </div>
               )
             })}
+            {filtered.length === 0 && <p className="text-sm text-center text-gray-500">No notifications</p>}
           </CardContent>
         </Card>
       </div>

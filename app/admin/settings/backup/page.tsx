@@ -13,6 +13,7 @@ import {
   addAdminLog
 } from "@/lib/mock-admin-logs"
 import { downloadJSON, exportCSV } from "@/lib/mock-export"
+import { hasPermission } from "@/lib/mock-roles"
 import { useAuth } from "@/contexts/auth-context"
 
 export default function BillingBackupPage() {
@@ -78,10 +79,14 @@ export default function BillingBackupPage() {
     <div className="container mx-auto space-y-4 py-8">
       <h1 className="text-2xl font-bold">Billing Backup</h1>
       <div className="flex flex-col gap-2 max-w-sm">
-        <Button onClick={handleExportJSON}>Export JSON</Button>
-        <Button variant="outline" onClick={handleExportCSV}>
-          Export CSV
-        </Button>
+        {hasPermission(user?.role, 'export') && (
+          <Button onClick={handleExportJSON}>Export JSON</Button>
+        )}
+        {hasPermission(user?.role, 'export') && (
+          <Button variant="outline" onClick={handleExportCSV}>
+            Export CSV
+          </Button>
+        )}
         <Input type="file" onChange={handleImport} />
       </div>
     </div>
