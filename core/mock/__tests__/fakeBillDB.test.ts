@@ -1,9 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { join } from 'path'
-import { promises as fs } from 'fs'
-import { createFastBill, getFastBill } from '../fakeBillDB'
-
-const file = join(process.cwd(), 'mock', 'store', 'fast-bills.json')
+import { createFastBill, getFastBill, resetFastBills } from '../fakeBillDB'
 
 const sample = {
   customerName: 'Alice',
@@ -20,17 +16,15 @@ const sample = {
   tags: ['test']
 }
 
-beforeEach(async () => {
-  await fs.mkdir(join(process.cwd(), 'mock', 'store'), { recursive: true })
-  await fs.writeFile(file, '[]', 'utf8')
+beforeEach(() => {
+  resetFastBills()
 })
 
 describe('fakeBillDB', () => {
-  it('createFastBill appends to JSON store', async () => {
+  it('createFastBill returns a bill', async () => {
     const bill = await createFastBill(sample)
-    const stored = JSON.parse(await fs.readFile(file, 'utf8'))
-    expect(stored).toHaveLength(1)
-    expect(stored[0]).toEqual(bill)
+    const retrieved = await getFastBill(bill.id)
+    expect(retrieved).toEqual(bill)
   })
 
   it('getFastBill retrieves the same bill', async () => {

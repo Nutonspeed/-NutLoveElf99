@@ -1,11 +1,13 @@
-import { join } from 'path'
-import { readJson, writeJson } from '@/lib/jsonStore'
 import type { FastBill } from '@/lib/mock-fast-bills'
 
-const file = join(process.cwd(), 'mock', 'store', 'fast-bills.json')
+let fastBills: FastBill[] = []
+
+export function resetFastBills() {
+  fastBills = []
+}
 
 export async function listFastBills(): Promise<FastBill[]> {
-  return await readJson<FastBill[]>(file, [])
+  return fastBills
 }
 
 export async function createFastBill(
@@ -19,7 +21,6 @@ export async function createFastBill(
     createdAt: new Date().toISOString(),
   }
   bills.unshift(bill)
-  await writeJson(file, bills)
   return bill
 }
 
@@ -87,5 +88,4 @@ export async function updateBillAddress(id: string, address: string) {
   const idx = fakeBills.findIndex(b => b.id === id)
   if (idx === -1) return
   fakeBills[idx] = { ...fakeBills[idx], customerAddress: address }
-  await writeJson(file, fakeBills as any)
 }
