@@ -8,6 +8,7 @@
     "trackingNo": "TH1234567890",
     "carrier": "Kerry",
     "notes": "",
+    "customerNotes": [],
     "sharedAt": null,
     "sharedBy": null
   },
@@ -20,6 +21,7 @@
     "trackingNo": "TH0987654321",
     "carrier": "Flash",
     "notes": "",
+    "customerNotes": [],
     "sharedAt": null,
     "sharedBy": null
   }

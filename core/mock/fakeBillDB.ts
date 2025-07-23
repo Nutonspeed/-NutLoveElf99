@@ -30,6 +30,7 @@ export interface FakeBill {
   deliveryDate?: string
   trackingNo?: string
   carrier?: string
+  customerNotes?: { message: string; createdAt: string; from: string }[]
 }
 
 interface RawBill {
@@ -41,6 +42,7 @@ interface RawBill {
   trackingNo?: string
   carrier?: string
   notes?: string
+  customerNotes?: { message: string; createdAt: string; from: string }[]
 }
 
 let bills: FakeBill[] | null = null
@@ -72,6 +74,7 @@ async function loadBills(): Promise<FakeBill[]> {
         trackingNo: b.trackingNo,
         carrier: b.carrier,
         note: b.notes,
+        customerNotes: b.customerNotes || [],
         items: [],
         statusStep: stepMap[b.status] ?? 0,
         lastUpdated: '',

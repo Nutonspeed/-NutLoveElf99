@@ -10,6 +10,7 @@ import { formatDateThai } from '@/lib/formatDateThai'
 import { copyToClipboard } from '@/helpers/clipboard'
 import type { AdminBill } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
+import { useEffect, useState } from 'react'
 
 interface BillRowProps {
   bill: AdminBill
@@ -22,6 +23,13 @@ interface BillRowProps {
 
 export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, highlightPayment }: BillRowProps) {
   const store = useBillStore()
+  const [noteCount, setNoteCount] = useState(bill.customerNotes?.length || 0)
+  useEffect(() => {
+    fetch(`/api/bill/add-note?billId=${bill.id}`)
+      .then(r => r.json())
+      .then((d) => Array.isArray(d) && setNoteCount(d.length))
+      .catch(() => {})
+  }, [bill.id])
   const total = bill.items.reduce((s, it) => s + it.price * it.quantity, 0) + bill.shipping
   const contact =
     (bill as any).customerPhone ??
@@ -53,6 +61,24 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
         >
           🔗
         </button>
+        {noteCount > 0 && (
+          <button
+            type="button"
+            className="ml-1"
+            title="มีข้อความจากลูกค้า"
+            onClick={() =>
+              fetch(`/api/bill/add-note?billId=${bill.id}`)
+                .then(r => r.json())
+                .then((d) =>
+                  alert(
+                    (d as any[]).map(n => `${n.message} (${new Date(n.createdAt).toLocaleString()})`).join('\n'),
+                  ),
+                )
+            }
+          >
+            💬({noteCount})
+          </button>
+        )}
       </TableCell>
       <TableCell>{bill.customer}</TableCell>
       <TableCell className="text-right">{formatCurrency(total)}</TableCell>
