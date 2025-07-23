@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useBillStore } from '@/core/store'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import BillStatusTag from '@/components/admin/bills/BillStatusTag'
 import { formatDateThai } from '@/lib/formatDateThai'
@@ -50,7 +51,14 @@ export default function UnshippedBillsPage() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">ยังไม่จัดส่ง</h1>
         {unshipped.length > 0 && (
-          <Button onClick={exportList}>Export รายการจัดส่ง</Button>
+          <div className="flex gap-2">
+            <Button onClick={exportList}>Export รายการจัดส่ง</Button>
+            <Link
+              href={`/admin/bills/print-labels?ids=${unshipped.map(b => b.id).join(',')}`}
+            >
+              <Button variant="outline">พิมพ์ใบปะหน้าทั้งหมด</Button>
+            </Link>
+          </div>
         )}
       </div>
       <Table>
