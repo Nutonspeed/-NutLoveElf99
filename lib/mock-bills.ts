@@ -6,6 +6,14 @@ import { addChatMessage } from "./mock-chat-messages"
 import { mockBills } from "./bills"
 import { logBillAction } from "./mock-bill-audit"
 import { generateMockId } from "./mock-uid"
+import { reduceStock, increaseStock } from "@/mock/fabrics"
+
+const productToFabric: Record<string, string> = {
+  '1': 'SL-001',
+  '2': 'CC-002',
+  '3': 'VD-003',
+  '4': 'CS-004',
+}
 export { mockBills } from "./bills"
 
 
@@ -30,6 +38,12 @@ export function createBill(
     bill.hidden = true
   }
   mockBills.push(bill)
+  if (order) {
+    order.items.forEach((it) => {
+      const code = productToFabric[it.productId]
+      if (code) reduceStock(code, it.quantity)
+    })
+  }
   addAdminLog(`create bill ${bill.id}`, 'mockAdminId')
   logBillAction(bill.id, 'create', { ip: '127.0.0.1', device: 'browser', role: 'admin' })
   addChatMessage(orderId, 'bill_created')
@@ -53,6 +67,13 @@ export function cancelBill(id: string) {
   const b = getBill(id)
   if (b) {
     b.status = "cancelled"
+    const order = mockOrders.find((o) => o.id === b.orderId)
+    if (order) {
+      order.items.forEach((it) => {
+        const code = productToFabric[it.productId]
+        if (code) increaseStock(code, it.quantity)
+      })
+    }
     addAdminLog(`cancel bill ${id}`, 'mockAdminId')
     logBillAction(id, 'cancel', { ip: '127.0.0.1', device: 'browser', role: 'admin' })
   }

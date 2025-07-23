@@ -3,8 +3,10 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
+import { Dialog, DialogContent } from "@/components/ui/modals/dialog"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
 
@@ -20,6 +22,7 @@ interface Fabric {
 export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
+  const [preview, setPreview] = useState<string | null>(null)
 
   const handleCompare = () => {
     router.push(`/compare`)
@@ -48,14 +51,14 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                 className="absolute top-2 left-2 z-10 bg-white/80"
               />
               <Link href={`/fabrics/${slug}`}>
-                <div className="relative aspect-square">
+                <div className="relative aspect-square" onClick={(e) => { e.preventDefault(); setPreview(fabric.image_urls?.[0] || fabric.image_url || '/placeholder.svg') }}>
                   <Image
                     src={
                       fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
                     }
                     alt={fabric.name}
                     fill
-                    className="object-cover"
+                    className="object-cover cursor-zoom-in"
                   />
                 </div>
                 <div className="p-2 text-center">
@@ -71,6 +74,13 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
           <Button onClick={handleCompare}>เปรียบเทียบตอนนี้</Button>
         </div>
       )}
+      <Dialog open={!!preview} onOpenChange={() => setPreview(null)}>
+        <DialogContent className="max-w-xl">
+          {preview && (
+            <Image src={preview} alt="preview" width={600} height={600} className="object-cover" />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
