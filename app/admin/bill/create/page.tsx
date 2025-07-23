@@ -15,6 +15,8 @@ import { useBillStore } from '@/stores/billStore'
 import { genBillId } from '@/lib/genBillId'
 import type { Fabric } from '@/mock/fabrics'
 import { getFabrics, getBills } from '@/core/mock/store'
+import customersData from '@/mock/customers.json'
+import type { Customer } from '@/types/customer'
 import { copyToClipboard } from '@/helpers/clipboard'
 
 export default function AdminBillCreatePage() {
@@ -25,6 +27,8 @@ export default function AdminBillCreatePage() {
 
   const [fabrics, setFabrics] = useState<Fabric[]>([])
   const [customerName, setCustomerName] = useState('')
+  const [customerPhone, setCustomerPhone] = useState('')
+  const [customerId, setCustomerId] = useState<string | null>(null)
   const [fabricId, setFabricId] = useState('')
   const [sofaType, setSofaType] = useState('1-seater')
   const [customSizeNote, setCustomSizeNote] = useState('')
@@ -63,7 +67,17 @@ export default function AdminBillCreatePage() {
   const pricePerItem = selectedFabric?.price ?? 0
   const total = quantity * pricePerItem
 
-  const isValid = customerName.trim() !== '' && fabricId !== '' && quantity > 0
+  const customers = customersData as Customer[]
+  const suggestions = customers.filter(c =>
+    (customerPhone && c.phone.includes(customerPhone)) ||
+    (customerName && c.name.includes(customerName))
+  ).slice(0, 5)
+
+  const isValid =
+    customerName.trim() !== '' &&
+    fabricId !== '' &&
+    quantity > 0 &&
+    (customerPhone.trim() !== '' || customerId)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,6 +89,7 @@ export default function AdminBillCreatePage() {
     const id = genBillId()
     addBill({
       id,
+      customerId: customerId || undefined,
       customer: customerName,
       items: `fabric:${fabricId};sofa:${sofaType};note:${customSizeNote};addr:${customerAddress};delivery:${deliveryNote}`,
       amount: total,
@@ -97,6 +112,22 @@ export default function AdminBillCreatePage() {
         <div className="space-y-2">
           <label className="text-sm">ชื่อลูกค้า</label>
           <Input value={customerName} onChange={e => setCustomerName(e.target.value)} />
+        </div>
+        <div className="space-y-2 relative">
+          <label className="text-sm">เบอร์โทร</label>
+          <Input value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} />
+          {suggestions.length > 0 && (
+            <ul className="absolute z-10 bg-white border w-full shadow text-sm">
+              {suggestions.map(s => (
+                <li key={s.id} className="px-2 py-1 hover:bg-gray-100 cursor-pointer" onClick={() => {
+                  setCustomerId(s.id)
+                  setCustomerName(s.name)
+                  setCustomerPhone(s.phone || '')
+                  setCustomerAddress(s.address || '')
+                }}>{s.name} ({s.phone})</li>
+              ))}
+            </ul>
+          )}
         </div>
         <div className="space-y-2">
           <label className="text-sm">ลายผ้า</label>

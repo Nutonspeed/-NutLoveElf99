@@ -16,6 +16,7 @@ export interface FakeBillItem {
 
 export interface FakeBill {
   id: string
+  customerId: string
   customerName: string
   customerAddress: string
   customerPhone: string
@@ -32,9 +33,7 @@ export interface FakeBill {
 
 interface RawBill {
   id: string
-  name: string
-  phone: string
-  address: string
+  customerId: string
   delivered?: boolean
   status: BillStatus
   deliveryDate?: string
@@ -47,6 +46,8 @@ let bills: FakeBill[] | null = null
 async function loadBills(): Promise<FakeBill[]> {
   if (!bills) {
     const data = (await import('../../mock/bills.json')).default as RawBill[]
+    const customers = (await import('../../mock/customers.json')).default as any[]
+    const customerMap = new Map(customers.map((c: any) => [c.id, c]))
     const stepMap: Record<BillStatus, number> = {
       waiting: 0,
       cutting: 1,
@@ -55,21 +56,25 @@ async function loadBills(): Promise<FakeBill[]> {
       shipped: 4,
       delivered: 5,
     }
-    bills = data.map((b) => ({
-      id: b.id,
-      customerName: b.name,
-      customerPhone: b.phone,
-      customerAddress: b.address,
-      delivered: b.delivered,
-      status: b.status,
-      deliveryDate: b.deliveryDate,
-      trackingNo: b.trackingNo,
-      note: b.notes,
-      items: [],
-      statusStep: stepMap[b.status] ?? 0,
-      lastUpdated: '',
-      estimatedTotal: 0,
-    }))
+    bills = data.map((b) => {
+      const c = customerMap.get(b.customerId)
+      return {
+        id: b.id,
+        customerId: b.customerId,
+        customerName: c?.name || '',
+        customerPhone: c?.phone || '',
+        customerAddress: c?.address || '',
+        delivered: b.delivered,
+        status: b.status,
+        deliveryDate: b.deliveryDate,
+        trackingNo: b.trackingNo,
+        note: b.notes,
+        items: [],
+        statusStep: stepMap[b.status] ?? 0,
+        lastUpdated: '',
+        estimatedTotal: 0,
+      }
+    })
   }
   return bills
 }
