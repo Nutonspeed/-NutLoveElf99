@@ -89,3 +89,18 @@ export async function updateBillAddress(id: string, address: string) {
   fakeBills[idx] = { ...fakeBills[idx], customerAddress: address }
   await writeJson(file, fakeBills as any)
 }
+
+export async function updateBillContact(
+  id: string,
+  data: { name: string; phone: string; address: string },
+) {
+  const idx = fakeBills.findIndex(b => b.id === id)
+  if (idx === -1) return
+  fakeBills[idx] = {
+    ...fakeBills[idx],
+    customerName: data.name,
+    customerPhone: data.phone,
+    customerAddress: data.address,
+  }
+  await writeJson(file, fakeBills as any)
+}
