@@ -9,6 +9,7 @@ import { formatCurrency } from '@/lib/utils'
 import { formatDateThai } from '@/lib/formatDateThai'
 import { copyToClipboard } from '@/helpers/clipboard'
 import type { AdminBill } from '@/mock/bills'
+import { useBillStore } from '@/core/store'
 
 interface BillRowProps {
   bill: AdminBill
@@ -20,6 +21,7 @@ interface BillRowProps {
 }
 
 export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, highlightPayment }: BillRowProps) {
+  const store = useBillStore()
   const total = bill.items.reduce((s, it) => s + it.price * it.quantity, 0) + bill.shipping
   const contact =
     (bill as any).customerPhone ??
@@ -43,7 +45,10 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
         {bill.id}
         <button
           type="button"
-          onClick={() => copyToClipboard(`${window.location.origin}/bill/${bill.id}`)}
+          onClick={() => {
+            copyToClipboard(`${window.location.origin}/bill/view/${bill.id}`)
+            store.recordShare(bill.id, 'admin')
+          }}
           title="คัดลอกลิงก์"
         >
           🔗
@@ -76,7 +81,10 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
         <button
           type="button"
           className="text-sm text-blue-600 flex items-center"
-          onClick={() => copyToClipboard(`${window.location.origin}/bill/${bill.id}`)}
+          onClick={() => {
+            copyToClipboard(`${window.location.origin}/bill/view/${bill.id}`)
+            store.recordShare(bill.id, 'admin')
+          }}
         >
           <Copy className="h-4 w-4 mr-1" />คัดลอกลิงก์
         </button>

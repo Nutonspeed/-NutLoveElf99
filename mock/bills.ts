@@ -36,6 +36,8 @@ export interface AdminBill {
   archived?: boolean
   /** timestamps for follow up contact */
   followup_log?: string[]
+  sharedAt?: string | null
+  sharedBy?: string | null
 }
 
 export const mockBills: AdminBill[] = [
@@ -55,11 +57,13 @@ export const mockBills: AdminBill[] = [
   trackingNo: 'TH1234567890',
   deliveryDate: new Date().toISOString(),
   carrier: 'Kerry',
-  shippingMethod: 'Flash',
+    shippingMethod: 'Flash',
     shippingStatus: 'shipped',
     phone: '0812345678',
     createdAt: new Date().toISOString(),
     followup_log: [],
+    sharedAt: null,
+    sharedBy: null,
   },
   {
     id: 'BILL-002',
@@ -76,6 +80,8 @@ export const mockBills: AdminBill[] = [
   carrier: 'Flash',
   createdAt: new Date().toISOString(),
     followup_log: [],
+    sharedAt: null,
+    sharedBy: null,
   },
   {
     id: 'BILL-003',
@@ -92,6 +98,8 @@ export const mockBills: AdminBill[] = [
   carrier: 'JT',
   createdAt: new Date().toISOString(),
     followup_log: [],
+    sharedAt: null,
+    sharedBy: null,
   },
 ]
 

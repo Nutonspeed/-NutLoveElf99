@@ -2,6 +2,9 @@
 import { useEffect, useState } from 'react'
 import { getBills, addBillActivity } from '@/core/mock/store'
 import { useBillStore } from '@/core/store'
+import { copyToClipboard } from '@/helpers/clipboard'
+import { generateQRUrl } from '@/lib/qr/generate'
+import { useBillStore } from '@/core/store'
 import { Button } from '@/components/ui/buttons/button'
 import Link from 'next/link'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -66,6 +69,20 @@ export default function AdminBillDetail({ params }: { params: { id: string } }) 
       <div className="flex items-center space-x-2">
         <h1 className="text-xl font-bold">บิล {bill.id}</h1>
         <Link href={`/admin/bills/${bill.id}/timeline`} className="text-sm underline text-blue-600">timeline</Link>
+      </div>
+      <div className="flex items-center space-x-4">
+        <img
+          src={generateQRUrl(`${window.location.origin}/bill/view/${bill.id}`)}
+          alt="QR"
+          className="w-24 h-24 border"
+        />
+        <Button
+          variant="outline"
+          onClick={() => {
+            copyToClipboard(`${window.location.origin}/bill/view/${bill.id}`)
+            store.recordShare(bill.id, 'admin')
+          }}
+        >คัดลอกลิงก์</Button>
       </div>
       <div className="flex items-center space-x-2">
         <span className="text-sm">สถานะ:</span>

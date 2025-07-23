@@ -13,6 +13,7 @@ import {
   deleteBill,
   autoArchiveBills,
 } from '@/core/mock/store'
+import { recordShare as recordShareInternal } from '@/core/mock/store'
 
 interface BillStore {
   bills: AdminBill[]
@@ -28,6 +29,7 @@ interface BillStore {
   restore: (id: string) => void
   remove: (id: string) => void
   setFeedback: (id: string, fb: AdminBill['feedback']) => void
+  recordShare: (id: string, user: string) => void
 }
 
 export const useBillStore = create<BillStore>((set) => ({
@@ -67,6 +69,10 @@ export const useBillStore = create<BillStore>((set) => ({
   },
   setFeedback: (id, fb) => {
     setFb(id, fb)
+    set({ bills: getBills() })
+  },
+  recordShare: (id, user) => {
+    recordShareInternal(id, user)
     set({ bills: getBills() })
   },
 }))
