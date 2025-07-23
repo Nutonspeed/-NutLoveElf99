@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react"
 import Link from "next/link"
+import { Star } from 'lucide-react'
 import customers from '@/mock/customers.json'
 import bills from '@/mock/bills.json'
 import { downloadCSV } from '@/lib/mock-export'
@@ -17,8 +18,12 @@ function billCount(id: string) {
 export default function AdminCustomersPage() {
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState("newest")
+  const [list, setList] = useState<Customer[]>([...customerList])
 
-  const filtered = customerList
+  const toggleStar = (id: string) =>
+    setList(prev => prev.map(c => (c.id === id ? { ...c, starred: !c.starred } : c)))
+
+  const filtered = list
     .filter(c =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.phone.includes(search)
@@ -38,9 +43,21 @@ export default function AdminCustomersPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => downloadCSV(customerList, 'customers.csv')}
+            onClick={() => downloadCSV(list, 'customers.csv')}
           >
             ดาวน์โหลดรายชื่อ (.csv)
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              downloadCSV(
+                list.filter(c => c.starred && c.followUpAt),
+                'follow-up.csv'
+              )
+            }
+          >
+            ดาวน์โหลดรายชื่อลูกค้าที่น่าติดตาม (.csv)
           </Button>
           <Link href="/admin/customers/edit/new">
             <Button size="sm">เพิ่มลูกค้า</Button>
@@ -76,7 +93,14 @@ export default function AdminCustomersPage() {
         <tbody>
           {filtered.map(c => (
             <tr key={c.id} className="hover:bg-gray-50">
-              <td className="p-2">{c.name}</td>
+              <td className="p-2 flex items-center gap-1">
+                <button type="button" onClick={() => toggleStar(c.id)}>
+                  <Star
+                    className={`h-4 w-4 ${c.starred ? 'fill-yellow-400 text-yellow-500' : 'text-gray-400'}`}
+                  />
+                </button>
+                {c.name}
+              </td>
               <td className="p-2">{c.phone}</td>
               <td className="p-2">{billCount(c.id)}</td>
               <td className="p-2">

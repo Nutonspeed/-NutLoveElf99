@@ -7,4 +7,7 @@ export interface CustomerSchema {
   createdAt: string
   email?: string
   note?: string
+  followUpAt?: string
+  followUpNote?: string
+  starred?: boolean
 }

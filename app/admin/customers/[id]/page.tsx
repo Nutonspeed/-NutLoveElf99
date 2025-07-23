@@ -4,6 +4,8 @@ import customers from '@/mock/customers.json'
 import bills from '@/mock/bills.json'
 import type { Customer } from '@/types/customer'
 import { Button } from '@/components/ui/buttons/button'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { AlarmClock } from 'lucide-react'
 
 export default function CustomerDetailPage({ params }: { params: { id: string } }) {
   const { id } = params
@@ -15,6 +17,17 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
 
   return (
     <div className="p-4 space-y-4">
+      {customer.followUpAt && (
+        <Alert className="border-yellow-300 bg-yellow-50">
+          <AlarmClock className="h-4 w-4 text-yellow-600" />
+          <AlertTitle>
+            ควรติดต่อลูกค้าภายใน {new Date(customer.followUpAt).toLocaleString('th-TH')}
+          </AlertTitle>
+          {customer.followUpNote && (
+            <AlertDescription>{customer.followUpNote}</AlertDescription>
+          )}
+        </Alert>
+      )}
       <div className="flex items-center gap-2">
         <Link href="/admin/customers">
           <Button variant="outline" size="sm">กลับ</Button>
