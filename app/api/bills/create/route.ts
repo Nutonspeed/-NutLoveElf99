@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createFastBill } from '@/core/mock/fakeBillDB'
+import { createFastBill } from '@/core/fake/fakeBillStore'
 import { getFabrics } from '@/core/mock/store'
 
 const required = ['customerName', 'fabricName', 'sofaType', 'quantity', 'tags'] as const
