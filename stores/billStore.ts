@@ -5,6 +5,7 @@ export type BillStatus = 'draft' | 'paid' | 'overdue'
 
 export interface BillRecord {
   id: string
+  customerId?: string
   customer: string
   items: string
   amount: number

@@ -10,15 +10,21 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
+import { getCustomerById } from '@/core/mock/fakeCustomerDB'
+import type { Customer } from '@/types/customer'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const { billId } = params
   const [bill, setBill] = useState<FakeBill | undefined>()
+  const [customer, setCustomer] = useState<Customer | undefined>()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     getBillById(billId).then(b => {
       setBill(b)
+      if (b) {
+        getCustomerById(b.customerId).then(c => setCustomer(c))
+      }
       setLoading(false)
     })
   }, [billId])
@@ -41,9 +47,9 @@ export default function BillViewPage({ params }: { params: { billId: string } })
       <BillClientInteraction bill={bill} />
       <EditAddressForm
         billId={bill.id}
-        name={bill.customerName}
-        phone={bill.customerPhone}
-        address={bill.customerAddress}
+        name={customer?.name || bill.customerName}
+        phone={customer?.phone || bill.customerPhone}
+        address={customer?.address || bill.customerAddress}
         delivered={bill.delivered}
         status={bill.status}
       />

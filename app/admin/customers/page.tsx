@@ -1,96 +1,83 @@
 "use client"
-
 import { useState } from "react"
 import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/buttons/button"
-import { Edit, Plus } from "lucide-react"
-import CustomerPopup from "@/core/ui/CustomerPopup"
-import { useCustomerGroups, CustomerGroup } from "@/hooks/useCustomerGroups"
-import CustomerListEmptyState from "@/components/admin/customers/CustomerListEmptyState"
+import customers from '@/mock/customers.json'
+import bills from '@/mock/bills.json'
+import type { Customer } from '@/types/customer'
+import { Button } from '@/components/ui/buttons/button'
+
+const customerList = customers as Customer[]
+const billList: any[] = bills as any[]
+
+function billCount(id: string) {
+  return billList.filter(b => b.customerId === id).length
+}
 
 export default function AdminCustomersPage() {
-  const { groups, topTags } = useCustomerGroups()
-  const [filter, setFilter] = useState("")
+  const [search, setSearch] = useState("")
+  const [sort, setSort] = useState("newest")
 
-  const filtered = groups.filter(g =>
-    !filter || g.tags.some(t => t.tag === filter)
-  )
-
-  if (groups.length === 0) {
-    return <CustomerListEmptyState />
-  }
+  const filtered = customerList
+    .filter(c =>
+      c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.phone.includes(search)
+    )
+    .sort((a,b) => {
+      if (sort === 'name') return a.name.localeCompare(b.name)
+      const da = new Date(a.createdAt).getTime()
+      const db = new Date(b.createdAt).getTime()
+      return sort === 'oldest' ? da - db : db - da
+    })
 
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-lg font-bold">กลุ่มลูกค้าตามแท็ก</h1>
+        <h1 className="text-lg font-bold">ลูกค้า</h1>
         <Link href="/admin/customers/edit/new">
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-1" /> สร้างลูกค้าใหม่
-          </Button>
+          <Button size="sm">เพิ่มลูกค้า</Button>
         </Link>
       </div>
-      <div className="mb-4">
+      <div className="flex gap-2 mb-4">
+        <input
+          className="border px-2 py-1 text-sm flex-1"
+          placeholder="ค้นหา"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
         <select
-          className="border rounded px-2 py-1 text-sm"
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
+          className="border px-2 py-1 text-sm"
+          value={sort}
+          onChange={e => setSort(e.target.value)}
         >
-          <option value="">ทั้งหมด</option>
-          {topTags.map(tag => (
-            <option key={tag} value={tag}>{tag}</option>
-          ))}
+          <option value="newest">ล่าสุด</option>
+          <option value="oldest">เก่าสุด</option>
+          <option value="name">ชื่อ</option>
         </select>
       </div>
       <table className="min-w-full text-sm">
         <thead>
           <tr>
             <th className="text-left font-medium p-2">ชื่อลูกค้า</th>
-            <th className="text-left font-medium p-2">แท็กยอดนิยม</th>
+            <th className="text-left font-medium p-2">เบอร์</th>
             <th className="text-left font-medium p-2">จำนวนบิล</th>
             <th className="text-left font-medium p-2">การจัดการ</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.map(group => (
-            <CustomerRow key={group.customer.id} group={group} />
+          {filtered.map(c => (
+            <tr key={c.id} className="hover:bg-gray-50">
+              <td className="p-2">{c.name}</td>
+              <td className="p-2">{c.phone}</td>
+              <td className="p-2">{billCount(c.id)}</td>
+              <td className="p-2">
+                <Link href={`/admin/customers/${c.id}`}> 
+                  <Button variant="outline" size="sm">ดู</Button>
+                </Link>
+              </td>
+            </tr>
           ))}
         </tbody>
       </table>
     </div>
-  )
-}
-
-function CustomerRow({ group }: { group: CustomerGroup }) {
-  const [open, setOpen] = useState(false)
-  return (
-    <tr className="hover:bg-gray-50">
-      <td className="p-2">
-        <button className="font-medium" onClick={() => setOpen(true)}>
-          {group.customer.name}
-        </button>
-        <CustomerPopup
-          customerId={group.customer.id}
-          open={open}
-          onClose={() => setOpen(false)}
-        />
-      </td>
-      <td className="p-2">
-        {group.tags.slice(0, 3).map(t => (
-          <Badge key={t.tag} className="mr-1 badge">
-            {t.tag}
-          </Badge>
-        ))}
-      </td>
-      <td className="p-2">{group.totalBills}</td>
-      <td className="p-2">
-        <Link href={`/admin/customers/edit/${group.customer.id}`}>
-          <Button variant="outline" size="icon">
-            <Edit className="w-4 h-4" />
-          </Button>
-        </Link>
-      </td>
-    </tr>
   )
 }
