@@ -2,11 +2,10 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import BillProgress from '@/components/BillProgress'
+import BillStatusStepper from '@/components/BillStatusStepper'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 
-const steps = ['กำลังตัดผ้า', 'รอเย็บ', 'กำลังแพ็ค', 'จัดส่งแล้ว']
 
 export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
   const [address, setAddress] = useState(bill.customerAddress)
@@ -88,7 +87,7 @@ export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
       </section>
       <section className="space-y-2">
         <h2 className="font-semibold">สถานะการผลิต</h2>
-        <BillProgress steps={steps} current={bill.statusStep} updatedAt={bill.lastUpdated} />
+        <BillStatusStepper status={bill.status} />
       </section>
       <section className="space-y-2">
         <h2 className="font-semibold">สอบถามเพิ่มเติม</h2>

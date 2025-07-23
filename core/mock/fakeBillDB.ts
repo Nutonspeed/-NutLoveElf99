@@ -1,3 +1,5 @@
+export type BillStatus = 'waiting' | 'cutting' | 'packing' | 'shipped'
+
 export interface FakeBillItem {
   fabricName: string
   sofaType: string
@@ -12,6 +14,7 @@ export interface FakeBill {
   customerAddress: string
   customerPhone: string
   items: FakeBillItem[]
+  status: BillStatus
   statusStep: number
   lastUpdated: string
   note?: string
@@ -25,6 +28,7 @@ interface RawBill {
   phone: string
   address: string
   delivered?: boolean
+  status: BillStatus
 }
 
 let bills: FakeBill[] | null = null
@@ -32,14 +36,21 @@ let bills: FakeBill[] | null = null
 async function loadBills(): Promise<FakeBill[]> {
   if (!bills) {
     const data = (await import('../../mock/bills.json')).default as RawBill[]
+    const stepMap: Record<BillStatus, number> = {
+      waiting: 0,
+      cutting: 1,
+      packing: 2,
+      shipped: 3,
+    }
     bills = data.map((b) => ({
       id: b.id,
       customerName: b.name,
       customerPhone: b.phone,
       customerAddress: b.address,
       delivered: b.delivered,
+      status: b.status,
       items: [],
-      statusStep: 1,
+      statusStep: stepMap[b.status] ?? 0,
       lastUpdated: '',
       estimatedTotal: 0,
     }))
