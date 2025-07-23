@@ -19,6 +19,7 @@ import customersData from '@/mock/customers.json'
 import type { Customer } from '@/types/customer'
 import { copyToClipboard } from '@/helpers/clipboard'
 import { parseMessage } from '@/lib/messageToBill'
+import { getLead, markBilled, convertLeadToCustomer } from '@/lib/mock-facebook-leads'
 
 export default function AdminBillCreatePage() {
   const router = useRouter()
@@ -45,6 +46,14 @@ export default function AdminBillCreatePage() {
 
   useEffect(() => {
     const from = params.get('from')
+    const lead = params.get('leadId')
+    if (lead) {
+      const l = getLead(lead)
+      if (l) {
+        setCustomerName(l.name)
+        setCustomerPhone(l.phone)
+      }
+    }
     if (from === 'cart') {
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('cart')
@@ -120,6 +129,14 @@ export default function AdminBillCreatePage() {
       amount: total,
       status: 'draft',
     })
+    const leadId = params.get('leadId')
+    if (leadId) {
+      const l = getLead(leadId)
+      if (l) {
+        convertLeadToCustomer(l)
+        markBilled(leadId)
+      }
+    }
     toast({ title: 'สร้างบิลแล้ว! พร้อมส่งลูกค้า' })
     setBillLink(`/bill/${id}`)
   }
