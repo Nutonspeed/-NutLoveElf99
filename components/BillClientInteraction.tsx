@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import BillStatusStepper from '@/components/BillStatusStepper'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
+import PromptPayQR from '@/components/bill/PromptPayQR'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 
 
@@ -112,7 +113,11 @@ export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
       <section className="space-y-2">
         <h2 className="font-semibold">ชำระเงิน</h2>
         <p>ยอดประมาณการ: ฿{bill.estimatedTotal.toLocaleString()}</p>
-        <QRCodePlaceholder />
+        {bill.status !== 'paid' ? (
+          <PromptPayQR amount={bill.estimatedTotal} />
+        ) : (
+          <QRCodePlaceholder />
+        )}
         {bill.note && <p className="text-sm text-gray-600">{bill.note}</p>}
       </section>
     </div>
