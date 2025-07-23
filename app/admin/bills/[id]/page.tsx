@@ -1,6 +1,6 @@
 "use client"
 import { useEffect, useState } from 'react'
-import { getBills, updateBillStatus, addBillActivity } from '@/core/mock/store'
+import { getBills, addBillActivity } from '@/core/mock/store'
 import { useBillStore } from '@/core/store'
 import { Button } from '@/components/ui/buttons/button'
 import Link from 'next/link'
@@ -25,10 +25,19 @@ export default function AdminBillDetail({ params }: { params: { id: string } }) 
     fetch(`/api/receipt/${params.id}/payment`).then(r => r.json()).then(setPayments)
   }, [params.id])
 
+  const updateStatus = async (status: string) => {
+    await fetch('/api/bill/update-status', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ billId: bill.id, newStatus: status }),
+    })
+    store.updateStatus(bill.id, status as any)
+  }
+
   if (!bill) return <div className="p-4">ไม่พบบิล</div>
 
-  const confirm = () => {
-    updateBillStatus(bill.id, 'paid')
+  const confirm = async () => {
+    await updateStatus('paid')
     alert('ยืนยันแล้ว (mock)')
   }
 
@@ -62,8 +71,8 @@ export default function AdminBillDetail({ params }: { params: { id: string } }) 
         <span className="text-sm">สถานะ:</span>
         <Select
           value={bill.status}
-          onValueChange={(v) => {
-            updateBillStatus(bill.id, v as any)
+          onValueChange={async (v) => {
+            await updateStatus(v as any)
             addBillActivity({ billId: bill.id, action: `status-${v}`, note: statusNote })
             setStatusNote('')
             router.refresh()
@@ -134,7 +143,7 @@ export default function AdminBillDetail({ params }: { params: { id: string } }) 
               <span>Total</span>
               <span>฿{items.reduce((s,it)=>s+it.price*it.quantity,0)+bill.shipping}</span>
             </div>
-            <Button onClick={() => {updateBillStatus(bill.id, bill.status); store.updateBill(bill.id,{items}); setEdit(false);}}>Save</Button>
+            <Button onClick={async () => {await updateStatus(bill.status); store.updateBill(bill.id,{items}); setEdit(false);}}>Save</Button>
           </div>
         )}
         <Dialog open={open} onOpenChange={setOpen}>

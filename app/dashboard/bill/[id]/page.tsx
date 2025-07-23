@@ -1,7 +1,7 @@
 import CopyLinkButton from '@/components/bills/CopyLinkButton'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
 import PaidStatusToggle from '@/components/bills/PaidStatusToggle'
-import { getBill, updateBillStatus } from '@/core/mock/store'
+import { getBill } from '@/core/mock/store'
 
 interface Props {
   params: { id: string }
@@ -13,6 +13,13 @@ export default function DashboardBillPage({ params }: Props) {
     return <div className="p-8">ไม่พบใบเสร็จนี้</div>
   }
   const total = bill.items.reduce((sum, it) => sum + it.price * it.quantity, 0) + bill.shipping
+  const updateStatus = async (status: string) => {
+    await fetch('/api/bill/update-status', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ billId: bill.id, newStatus: status }),
+    })
+  }
   return (
     <div className="container mx-auto space-y-4 py-8">
       <h1 className="text-2xl font-bold">ใบเสร็จ {bill.id}</h1>
@@ -44,9 +51,7 @@ export default function DashboardBillPage({ params }: Props) {
         <div className="space-y-1 text-right">
           <PaidStatusToggle
             defaultPaid={bill.status === 'paid'}
-            onChange={(paid) =>
-              updateBillStatus(bill.id, paid ? 'paid' : 'unpaid')
-            }
+            onChange={(paid) => updateStatus(paid ? 'paid' : 'unpaid')}
           />
           <p className="text-xs text-muted-foreground">แก้ไขล่าสุด: 2024-05-01</p>
         </div>
