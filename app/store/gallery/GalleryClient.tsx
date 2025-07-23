@@ -9,12 +9,23 @@ import ModalWrapper from '@/components/ui/ModalWrapper'
 interface Prod {id:string;name:string;type:string;colors:string[];material:string;image:string;description:string}
 
 export default function GalleryClient() {
-  const [products,setProducts] = useState<Prod[]>([])
+  const [products, setProducts] = useState<Prod[]>([])
+  const [loading, setLoading] = useState(true)
   const [type,setType] = useState('all')
   const [color,setColor] = useState('all')
   const [material,setMaterial] = useState('all')
-  const [view,setView] = useState<Prod|null>(null)
-  useEffect(()=>{fetch('/mock/store/products.json').then(r=>r.json()).then(setProducts)},[])
+  const [view, setView] = useState<Prod | null>(null)
+  useEffect(() => {
+    const t = setTimeout(() => {
+      fetch('/mock/store/products.json')
+        .then(r => r.json())
+        .then(d => {
+          setProducts(d)
+          setLoading(false)
+        })
+    }, 300)
+    return () => clearTimeout(t)
+  }, [])
   const filtered = products.filter(p=>
     (type==='all'||p.type===type)&&
     (color==='all'||p.colors.includes(color))&&
@@ -42,12 +53,16 @@ export default function GalleryClient() {
           </select>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filtered.map(p=>(
-            <button key={p.id} onClick={()=>setView(p)} className="focus:outline-none">
-              <Image src={p.image} alt={p.name} width={300} height={300} className="w-full h-40 object-cover" />
-              <p className="text-center mt-2 text-sm">{p.name}</p>
-            </button>
-          ))}
+          {loading
+            ? Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="h-40 bg-gray-200 animate-pulse rounded" />
+              ))
+            : filtered.map(p => (
+                <button key={p.id} onClick={() => setView(p)} className="focus:outline-none">
+                  <Image src={p.image} alt={p.name} width={300} height={300} className="w-full h-40 object-cover" />
+                  <p className="text-center mt-2 text-sm">{p.name}</p>
+                </button>
+              ))}
         </div>
       </div>
       <script
