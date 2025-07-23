@@ -3,6 +3,7 @@ import { useState } from "react"
 import Link from "next/link"
 import customers from '@/mock/customers.json'
 import bills from '@/mock/bills.json'
+import { downloadCSV } from '@/lib/mock-export'
 import type { Customer } from '@/types/customer'
 import { Button } from '@/components/ui/buttons/button'
 
@@ -33,9 +34,18 @@ export default function AdminCustomersPage() {
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-lg font-bold">ลูกค้า</h1>
-        <Link href="/admin/customers/edit/new">
-          <Button size="sm">เพิ่มลูกค้า</Button>
-        </Link>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => downloadCSV(customerList, 'customers.csv')}
+          >
+            ดาวน์โหลดรายชื่อ (.csv)
+          </Button>
+          <Link href="/admin/customers/edit/new">
+            <Button size="sm">เพิ่มลูกค้า</Button>
+          </Link>
+        </div>
       </div>
       <div className="flex gap-2 mb-4">
         <input
