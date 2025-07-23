@@ -2,7 +2,7 @@ import { mockBills } from '../mock-bills'
 import { markReminderSent } from '../mock-bills'
 import { mockNotificationService } from '../mock-notification-service'
 import { addNotification } from '../mock-notifications'
-import { readJson } from '../jsonStore'
+import { readJson } from '../jsonFile'
 import path from 'path'
 
 export type Job = () => Promise<void> | void

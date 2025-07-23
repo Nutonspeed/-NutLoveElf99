@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson } from '@/lib/jsonStore'
+import { readJson } from '@/lib/jsonFile'
 
 function billTotal(b: any) {
   return (b.items || []).reduce((s: number, i: any) => s + i.price * i.quantity, 0) + (b.shipping || 0)
