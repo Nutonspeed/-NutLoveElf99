@@ -1,10 +1,13 @@
 "use client"
 import { useEffect, useState } from 'react'
+import { Noto_Sans_Thai } from 'next/font/google'
 import PrintToolbar from '@/components/bill/PrintToolbar'
 import BillTimeline from '@/components/bill/BillTimeline'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
 import { formatDateThai } from '@/lib/formatDateThai'
+
+const thaiFont = Noto_Sans_Thai({ subsets: ['thai'], weight: ['400', '700'] })
 
 export default function BillPrintPage({ params }: { params: { billId: string } }) {
   const { billId } = params
@@ -29,7 +32,7 @@ export default function BillPrintPage({ params }: { params: { billId: string } }
   const subtotal = bill.items.reduce((s, it) => s + it.unitPrice * it.quantity, 0)
 
   return (
-    <div className="print-page relative space-y-6 p-4 print:p-6 print:w-[210mm] print:mx-auto">
+    <div className={`print-page relative space-y-6 p-4 print:p-6 print:w-[210mm] print:mx-auto ${thaiFont.className}`}>
       <PrintToolbar />
       <h1 className="text-xl font-bold">บิล {bill.id}</h1>
       <p className="font-medium">{bill.customerName}</p>
@@ -66,10 +69,11 @@ export default function BillPrintPage({ params }: { params: { billId: string } }
         </div>
       </div>
       <BillTimeline status={bill.status} />
-      {(bill.trackingNo || bill.deliveryDate) && (
+      {(bill.trackingNo || bill.deliveryDate || bill.deliveredAt) && (
         <div className="text-sm space-y-1">
           {bill.trackingNo && <p>Tracking: {bill.trackingNo}</p>}
           {bill.deliveryDate && <p>Delivered: {formatDateThai(bill.deliveryDate)}</p>}
+          {bill.deliveredAt && <p>🗓 จัดส่งเมื่อ: {formatDateThai(bill.deliveredAt)}</p>}
         </div>
       )}
       <style jsx>{`
