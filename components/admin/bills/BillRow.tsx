@@ -3,7 +3,8 @@ import { TableRow, TableCell } from '@/components/ui/table'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Copy } from 'lucide-react'
 import BillItemActions from '@/components/admin/BillItemActions'
-import BillStatusControl from '../BillStatusControl'
+import BillStatusTag from './BillStatusTag'
+import { Badge } from '@/components/ui/badge'
 import { formatCurrency } from '@/lib/utils'
 import { formatDateThai } from '@/lib/formatDateThai'
 import { copyToClipboard } from '@/helpers/clipboard'
@@ -52,8 +53,15 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
       <TableCell className="text-right">{formatCurrency(total)}</TableCell>
       <TableCell>{contact}</TableCell>
       <TableCell className="max-w-[8rem] truncate">{bill.note}</TableCell>
+      <TableCell className="space-x-1 whitespace-nowrap">
+        {bill.tags.map((t) => (
+          <Badge key={t} variant="secondary">
+            {t}
+          </Badge>
+        ))}
+      </TableCell>
       <TableCell>
-        <BillStatusControl billId={bill.id} status={bill.status} />
+        <BillStatusTag status={bill.status} />
       </TableCell>
       <TableCell>
         {lastFollow ? formatDateThai(lastFollow) : '-'}
