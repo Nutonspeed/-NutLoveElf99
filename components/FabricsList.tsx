@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
+import { trackPixel } from "@/lib/pixel"
 
 interface Fabric {
   id: string
@@ -17,9 +18,21 @@ interface Fabric {
   image_urls?: string[] | null
 }
 
-export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
+export function FabricsList({
+  fabrics,
+  trackSelect = false,
+}: {
+  fabrics: Fabric[]
+  trackSelect?: boolean
+}) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
+
+  const handleSelect = (slug: string) => {
+    if (trackSelect) {
+      trackPixel("เลือกผ้า", { slug })
+    }
+  }
 
   const handleCompare = () => {
     router.push(`/compare`)
@@ -47,7 +60,7 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                 onCheckedChange={() => toggleCompare(slug)}
                 className="absolute top-2 left-2 z-10 bg-white/80"
               />
-              <Link href={`/fabrics/${slug}`}>
+              <Link href={`/fabrics/${slug}`} onClick={() => handleSelect(slug)}>
                 <div className="relative aspect-square">
                   <Image
                     src={
