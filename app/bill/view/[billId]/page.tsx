@@ -8,30 +8,35 @@ import MarkAsPaidButton from '@/components/bill/MarkAsPaidButton'
 import { formatDateThai } from '@/lib/formatDateThai'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
-import type { FakeBill } from '@/core/mock/fakeBillDB'
-import { getBillById } from '@/core/mock/fakeBillDB'
+import { useBillStore } from '@/app/store/useBillStore'
 import { getCustomerById } from '@/core/mock/fakeCustomerDB'
 import type { Customer } from '@/types/customer'
 
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const { billId } = params
-  const [bill, setBill] = useState<FakeBill | undefined>()
+  const { bill, setBill, fetch, updateStatus } = useBillStore()
   const [customer, setCustomer] = useState<Customer | undefined>()
   const [loading, setLoading] = useState(true)
   const [notes, setNotes] = useState<{ message: string; createdAt: string; from: string }[]>([])
   const [message, setMessage] = useState('')
 
   useEffect(() => {
-    getBillById(billId).then(b => {
-      setBill(b)
-      if (b) {
-        setNotes(b.customerNotes || [])
-        getCustomerById(b.customerId).then(c => setCustomer(c))
-      }
+    if (!bill) {
+      fetch(billId).then(() => {
+        const b = useBillStore.getState().bill
+        if (b) {
+          setNotes(b.customerNotes || [])
+          getCustomerById(b.customerId).then(c => setCustomer(c))
+        }
+        setLoading(false)
+      })
+    } else {
+      setNotes(bill.customerNotes || [])
+      getCustomerById(bill.customerId).then(c => setCustomer(c))
       setLoading(false)
-    })
-  }, [billId])
+    }
+  }, [billId, bill, fetch])
 
   if (loading) {
     return <div className="p-8">Loading…</div>
@@ -58,7 +63,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         status={bill.status}
       />
       <BillTimeline status={bill.productionStatus} />
-      <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => setBill({ ...bill, status: 'paid' })} />
+      <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => updateStatus('paid')} />
       <div className="space-y-2">
         <h2 className="font-semibold">ฝากข้อความถึงแอดมิน</h2>
         <ul className="space-y-1 text-sm">

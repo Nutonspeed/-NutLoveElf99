@@ -1,25 +1,25 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/cards/card"
 import { Button } from "@/components/ui/buttons/button"
 import { Badge } from "@/components/ui/badge"
-import type { AdminBill } from "@/mock/bills"
-import { useBillStore } from "@/core/store"
+import { useBillStore as useBillListStore } from "@/core/store"
+import { useBillStore } from "@/app/store/useBillStore"
 import { generateReceiptPDF } from "@/lib/pdf/receipt"
 import { exportPDF } from "@/lib/pdf/export"
 import { Star } from "lucide-react"
 
 export default function AdminBillViewPage({ params }: { params: { billId: string } }) {
-  const store = useBillStore()
-  const [bill, setBill] = useState<AdminBill | undefined>(() =>
-    store.bills.find((b) => b.id === params.billId),
-  )
+  const listStore = useBillListStore()
+  const { bill, fetch } = useBillStore()
 
   useEffect(() => {
-    store.refresh()
-    setBill(store.bills.find((b) => b.id === params.billId))
-  }, [params.billId, store])
+    if (!bill) {
+      fetch(params.billId)
+    }
+    listStore.refresh()
+  }, [params.billId, bill, fetch, listStore])
 
   if (!bill) {
     return <div className="p-4">ไม่พบข้อมูลบิล</div>
