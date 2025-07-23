@@ -3,6 +3,8 @@ import Link from 'next/link'
 import customers from '@/mock/customers.json'
 import bills from '@/mock/bills.json'
 import type { Customer } from '@/types/customer'
+import { autoTagCustomers } from '@/lib/auto-tag-customers'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/buttons/button'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { AlarmClock } from 'lucide-react'
@@ -12,6 +14,7 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
   const customer = (customers as Customer[]).find(c => c.id === id)
   const customerBills = (bills as any[]).filter(b => b.customerId === id)
   const totalSpent = customerBills.reduce((sum, b) => sum + (b.amount || 0), 0)
+  const auto = autoTagCustomers().find(c => c.id === id)
 
   if (!customer) return <div className="p-4">ไม่พบลูกค้า</div>
 
@@ -37,7 +40,20 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
       <div>
         <p>เบอร์: {customer.phone}</p>
         <p>ที่อยู่: {customer.address}</p>
-        <p>แท็ก: {customer.tags?.join(', ')}</p>
+        <p className="space-x-1">
+          {customer.tags?.map(t => (
+            <Badge key={t} className="bg-blue-100 text-blue-600">{t}</Badge>
+          ))}
+          {auto?.autoTags.map(t => (
+            <Badge
+              key={t}
+              variant="outline"
+              className="bg-gray-100 text-gray-600 border-gray-300"
+            >
+              {t}
+            </Badge>
+          ))}
+        </p>
         <p>เริ่มใช้บริการ: {new Date(customer.createdAt).toLocaleDateString()}</p>
         <p>ยอดรวมใช้จ่าย: {totalSpent.toLocaleString()} บาท</p>
         <p>จำนวนบิล: {customerBills.length}</p>

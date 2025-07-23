@@ -2,14 +2,15 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Star } from 'lucide-react'
-import customers from '@/mock/customers.json'
 import bills from '@/mock/bills.json'
 import { downloadCSV } from '@/lib/mock-export'
-import type { Customer } from '@/types/customer'
 import { Button } from '@/components/ui/buttons/button'
+import { Badge } from '@/components/ui/badge'
+import { autoTagCustomers, TaggedCustomer } from '@/lib/auto-tag-customers'
 
-const customerList = customers as Customer[]
 const billList: any[] = bills as any[]
+
+const baseList: TaggedCustomer[] = autoTagCustomers()
 
 function billCount(id: string) {
   return billList.filter(b => b.customerId === id).length
@@ -18,7 +19,8 @@ function billCount(id: string) {
 export default function AdminCustomersPage() {
   const [search, setSearch] = useState("")
   const [sort, setSort] = useState("newest")
-  const [list, setList] = useState<Customer[]>([...customerList])
+  const [tag, setTag] = useState("all")
+  const [list, setList] = useState<TaggedCustomer[]>([...baseList])
 
   const toggleStar = (id: string) =>
     setList(prev => prev.map(c => (c.id === id ? { ...c, starred: !c.starred } : c)))
@@ -28,6 +30,7 @@ export default function AdminCustomersPage() {
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.phone.includes(search)
     )
+    .filter(c => tag === 'all' || c.autoTags.includes(tag) || c.tags?.includes(tag))
     .sort((a,b) => {
       if (sort === 'name') return a.name.localeCompare(b.name)
       const da = new Date(a.createdAt).getTime()
@@ -73,6 +76,16 @@ export default function AdminCustomersPage() {
         />
         <select
           className="border px-2 py-1 text-sm"
+          value={tag}
+          onChange={e => setTag(e.target.value)}
+        >
+          <option value="all">ทุกแท็ก</option>
+          <option value="ลูกค้าประจำ">ลูกค้าประจำ</option>
+          <option value="VIP">VIP</option>
+          <option value="ยังไม่เคยสั่ง">ยังไม่เคยสั่ง</option>
+        </select>
+        <select
+          className="border px-2 py-1 text-sm"
           value={sort}
           onChange={e => setSort(e.target.value)}
         >
@@ -86,6 +99,7 @@ export default function AdminCustomersPage() {
           <tr>
             <th className="text-left font-medium p-2">ชื่อลูกค้า</th>
             <th className="text-left font-medium p-2">เบอร์</th>
+            <th className="text-left font-medium p-2">แท็ก</th>
             <th className="text-left font-medium p-2">จำนวนบิล</th>
             <th className="text-left font-medium p-2">การจัดการ</th>
           </tr>
@@ -102,6 +116,20 @@ export default function AdminCustomersPage() {
                 {c.name}
               </td>
               <td className="p-2">{c.phone}</td>
+              <td className="p-2 space-x-1">
+                {c.tags?.map(t => (
+                  <Badge key={t} className="bg-blue-100 text-blue-600">{t}</Badge>
+                ))}
+                {c.autoTags.map(t => (
+                  <Badge
+                    key={t}
+                    variant="outline"
+                    className="bg-gray-100 text-gray-600 border-gray-300"
+                  >
+                    {t}
+                  </Badge>
+                ))}
+              </td>
               <td className="p-2">{billCount(c.id)}</td>
               <td className="p-2">
                 <Link href={`/admin/customers/${c.id}`}> 
@@ -112,6 +140,20 @@ export default function AdminCustomersPage() {
           ))}
         </tbody>
       </table>
+      <div className="mt-4 flex justify-between">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => downloadCSV(filtered, 'group.csv')}
+        >
+          ส่งออกกลุ่มนี้
+        </Button>
+        {tag !== 'all' && (
+          <Link href={`/admin/bill/create?bulk=${encodeURIComponent(tag)}`}>
+            <Button size="sm">ยิงบิลหาลูกค้ากลุ่มนี้</Button>
+          </Link>
+        )}
+      </div>
     </div>
   )
 }
