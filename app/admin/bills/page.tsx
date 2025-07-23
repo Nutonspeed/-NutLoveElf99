@@ -371,20 +371,7 @@ export default function AdminBillsPage() {
                       paidDate={paidAt}
                       highlightPayment={followupSuccess}
                       onSelect={() => toggle(b.id)}
-                      onStatusChange={async (v) => {
-                        const res = await fetch('/api/bill/update-status', {
-                          method: 'PATCH',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ billId: b.id, newStatus: v }),
-                        })
-                        if (res.ok) {
-                          store.updateStatus(b.id, v)
-                          setBills([...store.bills])
-                          toast.success('สถานะบิลอัปเดตแล้ว ✅')
-                        } else {
-                          toast.error('อัปเดตสถานะไม่สำเร็จ')
-                        }
-                      }}
+                      /* status control handled internally */
                       onEdit={() => {
                         setEdit(b.id)
                         setEditData({

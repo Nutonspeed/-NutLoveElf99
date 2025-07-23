@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
 import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
+import MarkAsPaidButton from '@/components/bill/MarkAsPaidButton'
 import { formatDateThai } from '@/lib/formatDateThai'
 import PrintButton from '@/components/ui/PrintButton'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
@@ -41,8 +42,10 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         phone={bill.customerPhone}
         address={bill.customerAddress}
         delivered={bill.delivered}
+        status={bill.status}
       />
       <BillTimeline status={bill.status} />
+      <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => setBill({ ...bill, status: 'paid' })} />
       {(bill.trackingNo || bill.deliveryDate) && (
         <div className="text-sm space-y-1">
           {bill.trackingNo && <p>Tracking: {bill.trackingNo}</p>}
