@@ -1,0 +1,19 @@
+[
+  {
+    "id": "floral-2025",
+    "title": "ลายดอก 2025",
+    "images": [
+      { "url": "/placeholder.jpg", "code": "FLO01", "tag": "hot" },
+      { "url": "/placeholder.jpg", "code": "FLO02" },
+      { "url": "/placeholder.jpg", "code": "FLO03" }
+    ]
+  },
+  {
+    "id": "basic-gray",
+    "title": "โทนสีเทาเรียบ",
+    "images": [
+      { "url": "/placeholder.jpg", "code": "BAS01" },
+      { "url": "/placeholder.jpg", "code": "BAS02", "tag": "new" }
+    ]
+  }
+]
