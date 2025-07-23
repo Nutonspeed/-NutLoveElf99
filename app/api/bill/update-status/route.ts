@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
 import { readJson, writeJson } from '@/lib/jsonFile'
+import type { BillStatus } from '@/core/mock/fakeBillDB'
 
 export async function PATCH(req: Request) {
   const { billId, newStatus } = (await req.json().catch(() => ({}))) as {
     billId?: string
-    newStatus?: string
+    newStatus?: BillStatus
   }
   if (!billId || !newStatus) {
     return NextResponse.json({ error: 'missing fields' }, { status: 400 })
