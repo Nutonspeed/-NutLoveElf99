@@ -10,7 +10,8 @@
     "notes": "",
     "customerNotes": [],
     "sharedAt": null,
-    "sharedBy": null
+    "sharedBy": null,
+    "packedBy": "เมีย"
   },
   {
     "id": "b_delivered",
@@ -23,6 +24,7 @@
     "notes": "",
     "customerNotes": [],
     "sharedAt": null,
-    "sharedBy": null
+    "sharedBy": null,
+    "packedBy": "แพ็คแล้วแต่รอเย็บผ้า"
   }
 ]

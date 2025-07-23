@@ -39,6 +39,7 @@ export interface AdminBill {
   sharedAt?: string | null
   sharedBy?: string | null
   customerNotes?: { message: string; createdAt: string; from: string }[]
+  packedBy?: string
 }
 
 export const mockBills: AdminBill[] = [
@@ -57,16 +58,17 @@ export const mockBills: AdminBill[] = [
   trackingNumber: 'TH1234567890',
   trackingNo: 'TH1234567890',
   deliveryDate: new Date().toISOString(),
-    carrier: 'Kerry',
-      shippingMethod: 'Flash',
-      shippingStatus: 'shipped',
-      phone: '0812345678',
-      createdAt: new Date().toISOString(),
-      followup_log: [],
-      sharedAt: null,
-      sharedBy: null,
-      customerNotes: [],
-    },
+  carrier: 'Kerry',
+  shippingMethod: 'Flash',
+  shippingStatus: 'shipped',
+  phone: '0812345678',
+  createdAt: new Date().toISOString(),
+  followup_log: [],
+  sharedAt: null,
+  sharedBy: null,
+  customerNotes: [],
+  packedBy: 'เมีย',
+  },
   {
     id: 'BILL-002',
     customer: 'ทดสอบ ยกเลิก',
@@ -79,13 +81,14 @@ export const mockBills: AdminBill[] = [
   paymentStatus: 'unpaid',
   tags: [],
   deliveryDate: new Date().toISOString(),
-    carrier: 'Flash',
-      createdAt: new Date().toISOString(),
-      followup_log: [],
-      sharedAt: null,
-      sharedBy: null,
-      customerNotes: [],
-    },
+  carrier: 'Flash',
+  createdAt: new Date().toISOString(),
+  followup_log: [],
+  sharedAt: null,
+  sharedBy: null,
+  customerNotes: [],
+  packedBy: 'แพ็คแล้วแต่รอเย็บผ้า',
+  },
   {
     id: 'BILL-003',
     customer: 'Cancelled Order',
@@ -98,13 +101,14 @@ export const mockBills: AdminBill[] = [
   paymentStatus: 'unpaid',
   tags: ['test'],
   trackingNo: 'TH1111111111',
-    carrier: 'JT',
-      createdAt: new Date().toISOString(),
-      followup_log: [],
-      sharedAt: null,
-      sharedBy: null,
-      customerNotes: [],
-    },
+  carrier: 'JT',
+  createdAt: new Date().toISOString(),
+  followup_log: [],
+  sharedAt: null,
+  sharedBy: null,
+  customerNotes: [],
+  packedBy: 'แพ็คโดยเมีย',
+  },
 ]
 
 export function addBill(
