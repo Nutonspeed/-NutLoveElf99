@@ -3,6 +3,9 @@ import { useEffect, useState } from 'react'
 import BillLabel from '@/components/shipping/BillLabel'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
+import { Noto_Sans_Thai } from 'next/font/google'
+
+const thaiFont = Noto_Sans_Thai({ subsets: ['thai'], weight: ['400', '700'] })
 
 export default function PrintBillLabelsPage({ searchParams }: { searchParams: { ids?: string } }) {
   const [bills, setBills] = useState<FakeBill[]>([])
@@ -25,12 +28,12 @@ export default function PrintBillLabelsPage({ searchParams }: { searchParams: { 
   }
 
   return (
-    <div className="p-4 space-y-4 print:p-0">
+    <div className={`p-4 space-y-4 print:space-y-0 print:p-0 bg-white ${thaiFont.className}`}>
       {bills.map(bill => (
         <BillLabel key={bill.id} bill={bill} />
       ))}
       <style jsx>{`
-        @media print { body { margin: 0; } }
+        @media print { body { margin: 0; background: white; } }
       `}</style>
     </div>
   )
