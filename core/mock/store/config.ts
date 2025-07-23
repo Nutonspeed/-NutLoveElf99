@@ -1,4 +1,4 @@
-import type { StorefrontConfig, ThemeConfig, LayoutComponent } from '@/types/storefront'
+import type { StorefrontConfig, ThemeConfig, LayoutComponent, TaxConfig } from '@/types/storefront'
 import { loadFromStorage, saveToStorage } from './persist'
 
 const KEY = 'mockStore_config'
@@ -14,6 +14,7 @@ const defaultConfig: StorefrontConfig = {
     },
   },
   layout: [],
+  tax: { rate: 7, included: false },
 }
 
 let config: StorefrontConfig = loadFromStorage(KEY, defaultConfig)
@@ -33,6 +34,11 @@ export function setTheme(theme: ThemeConfig) {
 
 export function setLayout(layout: LayoutComponent[]) {
   config.layout = layout
+  persist()
+}
+
+export function setTax(tax: TaxConfig) {
+  config.tax = tax
   persist()
 }
 
