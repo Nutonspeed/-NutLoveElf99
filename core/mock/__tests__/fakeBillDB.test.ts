@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { join } from 'path'
 import { promises as fs } from 'fs'
-import { createFastBill, getFastBill } from '../fakeBillDB'
+import { createFastBill, getFastBill } from '../../fake/fakeBillStore'
 
 const file = join(process.cwd(), 'mock', 'store', 'fast-bills.json')
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { listFastBills } from '@/core/mock/fakeBillDB'
+import { listFastBills } from '@/core/fake/fakeBillStore'
 
 export async function GET(req: Request) {
   const bills = await listFastBills()

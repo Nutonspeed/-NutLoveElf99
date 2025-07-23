@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createFastBill } from '@/core/mock/fakeBillDB'
+import { createFastBill } from '@/core/fake/fakeBillStore'
 
 export async function POST(req: Request) {
   const data = await req.json()
