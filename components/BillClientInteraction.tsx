@@ -4,22 +4,13 @@ import { useState } from 'react'
 import Image from 'next/image'
 import BillProgress from '@/components/BillProgress'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
+import EditAddressForm from '@/components/public/bill/EditAddressForm'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 
-const steps = ['กำลังตัดผ้า', 'รอเย็บ', 'กำลังแพ็ค', 'จัดส่งแล้ว']
+const steps = ['draft', 'cutting', 'sewing', 'packed', 'shipped']
 
 export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
-  const [address, setAddress] = useState(bill.customerAddress)
   const [question, setQuestion] = useState('')
-
-  const handleSave = async () => {
-    await fetch(`/api/bill/${bill.id}/update-address`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address }),
-    })
-    alert('บันทึกที่อยู่แล้ว')
-  }
 
   const handleQuestion = () => {
     alert('ส่งคำถาม: ' + question)
@@ -30,15 +21,12 @@ export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
     <div className="max-w-2xl mx-auto p-4 space-y-6">
       <section className="space-y-2">
         <h1 className="text-xl font-bold">บิล {bill.id}</h1>
-        <p className="font-medium">{bill.customerName}</p>
-        <input
-          className="border p-2 w-full"
-          value={address}
-          onChange={e => setAddress(e.target.value)}
+        <EditAddressForm
+          billId={bill.id}
+          name={bill.customerName}
+          phone={bill.customerPhone}
+          address={bill.customerAddress}
         />
-        <button className="border px-3 py-1 text-sm mt-1" onClick={handleSave}>
-          บันทึกที่อยู่
-        </button>
         <p>
           <a href={`tel:${bill.customerPhone}`} className="text-primary underline">
             {bill.customerPhone}
