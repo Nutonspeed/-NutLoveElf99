@@ -1,6 +1,3 @@
-import { promises as fs } from 'fs'
-import { dirname, join } from 'path'
-
 export interface FakeBillItem {
   fabricName: string
   sofaType: string
@@ -22,49 +19,51 @@ export interface FakeBill {
   delivered?: boolean
 }
 
-const file = join(process.cwd(), 'mock', 'bills.json')
-
-async function ensureFile() {
-  try {
-    await fs.access(file)
-  } catch {
-    await fs.mkdir(dirname(file), { recursive: true })
-    await fs.writeFile(file, '[]', 'utf8')
-  }
+interface RawBill {
+  id: string
+  name: string
+  phone: string
+  address: string
+  delivered?: boolean
 }
 
-async function readBills(): Promise<FakeBill[]> {
-  await ensureFile()
-  try {
-    const text = await fs.readFile(file, 'utf8')
-    return JSON.parse(text) as FakeBill[]
-  } catch {
-    return []
-  }
-}
+let bills: FakeBill[] | null = null
 
-async function writeBills(bills: FakeBill[]): Promise<void> {
-  await ensureFile()
-  await fs.writeFile(file, JSON.stringify(bills, null, 2), 'utf8')
+async function loadBills(): Promise<FakeBill[]> {
+  if (!bills) {
+    const data = (await import('../../mock/bills.json')).default as RawBill[]
+    bills = data.map((b) => ({
+      id: b.id,
+      customerName: b.name,
+      customerPhone: b.phone,
+      customerAddress: b.address,
+      delivered: b.delivered,
+      items: [],
+      statusStep: 1,
+      lastUpdated: '',
+      estimatedTotal: 0,
+    }))
+  }
+  return bills
 }
 
 export async function getBillById(id: string): Promise<FakeBill | undefined> {
-  const bills = await readBills()
-  return bills.find(b => b.id === id)
+  const list = await loadBills()
+  return list.find((b) => b.id === id)
 }
 
 export async function updateBillAddress(
   id: string,
   data: { name: string; phone: string; address: string },
 ) {
-  const bills = await readBills()
-  const idx = bills.findIndex(b => b.id === id)
+  const list = await loadBills()
+  const idx = list.findIndex((b) => b.id === id)
   if (idx === -1) return
-  bills[idx] = {
-    ...bills[idx],
+  list[idx] = {
+    ...list[idx],
     customerName: data.name,
     customerPhone: data.phone,
     customerAddress: data.address,
   }
-  await writeBills(bills)
 }
+
