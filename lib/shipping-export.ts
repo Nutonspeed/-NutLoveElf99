@@ -1,5 +1,6 @@
 import type { Bill } from '@/types/bill'
 import { mockOrders } from './mock-orders'
+import { submitFlashShipment } from './flashApi'
 
 function escapeCSV(value: string | number | undefined): string {
   const v = value === undefined || value === null ? '' : String(value)
@@ -40,4 +41,18 @@ export function downloadShippingCSV(bills: Bill[]) {
   URL.revokeObjectURL(url)
 }
 
-// TODO: Integrate Flash Express API for direct submission
+export async function submitFlashShipments(bills: Bill[]) {
+  for (const bill of bills) {
+    const order = mockOrders.find(o => o.id === bill.orderId)
+    const provider = order?.delivery_method?.toLowerCase()
+    if (provider !== 'flash') continue
+    try {
+      const res = await submitFlashShipment({ bill, order })
+      if (res.success && res.trackingNumber && order) {
+        order.tracking_number = res.trackingNumber
+      }
+    } catch (e) {
+      console.error('Flash submission error', e)
+    }
+  }
+}
