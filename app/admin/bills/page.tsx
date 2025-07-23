@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { carriers } from '@/config/carriers'
 import EmptyState from '@/components/ui/EmptyState'
 import BillRow from '@/components/admin/bills/BillRow'
 import { formatCurrency } from '@/lib/utils'
@@ -45,6 +46,7 @@ export default function AdminBillsPage() {
   const [shipping, setShipping] = useState(50)
   const subtotal = items.reduce((s, it) => s + it.price * it.quantity, 0)
   const total = subtotal + shipping
+  const [carrier, setCarrier] = useState<string>(carriers[0])
   const [note, setNote] = useState('')
   const [edit, setEdit] = useState<string | null>(null)
   const [editData, setEditData] = useState<{
@@ -54,6 +56,7 @@ export default function AdminBillsPage() {
     note: string
     trackingNo?: string
     deliveryDate?: string
+    carrier?: string
   } | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'unpaid' | 'paid' | 'shipped'>('all')
@@ -88,6 +91,7 @@ export default function AdminBillsPage() {
       customer,
       items,
       shipping,
+      carrier,
       note,
       tags: [],
       paymentStatus: 'unpaid',
@@ -97,6 +101,7 @@ export default function AdminBillsPage() {
     setItems([])
     setNote('')
     setShipping(50)
+    setCarrier(carriers[0])
     setOpen(false)
   }
 
@@ -250,6 +255,21 @@ export default function AdminBillsPage() {
                     onChange={(e) => setShipping(parseFloat(e.target.value) || 0)}
                   />
                 </div>
+                <div className="flex justify-between items-center">
+                  <span>ขนส่ง</span>
+                  <Select value={carrier} onValueChange={setCarrier}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {carriers.map(c => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="flex justify-between font-semibold">
                   <span>ยอดรวม</span>
                   <span>฿{total.toLocaleString()}</span>
@@ -380,6 +400,7 @@ export default function AdminBillsPage() {
                           note: b.note,
                           trackingNo: b.trackingNo,
                           deliveryDate: b.deliveryDate,
+                          carrier: (b as any).carrier,
                         })
                       }}
                     />
@@ -502,6 +523,21 @@ export default function AdminBillsPage() {
                       setEditData({ ...editData, shipping: parseFloat(e.target.value) || 0 })
                     }
                   />
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>ขนส่ง</span>
+                  <Select value={editData.carrier ?? carriers[0]} onValueChange={(v) => setEditData({ ...editData!, carrier: v })}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {carriers.map(c => (
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Tracking No</span>

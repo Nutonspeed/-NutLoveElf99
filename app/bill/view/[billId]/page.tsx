@@ -58,7 +58,29 @@ export default function BillViewPage({ params }: { params: { billId: string } })
       {bill.note && <p className="text-sm">Note: {bill.note}</p>}
       {(bill.trackingNo || bill.deliveryDate) && (
         <div className="text-sm space-y-1">
-          {bill.trackingNo && <p>Tracking: {bill.trackingNo}</p>}
+          {bill.carrier && (
+            <p>
+              📦 ขนส่ง: {bill.carrier}
+              {bill.trackingNo && (
+                <>
+                  {' '}
+                  <a
+                    href={
+                      bill.carrier === 'Kerry'
+                        ? `https://th.kerryexpress.com/th/track/?track=${bill.trackingNo}`
+                        : undefined
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    className="ml-2 underline"
+                  >
+                    เช็คสถานะพัสดุ
+                  </a>
+                </>
+              )}
+            </p>
+          )}
+          {bill.trackingNo && <p>🔢 เลขพัสดุ: {bill.trackingNo}</p>}
           {bill.deliveryDate && <p>Delivered: {formatDateThai(bill.deliveryDate)}</p>}
         </div>
       )}
