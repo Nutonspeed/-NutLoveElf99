@@ -25,6 +25,7 @@ export interface FakeBillItem {
 
 export interface FakeBill {
   id: string
+  shortCode: string
   customerId: string
   customerName: string
   customerAddress: string
@@ -47,6 +48,7 @@ export interface FakeBill {
 
 interface RawBill {
   id: string
+  shortCode?: string
   customerId: string
   delivered?: boolean
   status: BillStatus
@@ -61,6 +63,7 @@ interface RawBill {
 }
 
 let bills: FakeBill[] | null = null
+const shortMap: Record<string, string> = {}
 
 async function loadBills(): Promise<FakeBill[]> {
   if (!bills) {
@@ -78,8 +81,11 @@ async function loadBills(): Promise<FakeBill[]> {
     }
     bills = data.map((b) => {
       const c = customerMap.get(b.customerId)
+      const shortCode = b.shortCode || `BILL${Date.now()}`
+      shortMap[shortCode] = b.id
       return {
         id: b.id,
+        shortCode,
         customerId: b.customerId,
         customerName: c?.name || '',
         customerPhone: c?.phone || '',
@@ -107,6 +113,16 @@ async function loadBills(): Promise<FakeBill[]> {
 export async function getBillById(id: string): Promise<FakeBill | undefined> {
   const list = await loadBills()
   return list.find((b) => b.id === id)
+}
+
+export async function getBillIdByShortCode(code: string): Promise<string | undefined> {
+  await loadBills()
+  return shortMap[code]
+}
+
+export async function getBillByShortCode(code: string): Promise<FakeBill | undefined> {
+  const id = await getBillIdByShortCode(code)
+  return id ? getBillById(id) : undefined
 }
 
 export async function updateBillAddress(

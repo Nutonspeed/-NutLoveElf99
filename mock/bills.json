@@ -1,6 +1,7 @@
 [
   {
     "id": "b_qw8xkz128ezl",
+    "shortCode": "BILL001",
     "customerId": "c1",
     "delivered": false,
     "status": "waiting",
@@ -16,6 +17,7 @@
   },
   {
     "id": "b_delivered",
+    "shortCode": "BILL002",
     "customerId": "c2",
     "delivered": true,
     "status": "delivering",

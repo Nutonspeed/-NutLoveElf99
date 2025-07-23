@@ -2,6 +2,7 @@ import type { BillFeedback, BillItem } from '@/types/bill'
 
 export interface AdminBill {
   id: string
+  shortCode: string
   customer: string
   items: BillItem[]
   shipping: number
@@ -48,6 +49,7 @@ export interface AdminBill {
 export const mockBills: AdminBill[] = [
   {
     id: 'BILL-001',
+    shortCode: 'B001',
     customer: 'สมชาย ใจดี',
     items: [
       { name: 'ผ้าคลุมโซฟา', quantity: 1, price: 299 },
@@ -75,6 +77,7 @@ export const mockBills: AdminBill[] = [
   },
   {
     id: 'BILL-002',
+    shortCode: 'B002',
     customer: 'ทดสอบ ยกเลิก',
     items: [
       { name: 'ชุดโซฟา', quantity: 1, price: 500 },
@@ -96,6 +99,7 @@ export const mockBills: AdminBill[] = [
   },
   {
     id: 'BILL-003',
+    shortCode: 'B003',
     customer: 'Cancelled Order',
     items: [
       { name: 'ปลอกหมอน', quantity: 4, price: 59 },
@@ -122,6 +126,7 @@ export function addBill(
 ): AdminBill {
   const bill: AdminBill = {
     id: `bill-${Date.now()}`,
+    shortCode: data.shortCode || `BILL${Date.now()}`,
     status: 'unpaid',
     paymentStatus: 'unpaid',
     productionStatus: 'waiting',

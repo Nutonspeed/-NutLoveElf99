@@ -1,6 +1,7 @@
 [
   {
     "id": "BILL-001",
+    "shortCode": "B001",
     "customer": "สมชาย ใจดี",
     "items": [
       { "name": "ผ้าคลุมโซฟา", "quantity": 1, "price": 299 },
@@ -17,6 +18,7 @@
   },
   {
     "id": "BILL-002",
+    "shortCode": "B002",
     "customer": "ทดสอบ ยกเลิก",
     "items": [
       { "name": "ชุดโซฟา", "quantity": 1, "price": 500 }
@@ -31,6 +33,7 @@
   },
   {
     "id": "BILL-003",
+    "shortCode": "B003",
     "customer": "Cancelled Order",
     "items": [
       { "name": "ปลอกหมอน", "quantity": 4, "price": 59 }
