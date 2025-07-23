@@ -39,6 +39,7 @@ interface RawBill {
   status: BillStatus
   deliveryDate?: string
   trackingNo?: string
+  notes?: string
 }
 
 let bills: FakeBill[] | null = null
@@ -63,6 +64,7 @@ async function loadBills(): Promise<FakeBill[]> {
       status: b.status,
       deliveryDate: b.deliveryDate,
       trackingNo: b.trackingNo,
+      note: b.notes,
       items: [],
       statusStep: stepMap[b.status] ?? 0,
       lastUpdated: '',

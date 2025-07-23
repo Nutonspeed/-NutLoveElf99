@@ -46,6 +46,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
       />
       <BillTimeline status={bill.status} />
       <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => setBill({ ...bill, status: 'paid' })} />
+      {bill.note && <p className="text-sm">Note: {bill.note}</p>}
       {(bill.trackingNo || bill.deliveryDate) && (
         <div className="text-sm space-y-1">
           {bill.trackingNo && <p>Tracking: {bill.trackingNo}</p>}
