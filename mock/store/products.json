@@ -6,7 +6,8 @@
     "colors": ["Navy Blue", "Charcoal Gray"],
     "material": "Velvet",
     "image": "/placeholder.svg?height=400&width=400",
-    "description": "ผ้ากำมะหยี่คุณภาพสูง นุ่มสบาย กันน้ำ"
+    "description": "ผ้ากำมะหยี่คุณภาพสูง นุ่มสบาย กันน้ำ",
+    "collections": ["col-1"]
   },
   {
     "id": "2",
@@ -15,7 +16,8 @@
     "colors": ["Cream", "Beige"],
     "material": "Cotton",
     "image": "/placeholder.svg?height=400&width=400",
-    "description": "ระบายอากาศได้ดี เหมาะกับอากาศร้อน"
+    "description": "ระบายอากาศได้ดี เหมาะกับอากาศร้อน",
+    "collections": ["col-2"]
   },
   {
     "id": "3",
@@ -24,6 +26,7 @@
     "colors": ["Black", "Brown"],
     "material": "Polyester",
     "image": "/placeholder.svg?height=400&width=400",
-    "description": "กันน้ำ 100% เหมาะสำหรับบ้านที่มีสัตว์เลี้ยง"
+    "description": "กันน้ำ 100% เหมาะสำหรับบ้านที่มีสัตว์เลี้ยง",
+    "collections": ["col-2"]
   }
 ]

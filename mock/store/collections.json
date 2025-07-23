@@ -1,0 +1,16 @@
+[
+  {
+    "id": "col-1",
+    "title": "ผ้าลายมัดหมี่",
+    "description": "ชุดผ้าลายมัดหมี่พื้นเมือง",
+    "slug": "mudmee",
+    "products": ["1"]
+  },
+  {
+    "id": "col-2",
+    "title": "Minimal สีเรียบ",
+    "description": "โทนสีเรียบ เหมาะกับทุกห้อง",
+    "slug": "minimal",
+    "products": ["2", "3"]
+  }
+]
