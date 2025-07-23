@@ -24,6 +24,8 @@ export interface AdminBill {
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
   trackingNumber?: string
+  trackingNo?: string
+  deliveryDate?: string
   shippingMethod?: string
   shippingStatus?: 'shipped' | 'delivered' | 'returned' | 'cancelled'
   phone?: string
@@ -49,6 +51,8 @@ export const mockBills: AdminBill[] = [
     paymentStatus: 'paid',
     tags: ['flash'],
     trackingNumber: 'TH1234567890',
+    trackingNo: 'TH1234567890',
+    deliveryDate: new Date().toISOString(),
     shippingMethod: 'Flash',
     shippingStatus: 'shipped',
     phone: '0812345678',
@@ -66,6 +70,7 @@ export const mockBills: AdminBill[] = [
     status: 'cancelled',
     paymentStatus: 'unpaid',
     tags: [],
+    deliveryDate: new Date().toISOString(),
     createdAt: new Date().toISOString(),
     followup_log: [],
   },
@@ -80,6 +85,7 @@ export const mockBills: AdminBill[] = [
     status: 'cancelled',
     paymentStatus: 'unpaid',
     tags: ['test'],
+    trackingNo: 'TH1111111111',
     createdAt: new Date().toISOString(),
     followup_log: [],
   },

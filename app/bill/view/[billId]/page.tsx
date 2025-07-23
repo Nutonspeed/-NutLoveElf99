@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
 import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
+import { formatDateThai } from '@/lib/formatDateThai'
 import PrintButton from '@/components/ui/PrintButton'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
@@ -42,6 +43,12 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         delivered={bill.delivered}
       />
       <BillTimeline status={bill.status} />
+      {(bill.trackingNo || bill.deliveryDate) && (
+        <div className="text-sm space-y-1">
+          {bill.trackingNo && <p>Tracking: {bill.trackingNo}</p>}
+          {bill.deliveryDate && <p>Delivered: {formatDateThai(bill.deliveryDate)}</p>}
+        </div>
+      )}
     </div>
   )
 }

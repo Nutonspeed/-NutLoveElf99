@@ -52,6 +52,8 @@ export default function AdminBillsPage() {
     items: BillItem[]
     shipping: number
     note: string
+    trackingNo?: string
+    deliveryDate?: string
   } | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'>('all')
@@ -390,6 +392,8 @@ export default function AdminBillsPage() {
                           items: b.items,
                           shipping: b.shipping,
                           note: b.note,
+                          trackingNo: b.trackingNo,
+                          deliveryDate: b.deliveryDate,
                         })
                       }}
                     />
@@ -511,6 +515,23 @@ export default function AdminBillsPage() {
                     onChange={(e) =>
                       setEditData({ ...editData, shipping: parseFloat(e.target.value) || 0 })
                     }
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Tracking No</span>
+                  <Input
+                    className="w-40"
+                    value={editData.trackingNo ?? ''}
+                    onChange={(e) => setEditData({ ...editData, trackingNo: e.target.value })}
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <span>Delivery Date</span>
+                  <Input
+                    type="date"
+                    className="w-40"
+                    value={editData.deliveryDate ?? ''}
+                    onChange={(e) => setEditData({ ...editData, deliveryDate: e.target.value })}
                   />
                 </div>
                 <Textarea
