@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
 import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
+import { useBillSync } from '@/hooks/useBillSync'
 import type { Metadata } from 'next'
 import { getCustomerById } from '@/core/mock/fakeCustomerDB'
 import type { Customer } from '@/types/customer'
@@ -30,21 +31,39 @@ export async function generateMetadata({ params }: { params: { billId: string } 
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const { billId } = params
-  const [bill, setBill] = useState<FakeBill | undefined>()
+  const { bill, isLoading, mutate } = useBillSync(billId)
   const [customer, setCustomer] = useState<Customer | undefined>()
-  const [loading, setLoading] = useState(true)
+  const [updated, setUpdated] = useState(false)
+  const prevRef = useRef<FakeBill | undefined>()
 
   useEffect(() => {
-    getBillById(billId).then(b => {
-      setBill(b)
-      if (b) {
-        getCustomerById(b.customerId).then(c => setCustomer(c))
-      }
-      setLoading(false)
-    })
-  }, [billId])
+    if (bill) {
+      getCustomerById(bill.customerId).then(c => setCustomer(c))
+    }
+  }, [bill])
 
-  if (loading) {
+  useEffect(() => {
+    if (!bill || !prevRef.current) {
+      prevRef.current = bill
+      return
+    }
+    if (JSON.stringify(bill) !== JSON.stringify(prevRef.current)) {
+      setUpdated(true)
+      if (bill.status !== prevRef.current.status) {
+        document.getElementById('bill-timeline')?.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+    prevRef.current = bill
+  }, [bill])
+
+  useEffect(() => {
+    if (updated) {
+      const t = setTimeout(() => setUpdated(false), 3000)
+      return () => clearTimeout(t)
+    }
+  }, [updated])
+
+  if (isLoading) {
     return <div className="p-8">Loading…</div>
   }
 
@@ -68,8 +87,11 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         delivered={bill.delivered}
         status={bill.status}
       />
+      {updated && (
+        <div className="text-sm text-center text-blue-600">มีการอัปเดตใหม่แล้ว</div>
+      )}
       <BillTimeline status={bill.status} />
-      <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => setBill({ ...bill, status: 'paid' })} />
+      <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => mutate()} />
       {bill.note && <p className="text-sm">Note: {bill.note}</p>}
       {(bill.trackingNo || bill.deliveryDate) && (
         <div className="text-sm space-y-1">
