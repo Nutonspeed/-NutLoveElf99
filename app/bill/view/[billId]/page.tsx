@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
+import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
 import PrintButton from '@/components/ui/PrintButton'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
@@ -40,6 +41,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         address={bill.customerAddress}
         delivered={bill.delivered}
       />
+      <BillTimeline status={bill.status} />
     </div>
   )
 }
