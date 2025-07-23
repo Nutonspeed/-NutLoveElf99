@@ -4,6 +4,7 @@ export type BillStatus =
   | 'sewing'
   | 'packing'
   | 'shipped'
+  | 'delivering'
   | 'delivered'
 
 export interface FakeBillItem {
@@ -28,6 +29,7 @@ export interface FakeBill {
   estimatedTotal: number
   delivered?: boolean
   deliveryDate?: string
+  deliveredAt?: string
   trackingNo?: string
   carrier?: string
   customerNotes?: { message: string; createdAt: string; from: string }[]
@@ -39,6 +41,7 @@ interface RawBill {
   delivered?: boolean
   status: BillStatus
   deliveryDate?: string
+  deliveredAt?: string
   trackingNo?: string
   carrier?: string
   notes?: string
@@ -58,6 +61,7 @@ async function loadBills(): Promise<FakeBill[]> {
       sewing: 2,
       packing: 3,
       shipped: 4,
+      delivering: 4,
       delivered: 5,
     }
     bills = data.map((b) => {
@@ -71,6 +75,7 @@ async function loadBills(): Promise<FakeBill[]> {
         delivered: b.delivered,
         status: b.status,
         deliveryDate: b.deliveryDate,
+        deliveredAt: b.deliveredAt,
         trackingNo: b.trackingNo,
         carrier: b.carrier,
         note: b.notes,

@@ -6,12 +6,13 @@ const steps = [
   { key: 'cutting', label: 'ตัดผ้า', icon: Scissors },
   { key: 'sewing', label: 'เย็บ', icon: Shirt },
   { key: 'packing', label: 'แพ็ค', icon: Package },
-  { key: 'shipped', label: 'ส่งแล้ว', icon: Truck },
-  { key: 'delivered', label: 'ได้รับแล้ว', icon: CircleCheck },
+  { key: 'delivering', label: 'กำลังจัดส่ง', icon: Truck },
+  { key: 'delivered', label: 'ถึงแล้ว', icon: CircleCheck },
 ] as const
 
 export default function BillTimeline({ status }: { status: BillStatus }) {
-  const current = steps.findIndex(s => s.key === status)
+  const key = status === 'shipped' ? 'delivering' : status
+  const current = steps.findIndex(s => s.key === key)
   return (
     <div className="flex items-center justify-between relative">
       {steps.map((step, index) => {

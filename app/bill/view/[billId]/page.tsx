@@ -44,7 +44,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   return (
     <div className="space-y-6 p-4 print:p-6 print:w-[210mm] print:mx-auto">
       <div className="print:hidden">
-        <Link href={`/bill/print/${bill.id}`}>
+        <Link href={`/bill/print/${bill.id}`} target="_blank" rel="noreferrer">
           <Button variant="outline" size="sm">Print</Button>
         </Link>
       </div>
@@ -127,6 +127,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
           )}
           {bill.trackingNo && <p>🔢 เลขพัสดุ: {bill.trackingNo}</p>}
           {bill.deliveryDate && <p>Delivered: {formatDateThai(bill.deliveryDate)}</p>}
+          {bill.deliveredAt && <p>🗓 จัดส่งเมื่อ: {formatDateThai(bill.deliveredAt)}</p>}
         </div>
       )}
     </div>
