@@ -1,3 +1,6 @@
+import { promises as fs } from 'fs'
+import { dirname, join } from 'path'
+
 export interface FakeBillItem {
   fabricName: string
   sofaType: string
@@ -16,30 +19,52 @@ export interface FakeBill {
   lastUpdated: string
   note?: string
   estimatedTotal: number
+  delivered?: boolean
 }
 
-const fakeBills: FakeBill[] = [
-  {
-    id: 'B001',
-    customerName: 'สมชาย ใจดี',
-    customerAddress: '123 ถนนสายม็อค กรุงเทพฯ',
-    customerPhone: '0812345678',
-    items: [
-      {
-        fabricName: 'Cotton',
-        sofaType: 'L-Shape',
-        quantity: 1,
-        unitPrice: 2500,
-        image: '/placeholder.svg',
-      },
-    ],
-    statusStep: 1,
-    lastUpdated: '2024-06-01',
-    note: 'รอชำระหลังตรวจสอบขนาด',
-    estimatedTotal: 2500,
-  },
-]
+const file = join(process.cwd(), 'mock', 'bills.json')
+
+async function ensureFile() {
+  try {
+    await fs.access(file)
+  } catch {
+    await fs.mkdir(dirname(file), { recursive: true })
+    await fs.writeFile(file, '[]', 'utf8')
+  }
+}
+
+async function readBills(): Promise<FakeBill[]> {
+  await ensureFile()
+  try {
+    const text = await fs.readFile(file, 'utf8')
+    return JSON.parse(text) as FakeBill[]
+  } catch {
+    return []
+  }
+}
+
+async function writeBills(bills: FakeBill[]): Promise<void> {
+  await ensureFile()
+  await fs.writeFile(file, JSON.stringify(bills, null, 2), 'utf8')
+}
 
 export async function getBillById(id: string): Promise<FakeBill | undefined> {
-  return fakeBills.find(b => b.id === id)
+  const bills = await readBills()
+  return bills.find(b => b.id === id)
+}
+
+export async function updateBillAddress(
+  id: string,
+  data: { name: string; phone: string; address: string },
+) {
+  const bills = await readBills()
+  const idx = bills.findIndex(b => b.id === id)
+  if (idx === -1) return
+  bills[idx] = {
+    ...bills[idx],
+    customerName: data.name,
+    customerPhone: data.phone,
+    customerAddress: data.address,
+  }
+  await writeBills(bills)
 }

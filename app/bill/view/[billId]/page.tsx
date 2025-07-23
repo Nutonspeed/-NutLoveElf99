@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
+import EditAddressForm from '@/components/bill/EditAddressForm'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
 
@@ -25,5 +26,16 @@ export default function BillViewPage({ params }: { params: { billId: string } })
     return <div className="p-8">ไม่พบบิลนี้</div>
   }
 
-  return <BillClientInteraction bill={bill} />
+  return (
+    <div className="space-y-6 p-4">
+      <BillClientInteraction bill={bill} />
+      <EditAddressForm
+        billId={bill.id}
+        name={bill.customerName}
+        phone={bill.customerPhone}
+        address={bill.customerAddress}
+        delivered={bill.delivered}
+      />
+    </div>
+  )
 }

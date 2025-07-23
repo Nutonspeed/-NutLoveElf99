@@ -1,0 +1,16 @@
+[
+  {
+    "id": "b_qw8xkz128ezl",
+    "name": "สมชาย ใจดี",
+    "phone": "0812345678",
+    "address": "123 ถนนสุขุมวิท กรุงเทพฯ",
+    "delivered": false
+  },
+  {
+    "id": "b_delivered",
+    "name": "นาย ส่งของแล้ว",
+    "phone": "0899999999",
+    "address": "99/1 ถนนพัฒนา กรุงเทพฯ",
+    "delivered": true
+  }
+]
