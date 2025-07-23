@@ -18,6 +18,7 @@ import { getFabrics, getBills } from '@/core/mock/store'
 import customersData from '@/mock/customers.json'
 import type { Customer } from '@/types/customer'
 import { copyToClipboard } from '@/helpers/clipboard'
+import { parseMessage } from '@/lib/messageToBill'
 
 export default function AdminBillCreatePage() {
   const router = useRouter()
@@ -44,7 +45,31 @@ export default function AdminBillCreatePage() {
 
   useEffect(() => {
     const from = params.get('from')
-    if (from) {
+    if (from === 'cart') {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('cart')
+        if (stored) {
+          try {
+            const cart = JSON.parse(stored) as Array<{id:string;qty:number}>
+            if (cart[0]) {
+              setFabricId(cart[0].id)
+              setQuantity(cart[0].qty)
+            }
+          } catch {}
+        }
+      }
+    } else if (from === 'message') {
+      const text = params.get('text') || ''
+      if (text) {
+        const { items, customerName: name, customerPhone: phone } = parseMessage(text)
+        if (items[0]) {
+          setFabricId(items[0].productId)
+          setQuantity(items[0].quantity)
+        }
+        if (name) setCustomerName(name)
+        if (phone) setCustomerPhone(phone)
+      }
+    } else if (from) {
       const b = getBills().find(x => x.id === from)
       if (b) {
         setCustomerName(b.customer)
