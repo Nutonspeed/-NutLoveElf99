@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { updateBillAddress } from '@/core/mock/fakeBillDB'
+import { updateFastBillAddress } from '@/core/fake/fakeBillStore'
 
 export async function PUT(
   req: Request,
@@ -12,7 +12,7 @@ export async function PUT(
     return NextResponse.json({ error: 'address required' }, { status: 400 })
   }
   try {
-    await updateBillAddress(params.id, address)
+    await updateFastBillAddress(params.id, address)
     return NextResponse.json({ success: true })
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 })

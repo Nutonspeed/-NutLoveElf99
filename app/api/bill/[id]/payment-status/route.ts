@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson, writeJson } from '@/lib/jsonStore'
+import { readJson, writeJson } from '@/lib/jsonFile'
 import { addNotification } from '@/lib/notificationLog'
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {

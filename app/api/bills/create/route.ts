@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { createFastBill } from '@/core/mock/fakeBillDB'
+import { addFastBill } from '@/core/fake/fakeBillStore'
 import { getFabrics } from '@/core/mock/store'
 
 const required = ['customerName', 'fabricName', 'sofaType', 'quantity', 'tags'] as const
@@ -17,7 +17,12 @@ export async function POST(req: Request) {
   }
 
   for (const field of required) {
-    if (data[field] === undefined || data[field] === null || (Array.isArray(data[field]) && data[field].length === 0) || data[field] === '') {
+    if (
+      data[field] === undefined ||
+      data[field] === null ||
+      (Array.isArray(data[field]) && data[field].length === 0) ||
+      data[field] === ''
+    ) {
       return NextResponse.json({ error: `missing field: ${field}` }, { status: 400 })
     }
   }
@@ -26,6 +31,6 @@ export async function POST(req: Request) {
     f => f.name === data.fabricName || f.id === data.fabricId,
   )
   const price = fabric?.price ?? 0
-  const bill = await createFastBill({ ...data, total: price * Number(data.quantity || 1) })
+  const bill = await addFastBill({ ...data, total: price * Number(data.quantity || 1) })
   return NextResponse.json(bill)
 }

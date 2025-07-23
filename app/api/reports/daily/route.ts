@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson } from '@/lib/jsonStore'
+import { readJson } from '@/lib/jsonFile'
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)

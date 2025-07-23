@@ -1,4 +1,5 @@
 import { promises as fs } from 'fs'
+import { dirname } from 'path'
 
 export async function readJson<T>(file: string, fallback: T): Promise<T> {
   try {
@@ -10,6 +11,6 @@ export async function readJson<T>(file: string, fallback: T): Promise<T> {
 }
 
 export async function writeJson<T>(file: string, data: T): Promise<void> {
-  await fs.mkdir(require('path').dirname(file), { recursive: true })
+  await fs.mkdir(dirname(file), { recursive: true })
   await fs.writeFile(file, JSON.stringify(data, null, 2), 'utf8')
 }

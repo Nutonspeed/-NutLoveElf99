@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { join } from 'path'
 import { promises as fs } from 'fs'
-import { createFastBill, getFastBill } from '../fakeBillDB'
+import { addFastBill, findFastBill } from '@/core/fake/fakeBillStore'
 
 const file = join(process.cwd(), 'mock', 'store', 'fast-bills.json')
 
@@ -17,7 +17,7 @@ const sample = {
   sofaType: 'L-shape',
   sofaSize: 'Large',
   quantity: 1,
-  tags: ['test']
+  tags: ['test'],
 }
 
 beforeEach(async () => {
@@ -25,17 +25,17 @@ beforeEach(async () => {
   await fs.writeFile(file, '[]', 'utf8')
 })
 
-describe('fakeBillDB', () => {
-  it('createFastBill appends to JSON store', async () => {
-    const bill = await createFastBill(sample)
+describe('fakeBillStore', () => {
+  it('addFastBill appends to JSON store', async () => {
+    const bill = await addFastBill(sample)
     const stored = JSON.parse(await fs.readFile(file, 'utf8'))
     expect(stored).toHaveLength(1)
     expect(stored[0]).toEqual(bill)
   })
 
-  it('getFastBill retrieves the same bill', async () => {
-    const bill = await createFastBill(sample)
-    const retrieved = await getFastBill(bill.id)
+  it('findFastBill retrieves the same bill', async () => {
+    const bill = await addFastBill(sample)
+    const retrieved = await findFastBill(bill.id)
     expect(retrieved).toEqual(bill)
   })
 })

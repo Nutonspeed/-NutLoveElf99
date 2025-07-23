@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson, writeJson } from '@/lib/jsonStore'
+import { readJson, writeJson } from '@/lib/jsonFile'
 
 export async function POST() {
   const dir = join(process.cwd(), 'mock', 'store')
