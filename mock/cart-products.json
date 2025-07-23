@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "title": "ปลอกหมอน",
+    "image": "/placeholder.svg?height=200&width=200",
+    "price": 99,
+    "category": "accessory"
+  },
+  {
+    "id": "2",
+    "title": "สายรัดโซฟา",
+    "image": "/placeholder.svg?height=200&width=200",
+    "price": 149,
+    "category": "accessory"
+  },
+  {
+    "id": "3",
+    "title": "ฟองน้ำทำความสะอาด",
+    "image": "/placeholder.svg?height=200&width=200",
+    "price": 59,
+    "category": "cleaning"
+  },
+  {
+    "id": "4",
+    "title": "สเปรย์กันไรฝุ่น",
+    "image": "/placeholder.svg?height=200&width=200",
+    "price": 199,
+    "category": "cleaning"
+  }
+]

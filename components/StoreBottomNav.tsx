@@ -3,10 +3,14 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, ShoppingCart, Package, User } from "lucide-react"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { useCart } from "@/contexts/cart-context"
+import { Badge } from "@/components/ui/badge"
 
 export default function StoreBottomNav() {
   const isMobile = useIsMobile()
   const pathname = usePathname()
+  const { state } = useCart()
+  const count = state.items.reduce((s, i) => s + i.quantity, 0)
 
   if (!isMobile) return null
 
@@ -20,7 +24,14 @@ export default function StoreBottomNav() {
         Home
       </Link>
       <Link href="/cart" className={itemClass(pathname.startsWith('/cart'))}>
-        <ShoppingCart className="h-5 w-5" />
+        <div className="relative">
+          <ShoppingCart className="h-5 w-5" />
+          {count > 0 && (
+            <Badge className="absolute -top-1 -right-2 h-4 w-4 p-0 text-[10px]">
+              {count}
+            </Badge>
+          )}
+        </div>
         Cart
       </Link>
       <Link href="/orders" className={itemClass(pathname.startsWith('/orders'))}>

@@ -11,9 +11,11 @@ import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "@/contexts/cart-context"
+import { useToast } from "@/hooks/use-toast"
 
 export default function CartPage() {
   const { state, dispatch } = useCart()
+  const { toast } = useToast()
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
 
@@ -171,6 +173,23 @@ export default function CartPage() {
                   <Button className="w-full" size="lg">
                     ดำเนินการชำระเงิน
                     <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </Link>
+
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => {
+                    navigator.clipboard.writeText(JSON.stringify(state.items))
+                    toast({ title: "คัดลอกข้อมูลตะกร้าแล้ว" })
+                  }}
+                >
+                  ส่งเข้าร้าน
+                </Button>
+
+                <Link href="/admin/bill/create?from=cart">
+                  <Button variant="outline" className="w-full bg-transparent">
+                    เปิดบิลจากตะกร้า
                   </Button>
                 </Link>
 

@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useReducer, type ReactNode } from "react"
+import { createContext, useContext, useReducer, useEffect, type ReactNode } from "react"
 import { calculateTotal } from "@/lib/utils"
+import { useLocalStorage } from "@/hooks/use-local-storage"
 
 interface CartItem {
   id: string
@@ -89,13 +90,20 @@ export const cartReducer = (
 }
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [state, dispatch] = useReducer(cartReducer, {
+  const [persisted, setPersisted] = useLocalStorage<CartState>("cart", {
     items: [],
     total: 0,
     itemCount: 0,
   })
+  const [state, dispatch] = useReducer(cartReducer, persisted)
 
-  return <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>
+  useEffect(() => {
+    setPersisted(state)
+  }, [state, setPersisted])
+
+  return (
+    <CartContext.Provider value={{ state, dispatch }}>{children}</CartContext.Provider>
+  )
 }
 
 export const useCart = () => {
