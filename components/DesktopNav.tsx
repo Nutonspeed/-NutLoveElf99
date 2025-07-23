@@ -27,6 +27,7 @@ export default function DesktopNav() {
     { name: "คอลเลกชัน", href: "/collections" },
     { name: "เกี่ยวกับเรา", href: "/about" },
     { name: "ติดต่อเรา", href: "/contact" },
+    { name: "การคืนสินค้า", href: "/returns" },
   ]
 
   return (

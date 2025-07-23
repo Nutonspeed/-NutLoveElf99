@@ -180,14 +180,20 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
                 <CardTitle>การดำเนินการ</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {order.status === "paid" && (
-                  <Link href={`/invoice/${order.id}`}>
-                    <Button className="w-full bg-transparent" variant="outline">
-                      <Download className="mr-2 h-4 w-4" />
-                      ดาวน์โหลดใบเสร็จ
-                    </Button>
-                  </Link>
-                )}
+              {order.status === "paid" && (
+                <Link href={`/invoice/${order.id}`}>
+                  <Button className="w-full bg-transparent" variant="outline">
+                    <Download className="mr-2 h-4 w-4" />
+                    ดาวน์โหลดใบเสร็จ
+                  </Button>
+                </Link>
+              )}
+
+              <Link href={`/orders/${order.id}/slip`}>
+                <Button className="w-full bg-transparent" variant="outline">
+                  แนบสลิปโอนเงิน
+                </Button>
+              </Link>
 
                 <Link href="/chat">
                   <Button className="w-full bg-transparent" variant="outline">
