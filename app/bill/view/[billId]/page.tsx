@@ -6,7 +6,8 @@ import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
 import MarkAsPaidButton from '@/components/bill/MarkAsPaidButton'
 import { formatDateThai } from '@/lib/formatDateThai'
-import PrintButton from '@/components/ui/PrintButton'
+import Link from 'next/link'
+import { Button } from '@/components/ui/buttons/button'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
 
@@ -33,7 +34,9 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   return (
     <div className="space-y-6 p-4 print:p-6 print:w-[210mm] print:mx-auto">
       <div className="print:hidden">
-        <PrintButton />
+        <Link href={`/bill/print/${bill.id}`}>
+          <Button variant="outline" size="sm">Print</Button>
+        </Link>
       </div>
       <BillClientInteraction bill={bill} />
       <EditAddressForm
