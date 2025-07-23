@@ -1,0 +1,22 @@
+[
+  {
+    "id": "B001",
+    "customerName": "สมชาย ใจดี",
+    "customerAddress": "123 ถนนสายม็อค กรุงเทพฯ",
+    "customerPhone": "0812345678",
+    "items": [
+      {
+        "fabricName": "Cotton",
+        "sofaType": "L-Shape",
+        "quantity": 1,
+        "unitPrice": 2500,
+        "image": "/placeholder.svg"
+      }
+    ],
+    "status": "cutting",
+    "lastUpdated": "2024-06-01",
+    "note": "รอชำระหลังตรวจสอบขนาด",
+    "estimatedTotal": 2500,
+    "comments": []
+  }
+]
