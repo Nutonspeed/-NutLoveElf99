@@ -34,6 +34,16 @@ export default function BillItemActions({ bill, onEdit }: BillItemActionsProps) 
           <Printer className="h-4 w-4" />
         </Button>
       </Link>
+      <Link
+        href={`/bill/label/${bill.id}`}
+        className="no-underline"
+        target="_blank"
+        title="พิมพ์ใบปะหน้า"
+      >
+        <Button variant="outline" size="sm">
+          <Printer className="h-4 w-4" /> ใบปะหน้า
+        </Button>
+      </Link>
       <Link href={`/admin/bill/create?from=${bill.id}`} className="no-underline" title="ทำซ้ำบิล">
         <Button variant="outline" size="sm">
           <Copy className="h-4 w-4" />
