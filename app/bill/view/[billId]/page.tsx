@@ -9,25 +9,9 @@ import { formatDateThai } from '@/lib/formatDateThai'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
-import { getBillById } from '@/core/mock/fakeBillDB'
 import { useBillSync } from '@/hooks/useBillSync'
-import type { Metadata } from 'next'
 import { getCustomerById } from '@/core/mock/fakeCustomerDB'
 import type { Customer } from '@/types/customer'
-
-export async function generateMetadata({ params }: { params: { billId: string } }): Promise<Metadata> {
-  const bill = await getBillById(params.billId)
-  const title = '🧾 บิลของคุณ'
-  const description = bill ? `ชำระได้ที่นี่ → ${params.billId}` : 'บิลของคุณ'
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-    },
-  }
-}
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const { billId } = params
