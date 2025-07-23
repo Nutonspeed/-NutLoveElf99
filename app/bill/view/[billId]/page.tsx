@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
 import EditAddressForm from '@/components/bill/EditAddressForm'
+import PrintButton from '@/components/ui/PrintButton'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
 
@@ -27,7 +28,10 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   }
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-6 p-4 print:p-6 print:w-[210mm] print:mx-auto">
+      <div className="print:hidden">
+        <PrintButton />
+      </div>
       <BillClientInteraction bill={bill} />
       <EditAddressForm
         billId={bill.id}
