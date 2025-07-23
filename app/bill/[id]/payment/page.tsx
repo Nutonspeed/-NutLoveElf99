@@ -31,6 +31,7 @@ export default function PaymentPage({ params }: { params: { id: string } }) {
       date,
       amount: parseFloat(amount) || 0,
       slip: slip?.name,
+      method: 'bank_transfer',
     })
     if (p) {
       toast.success("บันทึกการแจ้งโอนแล้ว")
