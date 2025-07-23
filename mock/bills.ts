@@ -26,6 +26,7 @@ export interface AdminBill {
   trackingNumber?: string
   trackingNo?: string
   deliveryDate?: string
+  carrier?: string
   shippingMethod?: string
   shippingStatus?: 'shipped' | 'delivered' | 'returned' | 'cancelled'
   phone?: string
@@ -50,10 +51,11 @@ export const mockBills: AdminBill[] = [
     status: 'paid',
     paymentStatus: 'paid',
     tags: ['flash'],
-    trackingNumber: 'TH1234567890',
-    trackingNo: 'TH1234567890',
-    deliveryDate: new Date().toISOString(),
-    shippingMethod: 'Flash',
+  trackingNumber: 'TH1234567890',
+  trackingNo: 'TH1234567890',
+  deliveryDate: new Date().toISOString(),
+  carrier: 'Kerry',
+  shippingMethod: 'Flash',
     shippingStatus: 'shipped',
     phone: '0812345678',
     createdAt: new Date().toISOString(),
@@ -66,12 +68,13 @@ export const mockBills: AdminBill[] = [
       { name: 'ชุดโซฟา', quantity: 1, price: 500 },
     ],
     shipping: 50,
-    note: 'ลูกค้าขอยกเลิก',
-    status: 'cancelled',
-    paymentStatus: 'unpaid',
-    tags: [],
-    deliveryDate: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
+  note: 'ลูกค้าขอยกเลิก',
+  status: 'cancelled',
+  paymentStatus: 'unpaid',
+  tags: [],
+  deliveryDate: new Date().toISOString(),
+  carrier: 'Flash',
+  createdAt: new Date().toISOString(),
     followup_log: [],
   },
   {
@@ -81,12 +84,13 @@ export const mockBills: AdminBill[] = [
       { name: 'ปลอกหมอน', quantity: 4, price: 59 },
     ],
     shipping: 30,
-    note: 'cancel due to duplicate',
-    status: 'cancelled',
-    paymentStatus: 'unpaid',
-    tags: ['test'],
-    trackingNo: 'TH1111111111',
-    createdAt: new Date().toISOString(),
+  note: 'cancel due to duplicate',
+  status: 'cancelled',
+  paymentStatus: 'unpaid',
+  tags: ['test'],
+  trackingNo: 'TH1111111111',
+  carrier: 'JT',
+  createdAt: new Date().toISOString(),
     followup_log: [],
   },
 ]
