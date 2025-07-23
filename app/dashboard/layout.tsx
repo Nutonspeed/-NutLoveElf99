@@ -1,6 +1,6 @@
 import type React from "react"
-import Guard from "@/components/Guard"
+import DashboardLayout from "@/components/layouts/DashboardLayout"
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  return <Guard role={["admin", "staff"]}>{children}</Guard>
+export default function DashboardRootLayout({ children }: { children: React.ReactNode }) {
+  return <DashboardLayout>{children}</DashboardLayout>
 }
