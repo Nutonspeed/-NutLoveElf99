@@ -348,6 +348,7 @@ export default function AdminBillsPage() {
                   <TableHead>ชื่อลูกค้า</TableHead>
                   <TableHead className="text-right">ยอดรวม</TableHead>
                   <TableHead>ติดต่อ</TableHead>
+                  <TableHead>หมายเหตุ</TableHead>
                   <TableHead>แท็ก</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>Last Follow-up</TableHead>

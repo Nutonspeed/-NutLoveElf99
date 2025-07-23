@@ -51,6 +51,7 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
       <TableCell>{bill.customer}</TableCell>
       <TableCell className="text-right">{formatCurrency(total)}</TableCell>
       <TableCell>{contact}</TableCell>
+      <TableCell className="max-w-[8rem] truncate">{bill.note}</TableCell>
       <TableCell>
         <BillStatusControl billId={bill.id} status={bill.status} />
       </TableCell>

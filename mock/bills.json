@@ -7,7 +7,8 @@
     "delivered": false,
     "status": "waiting",
     "deliveryDate": "2024-05-20",
-    "trackingNo": "TH1234567890"
+    "trackingNo": "TH1234567890",
+    "notes": ""
   },
   {
     "id": "b_delivered",
@@ -17,6 +18,7 @@
     "delivered": true,
     "status": "shipped",
     "deliveryDate": "2024-05-18",
-    "trackingNo": "TH0987654321"
+    "trackingNo": "TH0987654321",
+    "notes": ""
   }
 ]
