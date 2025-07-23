@@ -4,6 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Copy } from 'lucide-react'
 import BillItemActions from '@/components/admin/BillItemActions'
 import BillStatusTag from './BillStatusTag'
+import ProductionStatusControl from '../ProductionStatusControl'
 import { Badge } from '@/components/ui/badge'
 import { formatCurrency } from '@/lib/utils'
 import { formatDateThai } from '@/lib/formatDateThai'
@@ -90,6 +91,12 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
             {t}
           </Badge>
         ))}
+      </TableCell>
+      <TableCell>
+        <ProductionStatusControl
+          billId={bill.id}
+          status={bill.productionStatus ?? 'waiting'}
+        />
       </TableCell>
       <TableCell>
         <BillStatusTag status={bill.status} />

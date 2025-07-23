@@ -6,6 +6,7 @@ import {
   addBill as add,
   updateBill as update,
   updateBillStatus as setStatus,
+  updateProductionStatus as setProdStatus,
   updatePaymentStatus as setPayStatus,
   setBillFeedback as setFb,
   archiveBill as archive,
@@ -24,6 +25,10 @@ interface BillStore {
   ) => void
   updateBill: (id: string, data: Partial<Omit<AdminBill, 'id' | 'createdAt'>>) => void
   updateStatus: (id: string, status: AdminBill['status']) => void
+  updateProductionStatus: (
+    id: string,
+    status: AdminBill['productionStatus'],
+  ) => void
   updatePaymentStatus: (id: string, status: AdminBill['paymentStatus']) => void
   archive: (id: string) => void
   restore: (id: string) => void
@@ -49,6 +54,10 @@ export const useBillStore = create<BillStore>((set) => ({
   },
   updateStatus: (id, status) => {
     setStatus(id, status)
+    set({ bills: getBills() })
+  },
+  updateProductionStatus: (id, status) => {
+    setProdStatus(id, status)
     set({ bills: getBills() })
   },
   updatePaymentStatus: (id, status) => {
