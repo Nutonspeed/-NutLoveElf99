@@ -18,5 +18,5 @@ export async function PATCH(req: Request) {
   }
   bill.status = newStatus
   await writeJson(file, bills)
-  return NextResponse.json({ success: true })
+  return NextResponse.json(bill)
 }
