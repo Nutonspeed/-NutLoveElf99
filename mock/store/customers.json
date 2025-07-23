@@ -1,7 +1,7 @@
 [
-  {"id":"2","name":"John Doe"},
-  {"id":"3","name":"Jane Smith"},
-  {"id":"4","name":"Mike Johnson"},
-  {"id":"5","name":"Sarah Wilson"},
-  {"id":"6","name":"David Brown"}
+  {"id":"2","name":"John Doe","tags":["ลูกค้าประจำ"]},
+  {"id":"3","name":"Jane Smith","tags":["COD"]},
+  {"id":"4","name":"Mike Johnson","tags":[]},
+  {"id":"5","name":"Sarah Wilson","tags":[]},
+  {"id":"6","name":"David Brown","tags":[]}
 ]
