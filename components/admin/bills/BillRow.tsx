@@ -55,7 +55,7 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
         <button
           type="button"
           onClick={() => {
-            copyToClipboard(`${window.location.origin}/bill/view/${bill.id}`)
+            copyToClipboard(`${window.location.origin}/b/${bill.shortCode}`)
             store.recordShare(bill.id, 'admin')
           }}
           title="คัดลอกลิงก์"
@@ -115,7 +115,7 @@ export default function BillRow({ bill, selected, onSelect, onEdit, paidDate, hi
           type="button"
           className="text-sm text-blue-600 flex items-center"
           onClick={() => {
-            copyToClipboard(`${window.location.origin}/bill/view/${bill.id}`)
+            copyToClipboard(`${window.location.origin}/b/${bill.shortCode}`)
             store.recordShare(bill.id, 'admin')
           }}
         >

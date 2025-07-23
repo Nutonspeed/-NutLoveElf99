@@ -71,14 +71,14 @@ export default function AdminBillDetail({ params }: { params: { id: string } }) 
       </div>
       <div className="flex items-center space-x-4">
         <img
-          src={generateQRUrl(`${window.location.origin}/bill/view/${bill.id}`)}
+          src={generateQRUrl(`${window.location.origin}/b/${bill.shortCode}`)}
           alt="QR"
           className="w-24 h-24 border"
         />
         <Button
           variant="outline"
           onClick={() => {
-            copyToClipboard(`${window.location.origin}/bill/view/${bill.id}`)
+            copyToClipboard(`${window.location.origin}/b/${bill.shortCode}`)
             store.recordShare(bill.id, 'admin')
           }}
         >คัดลอกลิงก์</Button>

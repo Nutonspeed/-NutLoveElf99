@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import BillLabel from '@/components/shipping/BillLabel'
 import type { FakeBill } from '@/core/mock/fakeBillDB'
 import { getBillById } from '@/core/mock/fakeBillDB'
+import { copyToClipboard } from '@/helpers/clipboard'
 import { Noto_Sans_Thai } from 'next/font/google'
 
 const thaiFont = Noto_Sans_Thai({ subsets: ['thai'], weight: ['400', '700'] })
@@ -30,6 +31,13 @@ export default function BillLabelPage({ params }: { params: { billId: string } }
       <div className="print:hidden mb-4">
         <button type="button" className="border px-3 py-1" onClick={() => window.print()}>
           พิมพ์
+        </button>
+        <button
+          type="button"
+          className="border px-3 py-1 ml-2"
+          onClick={() => copyToClipboard(`${window.location.origin}/b/${bill.shortCode}`)}
+        >
+          คัดลอกลิงก์
         </button>
       </div>
       <div className="flex justify-center">
