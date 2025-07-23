@@ -16,6 +16,10 @@ export interface AdminBill {
     | 'delivered'
     | 'failed'
     | 'cancelled'
+    | 'waiting'
+    | 'cutting'
+    | 'sewing'
+    | 'packing'
   paymentStatus: 'unpaid' | 'paid' | 'partial'
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
