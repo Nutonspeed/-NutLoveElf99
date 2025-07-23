@@ -13,12 +13,24 @@ export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
   const [question, setQuestion] = useState('')
 
   const handleSave = async () => {
-    await fetch(`/api/bill/${bill.id}/update-address`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ address }),
-    })
-    alert('บันทึกที่อยู่แล้ว')
+    try {
+      const res = await fetch(`/api/bill/${bill.id}/update-address`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address }),
+      })
+
+      if (res.ok) {
+        alert('บันทึกที่อยู่แล้ว')
+      } else {
+        const err = await res.text()
+        console.error('Failed to save address:', err)
+        alert('เกิดข้อผิดพลาดในการบันทึกที่อยู่')
+      }
+    } catch (e) {
+      console.error('Network error:', e)
+      alert('เกิดข้อผิดพลาดในการบันทึกที่อยู่')
+    }
   }
 
   const handleQuestion = () => {
