@@ -56,7 +56,7 @@ export default function AdminBillsPage() {
     deliveryDate?: string
   } | null>(null)
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'unpaid' | 'paid' | 'shipped' | 'cancelled'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'unpaid' | 'paid' | 'shipped'>('all')
   const [dateFilter, setDateFilter] = useState<'today' | '7d' | 'all'>('today')
   const [tagFilter, setTagFilter] = useState('all')
   const allTags = Array.from(new Set(bills.flatMap((b) => b.tags)))
@@ -322,11 +322,9 @@ export default function AdminBillsPage() {
           <Tabs value={statusFilter} onValueChange={setStatusFilter} className="mt-4">
             <TabsList>
               <TabsTrigger value="all">ทั้งหมด</TabsTrigger>
-              <TabsTrigger value="pending">รอตรวจสอบ</TabsTrigger>
-              <TabsTrigger value="unpaid">รอชำระ</TabsTrigger>
+              <TabsTrigger value="unpaid">ยังไม่จ่าย</TabsTrigger>
               <TabsTrigger value="paid">ชำระแล้ว</TabsTrigger>
               <TabsTrigger value="shipped">จัดส่งแล้ว</TabsTrigger>
-              <TabsTrigger value="cancelled">ยกเลิก</TabsTrigger>
             </TabsList>
           </Tabs>
         </CardHeader>
