@@ -16,30 +16,54 @@ export interface FakeBill {
   lastUpdated: string
   note?: string
   estimatedTotal: number
+  delivered?: boolean
 }
 
-const fakeBills: FakeBill[] = [
-  {
-    id: 'B001',
-    customerName: 'สมชาย ใจดี',
-    customerAddress: '123 ถนนสายม็อค กรุงเทพฯ',
-    customerPhone: '0812345678',
-    items: [
-      {
-        fabricName: 'Cotton',
-        sofaType: 'L-Shape',
-        quantity: 1,
-        unitPrice: 2500,
-        image: '/placeholder.svg',
-      },
-    ],
-    statusStep: 1,
-    lastUpdated: '2024-06-01',
-    note: 'รอชำระหลังตรวจสอบขนาด',
-    estimatedTotal: 2500,
-  },
-]
+interface RawBill {
+  id: string
+  name: string
+  phone: string
+  address: string
+  delivered?: boolean
+}
+
+let bills: FakeBill[] | null = null
+
+async function loadBills(): Promise<FakeBill[]> {
+  if (!bills) {
+    const data = (await import('../../mock/bills.json')).default as RawBill[]
+    bills = data.map((b) => ({
+      id: b.id,
+      customerName: b.name,
+      customerPhone: b.phone,
+      customerAddress: b.address,
+      delivered: b.delivered,
+      items: [],
+      statusStep: 1,
+      lastUpdated: '',
+      estimatedTotal: 0,
+    }))
+  }
+  return bills
+}
 
 export async function getBillById(id: string): Promise<FakeBill | undefined> {
-  return fakeBills.find(b => b.id === id)
+  const list = await loadBills()
+  return list.find((b) => b.id === id)
 }
+
+export async function updateBillAddress(
+  id: string,
+  data: { name: string; phone: string; address: string },
+) {
+  const list = await loadBills()
+  const idx = list.findIndex((b) => b.id === id)
+  if (idx === -1) return
+  list[idx] = {
+    ...list[idx],
+    customerName: data.name,
+    customerPhone: data.phone,
+    customerAddress: data.address,
+  }
+}
+
