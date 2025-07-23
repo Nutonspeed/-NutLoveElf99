@@ -36,6 +36,7 @@ const groups = [
     label: "Orders",
     items: [
       { href: "/admin/bills", label: "บิลทั้งหมด", icon: FileText, feature: "bills" },
+      { href: "/admin/bills/unshipped", label: "ยังไม่จัดส่ง", icon: Truck, feature: "bills" },
       { href: "/admin/bills/fast", label: "เปิดบิลด่วน", icon: Bolt, feature: "bills" },
     ],
   },
