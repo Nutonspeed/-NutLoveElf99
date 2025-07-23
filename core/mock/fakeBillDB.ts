@@ -1,4 +1,10 @@
-export type BillStatus = 'waiting' | 'cutting' | 'packing' | 'shipped'
+export type BillStatus =
+  | 'waiting'
+  | 'cutting'
+  | 'sewing'
+  | 'packing'
+  | 'shipped'
+  | 'delivered'
 
 export interface FakeBillItem {
   fabricName: string
@@ -39,8 +45,10 @@ async function loadBills(): Promise<FakeBill[]> {
     const stepMap: Record<BillStatus, number> = {
       waiting: 0,
       cutting: 1,
-      packing: 2,
-      shipped: 3,
+      sewing: 2,
+      packing: 3,
+      shipped: 4,
+      delivered: 5,
     }
     bills = data.map((b) => ({
       id: b.id,
