@@ -13,7 +13,7 @@ const steps = [
 export default function BillTimeline({ status }: { status: BillStatus }) {
   const current = steps.findIndex(s => s.key === status)
   return (
-    <div className="flex items-center justify-between relative">
+    <div id="bill-timeline" className="flex items-center justify-between relative transition-all">
       {steps.map((step, index) => {
         const StepIcon = step.icon
         const isDone = index <= current
@@ -21,7 +21,7 @@ export default function BillTimeline({ status }: { status: BillStatus }) {
         return (
           <div key={step.key} className="flex flex-col items-center flex-1">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${
+              className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 transition-colors ${
                 isDone
                   ? 'bg-green-500 text-white'
                   : isCurrent
