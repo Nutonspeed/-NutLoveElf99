@@ -110,3 +110,11 @@ export function setBillFeedback(id: string, feedback: AdminBill['feedback']) {
     persist()
   }
 }
+
+export function recordShare(id: string, user: string) {
+  const idx = bills.findIndex(b => b.id === id)
+  if (idx !== -1) {
+    bills[idx] = { ...bills[idx], sharedAt: new Date().toISOString(), sharedBy: user }
+    persist()
+  }
+}

@@ -7,7 +7,9 @@
     "deliveryDate": "2024-05-20",
     "trackingNo": "TH1234567890",
     "carrier": "Kerry",
-    "notes": ""
+    "notes": "",
+    "sharedAt": null,
+    "sharedBy": null
   },
   {
     "id": "b_delivered",
@@ -17,6 +19,8 @@
     "deliveryDate": "2024-05-18",
     "trackingNo": "TH0987654321",
     "carrier": "Flash",
-    "notes": ""
+    "notes": "",
+    "sharedAt": null,
+    "sharedBy": null
   }
 ]

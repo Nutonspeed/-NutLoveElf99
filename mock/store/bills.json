@@ -11,7 +11,9 @@
     "phone": "0812345678",
     "paymentStatus": "paid",
     "createdAt": "2024-01-15T08:00:00Z",
-    "followup_log": []
+    "followup_log": [],
+    "sharedAt": "2024-01-20T00:00:00Z",
+    "sharedBy": "admin"
   },
   {
     "id": "BILL-002",
@@ -23,7 +25,9 @@
     "status": "cancelled",
     "paymentStatus": "unpaid",
     "createdAt": "2024-01-16T08:00:00Z",
-    "followup_log": []
+    "followup_log": [],
+    "sharedAt": null,
+    "sharedBy": null
   },
   {
     "id": "BILL-003",
@@ -35,6 +39,8 @@
     "status": "cancelled",
     "paymentStatus": "unpaid",
     "createdAt": "2024-01-17T08:00:00Z",
-    "followup_log": []
+    "followup_log": [],
+    "sharedAt": null,
+    "sharedBy": null
   }
 ]
