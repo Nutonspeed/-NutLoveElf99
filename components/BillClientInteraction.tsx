@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import BillProgress from '@/components/BillProgress'
 import QRCodePlaceholder from '@/components/bills/QRCodePlaceholder'
-import { updateBillAddress, type FakeBill } from '@/core/mock/fakeBillDB'
+import type { FakeBill } from '@/core/mock/fakeBillDB'
 
 const steps = ['กำลังตัดผ้า', 'รอเย็บ', 'กำลังแพ็ค', 'จัดส่งแล้ว']
 
@@ -13,7 +13,11 @@ export default function BillClientInteraction({ bill }: { bill: FakeBill }) {
   const [question, setQuestion] = useState('')
 
   const handleSave = async () => {
-    await updateBillAddress(bill.id, address)
+    await fetch(`/api/bill/${bill.id}/update-address`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ address }),
+    })
     alert('บันทึกที่อยู่แล้ว')
   }
 
