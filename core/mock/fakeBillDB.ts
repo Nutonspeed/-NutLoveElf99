@@ -7,6 +7,14 @@ export type BillStatus =
   | 'delivering'
   | 'delivered'
 
+export type ProductionStatus =
+  | 'waiting'
+  | 'cutting'
+  | 'sewing'
+  | 'packing'
+  | 'shipped'
+  | 'done'
+
 export interface FakeBillItem {
   fabricName: string
   sofaType: string
@@ -23,6 +31,8 @@ export interface FakeBill {
   customerPhone: string
   items: FakeBillItem[]
   status: BillStatus
+  productionStatus: ProductionStatus
+  productionTimeline: { step: ProductionStatus; timestamp: string }[]
   statusStep: number
   lastUpdated: string
   note?: string
@@ -40,6 +50,8 @@ interface RawBill {
   customerId: string
   delivered?: boolean
   status: BillStatus
+  productionStatus?: ProductionStatus
+  productionTimeline?: { step: ProductionStatus; timestamp: string }[]
   deliveryDate?: string
   deliveredAt?: string
   trackingNo?: string
@@ -74,6 +86,8 @@ async function loadBills(): Promise<FakeBill[]> {
         customerAddress: c?.address || '',
         delivered: b.delivered,
         status: b.status,
+        productionStatus: b.productionStatus ?? 'waiting',
+        productionTimeline: b.productionTimeline ?? [],
         deliveryDate: b.deliveryDate,
         deliveredAt: b.deliveredAt,
         trackingNo: b.trackingNo,
@@ -107,6 +121,23 @@ export async function updateBillAddress(
     customerName: data.name,
     customerPhone: data.phone,
     customerAddress: data.address,
+  }
+}
+
+export async function updateProductionStatus(
+  id: string,
+  status: ProductionStatus,
+) {
+  const list = await loadBills()
+  const idx = list.findIndex((b) => b.id === id)
+  if (idx === -1) return
+  list[idx] = {
+    ...list[idx],
+    productionStatus: status,
+    productionTimeline: [
+      ...list[idx].productionTimeline,
+      { step: status, timestamp: new Date().toISOString() },
+    ],
   }
 }
 

@@ -57,7 +57,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         delivered={bill.delivered}
         status={bill.status}
       />
-      <BillTimeline status={bill.status} />
+      <BillTimeline status={bill.productionStatus} />
       <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => setBill({ ...bill, status: 'paid' })} />
       <div className="space-y-2">
         <h2 className="font-semibold">ฝากข้อความถึงแอดมิน</h2>
@@ -129,6 +129,15 @@ export default function BillViewPage({ params }: { params: { billId: string } })
           {bill.deliveryDate && <p>Delivered: {formatDateThai(bill.deliveryDate)}</p>}
           {bill.deliveredAt && <p>🗓 จัดส่งเมื่อ: {formatDateThai(bill.deliveredAt)}</p>}
         </div>
+      )}
+      {bill.productionStatus && bill.productionStatus !== 'done' && (
+        <p className="text-sm">
+          {bill.productionStatus === 'waiting' && '⌛ รอคิวผลิต'}
+          {bill.productionStatus === 'cutting' && '🧵 กำลังตัดผ้า'}
+          {bill.productionStatus === 'sewing' && '🪡 กำลังเย็บ'}
+          {bill.productionStatus === 'packing' && '📦 กำลังแพ็ค'}
+          {bill.productionStatus === 'shipped' && '🚚 จัดส่งแล้ว'}
+        </p>
       )}
     </div>
   )

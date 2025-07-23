@@ -16,10 +16,13 @@ export interface AdminBill {
     | 'delivered'
     | 'failed'
     | 'cancelled'
+  productionStatus?:
     | 'waiting'
     | 'cutting'
     | 'sewing'
     | 'packing'
+    | 'shipped'
+    | 'done'
   paymentStatus: 'unpaid' | 'paid' | 'partial'
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
@@ -61,6 +64,7 @@ export const mockBills: AdminBill[] = [
   carrier: 'Kerry',
   shippingMethod: 'Flash',
   shippingStatus: 'shipped',
+  productionStatus: 'done',
   phone: '0812345678',
   createdAt: new Date().toISOString(),
   followup_log: [],
@@ -80,6 +84,7 @@ export const mockBills: AdminBill[] = [
   status: 'cancelled',
   paymentStatus: 'unpaid',
   tags: [],
+  productionStatus: 'waiting',
   deliveryDate: new Date().toISOString(),
   carrier: 'Flash',
   createdAt: new Date().toISOString(),
@@ -100,6 +105,7 @@ export const mockBills: AdminBill[] = [
   status: 'cancelled',
   paymentStatus: 'unpaid',
   tags: ['test'],
+  productionStatus: 'waiting',
   trackingNo: 'TH1111111111',
   carrier: 'JT',
   createdAt: new Date().toISOString(),
@@ -118,6 +124,7 @@ export function addBill(
     id: `bill-${Date.now()}`,
     status: 'unpaid',
     paymentStatus: 'unpaid',
+    productionStatus: 'waiting',
     createdAt: new Date().toISOString(),
     followup_log: [],
     ...data,
@@ -138,6 +145,16 @@ export function updateBill(
 export function updateBillStatus(id: string, status: AdminBill['status']) {
   const bill = mockBills.find(b => b.id === id)
   if (bill) bill.status = status
+}
+
+export function updateProductionStatus(
+  id: string,
+  status: NonNullable<AdminBill['productionStatus']>,
+) {
+  const bill = mockBills.find(b => b.id === id)
+  if (bill) {
+    bill.productionStatus = status
+  }
 }
 
 export function updatePaymentStatus(

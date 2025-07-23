@@ -370,6 +370,7 @@ export default function AdminBillsPage() {
                   <TableHead>ติดต่อ</TableHead>
                   <TableHead>หมายเหตุ</TableHead>
                   <TableHead>แท็ก</TableHead>
+                  <TableHead>ผลิต</TableHead>
                   <TableHead>สถานะ</TableHead>
                   <TableHead>Last Follow-up</TableHead>
                   <TableHead

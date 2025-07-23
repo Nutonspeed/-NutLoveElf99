@@ -1,17 +1,17 @@
 import { Clock, Scissors, Shirt, Package, Truck, CircleCheck } from 'lucide-react'
-import type { BillStatus } from '@/core/mock/fakeBillDB'
+import type { ProductionStatus } from '@/core/mock/fakeBillDB'
 
 const steps = [
   { key: 'waiting', label: 'รอคิว', icon: Clock },
   { key: 'cutting', label: 'ตัดผ้า', icon: Scissors },
   { key: 'sewing', label: 'เย็บ', icon: Shirt },
   { key: 'packing', label: 'แพ็ค', icon: Package },
-  { key: 'delivering', label: 'กำลังจัดส่ง', icon: Truck },
-  { key: 'delivered', label: 'ถึงแล้ว', icon: CircleCheck },
+  { key: 'shipped', label: 'จัดส่ง', icon: Truck },
+  { key: 'done', label: 'เสร็จสิ้น', icon: CircleCheck },
 ] as const
 
-export default function BillTimeline({ status }: { status: BillStatus }) {
-  const key = status === 'shipped' ? 'delivering' : status
+export default function BillTimeline({ status }: { status: ProductionStatus }) {
+  const key = status
   const current = steps.findIndex(s => s.key === key)
   return (
     <div className="flex items-center justify-between relative">

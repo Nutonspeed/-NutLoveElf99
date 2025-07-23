@@ -4,6 +4,7 @@ import {
   addBill as baseAdd,
   updateBill as baseUpdate,
   updateBillStatus as baseStatus,
+  updateProductionStatus as baseProdStatus,
   updatePaymentStatus as basePayStatus,
   archiveBill as baseArchive,
   restoreBill as baseRestore,
@@ -49,6 +50,15 @@ export function updateBill(id: string, data: Partial<Omit<AdminBill, 'id' | 'cre
 
 export function updateBillStatus(id: string, status: AdminBill['status']) {
   baseStatus(id, status)
+  bills = [...seedBills]
+  persist()
+}
+
+export function updateProductionStatus(
+  id: string,
+  status: NonNullable<AdminBill['productionStatus']>,
+) {
+  baseProdStatus(id, status)
   bills = [...seedBills]
   persist()
 }

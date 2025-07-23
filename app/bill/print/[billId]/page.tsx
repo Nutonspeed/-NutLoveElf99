@@ -68,7 +68,7 @@ export default function BillPrintPage({ params }: { params: { billId: string } }
           <span>{subtotal.toLocaleString()}</span>
         </div>
       </div>
-      <BillTimeline status={bill.status} />
+      <BillTimeline status={bill.productionStatus} />
       {(bill.trackingNo || bill.deliveryDate || bill.deliveredAt) && (
         <div className="text-sm space-y-1">
           {bill.trackingNo && <p>Tracking: {bill.trackingNo}</p>}
