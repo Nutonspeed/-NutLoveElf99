@@ -23,9 +23,11 @@ interface Fabric {
 export function FabricsList({
   fabrics,
   selectable = false,
+  redirectTo,
 }: {
   fabrics: Fabric[];
   selectable?: boolean;
+  redirectTo?: string;
 }) {
   const { items, toggleCompare } = useCompare();
   const router = useRouter();
@@ -113,9 +115,13 @@ export function FabricsList({
                         JSON.stringify(obj),
                       );
                       setSelectedId(fabric.id);
-                      toast({
-                        title: "เลือกลายผ้าแล้ว! กลับไปสร้างบิลต่อได้เลย",
-                      });
+                      if (redirectTo) {
+                        router.push(redirectTo);
+                      } else {
+                        toast({
+                          title: "เลือกลายผ้าแล้ว! กลับไปสร้างบิลต่อได้เลย",
+                        });
+                      }
                     }}
                   >
                     เลือกผ้านี้
