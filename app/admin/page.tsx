@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { mockOrders, updateOrderStatus } from "@/lib/mock/orders";
 import { mockNotifications } from "@/lib/mock-notifications";
 import { chatNotifications } from "@/lib/mock/chat-notify";
-import DebugPanel from "@/components/admin/DebugPanel";
 import PageWrapper from "@/components/admin/PageWrapper";
 import { logEvent } from "@/lib/logs";
 import type { Order } from "@/types/order";
@@ -19,7 +18,6 @@ export default function AdminIndex() {
     process.env.NEXT_PUBLIC_CHATWOOT_URL || "http://localhost:3000";
 
   const [orders, setOrders] = useState<Order[]>(mockOrders);
-  const [debugOpen, setDebugOpen] = useState(false);
 
   const latest = Array.isArray(orders)
     ? [...orders].sort((a, b) =>
@@ -74,20 +72,6 @@ export default function AdminIndex() {
         <Link href="/admin/dashboard">
           <Button variant="outline" size="lg" className="h-12">เข้าสู่แดชบอร์ด</Button>
         </Link>
-        {process.env.NODE_ENV !== 'production' && (
-          <Button
-            variant="outline"
-            size="lg"
-            className="h-12"
-            onClick={() => {
-              const next = !debugOpen
-              setDebugOpen(next)
-              logEvent('toggle_debug', { open: next })
-            }}
-          >
-            {debugOpen ? 'ปิด Debug' : 'เปิด Debug'}
-          </Button>
-        )}
       </div>
 
       <Card>
@@ -172,7 +156,6 @@ export default function AdminIndex() {
       )}
       </CardContent>
       </Card>
-      {process.env.NODE_ENV !== 'production' && debugOpen && <DebugPanel />}
     </PageWrapper>
   );
 }

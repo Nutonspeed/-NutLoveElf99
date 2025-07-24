@@ -1,4 +1,7 @@
 export default function AdminDevToolsPage() {
+  if (process.env.NODE_ENV === 'production') {
+    return null
+  }
   return (
     <div className="container mx-auto py-8 space-y-4">
       <h1 className="text-2xl font-bold">Admin DevTools</h1>
