@@ -25,5 +25,21 @@ function calculate(orders: Order[]): AnalyticsSummary {
 }
 
 export async function fetchAnalyticsSummary(): Promise<AnalyticsSummary> {
-  return Promise.resolve(calculate(mockOrders))
+  try {
+    const res = await fetch('/mock/store/dashboard.json?_=' + Date.now())
+    if (res.ok) {
+      const data = await res.json()
+      if (
+        typeof data.ordersToday === 'number' &&
+        typeof data.revenueToday === 'number' &&
+        typeof data.unpaidOrders === 'number' &&
+        typeof data.readyToShip === 'number'
+      ) {
+        return data as AnalyticsSummary
+      }
+    }
+  } catch {
+    // ignore and fallback
+  }
+  return calculate(mockOrders)
 }
