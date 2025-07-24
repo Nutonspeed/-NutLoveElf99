@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/buttons/button"
 import { useCompare } from "@/contexts/compare-context"
 import { mockCoViewLog } from "@/lib/mock-co-view-log"
+import { useToast } from "@/hooks/use-toast"
 
 interface Fabric {
   id: string
@@ -20,6 +21,7 @@ interface Fabric {
 export function FabricsList({ fabrics, selectable = false }: { fabrics: Fabric[]; selectable?: boolean }) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
+  const { toast } = useToast()
 
   const handleCompare = () => {
     router.push(`/compare`)
@@ -60,24 +62,29 @@ export function FabricsList({ fabrics, selectable = false }: { fabrics: Fabric[]
                     />
                   </div>
                 </Link>
+              </div>
+              <div className="p-2 text-center space-y-2">
+                <Link href={`/fabrics/${slug}`} className="block">
+                  <p className="font-medium line-clamp-2">{fabric.name}</p>
+                </Link>
                 {selectable && (
                   <Button
                     size="sm"
-                    className="absolute bottom-2 right-2 z-10 text-xs"
+                    className="w-full text-xs"
                     onClick={() => {
-                      localStorage.setItem('selectedFabric', fabric.id)
-                      window.location.href = '/admin/bill/create'
+                      const obj = {
+                        id: fabric.id,
+                        code: fabric.sku || (fabric as any).code || '',
+                        name: fabric.name,
+                      }
+                      localStorage.setItem('selectedFabric', JSON.stringify(obj))
+                      toast({ title: 'เลือกลายผ้าแล้ว! กลับไปสร้างบิลต่อได้เลย' })
                     }}
                   >
                     เลือกผ้านี้
                   </Button>
                 )}
               </div>
-              <Link href={`/fabrics/${slug}`}> 
-                <div className="p-2 text-center">
-                  <p className="font-medium line-clamp-2">{fabric.name}</p>
-                </div>
-              </Link>
             </div>
           )
         })}

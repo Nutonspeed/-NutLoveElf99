@@ -48,7 +48,12 @@ export default function AdminBillCreatePage() {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('selectedFabric')
       if (stored) {
-        setFabricId(stored)
+        try {
+          const obj = JSON.parse(stored) as { id: string }
+          setFabricId(obj.id)
+        } catch {
+          setFabricId(stored)
+        }
         localStorage.removeItem('selectedFabric')
       }
     }
