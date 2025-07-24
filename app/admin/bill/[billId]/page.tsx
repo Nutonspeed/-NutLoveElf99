@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 import { useBillStore } from '@/core/store'
 import { useBillById } from '@/hooks/useBillById'
+import { carriers } from '@/config/carriers'
 
 export default function AdminBillDetailPage({ params }: { params: { billId: string } }) {
   const bill = useBillById(params.billId)
@@ -17,6 +18,8 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
   const { toast } = useToast()
   const [status, setStatus] = useState<'waiting' | 'cutting' | 'sewing' | 'packing' | 'shipped' | 'done'>(bill.productionStatus ?? 'waiting')
   const [note, setNote] = useState('')
+  const [tracking, setTracking] = useState(bill.trackingNumber || '')
+  const [carrier, setCarrier] = useState<string>(bill.carrier || carriers[0])
 
   if (bill === undefined) {
     return <div className="p-4 text-center">Loading...</div>
@@ -83,6 +86,44 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
             <span>รวมทั้งหมด</span>
             <span className="text-primary">฿{total.toLocaleString()}</span>
           </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>ข้อมูลขนส่ง</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <input
+            className="border p-2 w-full"
+            placeholder="เลขพัสดุ"
+            value={tracking}
+            onChange={e => setTracking(e.target.value)}
+          />
+          <Select value={carrier} onValueChange={setCarrier}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {carriers.map(c => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            onClick={() => {
+              store.updateBill(bill.id, {
+                trackingNumber: tracking,
+                carrier,
+                shippedAt: new Date().toISOString(),
+              })
+              store.updateProductionStatus(bill.id, 'shipped', 'บันทึกหมายเลขพัสดุ')
+              toast({ title: 'อัปเดตหมายเลขพัสดุแล้ว' })
+            }}
+          >
+            บันทึกหมายเลขพัสดุ
+          </Button>
         </CardContent>
       </Card>
       <Card>
