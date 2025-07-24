@@ -7,6 +7,8 @@
       { "name": "ผ้าคลุมโซฟา", "quantity": 1, "price": 299 },
       { "name": "ปลอกหมอน", "quantity": 2, "price": 59 }
     ],
+    "address": "123 ถนนสุขุมวิท แขวงคลองตัน เขตวัฒนา กรุงเทพฯ 10110",
+    "note": "จัดส่งภายในสัปดาห์",
     "shipping": 50,
     "status": "paid",
     "phone": "0812345678",
@@ -23,6 +25,8 @@
     "items": [
       { "name": "ชุดโซฟา", "quantity": 1, "price": 500 }
     ],
+    "address": "99/1 ซอยสุขุมวิท 10 กรุงเทพฯ 10110",
+    "note": "ลูกค้าขอยกเลิก",
     "shipping": 50,
     "status": "cancelled",
     "paymentStatus": "unpaid",
@@ -38,6 +42,8 @@
     "items": [
       { "name": "ปลอกหมอน", "quantity": 4, "price": 59 }
     ],
+    "address": "555/9 Test Road Bangkok",
+    "note": "cancel due to duplicate",
     "shipping": 30,
     "status": "cancelled",
     "paymentStatus": "unpaid",
