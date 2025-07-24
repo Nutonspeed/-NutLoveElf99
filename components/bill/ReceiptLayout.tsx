@@ -19,7 +19,7 @@ export default function ReceiptLayout({ bill }: { bill: AdminBill }) {
         discount={0}
         shipping={bill.shipping}
       />
-      <BillPaymentQR value={bill.id} />
+      <BillPaymentQR />
       <BillNoteBox note={bill.note} />
     </BillPrintLayout>
   )

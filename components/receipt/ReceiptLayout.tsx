@@ -15,7 +15,7 @@ export default function ReceiptLayout({ bill }: { bill: BillData }) {
       <BillPrintDate id={bill.id} />
       <BillItemTable items={bill.items} />
       <BillSummaryTotals subtotal={subtotal} discount={bill.discount} shipping={bill.shipping} />
-      <BillPaymentQR value={bill.id} />
+      <BillPaymentQR />
       <BillNoteBox note={bill.note} />
     </BillPrintLayout>
   )
