@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import React from 'react'
 import { readFileSync, writeFileSync, existsSync } from 'fs'
 import { join } from 'path'
-import { getBills } from '@/core/mock/store'
+import { getPaidBill } from '@/lib/receipt'
 import ReceiptLayout from '@/components/receipt/ReceiptLayout'
 import { componentToPDF } from '@/lib/pdf/from-html'
 
@@ -16,7 +16,7 @@ function loadLog() {
 }
 
 export async function GET(_req: Request, { params }: { params: { billId: string } }) {
-  const bill = getBills().find(b => b.id === params.billId)
+  const bill = getPaidBill(params.billId)
   if (!bill) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   const blob = await componentToPDF(<ReceiptLayout bill={bill as any} />)
   const buffer = Buffer.from(await blob.arrayBuffer())
