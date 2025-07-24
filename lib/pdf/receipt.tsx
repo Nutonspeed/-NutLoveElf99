@@ -1,6 +1,6 @@
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import type { BillData } from '@/lib/hooks/useBillData'
-import { company } from '@/lib/config/company.config'
+import { getStoreProfile } from '@/core/mock/store'
 
 const styles = StyleSheet.create({
   page: { padding: 24, fontSize: 12, fontFamily: 'Helvetica' },
@@ -16,19 +16,17 @@ const styles = StyleSheet.create({
 export async function generateReceiptPDF(bill: BillData, options?: { mock?: boolean; qr?: string }) {
   const subtotal = bill.items.reduce((s, it) => s + it.price * it.quantity, 0)
   const total = subtotal - (bill.discount || 0) + (bill.shipping || 0)
+  const company = getStoreProfile()
   const doc = (
     <Document>
       <Page size="A4" style={styles.page}>
         {options?.mock && <Text style={styles.watermark}>ตัวอย่าง</Text>}
         <View style={styles.header}>
-          {company.logo && <Image src={company.logo} style={styles.logo} />}
+          {company.logoUrl && <Image src={company.logoUrl} style={styles.logo} />}
           <View>
-            <Text>{company.name}</Text>
-            <Text>{company.address.line1}</Text>
-            {company.address.line2 && <Text>{company.address.line2}</Text>}
-            <Text>
-              {company.address.city} {company.address.postalCode}
-            </Text>
+            <Text>{company.storeName}</Text>
+            <Text>{company.address}</Text>
+            <Text>{company.phoneNumber}</Text>
           </View>
         </View>
         <Text>บิลเลขที่ {bill.id}</Text>
