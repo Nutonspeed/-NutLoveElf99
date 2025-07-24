@@ -45,7 +45,15 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   }
 
   if (!bill) {
-    return <div className="p-8">ไม่พบบิลนี้</div>
+    return (
+      <div className="text-center p-8 space-y-4 text-destructive">
+        <h2 className="text-xl font-semibold">ไม่พบบิลนี้</h2>
+        <p>กรุณาตรวจสอบลิงก์ หรือติดต่อแอดมินเพื่อขอความช่วยเหลือ</p>
+        <Link href="/" className="text-blue-500 underline">
+          กลับหน้าแรก
+        </Link>
+      </div>
+    )
   }
 
   return (
