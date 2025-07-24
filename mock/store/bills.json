@@ -32,8 +32,20 @@
       "amount": 408,
       "note": "เต็มจำนวน"
     },
-    "productionStatus": "waiting",
-    "productionTimeline": []
+    "productionStatus": "cutting",
+    "productionTimeline": [
+      {
+        "timestamp": "2024-01-15T08:00:00Z",
+        "status": "waiting",
+        "by": "Alice"
+      },
+      {
+        "timestamp": "2024-01-16T09:00:00Z",
+        "status": "cutting",
+        "by": "Bob",
+        "note": "เริ่มตัดผ้า"
+      }
+    ]
   },
   {
     "id": "BILL-002",
@@ -57,7 +69,13 @@
     "sharedAt": null,
     "sharedBy": null,
     "productionStatus": "waiting",
-    "productionTimeline": []
+    "productionTimeline": [
+      {
+        "timestamp": "2024-01-16T08:00:00Z",
+        "status": "waiting",
+        "by": "Bob"
+      }
+    ]
   },
   {
     "id": "BILL-003",
@@ -80,7 +98,38 @@
     "followup_log": [],
     "sharedAt": null,
     "sharedBy": null,
-    "productionStatus": "waiting",
-    "productionTimeline": []
+    "productionStatus": "done",
+    "productionTimeline": [
+      {
+        "timestamp": "2024-01-17T08:00:00Z",
+        "status": "waiting",
+        "by": "Alice"
+      },
+      {
+        "timestamp": "2024-01-17T10:00:00Z",
+        "status": "cutting",
+        "by": "Alice"
+      },
+      {
+        "timestamp": "2024-01-18T08:00:00Z",
+        "status": "sewing",
+        "by": "Team"
+      },
+      {
+        "timestamp": "2024-01-19T12:00:00Z",
+        "status": "packing",
+        "by": "Team"
+      },
+      {
+        "timestamp": "2024-01-20T08:00:00Z",
+        "status": "shipped",
+        "by": "Team"
+      },
+      {
+        "timestamp": "2024-01-21T08:00:00Z",
+        "status": "done",
+        "by": "Team"
+      }
+    ]
   }
 ]
