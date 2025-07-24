@@ -20,9 +20,9 @@
     "shipping": 50,
     "status": "แจ้งโอนแล้ว",
     "phone": "0812345678",
-  "paymentStatus": "paid",
-  "createdBy": "Alice",
-  "createdAt": "2024-01-15T08:00:00Z",
+    "paymentStatus": "paid",
+    "createdBy": "Alice",
+    "createdAt": "2024-01-15T08:00:00Z",
     "followup_log": [],
     "sharedAt": "2024-01-20T00:00:00Z",
     "sharedBy": "admin",
@@ -45,7 +45,10 @@
         "by": "Bob",
         "note": "เริ่มตัดผ้า"
       }
-    ]
+    ],
+    "trackingNumber": "EX123456789TH",
+    "carrier": "Flash",
+    "shippedAt": "2024-01-30T10:00:00Z"
   },
   {
     "id": "BILL-002",
@@ -62,9 +65,9 @@
     "note": "ลูกค้าขอยกเลิก",
     "shipping": 50,
     "status": "cancelled",
-  "paymentStatus": "unpaid",
-  "createdBy": "Bob",
-  "createdAt": "2024-01-16T08:00:00Z",
+    "paymentStatus": "unpaid",
+    "createdBy": "Bob",
+    "createdAt": "2024-01-16T08:00:00Z",
     "followup_log": [],
     "sharedAt": null,
     "sharedBy": null,
@@ -75,7 +78,10 @@
         "status": "waiting",
         "by": "Bob"
       }
-    ]
+    ],
+    "trackingNumber": "EX123456789TH",
+    "carrier": "Flash",
+    "shippedAt": "2024-01-30T10:00:00Z"
   },
   {
     "id": "BILL-003",
@@ -92,9 +98,9 @@
     "note": "cancel due to duplicate",
     "shipping": 30,
     "status": "cancelled",
-  "paymentStatus": "unpaid",
-  "createdBy": "Alice",
-  "createdAt": "2024-01-17T08:00:00Z",
+    "paymentStatus": "unpaid",
+    "createdBy": "Alice",
+    "createdAt": "2024-01-17T08:00:00Z",
     "followup_log": [],
     "sharedAt": null,
     "sharedBy": null,
@@ -130,6 +136,9 @@
         "status": "done",
         "by": "Team"
       }
-    ]
+    ],
+    "trackingNumber": "EX123456789TH",
+    "carrier": "Flash",
+    "shippedAt": "2024-01-30T10:00:00Z"
   }
 ]

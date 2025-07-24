@@ -5,6 +5,7 @@ import BillQRSection from '@/components/bill/BillQRSection'
 import TransferConfirmForm from '@/components/bill/TransferConfirmForm'
 import BillStatusTracker from '@/components/bill/BillStatusTracker'
 import BillTimeline from '@/components/bill/BillTimeline'
+import ShippingInfoCard from '@/components/bill/ShippingInfoCard'
 import { formatDateThai } from '@/lib/formatDateThai'
 import type { StoreProfile } from '@/lib/config'
 import { getStoreProfile } from '@/lib/config'
@@ -55,6 +56,11 @@ export default function BillViewPage({ params }: { params: { billId: string } })
           )}
         </p>
       )}
+      <ShippingInfoCard
+        trackingNumber={bill.trackingNumber}
+        carrier={bill.carrier}
+        shippedAt={bill.shippedAt}
+      />
       <div className="space-y-1">
         <p className="font-medium">{bill.customer}</p>
         {editAddr ? (
