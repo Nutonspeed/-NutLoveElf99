@@ -4,6 +4,8 @@ import bills from '@/mock/store/bills.json'
 import BillQRSection from '@/components/bill/BillQRSection'
 import TransferConfirmForm from '@/components/bill/TransferConfirmForm'
 import BillStatusTracker from '@/components/bill/BillStatusTracker'
+import BillTimeline from '@/components/bill/BillTimeline'
+import { formatDateThai } from '@/lib/formatDateThai'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const bill = (bills as any[]).find(b => b.id === params.billId)
@@ -33,6 +35,15 @@ export default function BillViewPage({ params }: { params: { billId: string } })
     <div className="p-4 space-y-4 max-w-xl mx-auto">
       <h1 className="text-xl font-bold text-center">บิล {bill.id}</h1>
       <BillStatusTracker status={bill.status} />
+      <BillTimeline status={bill.productionStatus || 'waiting'} />
+      {bill.productionTimeline?.length > 0 && (
+        <p className="text-xs text-gray-500 text-center">
+          อัปเดตล่าสุด:{' '}
+          {formatDateThai(
+            bill.productionTimeline[bill.productionTimeline.length - 1].timestamp
+          )}
+        </p>
+      )}
       <div className="space-y-1">
         <p className="font-medium">{bill.customer}</p>
         {editAddr ? (
