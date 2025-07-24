@@ -40,4 +40,13 @@ export function downloadShippingCSV(bills: Bill[]) {
   URL.revokeObjectURL(url)
 }
 
-// TODO: Integrate Flash Express API for direct submission
+/**
+ * Submit the provided bills to Flash Express.
+ *
+ * This is currently a stub implementation that simply logs the action. It
+ * serves as a placeholder for future integration with the Flash Express API.
+ */
+export async function submitFlashExpress(bills: Bill[]): Promise<void> {
+  console.log(`submitFlashExpress stub called with ${bills.length} bills`)
+}
+
