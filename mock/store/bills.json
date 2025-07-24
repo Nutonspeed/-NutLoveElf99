@@ -26,6 +26,8 @@
     "followup_log": [],
     "sharedAt": "2024-01-20T00:00:00Z",
     "sharedBy": "admin",
+    "receiptUrl": "https://cdn.example.com/receipts/BILL-001.pdf",
+    "receiptNote": "ออกโดยแอดมินวันที่ 1 ส.ค.",
     "transferConfirmation": {
       "bank": "SCB",
       "time": "2024-01-15T09:00:00Z",
@@ -71,6 +73,8 @@
     "followup_log": [],
     "sharedAt": null,
     "sharedBy": null,
+    "receiptUrl": "",
+    "receiptNote": "",
     "productionStatus": "waiting",
     "productionTimeline": [
       {
@@ -104,6 +108,8 @@
     "followup_log": [],
     "sharedAt": null,
     "sharedBy": null,
+    "receiptUrl": "",
+    "receiptNote": "",
     "productionStatus": "done",
     "productionTimeline": [
       {

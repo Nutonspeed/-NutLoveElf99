@@ -21,4 +21,12 @@ export function addOrderTimelineEntry(
   if (order) order.timeline.push(entry)
 }
 
+export function attachReceipt(id: string, url: string, note?: string) {
+  const order = mockOrders.find(o => o.id === id)
+  if (order) {
+    ;(order as any).receiptUrl = url
+    ;(order as any).receiptNote = note
+  }
+}
+
 export { getOrdersInRange, getDailySales, getTopSellingItems }
