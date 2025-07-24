@@ -17,7 +17,7 @@ interface Fabric {
   image_urls?: string[] | null
 }
 
-export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
+export function FabricsList({ fabrics, selectable = false }: { fabrics: Fabric[]; selectable?: boolean }) {
   const { items, toggleCompare } = useCompare()
   const router = useRouter()
 
@@ -47,17 +47,33 @@ export function FabricsList({ fabrics }: { fabrics: Fabric[] }) {
                 onCheckedChange={() => toggleCompare(slug)}
                 className="absolute top-2 left-2 z-10 bg-white/80"
               />
-              <Link href={`/fabrics/${slug}`}>
-                <div className="relative aspect-square">
-                  <Image
-                    src={
-                      fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
-                    }
-                    alt={fabric.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
+              <div className="relative">
+                <Link href={`/fabrics/${slug}`}> 
+                  <div className="relative aspect-square">
+                    <Image
+                      src={
+                        fabric.image_urls?.[0] || fabric.image_url || "/placeholder.svg"
+                      }
+                      alt={fabric.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                </Link>
+                {selectable && (
+                  <Button
+                    size="sm"
+                    className="absolute bottom-2 right-2 z-10 text-xs"
+                    onClick={() => {
+                      localStorage.setItem('selectedFabric', fabric.id)
+                      window.location.href = '/admin/bill/create'
+                    }}
+                  >
+                    เลือกผ้านี้
+                  </Button>
+                )}
+              </div>
+              <Link href={`/fabrics/${slug}`}> 
                 <div className="p-2 text-center">
                   <p className="font-medium line-clamp-2">{fabric.name}</p>
                 </div>

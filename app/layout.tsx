@@ -55,7 +55,9 @@ export default function RootLayout({
                             <RedirectMobileHome />
                             {children}
                             <StoreBottomNav className="print:hidden" />
-                            <DevBar className="print:hidden" />
+                            {process.env.NODE_ENV !== "production" && (
+                              <DevBar className="print:hidden" />
+                            )}
                             <Toaster />
                             <LanguageSwitcher />
                           </ReviewImagesProvider>

@@ -21,26 +21,6 @@ export default function AdminIndex() {
   const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [debugOpen, setDebugOpen] = useState(false);
 
-  let todayCount = 0;
-  let todayIncome = 0;
-  let unpaid = 0;
-  let pending = 0;
-  let ready = 0;
-  let done = 0;
-  if (Array.isArray(orders)) {
-    const today = new Date().toDateString();
-    for (const o of orders) {
-      if (new Date(o.createdAt).toDateString() === today) {
-        todayCount += 1;
-        todayIncome += o.total;
-      }
-      if (o.status === "pendingPayment") unpaid += 1;
-      if (o.status === "depositPaid") pending += 1;
-      if (o.status === "paid" && o.shipping_status === "pending") ready += 1;
-      if (o.status === "completed" || o.shipping_status === "delivered") done += 1;
-    }
-  }
-
   const latest = Array.isArray(orders)
     ? [...orders].sort((a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
@@ -94,45 +74,20 @@ export default function AdminIndex() {
         <Link href="/admin/dashboard">
           <Button variant="outline" size="lg" className="h-12">เข้าสู่แดชบอร์ด</Button>
         </Link>
-        <Button
-          variant="outline"
-          size="lg"
-          className="h-12"
-          onClick={() => {
-            const next = !debugOpen
-            setDebugOpen(next)
-            logEvent('toggle_debug', { open: next })
-          }}
-        >
-          {debugOpen ? 'ปิด Debug' : 'เปิด Debug'}
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-sm text-gray-600">ออเดอร์วันนี้</p>
-            <p className="text-2xl font-bold">{todayCount}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-sm text-gray-600">รายได้วันนี้</p>
-            <p className="text-2xl font-bold">฿{todayIncome.toLocaleString()}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-sm text-gray-600">ยังไม่โอน</p>
-            <p className="text-2xl font-bold">{unpaid}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-sm text-gray-600">รอจัดส่ง</p>
-            <p className="text-2xl font-bold">{ready}</p>
-          </CardContent>
-        </Card>
+        {process.env.NODE_ENV !== 'production' && (
+          <Button
+            variant="outline"
+            size="lg"
+            className="h-12"
+            onClick={() => {
+              const next = !debugOpen
+              setDebugOpen(next)
+              logEvent('toggle_debug', { open: next })
+            }}
+          >
+            {debugOpen ? 'ปิด Debug' : 'เปิด Debug'}
+          </Button>
+        )}
       </div>
 
       <Card>
@@ -217,7 +172,7 @@ export default function AdminIndex() {
       )}
       </CardContent>
       </Card>
-      {debugOpen && <DebugPanel />}
+      {process.env.NODE_ENV !== 'production' && debugOpen && <DebugPanel />}
     </PageWrapper>
   );
 }

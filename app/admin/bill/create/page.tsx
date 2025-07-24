@@ -45,6 +45,16 @@ export default function AdminBillCreatePage() {
   }, [])
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('selectedFabric')
+      if (stored) {
+        setFabricId(stored)
+        localStorage.removeItem('selectedFabric')
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     const from = params.get('from')
     const lead = params.get('leadId')
     if (lead) {
