@@ -1,0 +1,10 @@
+{
+  "storeName": "My Store",
+  "phoneNumber": "0123456789",
+  "address": "123 Test Street, Bangkok",
+  "logoUrl": "/placeholder-logo.png",
+  "promptPayId": "0812345678",
+  "bankName": "KBank",
+  "accountName": "John Doe",
+  "accountNumber": "012-3-45678-9"
+}

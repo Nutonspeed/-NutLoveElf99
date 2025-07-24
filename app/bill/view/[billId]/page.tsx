@@ -1,16 +1,23 @@
 "use client"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import bills from '@/mock/store/bills.json'
 import BillQRSection from '@/components/bill/BillQRSection'
 import TransferConfirmForm from '@/components/bill/TransferConfirmForm'
 import BillStatusTracker from '@/components/bill/BillStatusTracker'
 import BillTimeline from '@/components/bill/BillTimeline'
 import { formatDateThai } from '@/lib/formatDateThai'
+import type { StoreProfile } from '@/lib/config'
+import { getStoreProfile } from '@/lib/config'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const bill = (bills as any[]).find(b => b.id === params.billId)
   const [editAddr, setEditAddr] = useState(false)
   const [address, setAddress] = useState(bill?.address || '')
+  const [store, setStore] = useState<StoreProfile | null>(null)
+
+  useEffect(() => {
+    getStoreProfile().then(setStore)
+  }, [])
 
   if (!bill) {
     return (
@@ -88,6 +95,12 @@ export default function BillViewPage({ params }: { params: { billId: string } })
       </ul>
       {bill.note && <p className="text-sm">หมายเหตุ: {bill.note}</p>}
       <BillQRSection total={total} />
+      {store && (
+        <div className="text-sm text-center space-y-1">
+          <p className="font-semibold">{store.storeName}</p>
+          <p>{store.phoneNumber}</p>
+        </div>
+      )}
       <TransferConfirmForm billId={bill.id} existing={bill.transferConfirmation} />
       <button className="border px-3 py-1" onClick={handleShare}>คัดลอกลิงก์</button>
     </div>

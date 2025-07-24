@@ -12,6 +12,7 @@ export * from './paymentConfirmations'
 export * from './roles'
 export * from './team-access'
 export * from './notes'
+export * from './store-profile'
 
 import { resetOrders, regenerateOrders } from './orders'
 import { resetSimpleOrders, regenerateSimpleOrders } from './simple-orders'
