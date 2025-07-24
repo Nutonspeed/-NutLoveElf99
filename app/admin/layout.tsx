@@ -57,11 +57,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             )}
             <div className="flex flex-1 flex-col">
               <Topbar onMenuClick={() => setSidebarOpen(true)} />
-              <div className="px-4 py-2 text-right border-b">
-                <Link href="/admin/bill/create" className="text-sm text-primary hover:underline">
-                  สร้างบิลใหม่
-                </Link>
-              </div>
+              <div className="px-4 py-2 text-right border-b" />
               <main className="flex-1 pb-20 md:pb-4">{children}</main>
               <AdminToast />
               <QuickActionBar />

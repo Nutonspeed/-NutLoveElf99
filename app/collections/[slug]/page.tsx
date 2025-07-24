@@ -98,7 +98,7 @@ export default async function CollectionDetailPage({ params }: { params: { slug:
           </a>
           <CopyPageLinkButton />
         </div>
-        <FabricsList fabrics={fabrics} />
+        <FabricsList fabrics={filtered} selectable />
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">รีวิวจากลูกค้าที่สั่งลายนี้</h2>
           {reviews.length === 0 ? (
