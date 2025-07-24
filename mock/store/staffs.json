@@ -1,0 +1,5 @@
+[
+  {"id":"s1","name":"Alice Admin","username":"alice","password":"password","role":"admin","active":true},
+  {"id":"s2","name":"Bob Staff","username":"bob","password":"password","role":"staff","active":true},
+  {"id":"s3","name":"Charlie","username":"charlie","password":"password","role":"staff","active":false}
+]
