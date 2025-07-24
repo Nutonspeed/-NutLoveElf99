@@ -25,7 +25,6 @@ import type { AdminBill, BillItem } from '@/mock/bills'
 import { useBillStore } from '@/core/store'
 import { getBillActivity } from '@/core/mock/store'
 import { toast } from 'sonner'
-import CreateBillFromMessageDialog from '@/components/admin/bills/CreateBillFromMessageDialog'
 
 export default function AdminBillsPage() {
   const store = useBillStore()
@@ -282,7 +281,6 @@ export default function AdminBillsPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
-        <CreateBillFromMessageDialog onCreated={(id)=>toast.success(`สร้างบิล ${id}`)} />
       </div>
       <Card>
         <CardHeader>

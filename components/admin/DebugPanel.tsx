@@ -2,6 +2,9 @@
 import { logs } from '@/lib/logs'
 
 export default function DebugPanel() {
+  if (process.env.NODE_ENV === 'production') {
+    return null
+  }
   return (
     <div className="fixed bottom-4 right-4 z-50 w-80 max-h-60 overflow-y-auto rounded border bg-white p-4 text-xs shadow">
       <p className="font-bold mb-2">Debug Panel</p>
