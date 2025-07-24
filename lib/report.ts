@@ -1,5 +1,6 @@
-import { promises as fs } from 'fs'
-import { join } from 'path'
+// In serverless environments like Vercel we cannot use Node fs to read
+// local files at runtime. Instead load the mock data via fetch so it
+// works both during build and in server.
 
 export interface ReportBill {
   id: string
@@ -17,8 +18,7 @@ export function billTotal(bill: Pick<ReportBill, 'items' | 'shipping'>) {
 }
 
 export async function getBillsByDate(date: string): Promise<ReportBill[]> {
-  const file = join(process.cwd(), 'mock', 'store', 'bills.json')
-  const text = await fs.readFile(file, 'utf8')
-  const all = JSON.parse(text) as ReportBill[]
+  const res = await fetch('/mock/store/bills.json')
+  const all = (await res.json()) as ReportBill[]
   return all.filter(b => b.createdAt.startsWith(date))
 }
