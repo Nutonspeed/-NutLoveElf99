@@ -33,7 +33,12 @@ export interface FakeBill {
   items: FakeBillItem[]
   status: BillStatus
   productionStatus: ProductionStatus
-  productionTimeline: { step: ProductionStatus; timestamp: string }[]
+  productionTimeline: {
+    status: ProductionStatus
+    timestamp: string
+    by: string
+    note?: string
+  }[]
   statusStep: number
   lastUpdated: string
   note?: string
@@ -55,7 +60,12 @@ interface RawBill {
   delivered?: boolean
   status: BillStatus
   productionStatus?: ProductionStatus
-  productionTimeline?: { step: ProductionStatus; timestamp: string }[]
+  productionTimeline?: {
+    status: ProductionStatus
+    timestamp: string
+    by: string
+    note?: string
+  }[]
   deliveryDate?: string
   deliveredAt?: string
   trackingNo?: string
@@ -149,6 +159,8 @@ export async function updateBillAddress(
 export async function updateProductionStatus(
   id: string,
   status: ProductionStatus,
+  note?: string,
+  by: string = 'admin',
 ) {
   const list = await loadBills()
   const idx = list.findIndex((b) => b.id === id)
@@ -158,7 +170,12 @@ export async function updateProductionStatus(
     productionStatus: status,
     productionTimeline: [
       ...list[idx].productionTimeline,
-      { step: status, timestamp: new Date().toISOString() },
+      {
+        status,
+        timestamp: new Date().toISOString(),
+        by,
+        note,
+      },
     ],
   }
 }

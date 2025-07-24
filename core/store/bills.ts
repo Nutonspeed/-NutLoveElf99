@@ -28,6 +28,7 @@ interface BillStore {
   updateProductionStatus: (
     id: string,
     status: AdminBill['productionStatus'],
+    note?: string,
   ) => void
   updatePaymentStatus: (id: string, status: AdminBill['paymentStatus']) => void
   archive: (id: string) => void
@@ -56,8 +57,8 @@ export const useBillStore = create<BillStore>((set) => ({
     setStatus(id, status)
     set({ bills: getBills() })
   },
-  updateProductionStatus: (id, status) => {
-    setProdStatus(id, status)
+  updateProductionStatus: (id, status, note) => {
+    setProdStatus(id, status, note)
     set({ bills: getBills() })
   },
   updatePaymentStatus: (id, status) => {

@@ -1,13 +1,22 @@
 "use client"
 import Link from 'next/link'
+import { useState } from 'react'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/hooks/use-toast'
+import { useBillStore } from '@/core/store'
 import { useBillById } from '@/hooks/useBillById'
 
 export default function AdminBillDetailPage({ params }: { params: { billId: string } }) {
   const bill = useBillById(params.billId)
+  const store = useBillStore()
+  const { toast } = useToast()
+  const [status, setStatus] = useState<'waiting' | 'cutting' | 'sewing' | 'packing' | 'shipped' | 'done'>(bill.productionStatus ?? 'waiting')
+  const [note, setNote] = useState('')
 
   if (bill === undefined) {
     return <div className="p-4 text-center">Loading...</div>
@@ -74,6 +83,36 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
             <span>รวมทั้งหมด</span>
             <span className="text-primary">฿{total.toLocaleString()}</span>
           </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>อัปเดตสถานะผลิต</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Select value={status} onValueChange={v => setStatus(v as typeof status)}>
+            <SelectTrigger className="w-40">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="waiting">รอคิว</SelectItem>
+              <SelectItem value="cutting">ตัดผ้า</SelectItem>
+              <SelectItem value="sewing">เย็บ</SelectItem>
+              <SelectItem value="packing">แพ็ค</SelectItem>
+              <SelectItem value="shipped">จัดส่ง</SelectItem>
+              <SelectItem value="done">เสร็จ</SelectItem>
+            </SelectContent>
+          </Select>
+          <Textarea value={note} onChange={e => setNote(e.target.value)} />
+          <Button
+            onClick={() => {
+              store.updateProductionStatus(bill.id, status, note)
+              toast({ title: 'อัปเดตสถานะแล้ว' })
+              setNote('')
+            }}
+          >
+            อัปเดตสถานะ
+          </Button>
         </CardContent>
       </Card>
       <div className="flex gap-2">
