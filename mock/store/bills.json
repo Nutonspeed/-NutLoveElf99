@@ -10,13 +10,19 @@
     "address": "123 ถนนสุขุมวิท แขวงคลองตัน เขตวัฒนา กรุงเทพฯ 10110",
     "note": "จัดส่งภายในสัปดาห์",
     "shipping": 50,
-    "status": "paid",
+    "status": "แจ้งโอนแล้ว",
     "phone": "0812345678",
     "paymentStatus": "paid",
     "createdAt": "2024-01-15T08:00:00Z",
     "followup_log": [],
     "sharedAt": "2024-01-20T00:00:00Z",
-    "sharedBy": "admin"
+    "sharedBy": "admin",
+    "transferConfirmation": {
+      "bank": "SCB",
+      "time": "2024-01-15T09:00:00Z",
+      "amount": 408,
+      "note": "เต็มจำนวน"
+    }
   },
   {
     "id": "BILL-002",
