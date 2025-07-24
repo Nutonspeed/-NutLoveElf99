@@ -40,6 +40,8 @@ export interface AdminBill {
   shippingMethod?: string
   shippingStatus?: 'shipped' | 'delivered' | 'returned' | 'cancelled'
   phone?: string
+  receiptUrl?: string
+  receiptNote?: string
   contactChannel?: string
   createdAt: string
   feedback?: BillFeedback
