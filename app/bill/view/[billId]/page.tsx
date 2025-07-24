@@ -8,13 +8,17 @@ import BillTimeline from '@/components/bill/BillTimeline'
 import { formatDateThai } from '@/lib/formatDateThai'
 import type { StoreProfile } from '@/lib/config'
 import { getStoreProfile } from '@/lib/config'
+import { useToast } from '@/hooks/use-toast'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const bill = (bills as any[]).find(b => b.id === params.billId)
   const [editAddr, setEditAddr] = useState(false)
   const [address, setAddress] = useState(bill?.address || '')
+  const [editPhone, setEditPhone] = useState(false)
+  const [phone, setPhone] = useState(bill?.phone || '')
   const [store, setStore] = useState<StoreProfile | null>(null)
-
+  const { toast } = useToast()
+  
   useEffect(() => {
     getStoreProfile().then(setStore)
   }, [])
@@ -34,14 +38,14 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   const handleShare = () => {
     if (typeof window !== 'undefined') {
       navigator.clipboard.writeText(window.location.href)
-      alert('คัดลอกลิงก์แล้ว')
+      toast({ title: 'คัดลอกลิงก์แล้ว' })
     }
   }
 
   return (
     <div className="p-4 space-y-4 max-w-xl mx-auto">
       <h1 className="text-xl font-bold text-center">บิล {bill.id}</h1>
-      <BillStatusTracker status={bill.status} />
+      <BillStatusTracker status={bill.productionStatus || 'waiting'} />
       <BillTimeline status={bill.productionStatus || 'waiting'} />
       {bill.productionTimeline?.length > 0 && (
         <p className="text-xs text-gray-500 text-center">
@@ -75,6 +79,29 @@ export default function BillViewPage({ params }: { params: { billId: string } })
           onClick={() => setEditAddr(v => !v)}
         >
           แก้ไขที่อยู่
+        </button>
+        {editPhone ? (
+          <div className="space-y-2 mt-2">
+            <input
+              className="border p-2 w-full"
+              value={phone}
+              onChange={e => setPhone(e.target.value)}
+            />
+            <button
+              className="border px-3 py-1"
+              onClick={() => setEditPhone(false)}
+            >
+              บันทึกเบอร์
+            </button>
+          </div>
+        ) : (
+          <p>โทร {phone}</p>
+        )}
+        <button
+          className="text-sm underline text-blue-600"
+          onClick={() => setEditPhone(v => !v)}
+        >
+          แก้ไขเบอร์ติดต่อ
         </button>
       </div>
       <ul className="divide-y">
