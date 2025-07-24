@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson } from '@/lib/jsonFile'
+import { readJson } from '@/lib/server/jsonFile'
 
 export async function GET() {
   const file = join(process.cwd(), 'mock', 'store', 'notifications.json')

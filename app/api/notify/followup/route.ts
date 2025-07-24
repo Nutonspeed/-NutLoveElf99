@@ -3,7 +3,7 @@ import { addNotification } from '@/lib/notificationLog'
 import { promises as fs } from 'fs'
 import path from 'path'
 import bills from '@/mock/bill.detail.json'
-import { readJson, writeJson } from '@/lib/jsonFile'
+import { readJson, writeJson } from '@/lib/server/jsonFile'
 import { updateBill } from '@/mock/bills'
 
 const STATUS_FILE = path.join(process.cwd(), 'mock/store/shipping-status.json')
