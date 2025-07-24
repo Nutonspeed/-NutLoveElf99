@@ -18,6 +18,7 @@ import {
   MailQuestion,
   Megaphone,
   MessageCircle,
+  Search as SearchIcon,
   UserPlus,
   Percent,
   Database,
@@ -52,6 +53,12 @@ const groups = [
     items: [
       { href: "/admin/customers", label: "ลูกค้า", icon: Users, feature: "customers" },
       { href: "/admin/customers/create", label: "เพิ่มลูกค้าใหม่", icon: UserPlus, feature: "customers" },
+    ],
+  },
+  {
+    label: "Search",
+    items: [
+      { href: "/admin/search", label: "ค้นหา", icon: SearchIcon, feature: "dashboard" },
     ],
   },
   {
