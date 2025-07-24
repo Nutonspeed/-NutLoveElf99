@@ -77,7 +77,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
       </ul>
       {bill.note && <p className="text-sm">หมายเหตุ: {bill.note}</p>}
       <BillQRSection total={total} />
-      <TransferConfirmForm billId={bill.id} />
+      <TransferConfirmForm billId={bill.id} existing={bill.transferConfirmation} />
       <button className="border px-3 py-1" onClick={handleShare}>คัดลอกลิงก์</button>
     </div>
   )
