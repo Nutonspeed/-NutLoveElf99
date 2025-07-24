@@ -1,8 +1,4 @@
-import { join } from 'path'
-import { readJson, writeJson } from './jsonFile'
-
-const file = join(process.cwd(), 'mock', 'store', 'staffs.json')
-
+import { readJson } from "./jsonFile"
 export interface Staff {
   id: string
   name: string
@@ -12,8 +8,10 @@ export interface Staff {
   active: boolean
 }
 
+const url = '/mock/store/staffs.json'
+
 export async function listStaffs(): Promise<Staff[]> {
-  return readJson<Staff[]>(file, [])
+  return readJson<Staff[]>(url, [])
 }
 
 export async function getStaff(id: string): Promise<Staff | undefined> {
@@ -22,27 +20,27 @@ export async function getStaff(id: string): Promise<Staff | undefined> {
 }
 
 export async function addStaff(data: Omit<Staff, 'id'>): Promise<Staff> {
-  const list = await listStaffs()
-  const staff: Staff = { id: Date.now().toString(), ...data }
-  list.push(staff)
-  await writeJson(file, list)
-  return staff
+  const res = await fetch('/api/staffs', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  return res.json()
 }
 
 export async function updateStaff(id: string, data: Partial<Omit<Staff, 'id'>>): Promise<Staff | undefined> {
-  const list = await listStaffs()
-  const idx = list.findIndex(s => s.id === id)
-  if (idx === -1) return undefined
-  list[idx] = { ...list[idx], ...data }
-  await writeJson(file, list)
-  return list[idx]
+  const res = await fetch(`/api/staffs/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) return undefined
+  return res.json()
 }
 
 export async function removeStaff(id: string): Promise<boolean> {
-  const list = await listStaffs()
-  const idx = list.findIndex(s => s.id === id)
-  if (idx === -1) return false
-  list.splice(idx, 1)
-  await writeJson(file, list)
-  return true
+  const res = await fetch(`/api/staffs/${id}`, { method: 'DELETE' })
+  if (!res.ok) return false
+  const result = await res.json()
+  return !!result.success
 }

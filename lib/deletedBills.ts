@@ -1,6 +1,5 @@
-import { promises as fs } from 'fs'
 import { join } from 'path'
-import { readJson, writeJson } from './jsonFile'
+import { readJson, writeJson } from './server/jsonFile'
 
 const dir = join(process.cwd(), 'mock', 'store')
 const billsFile = join(dir, 'bills.json')

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson, writeJson } from '@/lib/jsonFile'
+import { readJson, writeJson } from '@/lib/server/jsonFile'
 import type { ProductionStatus } from '@/core/mock/fakeBillDB'
 
 export async function PATCH(req: Request) {

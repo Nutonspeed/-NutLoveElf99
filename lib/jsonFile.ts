@@ -1,16 +1,17 @@
-import { promises as fs } from 'fs'
-import { dirname } from 'path'
-
-export async function readJson<T>(file: string, fallback: T): Promise<T> {
+export async function readJson<T>(path: string, fallback: T): Promise<T> {
   try {
-    const text = await fs.readFile(file, 'utf8')
-    return JSON.parse(text) as T
+    const res = await fetch(path)
+    if (!res.ok) throw new Error('fetch failed')
+    return (await res.json()) as T
   } catch {
     return fallback
   }
 }
 
-export async function writeJson<T>(file: string, data: T): Promise<void> {
-  await fs.mkdir(dirname(file), { recursive: true })
-  await fs.writeFile(file, JSON.stringify(data, null, 2), 'utf8')
+export async function writeJson<T>(path: string, data: T): Promise<void> {
+  await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
 }

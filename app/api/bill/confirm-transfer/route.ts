@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { join } from 'path'
-import { readJson, writeJson } from '@/lib/jsonFile'
+import { readJson, writeJson } from '@/lib/server/jsonFile'
 
 export async function POST(req: Request) {
   const { billId, bank, time, amount, note } = (await req.json().catch(() => ({}))) as {
