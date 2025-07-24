@@ -32,7 +32,7 @@ export default function AdminBillPrint({ params }: { params: { billId: string } 
         <div data-printable="summary">
           <BillSummaryTotals subtotal={subtotal} discount={bill.discount} shipping={bill.shipping} />
         </div>
-        <BillPaymentQR value={bill.id} />
+        <BillPaymentQR />
         <BillNoteBox note={bill.note} />
       </BillPrintLayout>
     </div>
