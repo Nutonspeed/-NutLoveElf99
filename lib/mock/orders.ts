@@ -13,4 +13,12 @@ export function updateOrderStatus(id: string, status: OrderStatus) {
   setOrderStatus(id, status)
 }
 
+export function addOrderTimelineEntry(
+  id: string,
+  entry: { status: OrderStatus; timestamp: string; note?: string; updatedBy: string }
+) {
+  const order = mockOrders.find(o => o.id === id)
+  if (order) order.timeline.push(entry)
+}
+
 export { getOrdersInRange, getDailySales, getTopSellingItems }

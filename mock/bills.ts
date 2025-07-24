@@ -24,6 +24,12 @@ export interface AdminBill {
     | 'packing'
     | 'shipped'
     | 'done'
+  productionTimeline?: Array<{
+    status: 'waiting' | 'cutting' | 'sewing' | 'packing' | 'shipped' | 'done'
+    timestamp: string
+    by: string
+    note?: string
+  }>
   paymentStatus: 'unpaid' | 'paid' | 'partial'
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
@@ -155,10 +161,14 @@ export function updateBillStatus(id: string, status: AdminBill['status']) {
 export function updateProductionStatus(
   id: string,
   status: NonNullable<AdminBill['productionStatus']>,
+  note?: string,
+  by: string = 'admin',
 ) {
   const bill = mockBills.find(b => b.id === id)
   if (bill) {
     bill.productionStatus = status
+    if (!bill.productionTimeline) bill.productionTimeline = []
+    bill.productionTimeline.push({ status, timestamp: new Date().toISOString(), by, note })
   }
 }
 

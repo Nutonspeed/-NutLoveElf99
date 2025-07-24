@@ -19,11 +19,25 @@ export const useBillStore = create<BillState>((set, get) => ({
   setBill: (bill) => set({ bill }),
   updateStatus: (status) =>
     set(state => (state.bill ? { bill: { ...state.bill, status } } : state)),
-  updateProduction: (step) => {
+  updateProduction: (step, note) => {
     const { bill } = get()
     if (!bill) return
-    updateProductionStatus(bill.id, step)
-    set({ bill: { ...bill, productionStatus: step } })
+    updateProductionStatus(bill.id, step, note)
+    set({
+      bill: {
+        ...bill,
+        productionStatus: step,
+        productionTimeline: [
+          ...(bill.productionTimeline || []),
+          {
+            status: step,
+            timestamp: new Date().toISOString(),
+            by: 'admin',
+            note,
+          },
+        ],
+      },
+    })
   },
   addCustomerNote: (note) =>
     set((state) =>

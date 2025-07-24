@@ -57,8 +57,10 @@ export function updateBillStatus(id: string, status: AdminBill['status']) {
 export function updateProductionStatus(
   id: string,
   status: NonNullable<AdminBill['productionStatus']>,
+  note?: string,
+  by: string = 'admin',
 ) {
-  baseProdStatus(id, status)
+  baseProdStatus(id, status, note, by)
   bills = [...seedBills]
   persist()
 }
