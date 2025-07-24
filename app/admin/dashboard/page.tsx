@@ -19,6 +19,12 @@ import DashboardCard from "@/components/admin/dashboard/DashboardCard"
 import { useBillInsights } from "@/hooks/useBillInsights"
 import { mockCustomers, type Customer } from "@/lib/mock-customers"
 import {
+  OrdersTodayCard,
+  UnpaidOrdersCard,
+  RevenueSummaryCard,
+  ReadyToShipCard,
+} from "../analytics/cards"
+import {
   mockDB,
   countOrders,
   sumOrderTotal,
@@ -80,6 +86,15 @@ export default function AdminDashboard() {
       title="แดชบอร์ดแอดมินหลัก"
       breadcrumb={[{ title: "แดชบอร์ด" }]}
     >
+
+      <section>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <OrdersTodayCard />
+          <UnpaidOrdersCard />
+          <RevenueSummaryCard />
+          <ReadyToShipCard />
+        </div>
+      </section>
 
       <section className="space-y-2">
         <h2 className="text-lg font-semibold">สรุปยอดขายวันนี้</h2>
