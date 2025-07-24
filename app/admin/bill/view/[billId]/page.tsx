@@ -1,5 +1,8 @@
 "use client"
 import { useEffect, useState } from 'react'
+import AdminStatusEditor from '@/components/AdminStatusEditor'
+import BillTimeline from '@/components/bill/BillTimeline'
+import { formatDateThai } from '@/lib/formatDateThai'
 
 export default function ViewPage({ params }: { params: { billId: string } }) {
   const [bill, setBill] = useState<any | null>(null)
@@ -27,6 +30,19 @@ export default function ViewPage({ params }: { params: { billId: string } }) {
           {bill.status}
         </span>
       </p>
+      <div className="space-y-2">
+        <h2 className="font-medium">สถานะงานผลิต</h2>
+        <AdminStatusEditor billId={bill.id} step={bill.productionStatus || 'waiting'} />
+        <BillTimeline status={bill.productionStatus || 'waiting'} />
+        {bill.productionTimeline?.length > 0 && (
+          <p className="text-xs text-gray-500">
+            อัปเดตล่าสุด:{' '}
+            {formatDateThai(
+              bill.productionTimeline[bill.productionTimeline.length - 1].timestamp
+            )}
+          </p>
+        )}
+      </div>
       {bill.transferConfirmation && (
         <div className="border p-2 rounded">
           <p>ธนาคาร: {bill.transferConfirmation.bank}</p>

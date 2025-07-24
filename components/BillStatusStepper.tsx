@@ -1,16 +1,17 @@
-import { Clock, Scissors, Package, Truck } from 'lucide-react'
-import type { BillStatus } from '@/core/mock/fakeBillDB'
+import { Clock, Scissors, Shirt, Package, Truck, CircleCheck } from 'lucide-react'
 
 const steps = [
-  { key: 'waiting', label: 'Waiting', icon: Clock },
-  { key: 'cutting', label: 'Cutting', icon: Scissors },
-  { key: 'packing', label: 'Packing', icon: Package },
-  { key: 'shipped', label: 'Shipped', icon: Truck },
+  { key: 'waiting', label: 'รอตัด', icon: Clock },
+  { key: 'cutting', label: 'กำลังตัด', icon: Scissors },
+  { key: 'sewing', label: 'รอเย็บ', icon: Shirt },
+  { key: 'done', label: 'เย็บเสร็จ', icon: CircleCheck },
+  { key: 'packing', label: 'แพ็คแล้ว', icon: Package },
+  { key: 'shipped', label: 'จัดส่งแล้ว', icon: Truck },
 ] as const
 
 type StepKey = typeof steps[number]['key']
 
-export default function BillStatusStepper({ status }: { status: BillStatus }) {
+export default function BillStatusStepper({ status }: { status: StepKey }) {
   const currentStepIndex = steps.findIndex(s => s.key === status)
 
   return (

@@ -4,8 +4,16 @@
     "shortCode": "B001",
     "customer": "สมชาย ใจดี",
     "items": [
-      { "name": "ผ้าคลุมโซฟา", "quantity": 1, "price": 299 },
-      { "name": "ปลอกหมอน", "quantity": 2, "price": 59 }
+      {
+        "name": "ผ้าคลุมโซฟา",
+        "quantity": 1,
+        "price": 299
+      },
+      {
+        "name": "ปลอกหมอน",
+        "quantity": 2,
+        "price": 59
+      }
     ],
     "address": "123 ถนนสุขุมวิท แขวงคลองตัน เขตวัฒนา กรุงเทพฯ 10110",
     "note": "จัดส่งภายในสัปดาห์",
@@ -22,14 +30,20 @@
       "time": "2024-01-15T09:00:00Z",
       "amount": 408,
       "note": "เต็มจำนวน"
-    }
+    },
+    "productionStatus": "waiting",
+    "productionTimeline": []
   },
   {
     "id": "BILL-002",
     "shortCode": "B002",
     "customer": "ทดสอบ ยกเลิก",
     "items": [
-      { "name": "ชุดโซฟา", "quantity": 1, "price": 500 }
+      {
+        "name": "ชุดโซฟา",
+        "quantity": 1,
+        "price": 500
+      }
     ],
     "address": "99/1 ซอยสุขุมวิท 10 กรุงเทพฯ 10110",
     "note": "ลูกค้าขอยกเลิก",
@@ -39,14 +53,20 @@
     "createdAt": "2024-01-16T08:00:00Z",
     "followup_log": [],
     "sharedAt": null,
-    "sharedBy": null
+    "sharedBy": null,
+    "productionStatus": "waiting",
+    "productionTimeline": []
   },
   {
     "id": "BILL-003",
     "shortCode": "B003",
     "customer": "Cancelled Order",
     "items": [
-      { "name": "ปลอกหมอน", "quantity": 4, "price": 59 }
+      {
+        "name": "ปลอกหมอน",
+        "quantity": 4,
+        "price": 59
+      }
     ],
     "address": "555/9 Test Road Bangkok",
     "note": "cancel due to duplicate",
@@ -56,6 +76,8 @@
     "createdAt": "2024-01-17T08:00:00Z",
     "followup_log": [],
     "sharedAt": null,
-    "sharedBy": null
+    "sharedBy": null,
+    "productionStatus": "waiting",
+    "productionTimeline": []
   }
 ]
