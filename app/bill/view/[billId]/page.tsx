@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import BillClientInteraction from '@/components/BillClientInteraction'
 import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
 import MarkAsPaidButton from '@/components/bill/MarkAsPaidButton'
+import QRDisplay from '@/components/bill/QRDisplay'
 import { formatDateThai } from '@/lib/formatDateThai'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
@@ -15,11 +16,12 @@ import type { Customer } from '@/types/customer'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const { billId } = params
-  const { bill, setBill, fetch, updateStatus } = useBillStore()
+  const { bill, setBill, fetch, updateStatus, addCustomerNote } = useBillStore()
   const [customer, setCustomer] = useState<Customer | undefined>()
   const [loading, setLoading] = useState(true)
   const [notes, setNotes] = useState<{ message: string; createdAt: string; from: string }[]>([])
   const [message, setMessage] = useState('')
+  const listRef = useRef<HTMLUListElement>(null)
 
   useEffect(() => {
     if (!bill) {
@@ -63,10 +65,11 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         status={bill.status}
       />
       <BillTimeline status={bill.productionStatus} />
+      <QRDisplay total={bill.total} qrImage={bill.qrImage} />
       <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => updateStatus('paid')} />
       <div className="space-y-2">
         <h2 className="font-semibold">ฝากข้อความถึงแอดมิน</h2>
-        <ul className="space-y-1 text-sm">
+        <ul ref={listRef} className="space-y-1 text-sm max-h-60 overflow-auto">
           {notes.filter(n => n.from === 'customer').map((n, i) => (
             <li key={i} className="border p-2 rounded">
               {n.message}{' '}
@@ -76,29 +79,26 @@ export default function BillViewPage({ params }: { params: { billId: string } })
             </li>
           ))}
         </ul>
-        <div className="flex gap-2 mt-2">
+        <div className="mt-2">
           <textarea
-            className="border p-2 flex-1"
+            className="border p-2 w-full"
             value={message}
             onChange={e => setMessage(e.target.value)}
           />
           <button
-            className="border px-3 py-1"
+            className="border px-3 py-1 mt-2"
             type="button"
-            onClick={async () => {
-              if (!message.trim()) return
-              const res = await fetch('/api/bill/add-note', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ billId: bill.id, message }),
+            onClick={() => {
+              const msg = message.trim()
+              if (!msg) return
+              if (notes.some(n => n.message === msg)) return
+              const note = { message: msg, createdAt: new Date().toISOString(), from: 'customer' }
+              setNotes([...notes, note])
+              addCustomerNote(note)
+              setMessage('')
+              requestAnimationFrame(() => {
+                listRef.current?.lastElementChild?.scrollIntoView({ behavior: 'smooth' })
               })
-              if (res.ok) {
-                const note = { message: message.trim(), createdAt: new Date().toISOString(), from: 'customer' }
-                setNotes([...notes, note])
-                setMessage('')
-              } else {
-                alert('ส่งข้อความไม่สำเร็จ')
-              }
             }}
           >
             ส่งข้อความ

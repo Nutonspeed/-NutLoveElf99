@@ -10,6 +10,7 @@ interface BillState {
   setBill: (bill: Bill) => void
   updateStatus: (status: string) => void
   updateProduction: (step: string) => void
+  addCustomerNote: (note: { message: string; createdAt: string; from: string }) => void
   fetch: (id: string) => Promise<void>
 }
 
@@ -24,6 +25,17 @@ export const useBillStore = create<BillState>((set, get) => ({
     updateProductionStatus(bill.id, step)
     set({ bill: { ...bill, productionStatus: step } })
   },
+  addCustomerNote: (note) =>
+    set((state) =>
+      state.bill
+        ? {
+            bill: {
+              ...state.bill,
+              customerNotes: [...(state.bill.customerNotes || []), note],
+            },
+          }
+        : state,
+    ),
   async fetch(id) {
     const bill = await getBillById(id)
     if (bill) set({ bill })
