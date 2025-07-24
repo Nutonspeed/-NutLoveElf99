@@ -23,9 +23,20 @@ export default function AnalyticsContent() {
           <Link href="/admin/bill/create">
             <Button className="w-full">Create Bill</Button>
           </Link>
-          <Link href="/admin/analytics/store-kpi">
-            <Button variant="outline" className="w-full">ดู Store KPI</Button>
-          </Link>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Link href="/admin/analytics/store-kpi">
+              <Button variant="outline" className="w-full">ดู Store KPI</Button>
+            </Link>
+            <Link href="/admin/analytics/staff-activity">
+              <Button variant="outline" className="w-full">Staff Activity</Button>
+            </Link>
+            <Link href="/admin/analytics/ranking">
+              <Button variant="outline" className="w-full">Top Patterns</Button>
+            </Link>
+            <Link href="/admin/analytics/favorites">
+              <Button variant="outline" className="w-full">Favorites</Button>
+            </Link>
+          </div>
         </div>
         <div className="space-y-2">
           <div className="border rounded p-4 bg-white text-center">

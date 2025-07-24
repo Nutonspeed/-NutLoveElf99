@@ -1,18 +1,22 @@
-"use client"
-
+import { promises as fs } from 'fs'
+import { join } from 'path'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
-import { useLocalStorage } from '@/hooks/use-local-storage'
-import { fabrics } from '@/lib/mock-fabrics'
 
-export default function AdminFavoritesAnalytics() {
-  const [counts] = useLocalStorage<Record<string, number>>('favorite-counts', {})
-  const ranking = [...fabrics].map((f) => ({
-    ...f,
-    count: counts[f.slug] || 0,
-  })).sort((a, b) => b.count - a.count)
+async function loadFavorites() {
+  const file = join(process.cwd(), 'mock', 'store', 'analytics', 'favorites.json')
+  try {
+    const txt = await fs.readFile(file, 'utf8')
+    return JSON.parse(txt) as { slug: string; name: string; count: number }[]
+  } catch {
+    return []
+  }
+}
+
+export default async function AdminFavoritesAnalytics() {
+  const ranking = await loadFavorites()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,7 +35,7 @@ export default function AdminFavoritesAnalytics() {
           </CardHeader>
           <CardContent>
             <ol className="space-y-2 list-decimal list-inside">
-              {ranking.map((f, idx) => (
+              {ranking.map((f) => (
                 <li key={f.slug} className="flex justify-between">
                   <span>{f.name}</span>
                   <span className="text-gray-600">{f.count}</span>

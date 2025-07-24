@@ -1,26 +1,22 @@
-"use client"
-
-import { useState } from 'react'
+import { promises as fs } from 'fs'
+import { join } from 'path'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
-import { getFabricRanking } from '@/lib/get-fabric-ranking'
 
-export default function AdminRankingPage() {
-  const [ranking, setRanking] = useState(getFabricRanking())
+async function loadRanking() {
+  const file = join(process.cwd(), 'mock', 'store', 'analytics', 'ranking.json')
+  try {
+    const txt = await fs.readFile(file, 'utf8')
+    return JSON.parse(txt) as { slug: string; name: string; count: number }[]
+  } catch {
+    return []
+  }
+}
 
-  const onDragStart = (e: React.DragEvent<HTMLLIElement>, idx: number) => {
-    e.dataTransfer.setData('idx', idx.toString())
-  }
-  const onDrop = (e: React.DragEvent<HTMLLIElement>, idx: number) => {
-    const from = Number(e.dataTransfer.getData('idx'))
-    if (from === idx) return
-    const items = [...ranking]
-    const [moved] = items.splice(from, 1)
-    items.splice(idx, 0, moved)
-    setRanking(items)
-  }
+export default async function AdminRankingPage() {
+  const ranking = await loadRanking()
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -35,20 +31,14 @@ export default function AdminRankingPage() {
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>ลากเพื่อเปลี่ยนลำดับ</CardTitle>
+            <CardTitle>Top Selling Patterns</CardTitle>
           </CardHeader>
           <CardContent>
             <ol className="space-y-2 list-decimal list-inside">
-              {ranking.map((f, idx) => (
-                <li
-                  key={f.slug}
-                  draggable
-                  onDragStart={(e) => onDragStart(e, idx)}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => onDrop(e, idx)}
-                  className="border p-2 rounded bg-white"
-                >
-                  {f.name} <span className="text-gray-600">({f.count})</span>
+              {ranking.map((f) => (
+                <li key={f.slug} className="border p-2 rounded bg-white flex justify-between">
+                  <span>{f.name}</span>
+                  <span className="text-gray-600">{f.count}</span>
                 </li>
               ))}
             </ol>

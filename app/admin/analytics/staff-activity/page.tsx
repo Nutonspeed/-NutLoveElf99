@@ -5,31 +5,18 @@ import { ArrowLeft } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
 import { Button } from '@/components/ui/buttons/button'
 
-async function loadLogs() {
-  const file = join(process.cwd(),'mock','store','activity-log.json')
+async function loadData() {
+  const file = join(process.cwd(), 'mock', 'store', 'analytics', 'staff-activity.json')
   try {
-    const txt = await fs.readFile(file,'utf8')
-    return JSON.parse(txt) as any[]
+    const txt = await fs.readFile(file, 'utf8')
+    return JSON.parse(txt) as { admin: string; createdBills: number; editedOrders: number }[]
   } catch {
     return []
   }
 }
 
-function buildHeatmap(logs: any[]) {
-  const map: Record<string, number[]> = {}
-  logs.forEach(l=>{
-    const hour = new Date(l.timestamp).getHours()
-    const u = l.admin || 'system'
-    if(!map[u]) map[u] = Array(24).fill(0)
-    map[u][hour]++
-  })
-  return map
-}
-
 export default async function StaffActivityPage() {
-  const logs = await loadLogs()
-  const heat = buildHeatmap(logs)
-  const users = Object.keys(heat)
+  const logs = await loadData()
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8 space-y-4">
@@ -43,23 +30,23 @@ export default async function StaffActivityPage() {
         </div>
         <Card>
           <CardHeader>
-            <CardTitle>Heatmap (hourly)</CardTitle>
+            <CardTitle>Activity Summary</CardTitle>
           </CardHeader>
           <CardContent>
-            <table className="text-xs">
+            <table className="w-full text-sm">
               <thead>
-                <tr>
-                  <th>User</th>
-                  {Array.from({length:24}).map((_,i)=>(<th key={i}>{i}</th>))}
+                <tr className="text-left">
+                  <th className="py-1">Admin</th>
+                  <th className="py-1">Bills Created</th>
+                  <th className="py-1">Orders Edited</th>
                 </tr>
               </thead>
               <tbody>
-                {users.map(u=>(
-                  <tr key={u} className="border-t">
-                    <td className="pr-2">{u}</td>
-                    {heat[u].map((c,i)=>(
-                      <td key={i} className={c? 'bg-blue-200 text-center':'text-center'}>{c||''}</td>
-                    ))}
+                {logs.map((l) => (
+                  <tr key={l.admin} className="border-t">
+                    <td className="py-1 pr-2">{l.admin}</td>
+                    <td className="py-1 text-center">{l.createdBills}</td>
+                    <td className="py-1 text-center">{l.editedOrders}</td>
                   </tr>
                 ))}
               </tbody>

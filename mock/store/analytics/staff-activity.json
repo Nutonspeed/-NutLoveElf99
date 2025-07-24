@@ -1,0 +1,5 @@
+[
+  {"admin": "alice", "createdBills": 12, "editedOrders": 6},
+  {"admin": "bob", "createdBills": 8, "editedOrders": 9},
+  {"admin": "cindy", "createdBills": 5, "editedOrders": 4}
+]
