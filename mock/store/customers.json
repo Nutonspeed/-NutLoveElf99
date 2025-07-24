@@ -1,7 +1,7 @@
 [
-  {"id":"2","name":"John Doe","tags":["ลูกค้าประจำ"]},
-  {"id":"3","name":"Jane Smith","tags":["COD"]},
-  {"id":"4","name":"Mike Johnson","tags":[]},
-  {"id":"5","name":"Sarah Wilson","tags":[]},
-  {"id":"6","name":"David Brown","tags":[]}
+  {"id": "c001", "name": "สมชาย ใจดี", "totalSpent": 12000, "lastOrder": "2024-07-10T00:00:00Z", "tags": ["VIP"]},
+  {"id": "c002", "name": "วิไลวรรณ มั่นคง", "totalSpent": 8500, "lastOrder": "2024-07-08T00:00:00Z", "tags": ["COD"]},
+  {"id": "c003", "name": "Michael Johnson", "totalSpent": 3000, "lastOrder": "2024-06-15T00:00:00Z", "tags": []},
+  {"id": "c004", "name": "Sarah Wilson", "totalSpent": 4500, "lastOrder": "2024-06-20T00:00:00Z", "tags": []},
+  {"id": "c005", "name": "David Brown", "totalSpent": 2200, "lastOrder": "2024-05-30T00:00:00Z", "tags": []}
 ]
