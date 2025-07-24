@@ -1,0 +1,26 @@
+[
+  {
+    "billId": "BILL-101",
+    "billNo": "B101",
+    "customer": "สมชาย ใจดี",
+    "updatedAt": "2024-07-01T09:00:00Z",
+    "status": "unpaid",
+    "category": "unpaid"
+  },
+  {
+    "billId": "BILL-102",
+    "billNo": "B102",
+    "customer": "วิไลวรรณ มั่นคง",
+    "updatedAt": "2024-07-02T11:30:00Z",
+    "status": "awaiting_print",
+    "category": "notPrinted"
+  },
+  {
+    "billId": "BILL-103",
+    "billNo": "B103",
+    "customer": "นรินทร์ สุขสวัสดิ์",
+    "updatedAt": "2024-07-02T14:45:00Z",
+    "status": "packed",
+    "category": "readyToShip"
+  }
+]

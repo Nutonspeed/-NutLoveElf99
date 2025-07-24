@@ -26,6 +26,9 @@ export default function AnalyticsContent() {
           <Link href="/admin/analytics/store-kpi">
             <Button variant="outline" className="w-full">ดู Store KPI</Button>
           </Link>
+          <Link href="/admin/alerts/pending-orders">
+            <Button variant="outline" className="w-full">Alerts</Button>
+          </Link>
         </div>
         <div className="space-y-2">
           <div className="border rounded p-4 bg-white text-center">
