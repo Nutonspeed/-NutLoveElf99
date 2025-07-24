@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Printer, Download } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Input } from '@/components/ui/inputs/input'
@@ -10,15 +11,27 @@ import { downloadCSV } from '@/lib/mock-export'
 import { billTotal } from '@/lib/report'
 
 export default function DailyReportPage() {
-  const [date, setDate] = useState(new Date().toISOString().slice(0, 10))
+  const params = useSearchParams()
+  const [date, setDate] = useState(
+    params.get('date') || new Date().toISOString().slice(0, 10),
+  )
   const [bills, setBills] = useState<any[]>([])
+  const staff = params.get('staff') || ''
 
   useEffect(() => {
     fetch('/mock/store/bills.json')
       .then(r => r.json())
-      .then((list: any[]) => setBills(list.filter(b => b.createdAt.startsWith(date))))
+      .then((list: any[]) =>
+        setBills(
+          list.filter(b => {
+            if (!b.createdAt.startsWith(date)) return false
+            if (staff && b.createdBy !== staff) return false
+            return true
+          }),
+        ),
+      )
       .catch(() => setBills([]))
-  }, [date])
+  }, [date, staff])
 
   const exportCsv = () => {
     downloadCSV(
