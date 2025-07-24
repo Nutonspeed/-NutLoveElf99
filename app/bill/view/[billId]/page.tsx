@@ -135,7 +135,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
           {bill.deliveredAt && <p>🗓 จัดส่งเมื่อ: {formatDateThai(bill.deliveredAt)}</p>}
         </div>
       )}
-      {bill.productionStatus && bill.productionStatus !== 'done' && (
+      {bill.productionStatus && (
         <p className="text-sm">
           {bill.productionStatus === 'waiting' && '⌛ รอคิวผลิต'}
           {bill.productionStatus === 'cutting' && '🧵 กำลังตัดผ้า'}

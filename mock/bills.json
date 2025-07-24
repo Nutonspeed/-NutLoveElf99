@@ -23,7 +23,7 @@
     "customerId": "c2",
     "delivered": true,
     "status": "delivering",
-    "productionStatus": "done",
+    "productionStatus": "shipped",
     "deliveryDate": "2024-05-18",
     "deliveredAt": "2024-05-21",
     "trackingNo": "TH0987654321",

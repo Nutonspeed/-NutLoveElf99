@@ -23,7 +23,6 @@ export interface AdminBill {
     | 'sewing'
     | 'packing'
     | 'shipped'
-    | 'done'
   paymentStatus: 'unpaid' | 'paid' | 'partial'
   paymentMethod?: 'cod' | 'bank_transfer' | 'promptpay' | 'credit_card'
   tags: string[]
@@ -66,7 +65,7 @@ export const mockBills: AdminBill[] = [
   carrier: 'Kerry',
   shippingMethod: 'Flash',
   shippingStatus: 'shipped',
-  productionStatus: 'done',
+  productionStatus: 'shipped',
   phone: '0812345678',
   createdAt: new Date().toISOString(),
   followup_log: [],

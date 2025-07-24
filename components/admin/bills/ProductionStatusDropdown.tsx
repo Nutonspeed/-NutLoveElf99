@@ -13,7 +13,6 @@ const options: { value: NonNullable<AdminBill['productionStatus']>; label: strin
   { value: 'sewing', label: 'เย็บ' },
   { value: 'packing', label: 'แพ็ค' },
   { value: 'shipped', label: 'จัดส่ง' },
-  { value: 'done', label: 'เสร็จ' },
 ]
 
 export default function ProductionStatusDropdown({ status, onChange }: Props) {

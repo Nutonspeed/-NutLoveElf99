@@ -1,13 +1,12 @@
-import { Clock, Scissors, Shirt, Package, Truck, CircleCheck } from 'lucide-react'
+import { Clock, Scissors, Shirt, Package, Truck } from 'lucide-react'
 import type { ProductionStatus } from '@/core/mock/fakeBillDB'
 
 const steps = [
   { key: 'waiting', label: 'รอคิว', icon: Clock },
-  { key: 'cutting', label: 'ตัดผ้า', icon: Scissors },
-  { key: 'sewing', label: 'เย็บ', icon: Shirt },
-  { key: 'packing', label: 'แพ็ค', icon: Package },
-  { key: 'shipped', label: 'จัดส่ง', icon: Truck },
-  { key: 'done', label: 'เสร็จสิ้น', icon: CircleCheck },
+  { key: 'cutting', label: 'กำลังตัดผ้า', icon: Scissors },
+  { key: 'sewing', label: 'กำลังเย็บ', icon: Shirt },
+  { key: 'packing', label: 'กำลังแพ็ค', icon: Package },
+  { key: 'shipped', label: 'จัดส่งแล้ว', icon: Truck },
 ] as const
 
 export default function BillTimeline({ status }: { status: ProductionStatus }) {

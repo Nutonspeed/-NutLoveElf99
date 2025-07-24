@@ -13,7 +13,6 @@ export type ProductionStatus =
   | 'sewing'
   | 'packing'
   | 'shipped'
-  | 'done'
 
 export interface FakeBillItem {
   fabricName: string
