@@ -38,6 +38,8 @@ export interface FakeBill {
   lastUpdated: string
   note?: string
   estimatedTotal: number
+  total: number
+  qrImage?: string
   delivered?: boolean
   deliveryDate?: string
   deliveredAt?: string
@@ -60,6 +62,8 @@ interface RawBill {
   carrier?: string
   notes?: string
   customerNotes?: { message: string; createdAt: string; from: string }[]
+  total?: number
+  qrImage?: string
 }
 
 let bills: FakeBill[] | null = null
@@ -104,6 +108,8 @@ async function loadBills(): Promise<FakeBill[]> {
         statusStep: stepMap[b.status] ?? 0,
         lastUpdated: '',
         estimatedTotal: 0,
+        total: b.total ?? 0,
+        qrImage: b.qrImage,
       }
     })
   }

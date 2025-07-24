@@ -5,6 +5,7 @@ import BillClientInteraction from '@/components/BillClientInteraction'
 import BillTimeline from '@/components/bill/BillTimeline'
 import EditAddressForm from '@/components/bill/EditAddressForm'
 import MarkAsPaidButton from '@/components/bill/MarkAsPaidButton'
+import QRDisplay from '@/components/bill/QRDisplay'
 import { formatDateThai } from '@/lib/formatDateThai'
 import Link from 'next/link'
 import { Button } from '@/components/ui/buttons/button'
@@ -63,6 +64,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         status={bill.status}
       />
       <BillTimeline status={bill.productionStatus} />
+      <QRDisplay total={bill.total} qrImage={bill.qrImage} />
       <MarkAsPaidButton billId={bill.id} status={bill.status} onPaid={() => updateStatus('paid')} />
       <div className="space-y-2">
         <h2 className="font-semibold">ฝากข้อความถึงแอดมิน</h2>

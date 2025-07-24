@@ -13,7 +13,9 @@
     "customerNotes": [],
     "sharedAt": null,
     "sharedBy": null,
-    "packedBy": "เมีย"
+    "packedBy": "เมีย",
+    "total": 999,
+    "qrImage": "/placeholder.svg"
   },
   {
     "id": "b_delivered",
@@ -30,6 +32,8 @@
     "customerNotes": [],
     "sharedAt": null,
     "sharedBy": null,
-    "packedBy": "แพ็คแล้วแต่รอเย็บผ้า"
+    "packedBy": "แพ็คแล้วแต่รอเย็บผ้า",
+    "total": 1999,
+    "qrImage": "/placeholder.svg"
   }
 ]
