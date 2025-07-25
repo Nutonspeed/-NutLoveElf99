@@ -9,6 +9,8 @@ export interface StoreProfile {
   accountNumber: string
 }
 
+export const USE_SUPABASE = false
+
 export const dataMode: 'mock' | 'real' =
   (process.env.NEXT_PUBLIC_DATA_MODE as 'mock' | 'real') || 'mock'
 

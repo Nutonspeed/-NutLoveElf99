@@ -1,5 +1,5 @@
 "use client"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft, Download } from "lucide-react"
 import {
@@ -13,8 +13,10 @@ import { Input } from "@/components/ui/inputs/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts"
-import { getBills, type AdminBill } from "@/core/mock/store"
-import { mockCustomers } from "@/lib/mock-customers"
+import { getAllBills } from '@/lib/data/bills'
+import { getAllCustomers } from '@/lib/data/customers'
+import type { AdminBill } from '@/mock/bills'
+import type { Customer } from '@/types/customer'
 import { downloadCSV, downloadPDF } from "@/lib/mock-export"
 
 function getTotal(b: AdminBill) {
@@ -26,10 +28,17 @@ export default function BillingReportPage() {
   const [group, setGroup] = useState("all")
   const [start, setStart] = useState("")
   const [end, setEnd] = useState("")
+  const [bills, setBills] = useState<AdminBill[]>([])
+  const [customers, setCustomers] = useState<Customer[]>([])
 
-  const bills = useMemo(() => {
-    return getBills().filter((b) => {
-      const c = mockCustomers.find((c) => c.name === b.customer)
+  useEffect(() => {
+    getAllBills().then(setBills)
+    getAllCustomers().then(setCustomers)
+  }, [])
+
+  const filtered = useMemo(() => {
+    return bills.filter((b) => {
+      const c = customers.find((c) => c.name === b.customer)
       if (tag !== "all" && !c?.tags?.includes(tag)) return false
       if (group !== "all" && c?.tier !== group) return false
       const d = new Date(b.createdAt).getTime()
@@ -37,14 +46,14 @@ export default function BillingReportPage() {
       if (end && d > new Date(end + "T23:59:59").getTime()) return false
       return true
     })
-  }, [tag, group, start, end])
+  }, [tag, group, start, end, bills, customers])
 
-  const totalBilled = bills.reduce((s, b) => s + getTotal(b), 0)
-  const paidRate = bills.length
-    ? bills.filter((b) => b.status === "paid").length / bills.length
+  const totalBilled = filtered.reduce((s, b) => s + getTotal(b), 0)
+  const paidRate = filtered.length
+    ? filtered.filter((b) => b.status === "paid").length / filtered.length
     : 0
   const avgPay = useMemo(() => {
-    const paid = bills.filter((b) => b.status === "paid")
+    const paid = filtered.filter((b) => b.status === "paid")
     if (paid.length === 0) return 0
     const totalDays = paid.reduce((s, b) => {
       const created = new Date(b.createdAt).getTime()
@@ -52,22 +61,22 @@ export default function BillingReportPage() {
       return s + (paidAt - created) / (1000 * 60 * 60 * 24)
     }, 0)
     return totalDays / paid.length
-  }, [bills])
+  }, [filtered])
 
   const daily = useMemo(() => {
     const map = new Map<string, number>()
-    for (const b of bills) {
+    for (const b of filtered) {
       const key = b.createdAt.slice(0, 10)
       map.set(key, (map.get(key) || 0) + getTotal(b))
     }
     return Array.from(map.entries())
       .sort((a, b) => a[0].localeCompare(b[0]))
       .map(([date, total]) => ({ date, total }))
-  }, [bills])
+  }, [filtered])
 
   const exportCsv = () => {
     downloadCSV(
-      bills.map((b) => ({
+      filtered.map((b) => ({
         id: b.id,
         status: b.status,
         total: getTotal(b),
@@ -193,7 +202,7 @@ export default function BillingReportPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {bills.map((b) => (
+                {filtered.map((b) => (
                   <TableRow key={b.id}>
                     <TableCell>{b.id}</TableCell>
                     <TableCell>{b.status}</TableCell>

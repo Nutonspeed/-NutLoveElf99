@@ -2,16 +2,14 @@
 import { useEffect, useState } from 'react'
 import BillQRSection from '@/components/bill/BillQRSection'
 import { calculateTotal } from '@/core/modules/bill'
+import { getBillById } from '@/lib/data/bills'
 
 export default function ThankYouPage({ params }: { params: { billId: string } }) {
   const { billId } = params
   const [bill, setBill] = useState<any | null>(null)
 
   useEffect(() => {
-    fetch(`/api/bill/${billId}`)
-      .then(r => r.json())
-      .then(setBill)
-      .catch(() => setBill(null))
+    getBillById(billId).then(setBill).catch(() => setBill(null))
   }, [billId])
 
   if (!bill) return <div className="p-4 text-center">ไม่พบบิลนี้</div>

@@ -1,17 +1,19 @@
 "use client"
 import { useEffect, useState } from 'react'
 import type { AdminBill } from '@/mock/bills'
-import { getBill } from '@/core/mock/store'
+import { getBillById } from '@/lib/data/bills'
 
 export function useBillById(id: string) {
-  const [bill, setBill] = useState<AdminBill | undefined>(() => getBill(id))
+  const [bill, setBill] = useState<AdminBill | undefined>(undefined)
 
   useEffect(() => {
-    setBill(getBill(id))
+    getBillById(id).then(setBill)
   }, [id])
 
   useEffect(() => {
-    const handler = () => setBill(getBill(id))
+    const handler = () => {
+      getBillById(id).then(setBill)
+    }
     window.addEventListener('storage', handler)
     return () => window.removeEventListener('storage', handler)
   }, [id])

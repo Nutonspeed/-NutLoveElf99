@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
-import bills from '@/mock/store/bills.json'
+import { getBillById } from '@/lib/data/bills'
 import BillQRSection from '@/components/bill/BillQRSection'
 import CustomerPaymentForm from '@/components/bill/CustomerPaymentForm'
 import PaymentConfirmationCard from '@/components/bill/PaymentConfirmationCard'
@@ -16,17 +16,26 @@ import { useToast } from '@/hooks/use-toast'
 import { calculateTotal } from '@/core/modules/bill'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
-  const bill = (bills as any[]).find(b => b.id === params.billId)
+  const [bill, setBill] = useState<any | undefined>(undefined)
   const [editAddr, setEditAddr] = useState(false)
-  const [address, setAddress] = useState(bill?.address || '')
+  const [address, setAddress] = useState('')
   const [editPhone, setEditPhone] = useState(false)
-  const [phone, setPhone] = useState(bill?.phone || '')
+  const [phone, setPhone] = useState('')
   const [store, setStore] = useState<StoreProfile | null>(null)
   const { toast } = useToast()
-  
+
   useEffect(() => {
+    getBillById(params.billId).then(b => {
+      setBill(b)
+      setAddress(b?.address || '')
+      setPhone(b?.phone || '')
+    })
     getStoreProfile().then(setStore)
-  }, [])
+  }, [params.billId])
+
+  if (bill === undefined) {
+    return <div className="p-4 text-center">Loading...</div>
+  }
 
   if (!bill) {
     return (
