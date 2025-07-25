@@ -14,6 +14,7 @@ import { useBillStore } from '@/core/store'
 import { useBillById } from '@/hooks/useBillById'
 import { carriers } from '@/config/carriers'
 import PaymentConfirmationCard from '@/components/bill/PaymentConfirmationCard'
+import { calculateTotal, getBillStatus } from '@/core/modules/bill'
 
 export default function AdminBillDetailPage({ params }: { params: { billId: string } }) {
   const bill = useBillById(params.billId)
@@ -34,9 +35,12 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
     return <div className="p-4 text-center">ไม่พบบิล</div>
   }
 
-  const subtotal = bill.items.reduce((sum, it) => sum + it.price * it.quantity, 0)
   const discount = (bill as any).discount || 0
-  const total = subtotal - discount + bill.shipping
+  const { subtotal, total } = calculateTotal({
+    items: bill.items,
+    shipping: bill.shipping,
+    discount,
+  })
 
   return (
     <div className="space-y-6 p-4">
@@ -47,7 +51,7 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
           </Button>
         </Link>
         <h1 className="text-2xl font-bold">บิล {bill.id}</h1>
-        <Badge className="ml-auto">{bill.status}</Badge>
+        <Badge className="ml-auto">{getBillStatus(bill.status)}</Badge>
       </div>
       <Card>
         <CardHeader>

@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react'
 import BillQRSection from '@/components/bill/BillQRSection'
+import { calculateTotal } from '@/core/modules/bill'
 
 export default function ThankYouPage({ params }: { params: { billId: string } }) {
   const { billId } = params
@@ -15,8 +16,10 @@ export default function ThankYouPage({ params }: { params: { billId: string } })
 
   if (!bill) return <div className="p-4 text-center">ไม่พบบิลนี้</div>
 
-  const sum = bill.items?.reduce((s: number, it: any) => s + it.price * it.quantity, 0) || 0
-  const total = sum + (bill.shipping || 0)
+  const { total } = calculateTotal({
+    items: bill.items || [],
+    shipping: bill.shipping || 0,
+  })
 
   return (
     <div className="p-4 max-w-xl mx-auto space-y-4">

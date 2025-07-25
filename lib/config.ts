@@ -9,6 +9,9 @@ export interface StoreProfile {
   accountNumber: string
 }
 
+export const dataMode: 'mock' | 'real' =
+  (process.env.NEXT_PUBLIC_DATA_MODE as 'mock' | 'real') || 'mock'
+
 export async function getStoreProfile(): Promise<StoreProfile> {
   const res = await fetch('/api/config/store-profile')
   return res.json()
