@@ -2,7 +2,8 @@
 import { useState, useEffect } from 'react'
 import bills from '@/mock/store/bills.json'
 import BillQRSection from '@/components/bill/BillQRSection'
-import TransferConfirmForm from '@/components/bill/TransferConfirmForm'
+import CustomerPaymentForm from '@/components/bill/CustomerPaymentForm'
+import PaymentConfirmationCard from '@/components/bill/PaymentConfirmationCard'
 import BillStatusTracker from '@/components/bill/BillStatusTracker'
 import BillTimeline from '@/components/bill/BillTimeline'
 import ShippingInfoCard from '@/components/bill/ShippingInfoCard'
@@ -136,7 +137,13 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         </div>
       )}
       <ReceiptCard url={bill.receiptUrl} note={bill.receiptNote} />
-      <TransferConfirmForm billId={bill.id} existing={bill.transferConfirmation} />
+      {bill.confirmation ? (
+        <PaymentConfirmationCard confirmation={bill.confirmation} />
+      ) : (
+        bill.paymentStatus === 'unpaid' && (
+          <CustomerPaymentForm billId={bill.id} autofillAmount={total} />
+        )
+      )}
       <button className="border px-3 py-1" onClick={handleShare}>คัดลอกลิงก์</button>
     </div>
   )

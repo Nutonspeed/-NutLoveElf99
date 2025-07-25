@@ -52,6 +52,13 @@ export interface AdminBill {
   sharedBy?: string | null
   customerNotes?: { message: string; createdAt: string; from: string }[]
   packedBy?: string
+  confirmation?: {
+    amountTransferred: number
+    transferDate: string
+    transferSlipUrl: string
+    customerNote?: string
+    verified?: boolean
+  }
 }
 
 export const mockBills: AdminBill[] = [
