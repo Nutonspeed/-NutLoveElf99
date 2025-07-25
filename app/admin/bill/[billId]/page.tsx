@@ -1,6 +1,8 @@
 "use client"
 import Link from 'next/link'
 import { useState } from 'react'
+import { saveTemplate } from '@/core/mock/templates'
+import { slugify, billToTemplateData } from '@/lib/utils/templateHelpers'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/buttons/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/cards/card'
@@ -232,7 +234,25 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
           </Button>
         </CardContent>
       </Card>
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
+        <Link href={`/admin/bill/create?from=${bill.id}`}>
+          <Button variant="outline">Duplicate</Button>
+        </Link>
+        <Button
+          variant="outline"
+          onClick={() => {
+            const name = prompt('Template name?')
+            if (!name) return
+            saveTemplate({
+              slug: slugify(name),
+              name,
+              bill: billToTemplateData(bill),
+            })
+            toast({ title: 'บันทึกเทมเพลตแล้ว' })
+          }}
+        >
+          Save as Template
+        </Button>
         <Button>Approve</Button>
         <Button variant="outline">Mark as Paid</Button>
         <Button variant="destructive">Cancel</Button>

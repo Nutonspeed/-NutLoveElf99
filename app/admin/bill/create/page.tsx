@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
+import BillTemplateSelector from '@/components/bill/BillTemplateSelector'
+import { getTemplate } from '@/core/mock/templates'
 import PageWrapper from '@/components/admin/PageWrapper'
 import { Input } from '@/components/ui/inputs/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -61,6 +63,7 @@ export default function AdminBillCreatePage() {
 
   useEffect(() => {
     const from = params.get('from')
+    const templateSlug = params.get('template')
     const lead = params.get('leadId')
     if (lead) {
       const l = getLead(lead)
@@ -69,7 +72,23 @@ export default function AdminBillCreatePage() {
         setCustomerPhone(l.phone)
       }
     }
-    if (from === 'cart') {
+    if (templateSlug) {
+      const tpl = getTemplate(templateSlug)
+      if (tpl) {
+        setCustomerName(tpl.bill.customer)
+        const parts = Object.fromEntries(
+          String(tpl.bill.items).split(';').map(p => {
+            const [k, v] = p.split(':')
+            return [k, v]
+          }),
+        ) as Record<string, string>
+        setFabricId(parts['fabric'] || '')
+        setSofaType(parts['sofa'] || '1-seater')
+        setCustomSizeNote(parts['note'] || '')
+        setCustomerAddress(parts['addr'] || '')
+        setDeliveryNote(parts['delivery'] || '')
+      }
+    } else if (from === 'cart') {
       if (typeof window !== 'undefined') {
         const stored = localStorage.getItem('cart')
         if (stored) {
@@ -166,6 +185,12 @@ export default function AdminBillCreatePage() {
       ]}
     >
       <form onSubmit={handleSubmit} className="space-y-6 max-w-md">
+        <div className="space-y-2">
+          <label className="text-sm">Template</label>
+          <BillTemplateSelector onSelect={(slug) => {
+            if (slug) router.push(`/admin/bill/create?template=${slug}`)
+          }} />
+        </div>
         <div className="space-y-2">
           <label className="text-sm">ชื่อลูกค้า</label>
           <Input value={customerName} onChange={e => setCustomerName(e.target.value)} />
