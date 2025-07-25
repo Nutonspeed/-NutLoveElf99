@@ -13,6 +13,7 @@ import { formatDateThai } from '@/lib/formatDateThai'
 import type { StoreProfile } from '@/lib/config'
 import { getStoreProfile } from '@/lib/config'
 import { useToast } from '@/hooks/use-toast'
+import { calculateTotal } from '@/core/modules/bill'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
   const bill = (bills as any[]).find(b => b.id === params.billId)
@@ -33,11 +34,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
     )
   }
 
-  const sum = bill.items.reduce(
-    (s: number, it: any) => s + it.price * it.quantity,
-    0,
-  )
-  const total = sum + bill.shipping
+  const { total } = calculateTotal({ items: bill.items, shipping: bill.shipping })
 
   const handleShare = () => {
     if (typeof window !== 'undefined') {

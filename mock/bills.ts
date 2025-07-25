@@ -1,4 +1,5 @@
-import type { BillFeedback, BillItem } from '@/types/bill'
+import type { BillFeedback } from '@/types/bill'
+import type { BillItem } from '@/core/modules/bill'
 
 export interface AdminBill {
   id: string

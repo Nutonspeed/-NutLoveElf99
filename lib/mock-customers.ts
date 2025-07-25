@@ -1,4 +1,5 @@
-import type { Customer, PointLog } from '@/types/customer'
+import type { Customer } from '@/core/modules/bill'
+import type { PointLog } from '@/types/customer'
 export type { Customer }
 
 import { mockOrders } from "./mock-orders"
