@@ -24,7 +24,7 @@ export default function ReceiptCard({ url, note }: Props) {
             isImage(url) && <img src={url} alt="receipt" className="w-full" />
           )
         ) : (
-          <p className="text-sm text-gray-500">ยังไม่มีใบเสร็จแนบ</p>
+          <p className="text-sm text-gray-500">ยังไม่มีข้อมูล</p>
         )}
         {note && <p className="text-sm text-gray-500">{note}</p>}
       </CardContent>
