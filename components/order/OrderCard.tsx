@@ -18,7 +18,7 @@ export default function OrderCard({ order, onCancel }: { order: SimpleOrder; onC
         </p>
         <p>ยอดรวม: ฿{order.total.toLocaleString()}</p>
         <div className="flex gap-2 pt-2">
-          <Link href={`/dashboard/orders/${order.id}`}>
+          <Link href={`/admin/orders/${order.id}`}>
             <Button variant="outline" size="sm">ดู</Button>
           </Link>
           <Button

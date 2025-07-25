@@ -14,6 +14,8 @@ import type { Collection } from "@/types/collection"
 import { RecentProductsSection } from "@/components/RecentProductsSection"
 import { promises as fs } from "fs"
 import { join } from "path"
+import QuickEntryMock from "@/components/home/QuickEntryMock"
+import { ENABLE_MOCK_UI } from "@/lib/config"
 
 export default async function HomePage() {
   const featuredProducts = mockProducts.slice(0, 4)
@@ -30,6 +32,7 @@ export default async function HomePage() {
       <Navbar />
 
       <HeroBannerSection />
+      {ENABLE_MOCK_UI && <QuickEntryMock />}
 
       {curatedProducts.length > 0 && (
         <section className="py-16">
