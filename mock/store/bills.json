@@ -46,11 +46,22 @@
         "status": "cutting",
         "by": "Bob",
         "note": "เริ่มตัดผ้า"
+      },
+      {
+        "timestamp": "2024-01-15T10:00:00Z",
+        "status": "payment-confirmed-by-customer",
+        "by": "customer"
       }
     ],
     "trackingNumber": "EX123456789TH",
     "carrier": "Flash",
-    "shippedAt": "2024-01-30T10:00:00Z"
+    "shippedAt": "2024-01-30T10:00:00Z",
+    "confirmation": {
+      "amountTransferred": 408,
+      "transferDate": "2024-01-15",
+      "transferSlipUrl": "https://example.com/slip1.jpg",
+      "customerNote": "เต็มจำนวน"
+    }
   },
   {
     "id": "BILL-002",
@@ -85,7 +96,8 @@
     ],
     "trackingNumber": "EX123456789TH",
     "carrier": "Flash",
-    "shippedAt": "2024-01-30T10:00:00Z"
+    "shippedAt": "2024-01-30T10:00:00Z",
+    "confirmation": null
   },
   {
     "id": "BILL-003",
@@ -145,6 +157,7 @@
     ],
     "trackingNumber": "EX123456789TH",
     "carrier": "Flash",
-    "shippedAt": "2024-01-30T10:00:00Z"
+    "shippedAt": "2024-01-30T10:00:00Z",
+    "confirmation": null
   }
 ]

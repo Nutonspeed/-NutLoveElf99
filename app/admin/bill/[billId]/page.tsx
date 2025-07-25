@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast'
 import { useBillStore } from '@/core/store'
 import { useBillById } from '@/hooks/useBillById'
 import { carriers } from '@/config/carriers'
+import PaymentConfirmationCard from '@/components/bill/PaymentConfirmationCard'
 
 export default function AdminBillDetailPage({ params }: { params: { billId: string } }) {
   const bill = useBillById(params.billId)
@@ -128,6 +129,36 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
           </Button>
         </CardContent>
       </Card>
+      {bill.confirmation && (
+        <Card>
+          <CardHeader>
+            <CardTitle>แจ้งโอนโดยลูกค้า</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <PaymentConfirmationCard confirmation={bill.confirmation} />
+            <label className="flex items-center space-x-2 text-sm">
+              <input
+                type="checkbox"
+                checked={!!bill.confirmation.verified}
+                onChange={e => {
+                  const verified = e.target.checked
+                  store.updateBill(bill.id, { confirmation: { ...bill.confirmation, verified } })
+                  toast({ title: 'บันทึกแล้ว' })
+                }}
+              />
+              <span>ตรวจสอบแล้ว</span>
+            </label>
+            <Button
+              onClick={() => {
+                store.updateStatus(bill.id, 'paid')
+                toast({ title: 'ยืนยันรับยอด' })
+              }}
+            >
+              ยืนยันรับยอด
+            </Button>
+          </CardContent>
+        </Card>
+      )}
       <Card>
         <CardHeader>
           <CardTitle>แนบใบเสร็จ</CardTitle>
