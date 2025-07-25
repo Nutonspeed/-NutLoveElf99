@@ -16,7 +16,7 @@ export default function CustomerCard({ customer }: { customer: Customer }) {
   const status =
     customer.tier === "VIP" ? "VIP" : (customer.points ?? 0) > 50 ? "returning" : "new"
   return (
-    <Link href={`/dashboard/customers/${customer.id}`} className="block">
+    <Link href={`/admin/customers/${customer.id}`} className="block">
       <Card className="hover:bg-muted/50">
         <CardHeader>
           <CardTitle className="flex items-center justify-between">

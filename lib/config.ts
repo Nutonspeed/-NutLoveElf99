@@ -11,6 +11,7 @@ export interface StoreProfile {
 
 export const USE_SUPABASE = false
 export const ENABLE_MOCK_DASHBOARD = false
+export const ENABLE_MOCK_UI = false
 
 export const dataMode: 'mock' | 'real' =
   (process.env.NEXT_PUBLIC_DATA_MODE as 'mock' | 'real') || 'mock'
