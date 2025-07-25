@@ -1,30 +1,30 @@
-import DashboardCard from '@/components/dashboard/DashboardCard'
-import BillSummaryChart from '@/components/dashboard/BillSummaryChart'
-import RecentBillsTable from '@/components/dashboard/RecentBillsTable'
-import { getDashboardStats } from '@/lib/data/dashboardStats'
-import { ENABLE_MOCK_DASHBOARD } from '@/lib/config'
+import DashboardStats from '@/components/admin/DashboardStats'
+import RecentBillsTable from '@/components/admin/RecentBillsTable'
+import type { AdminBill } from '@/mock/bills'
+import { getBills } from '@/core/mock/bill'
+import { getCustomers } from '@/core/mock/customer'
 
-export default async function AdminDashboardPage() {
-  const stats = getDashboardStats()
+function billTotal(b: AdminBill) {
+  return b.items.reduce((s, i) => s + i.price * i.quantity, 0) + b.shipping
+}
 
-  if (ENABLE_MOCK_DASHBOARD) {
-    return <div className="p-4">Mock dashboard disabled</div>
-  }
+export default function AdminDashboardPage() {
+  const bills = getBills()
+  const customers = getCustomers()
+  const todayStr = new Date().toDateString()
+
+  const todaySales = bills
+    .filter(b => new Date(b.createdAt).toDateString() === todayStr && b.paymentStatus === 'paid')
+    .reduce((sum, b) => sum + billTotal(b), 0)
+  const totalBills = bills.length
+  const newCustomers = customers.filter(c => new Date(c.createdAt).toDateString() === todayStr).length
+  const recentBills = [...bills].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0,5)
 
   return (
     <div className="space-y-6 p-4 md:p-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <DashboardCard title="ยอดขายเดือนนี้" value={`฿${stats.monthSales.toLocaleString()}`} />
-        <DashboardCard title="บิลทั้งหมด" value={stats.totalBills} />
-        <DashboardCard title="ชำระแล้ว" value={stats.paidBills} />
-        <DashboardCard title="ค้างจ่าย" value={stats.unpaidBills} />
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <DashboardCard title="ลูกค้าใหม่" value={stats.newCustomers} className="sm:col-span-2" />
-        <BillSummaryChart data={stats.chartData} />
-      </div>
+      <DashboardStats todaySales={todaySales} totalBills={totalBills} newCustomers={newCustomers} />
       <div className="overflow-x-auto">
-        <RecentBillsTable bills={stats.recentBills} />
+        <RecentBillsTable bills={recentBills} />
       </div>
     </div>
   )
