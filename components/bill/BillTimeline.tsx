@@ -10,11 +10,17 @@ const steps = [
   { key: 'done', label: 'เสร็จสิ้น', icon: CircleCheck },
 ] as const
 
-export default function BillTimeline({ status }: { status: ProductionStatus }) {
+interface Props {
+  status: ProductionStatus
+  timeline?: Array<{ timestamp: string }>
+}
+
+export default function BillTimeline({ status, timeline }: Props) {
   const key = status
   const current = steps.findIndex(s => s.key === key)
   return (
-    <div className="flex items-center justify-between relative">
+    <div id="timeline" className="flex flex-col space-y-1">
+      <div className="flex items-center justify-between relative">
       {steps.map((step, index) => {
         const StepIcon = step.icon
         const isDone = index <= current
@@ -46,6 +52,10 @@ export default function BillTimeline({ status }: { status: ProductionStatus }) {
           </div>
         )
       })}
+      </div>
+      {timeline && timeline.length === 0 && (
+        <p className="text-xs text-center text-gray-500">ยังไม่มีข้อมูล</p>
+      )}
     </div>
   )
 }

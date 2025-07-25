@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { getBillById } from '@/lib/data/bills'
+import { useBill } from '@/lib/hooks/useBill'
 import BillQRSection from '@/components/bill/BillQRSection'
 import CustomerPaymentForm from '@/components/bill/CustomerPaymentForm'
 import PaymentConfirmationCard from '@/components/bill/PaymentConfirmationCard'
@@ -8,7 +8,9 @@ import BillStatusTracker from '@/components/bill/BillStatusTracker'
 import BillTimeline from '@/components/bill/BillTimeline'
 import ShippingInfoCard from '@/components/bill/ShippingInfoCard'
 import ReceiptCard from '@/components/bill/ReceiptCard'
-import BillFooterActions from '@/components/bill/BillFooterActions'
+import BillActionButtons from '@/components/bill/BillActionButtons'
+import { Badge } from '@/components/ui/badge'
+import { getBillStatusBadgeClass, getBillStatusLabel } from '@/lib/bill-status'
 import { formatDateThai } from '@/lib/formatDateThai'
 import type { StoreProfile } from '@/lib/config'
 import { getStoreProfile } from '@/lib/config'
@@ -16,7 +18,7 @@ import { useToast } from '@/hooks/use-toast'
 import { calculateTotal } from '@/core/modules/bill'
 
 export default function BillViewPage({ params }: { params: { billId: string } }) {
-  const [bill, setBill] = useState<any | undefined>(undefined)
+  const { bill, loading } = useBill(params.billId)
   const [editAddr, setEditAddr] = useState(false)
   const [address, setAddress] = useState('')
   const [editPhone, setEditPhone] = useState(false)
@@ -25,15 +27,16 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   const { toast } = useToast()
 
   useEffect(() => {
-    getBillById(params.billId).then(b => {
-      setBill(b)
-      setAddress(b?.address || '')
-      setPhone(b?.phone || '')
-    })
+    if (bill) {
+      setAddress(bill.address || '')
+      setPhone(bill.phone || '')
+    }
+  }, [bill])
+  useEffect(() => {
     getStoreProfile().then(setStore)
-  }, [params.billId])
+  }, [])
 
-  if (bill === undefined) {
+  if (loading) {
     return <div className="p-4 text-center">Loading...</div>
   }
 
@@ -53,17 +56,24 @@ export default function BillViewPage({ params }: { params: { billId: string } })
   }
 
   return (
-    <div className="p-4 space-y-4 max-w-xl mx-auto">
-      <h1 className="text-xl font-bold text-center">บิล {bill.id}</h1>
+    <div className="p-4 space-y-4 max-w-md mx-auto">
+      <h1 className="text-xl font-bold text-center">
+        บิล {bill.id}{' '}
+        <Badge className={getBillStatusBadgeClass(bill.status)}>
+          {getBillStatusLabel(bill.status)}
+        </Badge>
+      </h1>
       <BillStatusTracker status={bill.productionStatus || 'waiting'} />
-      <BillTimeline status={bill.productionStatus || 'waiting'} />
-      {bill.productionTimeline?.length > 0 && (
+      <BillTimeline status={bill.productionStatus || 'waiting'} timeline={bill.productionTimeline} />
+      {bill.productionTimeline && bill.productionTimeline.length > 0 ? (
         <p className="text-xs text-gray-500 text-center">
           อัปเดตล่าสุด:{' '}
           {formatDateThai(
             bill.productionTimeline[bill.productionTimeline.length - 1].timestamp
           )}
         </p>
+      ) : (
+        <p className="text-xs text-center text-gray-500">ยังไม่มีข้อมูล</p>
       )}
       <ShippingInfoCard
         trackingNumber={bill.trackingNumber}
@@ -152,7 +162,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         )
       )}
       <button className="border px-3 py-1" onClick={handleShare}>คัดลอกลิงก์</button>
-      <BillFooterActions billId={bill.id} />
+      <BillActionButtons billId={bill.id} />
     </div>
   )
 }

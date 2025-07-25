@@ -1,5 +1,8 @@
 import { USE_SUPABASE } from '../config'
 import type { AdminBill } from '@/mock/bills'
+
+// Public Bill interface for future real database
+export type Bill = AdminBill
 import { getBill, getBills } from '@/mockDB/bills'
 import { getBillFromSupabase, getBillsFromSupabase } from '../supabase/billService'
 
