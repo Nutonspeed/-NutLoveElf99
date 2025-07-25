@@ -1,1 +1,21 @@
-[]
+[
+  {
+    "customerName": "Alice",
+    "phone": "1234567890",
+    "items": "sofa",
+    "total": 1000,
+    "deposit": 100,
+    "days": 7,
+    "fabricName": "Cotton",
+    "fabricImage": "img.jpg",
+    "sofaType": "L-shape",
+    "sofaSize": "Large",
+    "quantity": 1,
+    "tags": [
+      "test"
+    ],
+    "id": "FB-1753417058945",
+    "depositPaid": false,
+    "createdAt": "2025-07-25T04:17:38.945Z"
+  }
+]
