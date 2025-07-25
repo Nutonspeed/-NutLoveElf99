@@ -20,6 +20,8 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
   const [note, setNote] = useState('')
   const [tracking, setTracking] = useState(bill.trackingNumber || '')
   const [carrier, setCarrier] = useState<string>(bill.carrier || carriers[0])
+  const [receiptUrl, setReceiptUrl] = useState(bill.receiptUrl || '')
+  const [receiptNote, setReceiptNote] = useState(bill.receiptNote || '')
 
   if (bill === undefined) {
     return <div className="p-4 text-center">Loading...</div>
@@ -123,6 +125,45 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
             }}
           >
             บันทึกหมายเลขพัสดุ
+          </Button>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>แนบใบเสร็จ</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <input
+            type="file"
+            accept="application/pdf,image/*"
+            onChange={e => {
+              const f = e.target.files?.[0]
+              if (f) {
+                const reader = new FileReader()
+                reader.onload = () => setReceiptUrl(reader.result as string)
+                reader.readAsDataURL(f)
+              }
+            }}
+          />
+          <input
+            className="border p-2 w-full"
+            placeholder="หรือใส่ลิงก์ใบเสร็จ"
+            value={receiptUrl}
+            onChange={e => setReceiptUrl(e.target.value)}
+          />
+          <input
+            className="border p-2 w-full"
+            placeholder="หมายเหตุ"
+            value={receiptNote}
+            onChange={e => setReceiptNote(e.target.value)}
+          />
+          <Button
+            onClick={() => {
+              store.updateBill(bill.id, { receiptUrl, receiptNote })
+              toast({ title: 'แนบใบเสร็จสำเร็จ' })
+            }}
+          >
+            บันทึกใบเสร็จ
           </Button>
         </CardContent>
       </Card>
