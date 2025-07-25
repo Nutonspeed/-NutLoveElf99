@@ -151,8 +151,7 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
             value={receiptUrl}
             onChange={e => setReceiptUrl(e.target.value)}
           />
-          <input
-            className="border p-2 w-full"
+          <Textarea
             placeholder="หมายเหตุ"
             value={receiptNote}
             onChange={e => setReceiptNote(e.target.value)}
@@ -160,6 +159,11 @@ export default function AdminBillDetailPage({ params }: { params: { billId: stri
           <Button
             onClick={() => {
               store.updateBill(bill.id, { receiptUrl, receiptNote })
+              fetch('/api/bill/update-receipt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ billId: bill.id, receiptUrl, receiptNote }),
+              })
               toast({ title: 'แนบใบเสร็จสำเร็จ' })
             }}
           >
