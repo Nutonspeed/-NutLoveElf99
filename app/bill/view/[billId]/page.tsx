@@ -8,6 +8,7 @@ import BillStatusTracker from '@/components/bill/BillStatusTracker'
 import BillTimeline from '@/components/bill/BillTimeline'
 import ShippingInfoCard from '@/components/bill/ShippingInfoCard'
 import ReceiptCard from '@/components/bill/ReceiptCard'
+import BillFooterActions from '@/components/bill/BillFooterActions'
 import { formatDateThai } from '@/lib/formatDateThai'
 import type { StoreProfile } from '@/lib/config'
 import { getStoreProfile } from '@/lib/config'
@@ -145,6 +146,7 @@ export default function BillViewPage({ params }: { params: { billId: string } })
         )
       )}
       <button className="border px-3 py-1" onClick={handleShare}>คัดลอกลิงก์</button>
+      <BillFooterActions billId={bill.id} />
     </div>
   )
 }
